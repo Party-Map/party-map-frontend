@@ -281,7 +281,7 @@ export const events: Event[] = [
   // New test events (home party kind)
   {
     id: 'e9',
-    title: 'Folyás a pincébe',
+    title: 'Buli a pincébe',
     placeId: 'p9',
     description: 'Laid-back basement home party with friendly crowd.',
     start: new Date(Date.now() + 86400000 * 2 + 21 * 3600000).toISOString(), // ~2 days 21:00
@@ -306,7 +306,7 @@ export const events: Event[] = [
   // New pub event
   {
     id: 'e11',
-    title: 'Masszív ivás',
+    title: 'Mértékkel ivás',
     placeId: 'p11',
     description: 'Deep session of social drinking and beats.',
     start: new Date(Date.now() + 86400000 * 2 + 20 * 3600000).toISOString(), // ~2 days 20:00
