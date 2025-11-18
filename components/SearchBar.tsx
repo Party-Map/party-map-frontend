@@ -367,23 +367,6 @@ export default function SearchBar() {
           </div>
         </div>
       )}
-
-      <style jsx>{`
-        @keyframes smokeInContainer { 0% { opacity:0; transform: translateY(4px) scale(.96); filter: blur(8px); } 60% { opacity:1; filter: blur(2px);} 100% { opacity:1; transform: translateY(0) scale(1); filter: blur(0);} }
-        @keyframes smokeOutContainer { 0% { opacity:1; transform: translateY(0) scale(1); filter: blur(0);} 40% { filter: blur(4px);} 100% { opacity:0; transform: translateY(-6px) scale(.98); filter: blur(12px);} }
-        .smoke-enter { animation: smokeInContainer 0.28s cubic-bezier(.4,.0,.2,1); }
-        .smoke-leave { animation: smokeOutContainer 0.28s cubic-bezier(.4,.0,.2,1) forwards; }
-
-        @keyframes puffRise { 0% { transform: translate(-50%, 10px) scale(.4); opacity:0; } 35% { opacity:.35; } 70% { opacity:.12; } 100% { transform: translate(-50%, -120px) scale(1.4); opacity:0; } }
-        .puff { animation: puffRise 1.2s linear forwards; mix-blend-mode: plus-lighter; }
-
-        /* Item animations */
-        @keyframes itemIn { 0% { opacity:0; transform: translateY(4px); } 100% { opacity:1; transform: translateY(0);} }
-        @keyframes itemOut { 0% { opacity:1; height: var(--h); margin-top:0; margin-bottom:0; } 80% { opacity:0; } 100% { opacity:0; height:0; margin-top:0; margin-bottom:0; } }
-        .item-enter { animation: itemIn 0.22s ease-out; }
-        .item-leave { animation: itemOut 0.22s ease-in forwards; overflow:hidden; }
-        .item-leave > a { pointer-events:none; }
-      `}</style>
     </div>
   )
 }

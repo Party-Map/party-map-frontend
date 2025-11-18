@@ -1,4 +1,4 @@
-import MapClient from '@/components/MapClient'
+import MapClient from '@/app/map/MapClient'
 import { getDataSource } from '@/lib/dataSource'
 
 export const revalidate = 60
