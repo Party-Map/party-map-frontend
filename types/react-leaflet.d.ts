@@ -1,6 +1,3 @@
-// Minimal override typings to satisfy properties used in the project.
-// This avoids using any-casts in component code while keeping compile-time safety for the used props.
-
 import * as React from 'react'
 import type { Map as LeafletMap, Icon, LatLngExpression } from 'leaflet'
 

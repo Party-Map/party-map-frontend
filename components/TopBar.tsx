@@ -1,9 +1,7 @@
-'use client'
 import ThemeToggle from './ThemeToggle'
 import SearchBar from './SearchBar'
 import NavActions from './NavActions'
 import Link from 'next/link'
-// New display font for branding
 import { Baloo_2 } from 'next/font/google'
 const partyFont = Baloo_2({ subsets: ['latin'], weight: ['400','600','700'], variable: '--font-party' })
 
@@ -49,18 +47,6 @@ export default function TopBar() {
           </div>
         </div>
       </div>
-      <style jsx global>{`
-        @media (prefers-reduced-motion: reduce) { }
-        /* Make the custom font variable easy to target if needed */
-        :root { font-feature-settings: 'ss01' on; }
-        /* Glint animation for Party Map logo */
-        .party-logo { position:relative; }
-        .party-logo-text { position:relative; display:inline-block; }
-        .party-logo-text::after { content:''; pointer-events:none; position:absolute; top:0; left:-130%; width:50%; height:100%; background:linear-gradient(115deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 28%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0) 72%, rgba(255,255,255,0) 100%); transform:skewX(-20deg); opacity:0; filter:blur(.4px); }
-        .party-logo:hover .party-logo-text::after { animation: party-glint .75s linear; opacity:1; }
-        @keyframes party-glint { 0% { left:-130%; opacity:0; } 8% { opacity:0; } 25% { opacity:1; } 55% { opacity:1; } 70% { opacity:0; } 100% { left:140%; opacity:0; } }
-        @media (prefers-reduced-motion: reduce) { .party-logo:hover .party-logo-text::after { animation:none; opacity:.35; left:0; width:100%; background:linear-gradient(90deg, rgba(255,255,255,0.25), rgba(255,255,255,0.05)); } }
-      `}</style>
     </div>
   )
 }

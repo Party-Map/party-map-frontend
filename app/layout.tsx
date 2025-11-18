@@ -11,11 +11,6 @@ import GdprConsent from '@/components/GdprConsent'
 export const metadata: Metadata = {
   title: 'PartyMap',
   description: 'Find parties on the map — places, events, performers',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'black-translucent',
-    title: 'PartyMap'
-  }
 }
 
 export const viewport: Viewport = {
@@ -29,9 +24,9 @@ export const viewport: Viewport = {
 }
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <body className="min-h-dvh antialiased bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
-        <ThemeProvider>
+      <ThemeProvider>
           {/* Floating bars (no layout padding reserved) */}
           <TopBar />
           <BottomBar />
@@ -41,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           {/* GDPR Consent */}
           <GdprConsent />
-        </ThemeProvider>
+      </ThemeProvider>
       </body>
     </html>
   )
