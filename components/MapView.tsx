@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap, Circle } from 'react-le
 import L, { LatLngTuple } from 'leaflet'
 import { useEffect, useState, useRef } from 'react'
 import type { Place, Event, EventType } from '@/lib/types'
+import type { LatLng } from '@/lib/map/types'
 import { EVENT_TYPE_LABELS } from '@/lib/types'
 // EVENT_TYPE_BADGE_CLASSES replaced by CSS-based .event-badge styles
 import PlacePopupCard from './PlacePopupCard'
