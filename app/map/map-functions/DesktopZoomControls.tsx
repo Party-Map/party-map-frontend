@@ -3,18 +3,17 @@ import {useMap} from 'react-leaflet'
 import L from 'leaflet'
 import type {Place} from '@/lib/types'
 
-export function DesktopZoomControls({
-                                        openPopupId,
-                                        places,
-                                    }: {
+export function DesktopZoomControls({ openPopupId, places }: {
     openPopupId: string | null
     places: Place[]
 }) {
     const map = useMap()
+
     const [tip, setTip] = useState<{ key: string; visible: boolean }>({
         key: '',
         visible: false,
     })
+
     const timers = useRef<Record<string, number>>({})
 
     const startTip = (key: string) => {
@@ -71,7 +70,6 @@ export function DesktopZoomControls({
     }, [])
 
     const selectedPlace = openPopupId ? places.find(p => p.id === openPopupId) : null
-
     const recenter = () => {
         if (!selectedPlace) return
         try {
@@ -91,11 +89,18 @@ export function DesktopZoomControls({
             className="hidden md:flex absolute right-4 top-24 z-[1000] select-none pm-zoom-controls flex-col gap-3"
         >
             <div
-                className="flex flex-col overflow-visible rounded-2xl backdrop-blur-xl bg-white/70 dark:bg-slate-900/50 border border-black/10 dark:border-white/10 shadow-lg divide-y divide-black/10 dark:divide-white/10">
+                className="flex flex-col overflow-visible rounded-2xl backdrop-blur-xl bg-white/70
+                dark:bg-slate-900/50 border border-black/10 dark:border-white/10 shadow-lg divide-y
+                divide-black/10 dark:divide-white/10">
                 <div className="relative">
                     <button
                         aria-label="Zoom in"
-                        className="h-11 w-11 grid place-items-center text-slate-800 dark:text-slate-100 rounded-md hover:bg-white/90 dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500/60 active:scale-95"
+                        className="h-11 w-11 grid place-items-center text-slate-800 dark:text-slate-100
+                        rounded-md hover:bg-white/90
+                        dark:hover:bg-slate-800/60 transition-colors
+                        focus:outline-none focus-visible:ring-2
+                        focus-visible:ring-pink-500/60 active:scale-95"
+
                         onPointerDown={e => {
                             e.stopPropagation()
                             try { map.dragging.disable() } catch {}
@@ -124,16 +129,21 @@ export function DesktopZoomControls({
                         </svg>
                     </button>
                     {tip.visible && tip.key === 'zin' && (
-                        <span
-                            className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-1 whitespace-nowrap text-[10px] font-medium px-2 py-1 rounded bg-slate-900/90 text-white shadow-lg ring-1 ring-white/10">
-              Zoom in
-            </span>
+                        <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-1
+                        whitespace-nowrap text-[10px] font-medium px-2 py-1 rounded bg-slate-900/90 text-white shadow-lg
+                        ring-1 ring-white/10"
+                        >
+                             Zoom in
+                        </span>
                     )}
                 </div>
                 <div className="relative">
                     <button
                         aria-label="Zoom out"
-                        className="h-11 w-11 grid place-items-center text-slate-800 dark:text-slate-100 rounded-md hover:bg-white/90 dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500/60 active:scale-95"
+                        className="h-11 w-11 grid place-items-center text-slate-800 dark:text-slate-100 rounded-md
+                        hover:bg-white/90 dark:hover:bg-slate-800/60 transition-colors
+                        focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500/60 active:scale-95"
+
                         onPointerDown={e => {
                             e.stopPropagation()
                             try { map.dragging.disable() } catch {}
@@ -162,10 +172,13 @@ export function DesktopZoomControls({
                         </svg>
                     </button>
                     {tip.visible && tip.key === 'zout' && (
-                        <span
-                            className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-1 whitespace-nowrap text-[10px] font-medium px-2 py-1 rounded bg-slate-900/90 text-white shadow-lg ring-1 ring-white/10">
-              Zoom out
-            </span>
+                        <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-1
+                        whitespace-nowrap text-[10px]
+                        font-medium px-2 py-1 rounded bg-slate-900/90
+                        text-white shadow-lg ring-1 ring-white/10"
+                        >
+                          Zoom out
+                        </span>
                     )}
                 </div>
             </div>
@@ -177,7 +190,12 @@ export function DesktopZoomControls({
                             recenter()
                         }}
                         aria-label="Center selected"
-                        className="h-11 w-11 grid place-items-center rounded-md backdrop-blur-xl bg-white/70 dark:bg-slate-900/50 border border-black/10 dark:border-white/10 shadow-lg text-pink-600 dark:text-pink-300 hover:bg-white/90 dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500/60 active:scale-95"
+                        className="h-11 w-11 grid place-items-center rounded-md backdrop-blur-xl bg-white/70
+                        dark:bg-slate-900/50 border border-black/10
+                        dark:border-white/10 shadow-lg text-pink-600 dark:text-pink-300 hover:bg-white/90
+                        dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2
+                        focus-visible:ring-pink-500/60 active:scale-95"
+
                         onMouseEnter={() => startTip('center')}
                         onMouseLeave={() => clearTip('center')}
                     >
@@ -195,10 +213,13 @@ export function DesktopZoomControls({
                         </svg>
                     </button>
                     {tip.visible && tip.key === 'center' && (
-                        <span
-                            className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-1 whitespace-nowrap text-[10px] font-medium px-2 py-1 rounded bg-slate-900/90 text-white shadow-lg ring-1 ring-white/10">
-              Center selected
-            </span>
+                        <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-1
+                        whitespace-nowrap text-[10px] font-medium px-2 py-1 rounded
+                        bg-slate-900/90 text-white shadow-lg ring-1
+                        ring-white/10"
+                        >
+                          Center selected
+                        </span>
                     )}
                 </div>
             )}

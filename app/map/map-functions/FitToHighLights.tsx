@@ -3,10 +3,7 @@ import {useMap} from 'react-leaflet'
 import L, {LatLngTuple} from 'leaflet'
 import type {Place} from '@/lib/types'
 
-export function FitToHighlights({
-                                    places,
-                                    highlightIds,
-                                }: {
+export function FitToHighlights({ places, highlightIds }: {
     places: Place[]
     highlightIds?: string[]
 }) {

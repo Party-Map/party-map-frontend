@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useMap } from 'react-leaflet'
 import L from 'leaflet'
-import { Event, Place } from '@/lib/types'
+import { Event, Place, PopupRect } from '@/lib/types'
 import { EVENT_TYPE_BADGE_CLASSES, EVENT_TYPE_LABELS } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import {
@@ -10,8 +10,6 @@ import {
   LABEL_BASE_OFFSET,
   LABEL_HIGHLIGHT_OFFSET,
 } from '@/lib/constants'
-
-type PopupRect = { left: number; right: number; top: number; bottom: number }
 
 function useMapInteraction(map: L.Map) {
   const [, force] = useState(0)

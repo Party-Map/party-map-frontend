@@ -3,10 +3,7 @@ import {Circle, Marker, useMap} from 'react-leaflet'
 import L, {LatLngTuple} from 'leaflet'
 import type {LatLng} from '@/lib/types'
 
-export function UserLocation({
-                                 auto = true,
-                                 onPosition,
-                             }: {
+export function UserLocation({ auto = true, onPosition }: {
     auto?: boolean
     onPosition?: (pos: LatLng) => void
 }) {
@@ -61,7 +58,15 @@ export function UserLocation({
 
     const youIcon = L.divIcon({
         className: 'pm-you-wrapper',
-        html: "<div class='pm-you'><span class='glow'></span><span class='ring'></span><span class='core'></span><span class='wave w1'></span><span class='wave w2'></span></div>",
+        html: `
+            <div class='pm-you'>
+                <span class='glow'></span>
+                <span class='ring'></span>
+                <span class='core'></span>
+                <span class='wave w1'></span>
+                <span class='wave w2'></span>
+            </div>
+            `,
         iconSize: [28, 28],
         iconAnchor: [14, 14],
     })

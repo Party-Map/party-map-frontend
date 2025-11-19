@@ -9,13 +9,11 @@ const ThemeCtx = createContext<ThemeContext | null>(null)
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const [theme, setTheme] = useState<Theme>('dark')
 
-    // Load initial theme
     useEffect(() => {
         const saved = localStorage.getItem('theme') as Theme | null
         setTheme(saved ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'))
     }, [])
 
-    // Apply + persist theme
     useEffect(() => {
         document.documentElement.classList.toggle('dark', theme === 'dark')
         localStorage.setItem('theme', theme)

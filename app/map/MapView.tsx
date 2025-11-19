@@ -26,7 +26,8 @@ function PinIcon(color: string, shiny: boolean) {
               </div>
             </div>
             <div class='pm-pin-tail'></div>
-          </div>`,
+          </div>
+        `,
         iconSize: [36, 48],
         iconAnchor: [18, 44],
         popupAnchor: [0, -38],

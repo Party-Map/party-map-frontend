@@ -9,7 +9,10 @@ import {useHighlight} from "@/components/HighlightContextProvider";
 
 const MapView = dynamic(() => import('@/app/map/MapView'), { ssr: false })
 
-export default function MapClient({ places, events }: { places: Place[]; events: Event[] }) {
+export default function MapClient({ places, events }: {
+    places: Place[];
+    events: Event[]
+}) {
     const { theme } = useTheme()
 
     const { highlightIds } = useHighlight()

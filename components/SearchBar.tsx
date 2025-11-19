@@ -7,8 +7,6 @@ import { usePathname, useRouter } from 'next/navigation'
 import {SearchResultListItem} from "@/components/SearchResultListItem";
 import {useHighlight} from "@/components/HighlightContextProvider";
 
-
-
 export default function SearchBar() {
     const [query, setQuery] = useState('')
     const [open, setOpen] = useState(false)
@@ -107,7 +105,10 @@ export default function SearchBar() {
     return (
         <div ref={rootRef} className="relative">
             {/* Input */}
-            <div className="flex items-center gap-2 rounded-full border border-white/20 dark:border-zinc/50 bg-white/90 dark:bg-zinc-900/70 px-3 py-2 shadow-sm dark:shadow-md backdrop-blur-md transition focus-within:ring-2 focus-within:ring-violet-400/60 dark:focus-within:ring-violet-500/50">
+            <div className="flex items-center gap-2 rounded-full border border-white/20 dark:border-zinc/50 bg-white/90
+            dark:bg-zinc-900/70 px-3 py-2 shadow-sm dark:shadow-md backdrop-blur-md transition focus-within:ring-2
+            focus-within:ring-violet-400/60 dark:focus-within:ring-violet-500/50"
+            >
                 <Search className="h-5 w-5 text-zinc-700 dark:text-zinc-300" aria-hidden />
                 <input
                     ref={inputRef}
@@ -123,7 +124,8 @@ export default function SearchBar() {
                         }
                     }}
                     placeholder="Search places, events, performers, tags"
-                    className="w-full bg-transparent text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-600 dark:placeholder-zinc-400 outline-none"
+                    className="w-full bg-transparent text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-600
+                    dark:placeholder-zinc-400 outline-none"
                 />
                 {query.trim() && (
                     <button
@@ -131,7 +133,9 @@ export default function SearchBar() {
                         onClick={open ? dismissResults : undefined}
                         aria-label={open ? 'Hide results' : 'Results hidden'}
                         aria-disabled={!open}
-                        className={`flex-shrink-0 inline-flex items-center justify-center rounded-full h-7 w-7 transition-colors focus:outline-none focus-visible:ring-2 ${
+                        className={`flex-shrink-0 inline-flex items-center justify-center rounded-full h-7 w-7 transition-colors 
+                        focus:outline-none focus-visible:ring-2 
+                        ${
                             open
                                 ? 'text-white bg-violet-600/80 hover:bg-violet-600 focus-visible:ring-violet-400/60'
                                 : 'text-zinc-500 dark:text-zinc-500 opacity-60 pointer-events-none'
@@ -144,16 +148,18 @@ export default function SearchBar() {
                     type="button"
                     onClick={clearAll}
                     aria-label="Clear selection"
-                    className="flex-shrink-0 inline-flex items-center justify-center rounded-full h-7 w-7 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200/70 dark:hover:bg-zinc-800/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/60"
+                    className="flex-shrink-0 inline-flex items-center justify-center rounded-full h-7 w-7 text-zinc-700
+                    dark:text-zinc-300 hover:bg-zinc-200/70 dark:hover:bg-zinc-800/60 focus:outline-none focus-visible:ring-2
+                    focus-visible:ring-violet-500/60"
                 >
                     <Eraser className="h-4 w-4" />
                 </button>
             </div>
-
             {/* Dropdown */}
             {open && (
                 <div
-                    className="absolute left-0 top-full mt-2 w-full max-h-96 overflow-auto rounded-xl border border-violet-300/50 dark:border-violet-400/20 bg-white/85 dark:bg-zinc-950/90 shadow-2xl backdrop-blur-lg z-[2000]"
+                    className="absolute left-0 top-full mt-2 w-full max-h-96 overflow-auto rounded-xl border border-violet-300/50
+                    dark:border-violet-400/20 bg-white/85 dark:bg-zinc-950/90 shadow-2xl backdrop-blur-lg z-[2000]"
                     role="listbox"
                 >
                     {items.length === 0 ? (

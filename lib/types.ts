@@ -37,11 +37,21 @@ export type Event = {
   price?: string
   kind: EventType
 }
-export type LatLng = { lat: number; lng: number }
+export type LatLng = {
+    lat: number;
+    lng: number
+}
 
+export type PopupRect = {
+    left: number;
+    right: number;
+    top: number;
+    bottom: number
+}
+
+// TODO: event types will later come from backend, with color
 export type EventType = 'disco' | 'techno' | 'festival' | 'jazz' | 'alter' | 'home' | 'pub'
 
-// Tailwind-friendly badge class mapping (text on solid background) – optional future use.
 export const EVENT_TYPE_BADGE_CLASSES: Record<EventType, string> = {
   disco: 'bg-pink-500 !text-white',
   techno: 'bg-indigo-500 !text-white',
@@ -52,7 +62,6 @@ export const EVENT_TYPE_BADGE_CLASSES: Record<EventType, string> = {
   pub: 'bg-amber-900 !text-amber-50',
 }
 
-// Human-readable display labels (separate from slug value), used for UI badges
 export const EVENT_TYPE_LABELS: Record<EventType, string> = {
   disco: 'Disco',
   techno: 'Techno',
@@ -64,14 +73,14 @@ export const EVENT_TYPE_LABELS: Record<EventType, string> = {
 }
 
 export type SearchHit = {
-  type: 'place' | 'event' | 'performer' | 'tag' // added 'tag'
+  type: 'place' | 'event' | 'performer' | 'tag'
   id: ID
   title: string
   subtitle: string
   href: string
-  image: string // new: thumbnail
-  placeId?: ID // for event hits (and could mirror place for convenience)
-  nextEventStart?: string // ISO of next upcoming related event (event itself, or linked to place/performer)
+  image: string
+  placeId?: ID
+  nextEventStart?: string
 }
 
 export type HighlightContextType = {
