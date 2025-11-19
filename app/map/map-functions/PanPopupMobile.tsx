@@ -1,8 +1,7 @@
-// components/map-helpers/pan-popup-mobile.tsx
-import {useEffect} from 'react'
-import {useMap} from 'react-leaflet'
-import L, {LatLngTuple} from 'leaflet'
-import type {Place} from '@/lib/types'
+import { useEffect } from 'react'
+import { useMap } from 'react-leaflet'
+import L, { LatLngTuple } from 'leaflet'
+import type { Place } from '@/lib/types'
 
 export function PanPopupMobile({
                                    places,

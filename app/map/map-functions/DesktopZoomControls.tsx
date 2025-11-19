@@ -1,4 +1,3 @@
-// components/map-helpers/desktop-zoom-controls.tsx
 import {useEffect, useRef, useState} from 'react'
 import {useMap} from 'react-leaflet'
 import L from 'leaflet'

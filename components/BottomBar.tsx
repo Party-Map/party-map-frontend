@@ -1,10 +1,8 @@
-'use client'
 import ThemeToggle from './ThemeToggle'
 import NavActions from './NavActions'
 
 export default function BottomBar() {
   return (
-    // Floating; doesn’t block map outside the bar
     <nav className="fixed inset-x-0 bottom-0 z-[1200] md:hidden pointer-events-none safe-bottom">
       <div className="relative mx-auto max-w-screen-sm px-4 pb-[env(safe-area-inset-bottom)]">
         <div className="flex h-16 items-center justify-between rounded-2xl

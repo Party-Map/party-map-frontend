@@ -6,12 +6,10 @@ import type { SearchHit } from '@/lib/types'
 import { usePathname, useRouter } from 'next/navigation'
 import {SearchResultListItem} from "@/components/SearchResultListItem";
 
-// bridge to map: highlight places via CustomEvent
 function emitHighlight(placeIds: string[]) {
     if (typeof window === 'undefined') return
     window.dispatchEvent(new CustomEvent('pm:highlight-places', { detail: { placeIds } }))
 }
-
 
 export default function SearchBar() {
     const [query, setQuery] = useState('')

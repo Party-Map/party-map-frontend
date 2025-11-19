@@ -1,4 +1,3 @@
-// components/map-helpers/user-location.tsx
 import {useEffect, useState} from 'react'
 import {Circle, Marker, useMap} from 'react-leaflet'
 import L, {LatLngTuple} from 'leaflet'

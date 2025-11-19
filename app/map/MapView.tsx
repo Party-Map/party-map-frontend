@@ -1,7 +1,5 @@
-'use client'
-
-import {MapContainer, Marker, Popup, TileLayer} from 'react-leaflet'
-import L, {LatLngTuple} from 'leaflet'
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
+import L, { LatLngTuple } from 'leaflet'
 import {useMemo} from 'react'
 
 import type {Event, Place} from '@/lib/types'
@@ -29,18 +27,18 @@ function PinIcon(color: string, shiny: boolean) {
     return L.divIcon({
         className: 'pm-pin-wrapper',
         html: `
-      <div class="pm-pin ${shiny ? 'pm-shiny' : ''}" style="--pin:${color}">
-        <div class='pm-pin-head'>
-          <div class='pm-pin-core'></div>
-          <div class='pm-pin-gloss'></div>
-          <div class='pm-pin-sparkles'>
-            <span class='sp s1'></span>
-            <span class='sp s2'></span>
-            <span class='sp s3'></span>
-          </div>
-        </div>
-        <div class='pm-pin-tail'></div>
-      </div>`,
+          <div class="pm-pin ${shiny ? 'pm-shiny' : ''}" style="--pin:${color}">
+            <div class='pm-pin-head'>
+              <div class='pm-pin-core'></div>
+              <div class='pm-pin-gloss'></div>
+              <div class='pm-pin-sparkles'>
+                <span class='sp s1'></span>
+                <span class='sp s2'></span>
+                <span class='sp s3'></span>
+              </div>
+            </div>
+            <div class='pm-pin-tail'></div>
+          </div>`,
         iconSize: [36, 48],
         iconAnchor: [18, 44],
         popupAnchor: [0, -38],
@@ -156,7 +154,6 @@ export default function MapView({
                         </Popup>
                     )
                 })()}
-
                 <PanPopupMobile places={places} openPopupId={openPopupId}/>
                 <MapBackgroundCloser onClose={() => onCloseAllPlaces?.()}/>
             </MapContainer>

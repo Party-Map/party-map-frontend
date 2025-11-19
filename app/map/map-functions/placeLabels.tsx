@@ -1,10 +1,9 @@
-
-import {useEffect, useRef, useState} from 'react'
-import {useMap} from 'react-leaflet'
+import { useEffect, useRef, useState } from 'react'
+import { useMap } from 'react-leaflet'
 import L from 'leaflet'
-import {Event, Place} from '@/lib/types'
-import {EVENT_TYPE_BADGE_CLASSES, EVENT_TYPE_LABELS} from '@/lib/types'
-import {cn} from '@/lib/utils'
+import { Event, Place } from '@/lib/types'
+import { EVENT_TYPE_BADGE_CLASSES, EVENT_TYPE_LABELS } from '@/lib/types'
+import { cn } from '@/lib/utils'
 import {
   BASE_LABEL_ZOOM,
   HIGHLIGHT_LABEL_ZOOM,
@@ -225,7 +224,6 @@ export function PlaceLabels({
                       "[text-shadow:0_1px_1px_rgba(0,0,0,0.35)]",
                       EVENT_TYPE_BADGE_CLASSES[upcoming.kind]
                   )}
-
                 >
                   {EVENT_TYPE_LABELS[upcoming.kind] || upcoming.kind}
                 </span>
