@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import type { Place, EventType, Event } from '@/lib/types'
-import { EVENT_TYPE_LABELS } from '@/lib/types'
+import { EVENT_TYPE_BADGE_CLASSES, EVENT_TYPE_LABELS} from '@/lib/types'
 import { ArrowRight, X, CalendarDays } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import {cn} from "@/lib/utils";
 
 interface EventInfo { id: string; title: string; image: string; startIso: string; startLabel: string; kind?: EventType }
 
@@ -21,7 +22,6 @@ export default function PlacePopupCard({ place, onClose }: { place: Place; onClo
 
   useEffect(() => {
     let active = true
-    // Reset while loading a new place or updated image so stale info isn't shown
     setEventInfo(null)
     ;(async () => {
       try {
@@ -63,7 +63,6 @@ export default function PlacePopupCard({ place, onClose }: { place: Place; onClo
         title={eventInfo ? `View event: ${eventInfo.title}` : `View place: ${place.name}`}
       >
         <span className="sr-only">{eventInfo ? 'View event' : 'View place'}</span>
-        {/* Decorative top-left indicator (not a separate button) */}
         <span
           aria-hidden="true"
           className="pointer-events-none absolute left-2 top-2 inline-flex items-center gap-1.5 rounded-full
@@ -73,14 +72,12 @@ export default function PlacePopupCard({ place, onClose }: { place: Place; onClo
           {eventInfo ? 'View event' : 'View place'}
           <ArrowRight className="h-3 w-3 opacity-80" />
         </span>
-        {/* Subtle gradient sheen on hover for affordance */}
         <span
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300
                      bg-gradient-to-tr from-black/25 via-transparent to-black/10" />
       </Link>
       <div className="p-3">
-        {/* Title + date: medium titles forced single line; long titles can wrap (clamped) */}
         {longTitle ? (
           <div className="flex items-start gap-2">
             <div className="flex-1 min-w-0">
@@ -89,7 +86,9 @@ export default function PlacePopupCard({ place, onClose }: { place: Place; onClo
               </span>
             </div>
             {eventInfo && (
-              <span className="flex-shrink-0 self-start whitespace-nowrap inline-flex items-center gap-1 rounded-full bg-violet-950/60 dark:bg-violet-800/40 text-violet-200 px-2 py-0.5 text-[10px] ring-1 ring-violet-500/30">
+              <span className="flex-shrink-0 self-start whitespace-nowrap inline-flex items-center gap-1 rounded-full
+              bg-violet-950/60 dark:bg-violet-800/40 text-violet-200 px-2 py-0.5 text-[10px] ring-1 ring-violet-500/30"
+              >
                 <CalendarDays className="h-3 w-3" />{eventInfo.startLabel}
               </span>
             )}
@@ -97,16 +96,19 @@ export default function PlacePopupCard({ place, onClose }: { place: Place; onClo
         ) : (
           <div className="relative">
             {eventInfo && (
-              <span className="absolute right-0 top-0 whitespace-nowrap inline-flex items-center gap-1 rounded-full bg-violet-950/60 dark:bg-violet-800/40 text-violet-200 px-2 py-0.5 text-[10px] ring-1 ring-violet-500/30">
+              <span className="absolute right-0 top-0 whitespace-nowrap inline-flex items-center gap-1 rounded-full
+              bg-violet-950/60 dark:bg-violet-800/40 text-violet-200 px-2 py-0.5 text-[10px] ring-1 ring-violet-500/30"
+              >
                 <CalendarDays className="h-3 w-3" />{eventInfo.startLabel}
               </span>
             )}
-            <span className="block pr-20 text-base leading-snug font-bold tracking-tight text-slate-900 dark:text-white drop-shadow-sm whitespace-nowrap">
+            <span className="block pr-20 text-base leading-snug font-bold tracking-tight text-slate-900
+            dark:text-white drop-shadow-sm whitespace-nowrap"
+            >
               {eventInfo ? eventInfo.title : place.name}
             </span>
           </div>
         )}
-        {/* Second row: place link only */}
         <div className="mt-1 text-xs text-zinc-600 dark:text-zinc-300 flex items-center gap-2">
           <Link
             href={`/places/${place.id}`}
@@ -118,8 +120,7 @@ export default function PlacePopupCard({ place, onClose }: { place: Place; onClo
             {place.name}
           </Link>
         </div>
-        {/* Third row: event kind + tags + close */}
-  <div className="mt-2 flex items-center">
+        <div className="mt-2 flex items-center">
           <div className="flex flex-wrap items-center gap-1 flex-1 pr-2">
             {[
               eventInfo?.kind ? { key: `kind-${eventInfo.kind}`, label: eventInfo.kind, kind: eventInfo.kind, isKind: true } : null,
@@ -128,26 +129,35 @@ export default function PlacePopupCard({ place, onClose }: { place: Place; onClo
                 .slice(0,3)
                 .map(t => ({ key: t, label: t, kind: undefined, isKind: false }))
             ].filter(Boolean).map((t: any) => {
-              const common = 'rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500/50';
-              if (t.isKind) {
-                const rawKind = t.label as EventType
-                const display = EVENT_TYPE_LABELS[rawKind] || rawKind
-                return (
-                  <Link
-                    key={t.key}
-                    href={`/tags/${encodeURIComponent(rawKind)}`}
-                    data-kind={rawKind}
-                    className={`event-badge px-2.5 py-0.5 text-[11px] font-semibold ${common}`}
-                  >
-                    {display}
-                  </Link>
-                )
-              }
+              const common = 'rounded-full px-2 py-0.5 text-[10px] font-medium ' +
+                  'transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500/50';
+                if (t.isKind) {
+                    const rawKind = t.label as EventType
+
+                    return (
+                        <Link
+                            key={t.key}
+                            href={`/tags/${encodeURIComponent(rawKind)}`}
+                            className={cn(
+                                "px-2.5 py-0.5 text-[11px] font-semibold rounded-full",
+                                EVENT_TYPE_BADGE_CLASSES[rawKind],
+                                common
+                            )}
+                        >
+                            {EVENT_TYPE_LABELS[rawKind]}
+                        </Link>
+                    )
+                }
+
               return (
                 <Link
                   key={t.key}
                   href={`/tags/${encodeURIComponent(t.label)}`}
-                  className={`bg-violet-100/70 text-violet-800 dark:bg-violet-900/40 dark:text-violet-200 hover:bg-violet-200/70 dark:hover:bg-violet-800/60 ${common}`}
+                  className={cn(
+                      "bg-violet-100/70 text-violet-800 dark:bg-violet-900/40 dark:text-violet-200 " +
+                      "hover:bg-violet-200/70 dark:hover:bg-violet-800/60",
+                      common
+                  )}
                 >
                   {t.label}
                 </Link>
@@ -163,7 +173,9 @@ export default function PlacePopupCard({ place, onClose }: { place: Place; onClo
                        focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF2800]/70
                        transition-colors"
           >
-            <span aria-hidden className="absolute inset-0 rounded-full bg-[#FF2800]/35 dark:bg-[#FF2800]/40 opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300" />
+            <span aria-hidden className="absolute inset-0 rounded-full bg-[#FF2800]/35 dark:bg-[#FF2800]/40 opacity-0
+            group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300"
+            />
             <X className="h-3.5 w-3.5 relative z-[1] transition-colors group-hover:text-[#ff3d19] dark:group-hover:text-[#ff6a47]" />
           </button>
         </div>

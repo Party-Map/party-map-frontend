@@ -1,7 +1,7 @@
 import { events, performers, places } from './data/mock'
 import type { Event, Performer, Place } from './types'
 
-// Data Source Interfaces (low-level retrieval abstraction)
+// TODO: remove whole stuff, do it in the backend
 export interface IDataSource {
   getPlaces(): Promise<Place[]>
   getPlace(id: string): Promise<Place | undefined>

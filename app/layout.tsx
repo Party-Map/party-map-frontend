@@ -7,15 +7,11 @@ import TopBar from '@/components/TopBar'
 import BottomBar from '@/components/BottomBar'
 import Toast from '@/components/Toast'
 import GdprConsent from '@/components/GdprConsent'
+import {HighlightProvider} from "@/components/HighlightContextProvider";
 
 export const metadata: Metadata = {
   title: 'PartyMap',
   description: 'Find parties on the map — places, events, performers',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'black-translucent',
-    title: 'PartyMap'
-  }
 }
 
 export const viewport: Viewport = {
@@ -29,19 +25,17 @@ export const viewport: Viewport = {
 }
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="min-h-dvh antialiased bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
-        <ThemeProvider>
-          {/* Floating bars (no layout padding reserved) */}
+    <html lang="en">
+      <body className="min-h-dvh bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
+      <ThemeProvider>
+          <HighlightProvider>
           <TopBar />
           <BottomBar />
-          {/* Toasts */}
           <Toast />
-          {/* Map fills the whole viewport; bars simply overlay */}
           {children}
-          {/* GDPR Consent */}
+          </HighlightProvider>
           <GdprConsent />
-        </ThemeProvider>
+      </ThemeProvider>
       </body>
     </html>
   )
