@@ -11,18 +11,6 @@ import {DesktopZoomControls} from "@/app/map/map-functions/DesktopZoomControls";
 import {PlaceLabels} from "@/app/map/map-functions/placeLabels";
 import {PanPopupMobile} from "@/app/map/map-functions/PanPopupMobile";
 
-interface Props {
-    places: Place[]
-    events: Event[]
-    isDark?: boolean
-    highlightIds?: string[]
-    activePlaceId?: string | null
-    activePlaceIds?: string[]
-    onOpenPlace?: (id: string) => void
-    onCloseAllPlaces?: () => void
-    onUserPosition?: (pos: LatLng) => void
-}
-
 function PinIcon(color: string, shiny: boolean) {
     return L.divIcon({
         className: 'pm-pin-wrapper',
@@ -51,17 +39,27 @@ function MapBackgroundCloser({ onClose }: { onClose: () => void }) {
     return null
 }
 
+interface Props {
+    places: Place[]
+    events: Event[]
+    isDark?: boolean
+    highlightIds?: string[]
+    openPopupPlaceId?: string | null
+    onOpenPlace?: (id: string) => void
+    onCloseAllPlaces?: () => void
+    onUserPosition?: (pos: LatLng) => void
+}
 export default function MapView({
                                     places,
                                     events,
                                     isDark = false,
                                     highlightIds,
-                                    activePlaceId,
-                                    activePlaceIds,
+                                    openPopupPlaceId,
                                     onOpenPlace,
                                     onCloseAllPlaces,
                                     onUserPosition,
                                 }: Props) {
+
     const eventsByPlace = useMemo(() => {
         const map = new Map<string, Event[]>()
         for (const e of events) {
@@ -70,9 +68,7 @@ export default function MapView({
         return map
     }, [events])
 
-    const openPopupId =
-        activePlaceId ??
-        (activePlaceIds && activePlaceIds.length ? activePlaceIds[0] : null)
+    const openPopupId = openPopupPlaceId ?? null
 
     const center: LatLngTuple = [47.4979, 19.0402]
     const tileUrl = isDark

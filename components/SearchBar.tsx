@@ -5,11 +5,9 @@ import { Search, Minimize2, Eraser } from 'lucide-react'
 import type { SearchHit } from '@/lib/types'
 import { usePathname, useRouter } from 'next/navigation'
 import {SearchResultListItem} from "@/components/SearchResultListItem";
+import {useHighlight} from "@/components/HighlightContextProvider";
 
-function emitHighlight(placeIds: string[]) {
-    if (typeof window === 'undefined') return
-    window.dispatchEvent(new CustomEvent('pm:highlight-places', { detail: { placeIds } }))
-}
+
 
 export default function SearchBar() {
     const [query, setQuery] = useState('')
@@ -17,6 +15,7 @@ export default function SearchBar() {
     const [items, setItems] = useState<SearchHit[]>([])
     const rootRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
+    const { setHighlightIds } = useHighlight()
 
     const pathname = usePathname()
     const router = useRouter()
@@ -51,7 +50,7 @@ export default function SearchBar() {
         if (!q) {
             setItems([])
             setOpen(false)
-            emitHighlight([])
+            setHighlightIds([])
             return
         }
 
@@ -67,7 +66,7 @@ export default function SearchBar() {
                         .filter(Boolean),
                 ),
             ) as string[]
-            emitHighlight(placeIds)
+            setHighlightIds(placeIds)
             setOpen(true)
         }, 200)
 
@@ -78,7 +77,7 @@ export default function SearchBar() {
         setQuery('')
         setItems([])
         setOpen(false)
-        emitHighlight([])
+        setHighlightIds([])
     }
 
     const dismissResults = () => {
@@ -93,7 +92,7 @@ export default function SearchBar() {
             if (pathname !== '/') {
                 router.push(`/?focus=${encodeURIComponent(placeIdForFocus)}`)
             } else {
-                emitHighlight([placeIdForFocus])
+                setHighlightIds([placeIdForFocus])
             }
         } else {
             router.push(hit.href)

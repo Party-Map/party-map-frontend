@@ -5,39 +5,29 @@ import { useEffect, useState } from 'react'
 
 import type { Place, Event } from '@/lib/types'
 import { useTheme } from '@/components/ThemeProvider'
+import {useHighlight} from "@/components/HighlightContextProvider";
 
 const MapView = dynamic(() => import('@/app/map/MapView'), { ssr: false })
 
 export default function MapClient({ places, events }: { places: Place[]; events: Event[] }) {
     const { theme } = useTheme()
 
-    const [highlightIds, setHighlightIds] = useState<string[] | undefined>()
-    const [activePlaceId, setActivePlaceId] = useState<string | null>(null)
-    const [activePlaceIds, setActivePlaceIds] = useState<string[] | null>(null)
+    const { highlightIds } = useHighlight()
+    const [openPopupId, setOpenPopupId] = useState<string | null>(null)
 
-    // External highlight trigger (kept on window)
     useEffect(() => {
-        const handler = (e: Event) => {
-            const ce = e as unknown as CustomEvent<{ placeIds: string[] }>
-            setHighlightIds(ce.detail.placeIds)
-            if (!ce.detail.placeIds.length) {
-                setActivePlaceId(null)
-                setActivePlaceIds(null)
-            }
-        }
-        window.addEventListener('pm:highlight-places', handler as any)
-        return () => window.removeEventListener('pm:highlight-places', handler as any)
-    }, [])
+        setOpenPopupId(null)
+    }, [highlightIds])
 
     const handleOpenPlace = (id: string) => {
-        setActivePlaceIds(null)
-        setActivePlaceId(prev => (prev === id ? null : id))
+        setOpenPopupId(prev => (prev === id ? null : id))
     }
 
     const handleCloseAllPlaces = () => {
-        setActivePlaceId(null)
-        setActivePlaceIds(null)
+        setOpenPopupId(null)
     }
+
+    const openPlacePopupId = openPopupId ?? null
 
     return (
         <MapView
@@ -45,8 +35,7 @@ export default function MapClient({ places, events }: { places: Place[]; events:
             events={events}
             isDark={theme === 'dark'}
             highlightIds={highlightIds}
-            activePlaceId={activePlaceId}
-            activePlaceIds={activePlaceIds ?? undefined}
+            openPopupPlaceId={openPlacePopupId}
             onOpenPlace={handleOpenPlace}
             onCloseAllPlaces={handleCloseAllPlaces}
         />

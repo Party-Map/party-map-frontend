@@ -284,13 +284,25 @@ export const events: Event[] = [
     title: 'Buli a pincébe',
     placeId: 'p9',
     description: 'Laid-back basement home party with friendly crowd.',
-    start: new Date(Date.now() + 86400000 * 2 + 21 * 3600000).toISOString(), // ~2 days 21:00
+    start: new Date(Date.now() + -1 * 3600000).toISOString(), // ~2 days 21:00
     end: new Date(Date.now() + 86400000 * 3 + 2 * 3600000).toISOString(),     // ~next day 02:00
   image: 'https://images.unsplash.com/photo-1646184466560-f81b1e495604?auto=format&fit=crop&w=1280&q=80', // updated basement image
     performerIds: [],
     price: 'Free',
   kind: 'home', // new home party event type
   },
+    {
+        id: 'e15',
+        title: 'Masik Buli a pincébe',
+        placeId: 'p9',
+        description: 'Laid-back basement home party with friendly crowd.',
+        start: new Date(Date.now() + 86400000 * 3 + 2 * 3600000).toISOString(), // ~2 days 21:00
+        end: new Date(Date.now() + 86400000 * 3 + 5 * 3600000).toISOString(),     // ~next day 02:00
+        image: 'https://images.unsplash.com/photo-1646184466560-f81b1e495604?auto=format&fit=crop&w=1280&q=80', // updated basement image
+        performerIds: [],
+        price: 'Free',
+        kind: 'home', // new home party event type
+    },
   {
     id: 'e10',
     title: 'Terasz Buli',

@@ -72,3 +72,8 @@ export type SearchHit = {
   placeId?: ID // for event hits (and could mirror place for convenience)
   nextEventStart?: string // ISO of next upcoming related event (event itself, or linked to place/performer)
 }
+
+export type HighlightContextType = {
+    highlightIds: string[];
+    setHighlightIds: (ids: ID[]) => void;
+}
