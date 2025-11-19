@@ -51,13 +51,3 @@ html.dark .place-popup-card { box-shadow: 0 4px 22px -4px rgba(0,0,0,.7), 0 0 0 
 
 /* Ensure dark mode map background is black while tiles load (avoid white flash) */
 html.dark .leaflet-container { background:rgb(13,13,13) !important; }
-
-/* Event kind badge styles (purge-safe custom CSS) */
-.event-badge { display:inline-flex; align-items:center; font-weight:600; letter-spacing:.25px; }
-.event-badge[data-kind=disco] { background:#ec4899; color:#fff; }
-.event-badge[data-kind=techno] { background:#6366f1; color:#fff; }
-.event-badge[data-kind=festival] { background:#10b981; color:#fff; }
-.event-badge[data-kind=jazz] { background:#f59e0b; color:#fff; }
-.event-badge[data-kind=alter] { background:#d946ef; color:#fff; }
-.event-badge[data-kind=home] { background:#06b6d4; color:#fff; }
-.event-badge[data-kind=pub] { background:#92400e; color:#fefce8; }

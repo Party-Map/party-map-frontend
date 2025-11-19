@@ -2,8 +2,8 @@
 import {useEffect, useRef, useState} from 'react'
 import {useMap} from 'react-leaflet'
 import L from 'leaflet'
-import type {Event, Place} from '@/lib/types'
-import {EVENT_TYPE_LABELS} from '@/lib/types'
+import {Event, Place} from '@/lib/types'
+import {EVENT_TYPE_BADGE_CLASSES, EVENT_TYPE_LABELS} from '@/lib/types'
 import {cn} from '@/lib/utils'
 import {
   BASE_LABEL_ZOOM,
@@ -220,7 +220,12 @@ export function PlaceLabels({
                 </span>
                 <span
                   data-kind={upcoming.kind}
-                  className="event-badge text-[9px] leading-none font-semibold px-1 py-0.5 rounded shadow [text-shadow:0_1px_1px_rgba(0,0,0,0.35)]"
+                  className={cn(
+                      "text-[9px] leading-none font-semibold px-1 py-0.5 rounded shadow",
+                      "[text-shadow:0_1px_1px_rgba(0,0,0,0.35)]",
+                      EVENT_TYPE_BADGE_CLASSES[upcoming.kind]
+                  )}
+
                 >
                   {EVENT_TYPE_LABELS[upcoming.kind] || upcoming.kind}
                 </span>

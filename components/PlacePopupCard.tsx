@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import type { Place, EventType, Event } from '@/lib/types'
-import { EVENT_TYPE_LABELS } from '@/lib/types'
+import { EVENT_TYPE_BADGE_CLASSES, EVENT_TYPE_LABELS} from '@/lib/types'
 import { ArrowRight, X, CalendarDays } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import {cn} from "@/lib/utils";
 
 interface EventInfo { id: string; title: string; image: string; startIso: string; startLabel: string; kind?: EventType }
 
@@ -129,25 +130,32 @@ export default function PlacePopupCard({ place, onClose }: { place: Place; onClo
                 .map(t => ({ key: t, label: t, kind: undefined, isKind: false }))
             ].filter(Boolean).map((t: any) => {
               const common = 'rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500/50';
-              if (t.isKind) {
-                const rawKind = t.label as EventType
-                const display = EVENT_TYPE_LABELS[rawKind] || rawKind
-                return (
-                  <Link
-                    key={t.key}
-                    href={`/tags/${encodeURIComponent(rawKind)}`}
-                    data-kind={rawKind}
-                    className={`event-badge px-2.5 py-0.5 text-[11px] font-semibold ${common}`}
-                  >
-                    {display}
-                  </Link>
-                )
-              }
+                if (t.isKind) {
+                    const rawKind = t.label as EventType
+
+                    return (
+                        <Link
+                            key={t.key}
+                            href={`/tags/${encodeURIComponent(rawKind)}`}
+                            className={cn(
+                                "px-2.5 py-0.5 text-[11px] font-semibold rounded-full",
+                                EVENT_TYPE_BADGE_CLASSES[rawKind],
+                                common
+                            )}
+                        >
+                            {EVENT_TYPE_LABELS[rawKind]}
+                        </Link>
+                    )
+                }
+
               return (
                 <Link
                   key={t.key}
                   href={`/tags/${encodeURIComponent(t.label)}`}
-                  className={`bg-violet-100/70 text-violet-800 dark:bg-violet-900/40 dark:text-violet-200 hover:bg-violet-200/70 dark:hover:bg-violet-800/60 ${common}`}
+                  className={cn(
+                      "bg-violet-100/70 text-violet-800 dark:bg-violet-900/40 dark:text-violet-200 hover:bg-violet-200/70 dark:hover:bg-violet-800/60",
+                      common
+                  )}
                 >
                   {t.label}
                 </Link>
