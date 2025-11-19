@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react'
 import {Circle, Marker, useMap} from 'react-leaflet'
 import L, {LatLngTuple} from 'leaflet'
-import type {LatLng} from '@/lib/map/types'
+import type {LatLng} from '@/lib/types'
 
 export function UserLocation({
                                  auto = true,

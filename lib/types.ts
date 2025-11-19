@@ -37,6 +37,7 @@ export type Event = {
   price?: string
   kind: EventType
 }
+export type LatLng = { lat: number; lng: number }
 
 export type EventType = 'disco' | 'techno' | 'festival' | 'jazz' | 'alter' | 'home' | 'pub'
 

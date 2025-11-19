@@ -3,7 +3,7 @@ import L, { LatLngTuple } from 'leaflet'
 import {useMemo} from 'react'
 
 import type {Event, Place} from '@/lib/types'
-import type {LatLng} from '@/lib/map/types'
+import type {LatLng} from '@/lib/types'
 import PlacePopupCard from '../../components/PlacePopupCard'
 import {FitToHighlights} from "@/app/map/map-functions/FitToHighLights";
 import {UserLocation} from "@/app/map/map-functions/UserLocation";

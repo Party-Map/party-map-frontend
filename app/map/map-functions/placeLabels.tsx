@@ -9,7 +9,7 @@ import {
   HIGHLIGHT_LABEL_ZOOM,
   LABEL_BASE_OFFSET,
   LABEL_HIGHLIGHT_OFFSET,
-} from '@/lib/map/constants'
+} from '@/lib/constants'
 
 type PopupRect = { left: number; right: number; top: number; bottom: number }
 
