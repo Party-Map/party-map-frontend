@@ -91,6 +91,7 @@ function getPopupRect(
   }
 }
 
+// TODO: replace logic with backend call
 function getUpcomingEvent(events: Event[], now: number): Event | undefined {
   if (!events.length) return undefined
   const sorted = [...events].sort(

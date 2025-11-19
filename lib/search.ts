@@ -10,8 +10,29 @@ export interface SearchDataBuckets {
 }
 
 /**
- * Build search hits from provided domain collections (pure / side-effect free)
+Has to normalize text (norm)
+
+Has to check substring matches across many fields
+
+Has to prebuild groupings (eventsByPlace, eventsByPerformer)
+
+Has to sort events by start time
+
+Has to decide what counts as upcoming
+
+Has to search tags
+
+Has to assemble place/event/performer hits
+
+Has to construct SearchHit[] manually
+
+Has to sort results by relevance
+
+Has to slice to top 20
+
+Has to do all of that in the browser every time the user types
  */
+// TODO: move logic to backend
 export function buildSearchHits(query: string, data: SearchDataBuckets): SearchHit[] {
   const q = query.trim()
   if (!q) return []
