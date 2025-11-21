@@ -18,6 +18,16 @@ export default function SearchBar() {
     const pathname = usePathname()
     const router = useRouter()
 
+    const extractPlaceIds = (hits: SearchHit[]): string[] => {
+        return Array.from(
+            new Set(
+                hits
+                    .map(h => h.placeId || (h.type === 'place' ? h.id : null))
+                    .filter(Boolean),
+            ),
+        ) as string[]
+    }
+
     // outside click
     useEffect(() => {
         const onPointerDown = (e: PointerEvent) => {
@@ -54,15 +64,10 @@ export default function SearchBar() {
         const t = setTimeout(async () => {
             const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`)
             const json = (await res.json()) as { hits: SearchHit[] }
+
             setItems(json.hits)
 
-            const placeIds = Array.from(
-                new Set(
-                    json.hits
-                        .map(h => h.placeId || (h.type === 'place' ? h.id : null))
-                        .filter(Boolean),
-                ),
-            ) as string[]
+            const placeIds = extractPlaceIds(json.hits)
             setHighlightIds(placeIds)
             setOpen(true)
         }, 200)
@@ -100,19 +105,14 @@ export default function SearchBar() {
     const handleViewClick = () => {
         dismissResults()
     }
-    const extractPlaceIds = (hits: SearchHit[]): string[] => {
-        return Array.from(
-            new Set(
-                hits
-                    .map(h => h.placeId || (h.type === 'place' ? h.id : null))
-                    .filter(Boolean),
-            ),
-        ) as string[]
-    }
+
 
     const handleEnter = () => {
         const q = query.trim()
-        if (!q) return
+        if (!q) {
+            clearAll()
+            return
+        }
         const placeIds = extractPlaceIds(items)
         if (!placeIds.length) {
             dismissResults()
@@ -120,14 +120,13 @@ export default function SearchBar() {
         }
 
         setHighlightIds(placeIds)
-        console.log(placeIds, "SearchBarban")
+
         if (pathname !== '/') {
             router.push('/')
         }
 
         dismissResults()
     }
-
 
     return (
         <div ref={rootRef} className="relative">
@@ -136,7 +135,20 @@ export default function SearchBar() {
             dark:bg-zinc-900/70 px-3 py-2 shadow-sm dark:shadow-md backdrop-blur-md transition focus-within:ring-2
             focus-within:ring-violet-400/60 dark:focus-within:ring-violet-500/50"
             >
-                <Search className="h-5 w-5 text-zinc-700 dark:text-zinc-300" aria-hidden />
+                <button
+                    type="button"
+                    onClick={query.trim() ? handleEnter : undefined}
+                    aria-label="Search"
+                    disabled={!query.trim()}
+                    className={`
+                        p-0 m-0 bg-transparent border-0 inline-flex items-center justify-center h-4 w-4 
+                        ${query.trim()
+                                        ? 'cursor-pointer text-zinc-700 dark:text-zinc-300'
+                                        : 'cursor-default opacity-40 text-zinc-500 dark:text-zinc-600'}
+                    `}
+                >
+                    <Search className="h-4 w-4" aria-hidden />
+                </button>
                 <input
                     ref={inputRef}
                     value={query}
@@ -161,7 +173,7 @@ export default function SearchBar() {
                         aria-label={open ? 'Hide results' : 'Results hidden'}
                         aria-disabled={!open}
                         className={`flex-shrink-0 inline-flex items-center justify-center rounded-full h-7 w-7 transition-colors 
-                        focus:outline-none focus-visible:ring-2 
+                        focus:outline-none focus-visible:ring-2 cursor-pointer 
                         ${
                             open
                                 ? 'text-white bg-violet-600/80 hover:bg-violet-600 focus-visible:ring-violet-400/60'
@@ -177,7 +189,7 @@ export default function SearchBar() {
                     aria-label="Clear selection"
                     className="flex-shrink-0 inline-flex items-center justify-center rounded-full h-7 w-7 text-zinc-700
                     dark:text-zinc-300 hover:bg-zinc-200/70 dark:hover:bg-zinc-800/60 focus:outline-none focus-visible:ring-2
-                    focus-visible:ring-violet-500/60"
+                    focus-visible:ring-violet-500/60 cursor-pointer"
                 >
                     <Eraser className="h-4 w-4" />
                 </button>
