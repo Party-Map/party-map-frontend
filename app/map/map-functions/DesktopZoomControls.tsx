@@ -1,64 +1,62 @@
-import {useEffect, useRef, useState} from 'react'
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import {useMap} from 'react-leaflet'
 import L from 'leaflet'
 import type {Place} from '@/lib/types'
 
-export function DesktopZoomControls({openPopupId, places}: {
+type TipKey = '' | 'zin' | 'zout' | 'center'
+
+export function DesktopZoomControls({
+                                        openPopupId,
+                                        places,
+                                    }: {
     openPopupId: string | null
     places: Place[]
 }) {
     const map = useMap()
 
-    const [tip, setTip] = useState<{ key: string; visible: boolean }>({
+    const [tip, setTip] = useState<{ key: TipKey; visible: boolean }>({
         key: '',
         visible: false,
     })
 
-    const timers = useRef<Record<string, number>>({})
+    const timers = useRef<Record<TipKey, number>>({} as Record<TipKey, number>)
+    const containerRef = useRef<HTMLDivElement | null>(null)
 
-    const startTip = (key: string) => {
-        clearTip(key)
-        timers.current[key] = window.setTimeout(() => {
-            setTip({key, visible: true})
-        }, 2000)
-    }
+    const selectedPlace = useMemo(
+        () => (openPopupId ? places.find(p => p.id === openPopupId) ?? null : null),
+        [openPopupId, places],
+    )
+    const [anchorActive, setAnchorActive] = useState(false)
 
-    const clearTip = (key?: string) => {
+    const clearTip = useCallback((key?: TipKey) => {
         if (key) {
             const id = timers.current[key]
             if (id) window.clearTimeout(id)
             delete timers.current[key]
         } else {
             Object.values(timers.current).forEach(id => window.clearTimeout(id))
-            timers.current = {}
+            timers.current = {} as Record<TipKey, number>
         }
-        setTip(prev => (prev.key === key ? {key: '', visible: false} : prev))
-    }
 
-    useEffect(() => () => clearTip(), [])
+        setTip(prev => (key && prev.key === key ? {key: '', visible: false} : prev))
+    }, [])
 
-    function preciseZoom(kind: 'in' | 'out') {
-        try {
-            const preCenter = map.getCenter()
-            const size = map.getSize()
-            const viewCenterPt = L.point(size.x / 2, size.y / 2)
-            map.once('zoomend', () => {
-                try {
-                    const postPt = map.latLngToContainerPoint(preCenter)
-                    const dx = postPt.x - viewCenterPt.x
-                    const dy = postPt.y - viewCenterPt.y
-                    if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
-                        map.panBy([-dx, -dy], {animate: false})
-                    }
-                } catch {
-                }
-            })
-            kind === 'in' ? map.zoomIn() : map.zoomOut()
-        } catch {
-        }
-    }
+    const startTip = useCallback(
+        (key: TipKey) => {
+            clearTip(key)
+            timers.current[key] = window.setTimeout(() => {
+                setTip({key, visible: true})
+            }, 1000)
+        },
+        [clearTip],
+    )
 
-    const containerRef = useRef<HTMLDivElement | null>(null)
+    // Clear tooltips on unmount
+    useEffect(() => {
+        return () => clearTip()
+    }, [clearTip])
+
+    // Stop map interaction leaking through the controls
     useEffect(() => {
         const el = containerRef.current
         if (!el) return
@@ -69,19 +67,81 @@ export function DesktopZoomControls({openPopupId, places}: {
         }
     }, [])
 
-    const selectedPlace = openPopupId ? places.find(p => p.id === openPopupId) : null
-    const recenter = () => {
+    const zoom = useCallback(
+        (kind: 'in' | 'out') => {
+            try {
+                const delta = kind === 'in' ? 1 : -1
+                const currentZoom = map.getZoom()
+                const targetZoom = currentZoom + delta
+
+                if (anchorActive && selectedPlace) {
+                    const anchor = L.latLng(
+                        selectedPlace.location.lat,
+                        selectedPlace.location.lng,
+                    )
+                    map.setZoomAround(anchor, targetZoom)
+                } else {
+                    map.setZoom(targetZoom)
+                }
+            } catch {
+            }
+        },
+        [map, selectedPlace, anchorActive],
+    )
+    // Centers to the selected pin and activates anchor
+    const recenter = useCallback(() => {
         if (!selectedPlace) return
+
         try {
-            const currentZoom = map.getZoom()
-            map.flyTo(
+            const zoom = map.getZoom()
+            const point = map.project(
                 [selectedPlace.location.lat, selectedPlace.location.lng],
-                currentZoom,
-                {duration: 0.6},
+                zoom,
             )
+
+            const offsetY = -100
+            const adjustedPoint = point.add([0, offsetY])
+            const adjustedLatLng = map.unproject(adjustedPoint, zoom)
+
+            // when we explicitly recenter, enable anchor
+            // Set state for UI rerender
+            setAnchorActive(true)
+
+            map.flyTo(adjustedLatLng, zoom, {duration: 0.6})
         } catch {
         }
-    }
+    }, [map, selectedPlace])
+
+    // Loose anchor on user drag
+    useEffect(() => {
+        const handleDragStart = () => {
+            setAnchorActive(false)
+        }
+
+        map.on('dragstart', handleDragStart)
+        return () => {
+            map.off('dragstart', handleDragStart)
+        }
+    }, [map])
+
+    // Shared pointer handlers to avoid repeating try/catch
+    const handlePointerDown = useCallback(
+        (e: React.PointerEvent) => {
+            e.stopPropagation()
+            try {
+                map.dragging.disable()
+            } catch {
+            }
+        },
+        [map],
+    )
+
+    const handlePointerUpOrLeave = useCallback(() => {
+        try {
+            map.dragging.enable()
+        } catch {
+        }
+    }, [map])
 
     return (
         <div
@@ -91,7 +151,9 @@ export function DesktopZoomControls({openPopupId, places}: {
             <div
                 className="flex flex-col overflow-visible rounded-2xl backdrop-blur-xl bg-white/70
                 dark:bg-slate-900/50 border border-black/10 dark:border-white/10 shadow-lg divide-y
-                divide-black/10 dark:divide-white/10">
+                divide-black/10 dark:divide-white/10"
+            >
+                {/* Zoom in */}
                 <div className="relative">
                     <button
                         aria-label="Zoom in"
@@ -99,113 +161,91 @@ export function DesktopZoomControls({openPopupId, places}: {
                         rounded-md hover:bg-white/90
                         dark:hover:bg-slate-800/60 transition-colors
                         focus:outline-none focus-visible:ring-2
-                        focus-visible:ring-pink-500/60 active:scale-95"
-
-                        onPointerDown={e => {
-                            e.stopPropagation()
-                            try {
-                                map.dragging.disable()
-                            } catch {
-                            }
-                        }}
-                        onPointerUp={e => {
-                            e.stopPropagation()
-                            try {
-                                map.dragging.enable()
-                            } catch {
-                            }
-                        }}
-                        onPointerLeave={() => {
-                            try {
-                                map.dragging.enable()
-                            } catch {
-                            }
-                        }}
-                        onPointerCancel={() => {
-                            try {
-                                map.dragging.enable()
-                            } catch {
-                            }
-                        }}
+                        focus-visible:ring-pink-500/60 active:scale-95 cursor-pointer"
+                        onPointerDown={handlePointerDown}
+                        onPointerUp={handlePointerUpOrLeave}
+                        onPointerLeave={handlePointerUpOrLeave}
+                        onPointerCancel={handlePointerUpOrLeave}
                         onMouseEnter={() => startTip('zin')}
                         onMouseLeave={() => clearTip('zin')}
                         onClick={e => {
                             e.stopPropagation()
                             ;(window as any).__pmLastZoomClick = Date.now()
-                            preciseZoom('in')
+                            zoom('in')
                         }}
                     >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                        >
                             <path d="M12 5v14M5 12h14"/>
                         </svg>
                     </button>
                     {tip.visible && tip.key === 'zin' && (
-                        <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-1
-                        whitespace-nowrap text-[10px] font-medium px-2 py-1 rounded bg-slate-900/90 text-white shadow-lg
-                        ring-1 ring-white/10"
+                        <span
+                            className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-1
+                            whitespace-nowrap text-[10px] font-medium px-2 py-1 rounded bg-slate-900/90 text-white shadow-lg
+                            ring-1 ring-white/10"
                         >
-                             Zoom in
+                            Zoom in
                         </span>
                     )}
                 </div>
+
+                {/* Zoom out */}
                 <div className="relative">
                     <button
                         aria-label="Zoom out"
                         className="h-11 w-11 grid place-items-center text-slate-800 dark:text-slate-100 rounded-md
                         hover:bg-white/90 dark:hover:bg-slate-800/60 transition-colors
-                        focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500/60 active:scale-95"
-
-                        onPointerDown={e => {
-                            e.stopPropagation()
-                            try {
-                                map.dragging.disable()
-                            } catch {
-                            }
-                        }}
-                        onPointerUp={e => {
-                            e.stopPropagation()
-                            try {
-                                map.dragging.enable()
-                            } catch {
-                            }
-                        }}
-                        onPointerLeave={() => {
-                            try {
-                                map.dragging.enable()
-                            } catch {
-                            }
-                        }}
-                        onPointerCancel={() => {
-                            try {
-                                map.dragging.enable()
-                            } catch {
-                            }
-                        }}
+                        focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500/60 active:scale-95 cursor-pointer"
+                        onPointerDown={handlePointerDown}
+                        onPointerUp={handlePointerUpOrLeave}
+                        onPointerLeave={handlePointerUpOrLeave}
+                        onPointerCancel={handlePointerUpOrLeave}
                         onMouseEnter={() => startTip('zout')}
                         onMouseLeave={() => clearTip('zout')}
                         onClick={e => {
                             e.stopPropagation()
                             ;(window as any).__pmLastZoomClick = Date.now()
-                            preciseZoom('out')
+                            zoom('out')
                         }}
                     >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                        >
                             <path d="M5 12h14"/>
                         </svg>
                     </button>
                     {tip.visible && tip.key === 'zout' && (
-                        <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-1
-                        whitespace-nowrap text-[10px]
-                        font-medium px-2 py-1 rounded bg-slate-900/90
-                        text-white shadow-lg ring-1 ring-white/10"
+                        <span
+                            className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-1
+                            whitespace-nowrap text-[10px]
+                            font-medium px-2 py-1 rounded bg-slate-900/90
+                            text-white shadow-lg ring-1 ring-white/10"
                         >
-                          Zoom out
+                            Zoom out
                         </span>
                     )}
                 </div>
             </div>
+
+            {/* Center selected */}
             {selectedPlace && (
                 <div className="relative">
                     <button
@@ -214,17 +254,31 @@ export function DesktopZoomControls({openPopupId, places}: {
                             recenter()
                         }}
                         aria-label="Center selected"
-                        className="h-11 w-11 grid place-items-center rounded-md backdrop-blur-xl bg-white/70
-                        dark:bg-slate-900/50 border border-black/10
-                        dark:border-white/10 shadow-lg text-pink-600 dark:text-pink-300 hover:bg-white/90
-                        dark:hover:bg-slate-800/60 transition-colors focus:outline-none focus-visible:ring-2
-                        focus-visible:ring-pink-500/60 active:scale-95"
-
+                        className={`
+                        h-11 w-11 grid place-items-center rounded-md backdrop-blur-xl
+                        bg-white/70 dark:bg-slate-900/50
+                        border shadow-lg text-pink-600 dark:text-pink-300
+                        hover:bg-white/90 dark:hover:bg-slate-800/60
+                        transition-colors focus:outline-none focus-visible:ring-2
+                        focus-visible:ring-pink-500/60 active:scale-95 cursor-pointer
+                        ${anchorActive
+                            ? 'border-pink-500 dark:border-pink-300'
+                            : 'border-black/10 dark:border-white/10'}
+                      `}
                         onMouseEnter={() => startTip('center')}
                         onMouseLeave={() => clearTip('center')}
                     >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                        >
                             <circle cx="12" cy="12" r="3"/>
                             <path d="M12 2v3"/>
                             <path d="M12 19v3"/>
@@ -237,12 +291,13 @@ export function DesktopZoomControls({openPopupId, places}: {
                         </svg>
                     </button>
                     {tip.visible && tip.key === 'center' && (
-                        <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-1
-                        whitespace-nowrap text-[10px] font-medium px-2 py-1 rounded
-                        bg-slate-900/90 text-white shadow-lg ring-1
-                        ring-white/10"
+                        <span
+                            className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-1
+                            whitespace-nowrap text-[10px] font-medium px-2 py-1 rounded
+                            bg-slate-900/90 text-white shadow-lg ring-1
+                            ring-white/10"
                         >
-                          Center selected
+                            Center selected
                         </span>
                     )}
                 </div>
