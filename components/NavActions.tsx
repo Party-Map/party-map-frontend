@@ -11,18 +11,18 @@ export default function NavActions({variant = 'desktop'}: { variant?: 'desktop' 
     const session = useContext(SessionContext)
 
     // TODO delete
-    useEffect(() => {
-        console.log(session.accessToken)
-        fetch('http://localhost:8080/jwt-test', {
-            headers: {
-                'Authorization': 'Bearer ' + session.accessToken,
-            }
-        }).then(value => {
-            value.json().then(jsonValue => {
-                console.log(jsonValue)
-            })
-        })
-    }, []);
+    // useEffect(() => {
+    //     console.log(session.accessToken)
+    //     fetch('http://localhost:8080/jwt-test', {
+    //         headers: {
+    //             'Authorization': 'Bearer ' + session.accessToken,
+    //         }
+    //     }).then(value => {
+    //         value.json().then(jsonValue => {
+    //             console.log(jsonValue)
+    //         })
+    //     })
+    // }, []);
 
     if (variant === 'mobile') {
         return (

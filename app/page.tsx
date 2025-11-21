@@ -1,5 +1,8 @@
 import MapClient from '@/app/map/MapClient'
 import { getDataSource } from '@/lib/dataSource'
+import TopBar from "@/components/TopBar";
+import BottomBar from "@/components/BottomBar";
+import Toast from "@/components/Toast";
 
 export const revalidate = 60
 
@@ -9,8 +12,13 @@ export default async function HomePage() {
   const events = await ds.getEvents()
 
   return (
-    <main className="fixed inset-0">
-          <MapClient places={places} events={events} />
-    </main>
+    <>
+        <TopBar/>
+        <BottomBar/>
+        <Toast/>
+        <main className="fixed inset-0">
+            <MapClient places={places} events={events} />
+        </main>
+    </>
   )
 }

@@ -1,11 +1,12 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useEffect, useState } from 'react'
+import {useEffect, useLayoutEffect, useState} from 'react'
 
 import type { Place, Event } from '@/lib/types'
 import { useTheme } from '@/components/ThemeProvider'
 import {useHighlight} from "@/components/HighlightContextProvider";
+import {useSearchParams} from "next/navigation";
 
 const MapView = dynamic(() => import('@/app/map/MapView'), { ssr: false })
 
@@ -13,10 +14,18 @@ export default function MapClient({ places, events }: {
     places: Place[];
     events: Event[]
 }) {
+    const focusParam = useSearchParams()
+    const focus = focusParam.get("focus")
     const { theme } = useTheme()
 
-    const { highlightIds } = useHighlight()
+    const { highlightIds, setHighlightIds } = useHighlight()
     const [openPopupId, setOpenPopupId] = useState<string | null>(null)
+
+    useEffect(() => {
+        if (focus) {
+            setHighlightIds([focus])
+        }
+    }, [focus, setHighlightIds])
 
     useEffect(() => {
         setOpenPopupId(null)

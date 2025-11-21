@@ -87,11 +87,8 @@ export default function MapView({
                 style={{zIndex: 0}}
             >
                 <TileLayer url={tileUrl}/>
-
+                <UserLocation auto={!(highlightIds && highlightIds.length)} onPosition={onUserPosition} />
                 <FitToHighlights places={places} highlightIds={highlightIds}/>
-
-                <UserLocation onPosition={onUserPosition}/>
-
                 <DesktopZoomControls openPopupId={openPopupId} places={places}/>
 
                 <PlaceLabels

@@ -8,24 +8,23 @@ import {
 import {NextURL} from "next/dist/server/web/next-url";
 
 export async function GET(request: NextRequest) {
-    // TODO put path into param and use it
-    const url = new NextURL(
-        '/',
-        process.env.NEXT_PUBLIC_URL_BASE
-    )
+    const { searchParams } = request.nextUrl;
+    const callback = searchParams.get("callback") || "/";
+
+    let redirectUrl = new NextURL(callback, process.env.NEXT_PUBLIC_URL_BASE);
     // Check if access token is valid
     if (!(await checkAccessTokenNeedsRefresh(request))) {
         // Refresh the token and continue
         try {
             const tokenResponse = await refreshToken(request)
-            const resp = NextResponse.redirect(url)
+            const resp = NextResponse.redirect(redirectUrl)
             setCookieUsingTokenResponse(resp, tokenResponse)
             return resp
         } catch (error) {
-            return login(request, url)
+            return login(request, redirectUrl)
         }
     } else {
         // If the token is valid
-        return NextResponse.redirect(url)
+        return NextResponse.redirect(redirectUrl)
     }
 }

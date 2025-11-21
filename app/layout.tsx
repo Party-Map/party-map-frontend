@@ -34,9 +34,6 @@ export default async function RootLayout({children}: { children: React.ReactNode
                 <SessionProvider
                     jwtAccessToken={(await cookies()).get('access_token')?.value!}
                 >
-                    <TopBar/>
-                    <BottomBar/>
-                    <Toast/>
                     {children}
                 </SessionProvider>
             </HighlightProvider>
