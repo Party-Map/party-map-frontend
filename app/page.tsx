@@ -3,13 +3,15 @@ import {getDataSource} from '@/lib/dataSource'
 import TopBar from "@/components/TopBar";
 import BottomBar from "@/components/BottomBar";
 import Toast from "@/components/Toast";
-
-export const revalidate = 60
+import {fetchPlaces} from "@/lib/api/places";
+import {fetchEvents} from "@/lib/api/events";
+import {getJwtSession} from "@/lib/auth/server-session";
 
 export default async function HomePage() {
+    const session = await getJwtSession()
     const ds = getDataSource()
-    const places = await ds.getPlaces()
-    const events = await ds.getEvents()
+    const places = await fetchPlaces(session)
+    const events = await fetchEvents(session)
 
     return (
         <>

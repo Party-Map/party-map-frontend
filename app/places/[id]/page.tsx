@@ -1,21 +1,23 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import {createRepositories, getDataSource} from '@/lib/dataSource'
 import {notFound} from 'next/navigation'
 import EventCard from '@/components/EventCard'
 import TopBar from "@/components/TopBar";
 import BottomBar from "@/components/BottomBar";
 import Toast from "@/components/Toast";
+import {fetchPlace} from "@/lib/api/places";
+import {getJwtSession} from "@/lib/auth/server-session";
+import {fetchEventSByPlaceId} from "@/lib/api/events";
 
 export const revalidate = 60
 
 export default async function PlacePage({params}: { params: Promise<{ id: string }> }) {
     const {id} = await params
-    const ds = getDataSource()
-    const {places, events} = createRepositories(ds)
-    const place = await places.byId(id)
+    const session = await getJwtSession()
+
+    const place = await fetchPlace(id, session)
     if (!place) return notFound()
-    const placeEvents = await events.byPlaceId(place.id)
+    const placeEvents = await fetchEventSByPlaceId(id, session)
 
     return (
         <>

@@ -1,22 +1,23 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import {createRepositories, getDataSource} from '@/lib/dataSource'
 import {notFound} from 'next/navigation'
 import {fmtRange} from '@/lib/time'
 import TopBar from "@/components/TopBar";
 import BottomBar from "@/components/BottomBar";
 import Toast from "@/components/Toast";
-
-export const revalidate = 60
+import {fetchEvent} from "@/lib/api/events";
+import {getJwtSession} from "@/lib/auth/server-session";
+import {fetchPlaceByEventId} from "@/lib/api/places";
+import {fetchPerformersByEventId} from "@/lib/api/performers";
 
 export default async function EventPage({params}: { params: Promise<{ id: string }> }) {
     const {id} = await params
-    const ds = getDataSource()
-    const {events, places, performers} = createRepositories(ds)
-    const event = await events.byId(id)
+    const session = await getJwtSession()
+
+    const event = await fetchEvent(id, session)
     if (!event) return notFound()
-    const place = await places.byId(event.placeId)
-    const performerEntities = await Promise.all(event.performerIds.map(pid => performers.byId(pid)))
+    const place = await fetchPlaceByEventId(id, session)
+    const performerEntities = await fetchPerformersByEventId(id, session)
 
     return (
         <>
