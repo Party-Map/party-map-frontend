@@ -110,7 +110,7 @@ export default function MapView({
                                 ? '#475569'
                                 : '#334155'
                     const icon = PinIcon(baseColor, shiny)
-                    const pos: LatLngTuple = [p.location.lat, p.location.lng]
+                    const pos: LatLngTuple = [p.location.latitude, p.location.longitude]
                     return (
                         <Marker
                             key={p.id}
@@ -129,7 +129,7 @@ export default function MapView({
                     return (
                         <Popup
                             key={`popup-${p.id}`}
-                            position={[p.location.lat, p.location.lng] as LatLngTuple}
+                            position={[p.location.latitude, p.location.longitude] as LatLngTuple}
                             autoPan={false}
                             closeButton={false}
                             closeOnClick={false}

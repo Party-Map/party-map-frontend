@@ -70,7 +70,7 @@ function getPopupRect(
     const anchor = places.find(pl => pl.id === openPopupId)
     if (!anchor) return null
 
-    const pt = map.latLngToContainerPoint([anchor.location.lat, anchor.location.lng])
+    const pt = map.latLngToContainerPoint([anchor.location.latitude, anchor.location.longitude])
     const halfW = 140
     const heightAbove = 230
     const heightBelow = 10
@@ -142,7 +142,7 @@ export function PlaceLabels({
     return (
         <div className="absolute inset-0 pointer-events-none z-[600] select-none">
             {places.map(p => {
-                const pt = map.latLngToContainerPoint([p.location.lat, p.location.lng])
+                const pt = map.latLngToContainerPoint([p.location.latitude, p.location.longitude])
                 if (pt.x < -80 || pt.y < -80 || pt.x > size.x + 80 || pt.y > size.y + 80) return null
 
                 const isHighlighted = !!highlightIds?.includes(p.id)

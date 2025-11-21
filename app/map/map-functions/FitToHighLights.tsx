@@ -16,12 +16,12 @@ export function FitToHighlights({places, highlightIds}: {
 
         if (targets.length === 1) {
             const t = targets[0]
-            map.flyTo([t.location.lat, t.location.lng], 15, {duration: 0.6})
+            map.flyTo([t.location.latitude, t.location.longitude], 15, {duration: 0.6})
             return
         }
 
         const bounds = L.latLngBounds(
-            targets.map(t => [t.location.lat, t.location.lng]) as LatLngTuple[],
+            targets.map(t => [t.location.latitude, t.location.longitude]) as LatLngTuple[],
         )
         map.flyToBounds(bounds.pad(0.2), {duration: 0.8})
     }, [highlightIds, places, map])

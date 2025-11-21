@@ -54,8 +54,8 @@ export function DesktopZoomControls({
 
                 if (anchorActive && selectedPlace) {
                     const anchor = L.latLng(
-                        selectedPlace.location.lat,
-                        selectedPlace.location.lng,
+                        selectedPlace.location.latitude,
+                        selectedPlace.location.longitude,
                     )
                     map.setZoomAround(anchor, targetZoom)
                 } else {
@@ -74,7 +74,7 @@ export function DesktopZoomControls({
         try {
             const zoomLevel = map.getZoom()
             const point = map.project(
-                [selectedPlace.location.lat, selectedPlace.location.lng],
+                [selectedPlace.location.latitude, selectedPlace.location.longitude],
                 zoomLevel,
             )
 

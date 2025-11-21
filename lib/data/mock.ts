@@ -5,7 +5,7 @@ export const places: Place[] = [
     {
         id: 'p1',
         name: 'Danube Club',
-        location: {lat: 47.5005, lng: 19.0481},
+        location: {latitude: 47.5005, longitude: 19.0481},
         address: 'Riverbank 12',
         city: 'Budapest',
         description: 'Riverside club with two dance floors and a rooftop terrace.',
@@ -15,7 +15,7 @@ export const places: Place[] = [
     {
         id: 'p2',
         name: 'Ruin Bar 42',
-        location: {lat: 47.4984, lng: 19.0593},
+        location: {latitude: 47.4984, longitude: 19.0593},
         address: 'Kazinczy u. 14',
         city: 'Budapest',
         description: 'Iconic ruin-bar vibe with eclectic rooms and a courtyard.',
@@ -25,7 +25,7 @@ export const places: Place[] = [
     {
         id: 'p3',
         name: 'Warehouse X',
-        location: {lat: 47.4869, lng: 19.0701},
+        location: {latitude: 47.4869, longitude: 19.0701},
         address: 'Kőbányai út 21',
         city: 'Budapest',
         description: 'Industrial warehouse turned into a late-night techno bunker.',
@@ -37,7 +37,7 @@ export const places: Place[] = [
     {
         id: 'p4',
         name: 'Silver Shore Club',
-        location: {lat: 46.9062, lng: 18.0491}, // Siófok
+        location: {latitude: 46.9062, longitude: 18.0491}, // Siófok
         address: 'Petőfi sétány 10',
         city: 'Siófok',
         description: 'Beachfront stage with sunset sessions and late-night DJs.',
@@ -47,7 +47,7 @@ export const places: Place[] = [
     {
         id: 'p5',
         name: 'Füred Pier Lounge',
-        location: {lat: 46.9606, lng: 17.8710}, // Balatonfüred
+        location: {latitude: 46.9606, longitude: 17.8710}, // Balatonfüred
         address: 'Tagore sétány 3',
         city: 'Balatonfüred',
         description: 'Lounge by the marina with mellow grooves and cocktails.',
@@ -57,7 +57,7 @@ export const places: Place[] = [
     {
         id: 'p6',
         name: 'Keszthely Waves',
-        location: {lat: 46.7680, lng: 17.2430}, // Keszthely
+        location: {latitude: 46.7680, longitude: 17.2430}, // Keszthely
         address: 'Balaton-part 1',
         city: 'Keszthely',
         description: 'Open-air dancefloor a few steps from the water.',
@@ -69,7 +69,7 @@ export const places: Place[] = [
     {
         id: 'p7',
         name: 'Fehérvár Hall',
-        location: {lat: 47.1860, lng: 18.4221},
+        location: {latitude: 47.1860, longitude: 18.4221},
         address: 'Palotai út 12',
         city: 'Székesfehérvár',
         description: 'Mid-size venue for bass nights and live electronic shows.',
@@ -81,7 +81,7 @@ export const places: Place[] = [
     {
         id: 'p8',
         name: 'Szeged Riverside',
-        location: {lat: 46.2530, lng: 20.1414},
+        location: {latitude: 46.2530, longitude: 20.1414},
         address: 'Tisza-part 5',
         city: 'Szeged',
         description: 'Neon-lit riverside terrace with synth and retro nights.',
@@ -92,7 +92,7 @@ export const places: Place[] = [
     {
         id: 'p9',
         name: 'Dénes Pince',
-        location: {lat: 47.408248, lng: 19.015077}, // exact provided
+        location: {latitude: 47.408248, longitude: 19.015077}, // exact provided
         address: 'Lépcsős utca 4',
         city: 'Budapest',
         description: 'Cozy basement hangout for intimate home gatherings.',
@@ -102,7 +102,7 @@ export const places: Place[] = [
     {
         id: 'p10',
         name: 'Bence Terasz',
-        location: {lat: 47.424137, lng: 19.014703}, // exact provided
+        location: {latitude: 47.424137, longitude: 19.014703}, // exact provided
         address: 'Zakariás József utca 5',
         city: 'Budapest',
         description: 'Private terrace vibe overlooking the quiet suburban streets.',
@@ -113,7 +113,7 @@ export const places: Place[] = [
     {
         id: 'p11',
         name: 'Poldi Bácsi Sörözö',
-        location: {lat: 47.4408014178659, lng: 19.02280223577477},
+        location: {latitude: 47.4408014178659, longitude: 19.02280223577477},
         address: 'Ady Endre út 95',
         city: 'Budapest',
         description: 'Cozy local pub for socializing and late-night sessions.',

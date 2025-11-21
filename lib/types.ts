@@ -1,8 +1,13 @@
 export type ID = string
 
 export type GeoPoint = {
-    lat: number
-    lng: number
+    latitude: number
+    longitude: number
+}
+export type LinkType = 'instagram' | 'facebook' |'twitter'| 'reddit' |'website'
+export type Link = {
+    type: LinkType
+    url: string
 }
 
 export type Place = {
@@ -14,6 +19,7 @@ export type Place = {
     description: string
     image: string
     tags: string[]
+    links?: Link[]
 }
 
 export type Performer = {
@@ -22,7 +28,7 @@ export type Performer = {
     genre: string
     bio: string
     image: string
-    links?: { type: 'instagram' | 'facebook' | 'website'; url: string }[]
+    links?: Link[]
 }
 
 export type Event = {
@@ -36,7 +42,9 @@ export type Event = {
     performerIds: ID[]
     price?: string
     kind: EventType
+    links?: Link[]
 }
+// TODO: remove and use GeoPoint
 export type LatLng = {
     lat: number;
     lng: number

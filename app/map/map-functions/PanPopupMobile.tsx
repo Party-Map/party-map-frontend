@@ -18,7 +18,7 @@ export function PanPopupMobile({places, openPopupId}: {
         let frame: number | null = null
         frame = requestAnimationFrame(() => {
             try {
-                const latlng: LatLngTuple = [place.location.lat, place.location.lng]
+                const latlng: LatLngTuple = [place.location.latitude, place.location.longitude]
                 const currentPt = map.latLngToContainerPoint(latlng)
                 const size = map.getSize()
                 const bottomBar =
