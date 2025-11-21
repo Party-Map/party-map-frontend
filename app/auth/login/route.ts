@@ -8,7 +8,7 @@ import {
 import {NextURL} from "next/dist/server/web/next-url";
 
 export async function GET(request: NextRequest) {
-    const { searchParams } = request.nextUrl;
+    const {searchParams} = request.nextUrl;
     const callback = searchParams.get("callback") || "/";
 
     let redirectUrl = new NextURL(callback, process.env.NEXT_PUBLIC_URL_BASE);

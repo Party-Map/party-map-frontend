@@ -1,5 +1,5 @@
-import { decodeJwt, JWTPayload } from 'jose'
-import { Roles } from '@/lib/auth/roles'
+import {decodeJwt, JWTPayload} from 'jose'
+import {Roles} from '@/lib/auth/roles'
 
 export type KeycloakJWTPayload = JWTPayload & {
     realm_access?: {
@@ -27,6 +27,6 @@ export class JwtSession {
     }
 
     public authorizationHeader(): { Authorization: string } {
-        return { Authorization: `Bearer ${this.accessToken}` }
+        return {Authorization: `Bearer ${this.accessToken}`}
     }
 }

@@ -1,9 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
-import {
-    checkAccessTokenNeedsRefresh,
-    refreshToken,
-    setCookieUsingTokenResponse,
-} from '@/lib/auth/server-jwt-utils'
+import {NextRequest, NextResponse} from 'next/server'
+import {checkAccessTokenNeedsRefresh, refreshToken, setCookieUsingTokenResponse,} from '@/lib/auth/server-jwt-utils'
 
 export async function GET(request: NextRequest) {
     // Check if access token is valid

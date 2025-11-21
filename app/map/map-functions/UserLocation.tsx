@@ -3,7 +3,7 @@ import {Circle, Marker, useMap} from 'react-leaflet'
 import L, {LatLngTuple} from 'leaflet'
 import type {LatLng} from '@/lib/types'
 
-export function UserLocation({ auto = true, onPosition }: {
+export function UserLocation({auto = true, onPosition}: {
     auto?: boolean
     onPosition?: (pos: LatLng) => void
 }) {
@@ -36,13 +36,15 @@ export function UserLocation({ auto = true, onPosition }: {
                 } catch {
                 }
             },
-            () => {},
+            () => {
+            },
             opts,
         )
 
         const id = navigator.geolocation.watchPosition(
             g => handlePosition(g),
-            () => {},
+            () => {
+            },
             opts,
         )
 

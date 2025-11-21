@@ -1,9 +1,9 @@
-import { useEffect } from 'react'
-import { useMap } from 'react-leaflet'
-import L, { LatLngTuple } from 'leaflet'
-import type { Place } from '@/lib/types'
+import {useEffect} from 'react'
+import {useMap} from 'react-leaflet'
+import L, {LatLngTuple} from 'leaflet'
+import type {Place} from '@/lib/types'
 
-export function PanPopupMobile({ places, openPopupId }: {
+export function PanPopupMobile({places, openPopupId}: {
     places: Place[]
     openPopupId: string | null
 }) {

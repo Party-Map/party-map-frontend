@@ -1,7 +1,7 @@
-import { getJwtSession } from '@/lib/auth/server-session'
+import {getJwtSession} from '@/lib/auth/server-session'
 import React from 'react'
-import { redirect } from 'next/navigation'
-import { ShieldCheck } from 'lucide-react'
+import {redirect} from 'next/navigation'
+import {ShieldCheck} from 'lucide-react'
 
 export default async function LogoutSuccessfulPage() {
     const session = await getJwtSession()
@@ -13,7 +13,7 @@ export default async function LogoutSuccessfulPage() {
         <main className="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
             <div className="text-center">
                 <div className="flex justify-center">
-                    <ShieldCheck className="mt-4 h-32 w-32 text-green-500" />
+                    <ShieldCheck className="mt-4 h-32 w-32 text-green-500"/>
                 </div>
                 <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">
                     You are now logged out

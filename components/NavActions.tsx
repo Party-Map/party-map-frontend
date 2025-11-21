@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useContext, useEffect} from 'react'
+import React, {useContext} from 'react'
 import Link from 'next/link'
 import {Ticket, User} from 'lucide-react'
 import {SessionContext} from "@/lib/auth/session-provider";
@@ -45,7 +45,7 @@ export default function NavActions({variant = 'desktop'}: { variant?: 'desktop' 
                         </Link>
                         <SignOutButton/>
                     </>
-                ): (
+                ) : (
                     <SignInButton/>
                 )}
             </div>
@@ -55,14 +55,14 @@ export default function NavActions({variant = 'desktop'}: { variant?: 'desktop' 
     // desktop
     return (
         <nav className="flex items-center gap-1">
-                <Link
-                    href="/404"
-                    className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm
+            <Link
+                href="/404"
+                className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm
                      text-white/95 hover:text-white hover:bg-white/10 transition"
-                >
-                    <Ticket className="h-4 w-4"/>
-                    <span>Tickets</span>
-                </Link>
+            >
+                <Ticket className="h-4 w-4"/>
+                <span>Tickets</span>
+            </Link>
             {session.accessToken ? (
                 <>
                     <Link
@@ -75,7 +75,7 @@ export default function NavActions({variant = 'desktop'}: { variant?: 'desktop' 
                     </Link>
                     <SignOutButton/>
                 </>
-            ) :(
+            ) : (
                 <SignInButton/>
             )}
         </nav>

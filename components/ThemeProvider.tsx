@@ -1,12 +1,12 @@
 'use client'
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, {createContext, useContext, useEffect, useState} from 'react'
 
 type Theme = 'light' | 'dark'
 type ThemeContext = { theme: Theme; toggle: () => void }
 
 const ThemeCtx = createContext<ThemeContext | null>(null)
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export function ThemeProvider({children}: { children: React.ReactNode }) {
     const [theme, setTheme] = useState<Theme>('dark')
 
     useEffect(() => {
@@ -22,7 +22,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const toggle = () => setTheme(t => (t === 'dark' ? 'light' : 'dark'))
 
     return (
-        <ThemeCtx.Provider value={{ theme, toggle }}>
+        <ThemeCtx.Provider value={{theme, toggle}}>
             {children}
         </ThemeCtx.Provider>
     )

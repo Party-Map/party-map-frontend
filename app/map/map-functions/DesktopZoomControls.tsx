@@ -3,7 +3,7 @@ import {useMap} from 'react-leaflet'
 import L from 'leaflet'
 import type {Place} from '@/lib/types'
 
-export function DesktopZoomControls({ openPopupId, places }: {
+export function DesktopZoomControls({openPopupId, places}: {
     openPopupId: string | null
     places: Place[]
 }) {
@@ -103,17 +103,29 @@ export function DesktopZoomControls({ openPopupId, places }: {
 
                         onPointerDown={e => {
                             e.stopPropagation()
-                            try { map.dragging.disable() } catch {}
+                            try {
+                                map.dragging.disable()
+                            } catch {
+                            }
                         }}
                         onPointerUp={e => {
                             e.stopPropagation()
-                            try { map.dragging.enable() } catch {}
+                            try {
+                                map.dragging.enable()
+                            } catch {
+                            }
                         }}
                         onPointerLeave={() => {
-                            try { map.dragging.enable() } catch {}
+                            try {
+                                map.dragging.enable()
+                            } catch {
+                            }
                         }}
                         onPointerCancel={() => {
-                            try { map.dragging.enable() } catch {}
+                            try {
+                                map.dragging.enable()
+                            } catch {
+                            }
                         }}
                         onMouseEnter={() => startTip('zin')}
                         onMouseLeave={() => clearTip('zin')}
@@ -146,17 +158,29 @@ export function DesktopZoomControls({ openPopupId, places }: {
 
                         onPointerDown={e => {
                             e.stopPropagation()
-                            try { map.dragging.disable() } catch {}
+                            try {
+                                map.dragging.disable()
+                            } catch {
+                            }
                         }}
                         onPointerUp={e => {
                             e.stopPropagation()
-                            try { map.dragging.enable() } catch {}
+                            try {
+                                map.dragging.enable()
+                            } catch {
+                            }
                         }}
                         onPointerLeave={() => {
-                            try { map.dragging.enable() } catch {}
+                            try {
+                                map.dragging.enable()
+                            } catch {
+                            }
                         }}
                         onPointerCancel={() => {
-                            try { map.dragging.enable() } catch {}
+                            try {
+                                map.dragging.enable()
+                            } catch {
+                            }
                         }}
                         onMouseEnter={() => startTip('zout')}
                         onMouseLeave={() => clearTip('zout')}

@@ -1,9 +1,8 @@
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
-import L, { LatLngTuple } from 'leaflet'
+import {MapContainer, Marker, Popup, TileLayer, useMapEvent} from 'react-leaflet'
+import L, {LatLngTuple} from 'leaflet'
 import {useMemo} from 'react'
 
-import type {Event, Place} from '@/lib/types'
-import type {LatLng} from '@/lib/types'
+import type {Event, LatLng, Place} from '@/lib/types'
 import PlacePopupCard from '../../components/PlacePopupCard'
 import {FitToHighlights} from "@/app/map/map-functions/FitToHighLights";
 import {UserLocation} from "@/app/map/map-functions/UserLocation";
@@ -33,9 +32,8 @@ function PinIcon(color: string, shiny: boolean) {
         popupAnchor: [0, -38],
     })
 }
-import {useMapEvent} from 'react-leaflet'
 
-function MapBackgroundCloser({ onClose }: { onClose: () => void }) {
+function MapBackgroundCloser({onClose}: { onClose: () => void }) {
     useMapEvent('click', () => onClose())
     return null
 }
@@ -50,6 +48,7 @@ interface Props {
     onCloseAllPlaces?: () => void
     onUserPosition?: (pos: LatLng) => void
 }
+
 export default function MapView({
                                     places,
                                     events,
@@ -87,7 +86,7 @@ export default function MapView({
                 style={{zIndex: 0}}
             >
                 <TileLayer url={tileUrl}/>
-                <UserLocation auto={!(highlightIds && highlightIds.length)} onPosition={onUserPosition} />
+                <UserLocation auto={!(highlightIds && highlightIds.length)} onPosition={onUserPosition}/>
                 <FitToHighlights places={places} highlightIds={highlightIds}/>
                 <DesktopZoomControls openPopupId={openPopupId} places={places}/>
 

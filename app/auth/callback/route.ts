@@ -1,12 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { COOKIE_NAME_STATE, JWKS } from '@/lib/auth/constants'
-import { NextURL } from 'next/dist/server/web/next-url'
-import { jwtVerify } from 'jose'
-import {
-    setCookieUsingTokenResponse,
-    StateCookie,
-    TokenResponse,
-} from '@/lib/auth/server-jwt-utils'
+import {NextRequest, NextResponse} from 'next/server'
+import {COOKIE_NAME_STATE, JWKS} from '@/lib/auth/constants'
+import {NextURL} from 'next/dist/server/web/next-url'
+import {jwtVerify} from 'jose'
+import {setCookieUsingTokenResponse, StateCookie, TokenResponse,} from '@/lib/auth/server-jwt-utils'
 
 /**
  * Handle authorization code callback
@@ -36,7 +32,7 @@ export async function GET(req: NextRequest) {
         `${process.env.AUTH_KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
         {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: new URLSearchParams({
                 client_id: process.env.AUTH_KEYCLOAK_ID!,
                 client_secret: process.env.AUTH_KEYCLOAK_SECRET!,

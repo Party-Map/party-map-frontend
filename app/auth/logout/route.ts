@@ -1,9 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
-import {
-    COOKIE_NAME_ACCESS_TOKEN,
-    COOKIE_NAME_REFRESH_TOKEN,
-} from '@/lib/auth/constants'
-import { NextURL } from 'next/dist/server/web/next-url'
+import {NextRequest, NextResponse} from 'next/server'
+import {COOKIE_NAME_ACCESS_TOKEN, COOKIE_NAME_REFRESH_TOKEN,} from '@/lib/auth/constants'
+import {NextURL} from 'next/dist/server/web/next-url'
 
 /**
  * Logout the user by calling the Keycloak logout endpoint and deleting the cookies

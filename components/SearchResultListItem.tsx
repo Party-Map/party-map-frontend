@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { SEARCH_TYPE_META } from '@/components/searchTypeMeta'
-import type { SearchHit } from '@/lib/types'
+import {SEARCH_TYPE_META} from '@/components/searchTypeMeta'
+import type {SearchHit} from '@/lib/types'
 import {cn} from "@/lib/utils";
 
 function formatDateLabel(hit: SearchHit): string | null {
@@ -11,18 +11,18 @@ function formatDateLabel(hit: SearchHit): string | null {
     const sameDay = d.toDateString() === now.toDateString()
 
     if (sameDay) {
-        return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        return d.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
     }
 
     const inYear = d.getFullYear() === now.getFullYear()
     return d.toLocaleDateString([], {
         month: 'short',
         day: 'numeric',
-        ...(inYear ? {} : { year: 'numeric' }),
+        ...(inYear ? {} : {year: 'numeric'}),
     })
 }
 
-export function SearchResultListItem({ hit, onPrimaryClick, onViewClick }: {
+export function SearchResultListItem({hit, onPrimaryClick, onViewClick}: {
     hit: SearchHit
     onPrimaryClick: () => void
     onViewClick: () => void
@@ -32,13 +32,15 @@ export function SearchResultListItem({ hit, onPrimaryClick, onViewClick }: {
 
     return (
         <li>
-            <div className="flex items-center gap-3 px-4 py-3 hover:bg-violet-50/70 dark:hover:bg-violet-900/30 transition-colors">
+            <div
+                className="flex items-center gap-3 px-4 py-3 hover:bg-violet-50/70 dark:hover:bg-violet-900/30 transition-colors">
                 <button
                     type="button"
                     onClick={onPrimaryClick}
                     className="flex flex-1 items-center gap-3 min-w-0 text-left group focus:outline-none"
                 >
-                    <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-md ring-1 ring-inset ring-white/20 group-hover:ring-violet-400/50 transition-colors">
+                    <div
+                        className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-md ring-1 ring-inset ring-white/20 group-hover:ring-violet-400/50 transition-colors">
                         <Image
                             src={hit.image}
                             alt={hit.title}
@@ -46,19 +48,22 @@ export function SearchResultListItem({ hit, onPrimaryClick, onViewClick }: {
                             sizes="40px"
                             className="object-cover"
                         />
-                        <span className="absolute bottom-0 left-0 right-0 text-[10px] font-medium uppercase tracking-wide bg-black/40 text-white text-center leading-tight">
+                        <span
+                            className="absolute bottom-0 left-0 right-0 text-[10px] font-medium uppercase tracking-wide bg-black/40 text-white text-center leading-tight">
                             {hit.type.charAt(0)}
                         </span>
                     </div>
 
                     <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                            <span className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-50 group-hover:text-violet-700 dark:group-hover:text-violet-300 transition-colors">
+                            <span
+                                className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-50 group-hover:text-violet-700 dark:group-hover:text-violet-300 transition-colors">
                                 {hit.title}
                             </span>
-                            <span className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium tracking-wide ring-1",
-                                meta.bg, meta.ring,meta.fg
-                            )}>
+                            <span
+                                className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium tracking-wide ring-1",
+                                    meta.bg, meta.ring, meta.fg
+                                )}>
                                 {meta.icon}
                                 {meta.label}
                             </span>

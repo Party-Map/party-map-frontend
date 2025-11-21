@@ -3,9 +3,6 @@ import './globals.css'
 import 'leaflet/dist/leaflet.css'
 import './map.css'
 import {ThemeProvider} from '@/components/ThemeProvider'
-import TopBar from '@/components/TopBar'
-import BottomBar from '@/components/BottomBar'
-import Toast from '@/components/Toast'
 import GdprConsent from '@/components/GdprConsent'
 import {HighlightProvider} from "@/components/HighlightContextProvider";
 import SessionProvider from "@/lib/auth/session-provider";

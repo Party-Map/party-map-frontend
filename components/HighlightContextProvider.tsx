@@ -5,7 +5,7 @@ import {createContext, useContext, useState} from "react";
 
 const HighlightContext = createContext<HighlightContextType | null>(null);
 
-export function HighlightProvider({ children }: { children: React.ReactNode }) {
+export function HighlightProvider({children}: { children: React.ReactNode }) {
     const [highlightIds, setHighlightIds] = useState<string[]>([]);
 
     return (

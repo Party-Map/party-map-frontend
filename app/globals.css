@@ -1,20 +1,32 @@
 @import "tailwindcss";
 
 @layer utilities {
-  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+    .safe-bottom {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
 }
 
-html, body, :root { height: 100%; }
+html, body, :root {
+    height: 100%;
+}
+
 /* Normalize all popups then customize our card */
 .leaflet-popup.place-popup .leaflet-popup-content-wrapper,
 .leaflet-popup-content-wrapper.place-popup,
 .place-popup .leaflet-popup-content-wrapper {
-  background: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border: 0 !important;
 }
+
 .leaflet-popup.place-popup .leaflet-popup-content,
-.place-popup .leaflet-popup-content { margin: 0 !important; }
+.place-popup .leaflet-popup-content {
+    margin: 0 !important;
+}
+
 .leaflet-popup.place-popup .leaflet-popup-tip,
-.place-popup .leaflet-popup-tip { background: transparent !important; box-shadow: none !important; }
+.place-popup .leaflet-popup-tip {
+    background: transparent !important;
+    box-shadow: none !important;
+}

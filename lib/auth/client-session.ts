@@ -1,7 +1,7 @@
 'use client'
 
-import { JwtSession } from '@/lib/auth/jwt-session'
-import { decodeJwt, JWTPayload } from 'jose'
+import {JwtSession} from '@/lib/auth/jwt-session'
+import {decodeJwt, JWTPayload} from 'jose'
 
 /**
  * This function is used to get the JWT session from the client side.
