@@ -3,8 +3,6 @@ import {useMap} from 'react-leaflet'
 import L from 'leaflet'
 import type {Place} from '@/lib/types'
 
-type TipKey = '' | 'zin' | 'zout' | 'center'
-
 export function DesktopZoomControls({
                                         openPopupId,
                                         places,
@@ -14,47 +12,13 @@ export function DesktopZoomControls({
 }) {
     const map = useMap()
 
-    const [tip, setTip] = useState<{ key: TipKey; visible: boolean }>({
-        key: '',
-        visible: false,
-    })
-
-    const timers = useRef<Record<TipKey, number>>({} as Record<TipKey, number>)
+    const [anchorActive, setAnchorActive] = useState(false)
     const containerRef = useRef<HTMLDivElement | null>(null)
 
     const selectedPlace = useMemo(
         () => (openPopupId ? places.find(p => p.id === openPopupId) ?? null : null),
         [openPopupId, places],
     )
-    const [anchorActive, setAnchorActive] = useState(false)
-
-    const clearTip = useCallback((key?: TipKey) => {
-        if (key) {
-            const id = timers.current[key]
-            if (id) window.clearTimeout(id)
-            delete timers.current[key]
-        } else {
-            Object.values(timers.current).forEach(id => window.clearTimeout(id))
-            timers.current = {} as Record<TipKey, number>
-        }
-
-        setTip(prev => (key && prev.key === key ? {key: '', visible: false} : prev))
-    }, [])
-
-    const startTip = useCallback(
-        (key: TipKey) => {
-            clearTip(key)
-            timers.current[key] = window.setTimeout(() => {
-                setTip({key, visible: true})
-            }, 1000)
-        },
-        [clearTip],
-    )
-
-    // Clear tooltips on unmount
-    useEffect(() => {
-        return () => clearTip()
-    }, [clearTip])
 
     // Stop map interaction leaking through the controls
     useEffect(() => {
@@ -64,9 +28,23 @@ export function DesktopZoomControls({
             L.DomEvent.disableClickPropagation(el)
             L.DomEvent.disableScrollPropagation(el)
         } catch {
+            // ignore
         }
     }, [])
 
+    // Lose anchor on user drag
+    useEffect(() => {
+        const handleDragStart = () => {
+            setAnchorActive(false)
+        }
+
+        map.on('dragstart', handleDragStart)
+        return () => {
+            map.off('dragstart', handleDragStart)
+        }
+    }, [map])
+
+    // Zoom anchored to selected place when anchorActive = true
     const zoom = useCallback(
         (kind: 'in' | 'out') => {
             try {
@@ -88,41 +66,28 @@ export function DesktopZoomControls({
         },
         [map, selectedPlace, anchorActive],
     )
-    // Centers to the selected pin and activates anchor
+
+    // Centers to the selected pin (with vertical offset) and activates anchor
     const recenter = useCallback(() => {
         if (!selectedPlace) return
 
         try {
-            const zoom = map.getZoom()
+            const zoomLevel = map.getZoom()
             const point = map.project(
                 [selectedPlace.location.lat, selectedPlace.location.lng],
-                zoom,
+                zoomLevel,
             )
 
+            // positive y moves the map center down (marker appears higher)
             const offsetY = -100
             const adjustedPoint = point.add([0, offsetY])
-            const adjustedLatLng = map.unproject(adjustedPoint, zoom)
+            const adjustedLatLng = map.unproject(adjustedPoint, zoomLevel)
 
-            // when we explicitly recenter, enable anchor
-            // Set state for UI rerender
             setAnchorActive(true)
-
-            map.flyTo(adjustedLatLng, zoom, {duration: 0.6})
+            map.flyTo(adjustedLatLng, zoomLevel, {duration: 0.6})
         } catch {
         }
     }, [map, selectedPlace])
-
-    // Loose anchor on user drag
-    useEffect(() => {
-        const handleDragStart = () => {
-            setAnchorActive(false)
-        }
-
-        map.on('dragstart', handleDragStart)
-        return () => {
-            map.off('dragstart', handleDragStart)
-        }
-    }, [map])
 
     // Shared pointer handlers to avoid repeating try/catch
     const handlePointerDown = useCallback(
@@ -150,24 +115,22 @@ export function DesktopZoomControls({
         >
             <div
                 className="flex flex-col overflow-visible rounded-2xl backdrop-blur-xl bg-white/70
-                dark:bg-slate-900/50 border border-black/10 dark:border-white/10 shadow-lg divide-y
-                divide-black/10 dark:divide-white/10"
+        dark:bg-slate-900/50 border border-black/10 dark:border-white/10 shadow-lg divide-y
+        divide-black/10 dark:divide-white/10"
             >
                 {/* Zoom in */}
-                <div className="relative">
+                <div className="relative group">
                     <button
                         aria-label="Zoom in"
                         className="h-11 w-11 grid place-items-center text-slate-800 dark:text-slate-100
-                        rounded-md hover:bg-white/90
-                        dark:hover:bg-slate-800/60 transition-colors
-                        focus:outline-none focus-visible:ring-2
-                        focus-visible:ring-pink-500/60 active:scale-95 cursor-pointer"
+            rounded-md hover:bg-white/90
+            dark:hover:bg-slate-800/60 transition-colors
+            focus:outline-none focus-visible:ring-2
+            focus-visible:ring-pink-500/60 active:scale-95 cursor-pointer"
                         onPointerDown={handlePointerDown}
                         onPointerUp={handlePointerUpOrLeave}
                         onPointerLeave={handlePointerUpOrLeave}
                         onPointerCancel={handlePointerUpOrLeave}
-                        onMouseEnter={() => startTip('zin')}
-                        onMouseLeave={() => clearTip('zin')}
                         onClick={e => {
                             e.stopPropagation()
                             ;(window as any).__pmLastZoomClick = Date.now()
@@ -188,30 +151,26 @@ export function DesktopZoomControls({
                             <path d="M12 5v14M5 12h14"/>
                         </svg>
                     </button>
-                    {tip.visible && tip.key === 'zin' && (
-                        <span
-                            className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-1
-                            whitespace-nowrap text-[10px] font-medium px-2 py-1 rounded bg-slate-900/90 text-white shadow-lg
-                            ring-1 ring-white/10"
-                        >
-                            Zoom in
-                        </span>
-                    )}
+                    <span
+                        className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-1
+            whitespace-nowrap text-[10px] font-medium px-2 py-1 rounded bg-slate-900/90 text-white shadow-lg
+            ring-1 ring-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                    >
+            Zoom in
+          </span>
                 </div>
 
                 {/* Zoom out */}
-                <div className="relative">
+                <div className="relative group">
                     <button
                         aria-label="Zoom out"
                         className="h-11 w-11 grid place-items-center text-slate-800 dark:text-slate-100 rounded-md
-                        hover:bg-white/90 dark:hover:bg-slate-800/60 transition-colors
-                        focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500/60 active:scale-95 cursor-pointer"
+            hover:bg-white/90 dark:hover:bg-slate-800/60 transition-colors
+            focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500/60 active:scale-95 cursor-pointer"
                         onPointerDown={handlePointerDown}
                         onPointerUp={handlePointerUpOrLeave}
                         onPointerLeave={handlePointerUpOrLeave}
                         onPointerCancel={handlePointerUpOrLeave}
-                        onMouseEnter={() => startTip('zout')}
-                        onMouseLeave={() => clearTip('zout')}
                         onClick={e => {
                             e.stopPropagation()
                             ;(window as any).__pmLastZoomClick = Date.now()
@@ -232,22 +191,19 @@ export function DesktopZoomControls({
                             <path d="M5 12h14"/>
                         </svg>
                     </button>
-                    {tip.visible && tip.key === 'zout' && (
-                        <span
-                            className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-1
-                            whitespace-nowrap text-[10px]
-                            font-medium px-2 py-1 rounded bg-slate-900/90
-                            text-white shadow-lg ring-1 ring-white/10"
-                        >
-                            Zoom out
-                        </span>
-                    )}
+                    <span
+                        className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-1
+            whitespace-nowrap text-[10px] font-medium px-2 py-1 rounded bg-slate-900/90
+            text-white shadow-lg ring-1 ring-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                    >
+            Zoom out
+          </span>
                 </div>
             </div>
 
             {/* Center selected */}
             {selectedPlace && (
-                <div className="relative">
+                <div className="relative group">
                     <button
                         onClick={e => {
                             e.stopPropagation()
@@ -255,18 +211,18 @@ export function DesktopZoomControls({
                         }}
                         aria-label="Center selected"
                         className={`
-                        h-11 w-11 grid place-items-center rounded-md backdrop-blur-xl
-                        bg-white/70 dark:bg-slate-900/50
-                        border shadow-lg text-pink-600 dark:text-pink-300
-                        hover:bg-white/90 dark:hover:bg-slate-800/60
-                        transition-colors focus:outline-none focus-visible:ring-2
-                        focus-visible:ring-pink-500/60 active:scale-95 cursor-pointer
-                        ${anchorActive
-                            ? 'border-pink-500 dark:border-pink-300'
-                            : 'border-black/10 dark:border-white/10'}
-                      `}
-                        onMouseEnter={() => startTip('center')}
-                        onMouseLeave={() => clearTip('center')}
+              h-11 w-11 grid place-items-center rounded-md backdrop-blur-xl
+              bg-white/70 dark:bg-slate-900/50
+              border shadow-lg text-pink-600 dark:text-pink-300
+              hover:bg-white/90 dark:hover:bg-slate-800/60
+              transition-colors focus:outline-none focus-visible:ring-2
+              focus-visible:ring-pink-500/60 active:scale-95 cursor-pointer
+              ${
+                            anchorActive
+                                ? 'border-pink-500 dark:border-pink-300'
+                                : 'border-black/10 dark:border-white/10'
+                        }
+            `}
                     >
                         <svg
                             width="18"
@@ -290,16 +246,14 @@ export function DesktopZoomControls({
                             <path d="M19.07 19.07l-2.12-2.12"/>
                         </svg>
                     </button>
-                    {tip.visible && tip.key === 'center' && (
-                        <span
-                            className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-1
-                            whitespace-nowrap text-[10px] font-medium px-2 py-1 rounded
-                            bg-slate-900/90 text-white shadow-lg ring-1
-                            ring-white/10"
-                        >
-                            Center selected
-                        </span>
-                    )}
+                    <span
+                        className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-1
+            whitespace-nowrap text-[10px] font-medium px-2 py-1 rounded
+            bg-slate-900/90 text-white shadow-lg ring-1
+            ring-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                    >
+            Center selected
+          </span>
                 </div>
             )}
         </div>
