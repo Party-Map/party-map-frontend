@@ -48,7 +48,6 @@ export default function SearchBar() {
         if (!q) {
             setItems([])
             setOpen(false)
-            setHighlightIds([])
             return
         }
 
@@ -101,6 +100,34 @@ export default function SearchBar() {
     const handleViewClick = () => {
         dismissResults()
     }
+    const extractPlaceIds = (hits: SearchHit[]): string[] => {
+        return Array.from(
+            new Set(
+                hits
+                    .map(h => h.placeId || (h.type === 'place' ? h.id : null))
+                    .filter(Boolean),
+            ),
+        ) as string[]
+    }
+
+    const handleEnter = () => {
+        const q = query.trim()
+        if (!q) return
+        const placeIds = extractPlaceIds(items)
+        if (!placeIds.length) {
+            dismissResults()
+            return
+        }
+
+        setHighlightIds(placeIds)
+        console.log(placeIds, "SearchBarban")
+        if (pathname !== '/') {
+            router.push('/')
+        }
+
+        dismissResults()
+    }
+
 
     return (
         <div ref={rootRef} className="relative">
@@ -118,9 +145,9 @@ export default function SearchBar() {
                         if (items.length) setOpen(true)
                     }}
                     onKeyDown={e => {
-                        if (e.key === 'Enter' && query.trim()) {
+                        if (e.key === 'Enter') {
                             e.preventDefault()
-                            dismissResults()
+                            handleEnter()
                         }
                     }}
                     placeholder="Search places, events, performers, tags"
