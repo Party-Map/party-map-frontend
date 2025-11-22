@@ -6,7 +6,7 @@ export type GeoPoint = {
     latitude: number
     longitude: number
 }
-export type LinkType = 'instagram' | 'facebook' |'twitter'| 'reddit' |'website'
+export type LinkType = 'instagram' | 'facebook' | 'twitter' | 'reddit' | 'website'
 export type Link = {
     type: LinkType
     url: string

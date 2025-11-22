@@ -12,7 +12,7 @@ export default function NavActions({variant = 'desktop'}: { variant?: 'desktop' 
 
     if (variant === 'mobile') {
         return (
-            <div className="grid w-full grid-cols-2">
+            <div className="grid w-full grid-cols-3">
                 <Link
                     href="/404"
                     className="flex flex-col items-center justify-center gap-1 text-xs opacity-95"
