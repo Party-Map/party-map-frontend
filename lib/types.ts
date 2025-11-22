@@ -1,3 +1,5 @@
+import type {ReactNode} from "react";
+
 export type ID = string
 
 export type GeoPoint = {
@@ -88,15 +90,29 @@ export const EVENT_TYPE_LABELS: Record<EventType, string> = {
     PUB: 'Pub',
 }
 
-export type SearchHit = {
-    type: 'place' | 'event' | 'performer' | 'tag'
-    id: ID
+export type SearchHitType = 'PLACE' | 'EVENT' | 'PERFORMER'
+
+export type SearchTypeMeta = {
+    icon: ReactNode
+    bg: string
+    ring: string
+    fg: string
+    label: string
+}
+
+export interface SearchHit {
+    id: string
+    type: SearchHitType
     title: string
     subtitle: string
-    href: string
-    image: string
-    placeId?: ID
-    nextEventStart?: string
+    image: string | null
+    nextEventStart: string | null
+    placeId: string | null
+}
+
+export interface SearchResponse {
+    query: string
+    hits: SearchHit[]
 }
 
 export type HighlightContextType = {

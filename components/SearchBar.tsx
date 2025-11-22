@@ -1,11 +1,13 @@
 'use client'
 
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useContext, useEffect, useRef, useState} from 'react'
 import {Eraser, Minimize2, Search} from 'lucide-react'
 import type {SearchHit} from '@/lib/types'
 import {usePathname, useRouter} from 'next/navigation'
-import {SearchResultListItem} from "@/components/SearchResultListItem";
-import {useHighlight} from "@/components/HighlightContextProvider";
+import {SearchResultListItem} from '@/components/SearchResultListItem'
+import {useHighlight} from '@/components/HighlightContextProvider'
+import {SessionContext} from '@/lib/auth/session-provider'
+import {fetchSearch} from "@/lib/api/search";
 
 export default function SearchBar() {
     const [query, setQuery] = useState('')
@@ -14,7 +16,7 @@ export default function SearchBar() {
     const rootRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
     const {setHighlightIds} = useHighlight()
-
+    const session = useContext(SessionContext)
     const pathname = usePathname()
     const router = useRouter()
 
@@ -22,10 +24,23 @@ export default function SearchBar() {
         return Array.from(
             new Set(
                 hits
-                    .map(h => h.placeId || (h.type === 'place' ? h.id : null))
-                    .filter(Boolean),
+                    .map(h => h.placeId || (h.type === 'PLACE' ? h.id : null))
+                    .filter((id): id is string => Boolean(id)),
             ),
-        ) as string[]
+        )
+    }
+
+    const matchHrefForHit = (hit: SearchHit): string => {
+        switch (hit.type) {
+            case 'PLACE':
+                return `/places/${hit.id}`
+            case 'EVENT':
+                return `/events/${hit.id}`
+            case 'PERFORMER':
+                return `/performers/${hit.id}`
+            default:
+                return '/'
+        }
     }
 
     // outside click
@@ -62,18 +77,24 @@ export default function SearchBar() {
         }
 
         const t = setTimeout(async () => {
-            const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`)
-            const json = (await res.json()) as { hits: SearchHit[] }
+            try {
+                const hits = await fetchSearch(q, session)
 
-            setItems(json.hits)
+                setItems(hits)
 
-            const placeIds = extractPlaceIds(json.hits)
-            setHighlightIds(placeIds)
-            setOpen(true)
-        }, 200)
+                const placeIds = extractPlaceIds(hits)
+                setHighlightIds(placeIds)
+                setOpen(true)
+            } catch (e) {
+                console.error('Search failed', e)
+                setItems([])
+                setHighlightIds([])
+                setOpen(false)
+            }
+        }, 300)
 
         return () => clearTimeout(t)
-    }, [query])
+    }, [query, session, setHighlightIds])
 
     const clearAll = () => {
         setQuery('')
@@ -88,7 +109,7 @@ export default function SearchBar() {
     }
 
     const handlePrimaryClick = (hit: SearchHit) => {
-        const placeIdForFocus = hit.placeId || (hit.type === 'place' ? hit.id : undefined)
+        const placeIdForFocus = hit.placeId || (hit.type === 'PLACE' ? hit.id : undefined)
 
         if (placeIdForFocus) {
             if (pathname !== '/') {
@@ -97,15 +118,15 @@ export default function SearchBar() {
                 setHighlightIds([placeIdForFocus])
             }
         } else {
-            router.push(hit.href)
+            router.push(matchHrefForHit(hit))
         }
         dismissResults()
     }
 
-    const handleViewClick = () => {
+    const handleViewClick = (hit: SearchHit) => {
+        router.push(matchHrefForHit(hit))
         dismissResults()
     }
-
 
     const handleEnter = () => {
         const q = query.trim()
@@ -131,7 +152,8 @@ export default function SearchBar() {
     return (
         <div ref={rootRef} className="relative">
             {/* Input */}
-            <div className="flex items-center gap-2 rounded-full border border-white/20 dark:border-zinc/50 bg-white/90
+            <div
+                className="flex items-center gap-2 rounded-full border border-white/20 dark:border-zinc/50 bg-white/90
             dark:bg-zinc-900/70 px-3 py-2 shadow-sm dark:shadow-md backdrop-blur-md transition focus-within:ring-2
             focus-within:ring-violet-400/60 dark:focus-within:ring-violet-500/50"
             >
@@ -142,9 +164,11 @@ export default function SearchBar() {
                     disabled={!query.trim()}
                     className={`
                         p-0 m-0 bg-transparent border-0 inline-flex items-center justify-center h-4 w-4 
-                        ${query.trim()
-                        ? 'cursor-pointer text-zinc-700 dark:text-zinc-300'
-                        : 'cursor-default opacity-40 text-zinc-500 dark:text-zinc-600'}
+                        ${
+                        query.trim()
+                            ? 'cursor-pointer text-zinc-700 dark:text-zinc-300'
+                            : 'cursor-default opacity-40 text-zinc-500 dark:text-zinc-600'
+                    }
                     `}
                 >
                     <Search className="h-4 w-4" aria-hidden/>
@@ -212,7 +236,7 @@ export default function SearchBar() {
                                     key={hit.id}
                                     hit={hit}
                                     onPrimaryClick={() => handlePrimaryClick(hit)}
-                                    onViewClick={handleViewClick}
+                                    onViewClick={() => handleViewClick(hit)}
                                 />
                             ))}
                         </ul>
