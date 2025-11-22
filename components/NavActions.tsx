@@ -23,7 +23,7 @@ export default function NavActions({variant = 'desktop'}: { variant?: 'desktop' 
                 {session?.accessToken ? (
                     <>
                         <Link
-                            href="/404"
+                            href="/profile"
                             className="flex flex-col items-center justify-center gap-1 text-xs opacity-95"
                         >
                             <User className="h-5 w-5"/>
@@ -52,7 +52,7 @@ export default function NavActions({variant = 'desktop'}: { variant?: 'desktop' 
             {session?.accessToken ? (
                 <>
                     <Link
-                        href="/404"
+                        href="/profile"
                         className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm
                      text-white/95 hover:text-white hover:bg-white/10 transition"
                     >
