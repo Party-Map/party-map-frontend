@@ -5,17 +5,17 @@ import React, {createContext, useEffect, useState} from 'react'
 import {getJwtSession} from '@/lib/auth/client-session'
 
 // @ts-ignore
-export const SessionContext = createContext<JwtSession>()
+export const SessionContext = createContext<JwtSession | null>()
 
 export default function SessionProvider({
                                             children,
                                             jwtAccessToken,
                                         }: Readonly<{
     children: React.ReactNode
-    jwtAccessToken: string
+    jwtAccessToken?: string
 }>) {
-    const [session, setSession] = useState<JwtSession>(
-        new JwtSession(jwtAccessToken)
+    const [session, setSession] = useState<JwtSession | null>(
+        jwtAccessToken ? new JwtSession(jwtAccessToken) : null
     )
     const [runs, setRuns] = useState(0)
 
@@ -24,7 +24,7 @@ export default function SessionProvider({
             getJwtSession()
                 .then((newSession) => {
                     // Only update session if it has changed
-                    if (newSession.accessToken != session.accessToken) {
+                    if (newSession.accessToken != session?.accessToken) {
                         setSession(() => newSession)
                     }
                     setRuns(runs + 1)

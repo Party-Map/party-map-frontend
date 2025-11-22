@@ -10,20 +10,6 @@ export default function NavActions({variant = 'desktop'}: { variant?: 'desktop' 
 
     const session = useContext(SessionContext)
 
-    // TODO delete
-    // useEffect(() => {
-    //     console.log(session.accessToken)
-    //     fetch('http://localhost:8080/jwt-test', {
-    //         headers: {
-    //             'Authorization': 'Bearer ' + session.accessToken,
-    //         }
-    //     }).then(value => {
-    //         value.json().then(jsonValue => {
-    //             console.log(jsonValue)
-    //         })
-    //     })
-    // }, []);
-
     if (variant === 'mobile') {
         return (
             <div className="grid w-full grid-cols-2">
@@ -34,7 +20,7 @@ export default function NavActions({variant = 'desktop'}: { variant?: 'desktop' 
                     <Ticket className="h-5 w-5"/>
                     <span>Tickets</span>
                 </Link>
-                {session.accessToken ? (
+                {session?.accessToken ? (
                     <>
                         <Link
                             href="/404"
@@ -63,7 +49,7 @@ export default function NavActions({variant = 'desktop'}: { variant?: 'desktop' 
                 <Ticket className="h-4 w-4"/>
                 <span>Tickets</span>
             </Link>
-            {session.accessToken ? (
+            {session?.accessToken ? (
                 <>
                     <Link
                         href="/404"

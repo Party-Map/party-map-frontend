@@ -1,9 +1,13 @@
+"use client"
+
 import Link from 'next/link'
-import type {Event, EventType, Place} from '@/lib/types'
+import type {EventType, Place} from '@/lib/types'
 import {EVENT_TYPE_BADGE_CLASSES, EVENT_TYPE_LABELS} from '@/lib/types'
 import {ArrowRight, CalendarDays, X} from 'lucide-react'
-import {useEffect, useState} from 'react'
+import {useContext, useEffect, useState} from 'react'
 import {cn} from "@/lib/utils";
+import {fetchEventSByPlaceId} from "@/lib/api/events";
+import {SessionContext} from "@/lib/auth/session-provider";
 
 interface EventInfo {
     id: string;
@@ -26,18 +30,17 @@ function formatUpcoming(iso: string) {
 export default function PlacePopupCard({place, onClose}: { place: Place; onClose: () => void }) {
     const [eventInfo, setEventInfo] = useState<EventInfo | null>(null)
     const longTitle = !!(eventInfo?.title && eventInfo.title.length > 28)
+    const session = useContext(SessionContext)
 
     useEffect(() => {
         let active = true
         setEventInfo(null)
         ;(async () => {
             try {
-                const res = await fetch('/api/events?place=' + place.id)
-                if (!res.ok) return
-                const data = await res.json() as { events: Event[] }
-                if (!data.events?.length) return
+                const events = await fetchEventSByPlaceId(place.id, session)
+                if (!events?.length) return
                 const now = Date.now()
-                const sorted = data.events.slice().sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
+                const sorted = events.slice().sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
                 const upcoming = sorted.find(e => new Date(e.end).getTime() > now) || sorted[0]
                 if (!upcoming) return
                 if (active) {

@@ -1,5 +1,4 @@
 import MapClient from '@/app/map/MapClient'
-import {getDataSource} from '@/lib/dataSource'
 import TopBar from "@/components/TopBar";
 import BottomBar from "@/components/BottomBar";
 import Toast from "@/components/Toast";
@@ -9,7 +8,7 @@ import {getJwtSession} from "@/lib/auth/server-session";
 
 export default async function HomePage() {
     const session = await getJwtSession()
-    const ds = getDataSource()
+
     const places = await fetchPlaces(session)
     const events = await fetchEvents(session)
 

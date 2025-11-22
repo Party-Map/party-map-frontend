@@ -1,20 +1,20 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import {createRepositories, getDataSource} from '@/lib/dataSource'
 import {notFound} from 'next/navigation'
 import TopBar from "@/components/TopBar";
 import BottomBar from "@/components/BottomBar";
 import Toast from "@/components/Toast";
-
-export const revalidate = 60
+import {getJwtSession} from "@/lib/auth/server-session";
+import {fetchPerformer} from "@/lib/api/performers";
+import {fetchEventsByPerformerId} from "@/lib/api/events";
 
 export default async function PerformerPage({params}: { params: Promise<{ id: string }> }) {
     const {id} = await params
-    const ds = getDataSource()
-    const {performers, events} = createRepositories(ds)
-    const performer = await performers.byId(id)
+    const session = await getJwtSession()
+
+    const performer = await fetchPerformer(id, session)
     if (!performer) return notFound()
-    const performerEvents = await events.byPerformerId(performer.id)
+    const performerEvents = await fetchEventsByPerformerId(id, session)
 
     return (
         <>

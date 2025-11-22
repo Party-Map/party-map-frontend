@@ -13,3 +13,7 @@ export async function fetchEvent(id: string, session: JwtSession | null): Promis
 export async function fetchEventSByPlaceId(id: string, session: JwtSession | null): Promise<Event[]> {
     return apiGet<Event[]>(`/events?placeId=${id}`, session)
 }
+
+export async function fetchEventsByPerformerId(id: string, session: JwtSession | null): Promise<Event[]> {
+    return apiGet<Event[]>(`/events?performerId=${id}`, session)
+}
