@@ -12,10 +12,6 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# Env
-.env*
-!.env.example
-
 # Misc
 Dockerfile
 docker-compose.yml

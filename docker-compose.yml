@@ -1,25 +1,7 @@
 services:
-  app:
-    image: ghcr.io/ventt/partymap:${IMAGE_TAG:-latest}
-    env_file:
-      - .env               # your app secrets/vars (create on server, not committed)
-    environment:
-      - PORT=8080
-    expose:
-      - "8080"
-
-  caddy:
-    image: caddy:2
+  nextjs:
+    build:
+      context: .
+    restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - app
-
-volumes:
-  caddy_data:
-  caddy_config:
+      - "3000:3000"

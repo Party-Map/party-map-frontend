@@ -1,37 +1,50 @@
-# ---- Base builder image ----
-FROM node:20-alpine AS deps
-WORKDIR /app
-RUN apk add --no-cache libc6-compat
-# Copy package manifests
-COPY package.json pnpm-lock.yaml* ./
-# Enable corepack and install deps (use lockfile if present)
-RUN corepack enable && pnpm install --frozen-lockfile
+# Multi-stage Dockerfile for a Next.js application using pnpm
+FROM node:lts-alpine AS base
 
-# ---- Build stage ----
-FROM node:20-alpine AS build
+# Install corepack to manage pnpm
+RUN apk --no-cache add curl
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+COPY . /app
 WORKDIR /app
-RUN apk add --no-cache libc6-compat
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-RUN corepack enable && pnpm run build
 
-# Prune dev dependencies to reduce final image size
-RUN corepack enable && pnpm prune --prod
+# Install production dependencies only
+FROM base AS prod-deps
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
-# ---- Production image ----
-FROM node:20-alpine AS runner
+# Build the application
+FROM base AS build
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm run build
+
+# Final stage: production image
+FROM base
+
 WORKDIR /app
+
+# Create a non-root user to run the application
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+
+USER nextjs
+
+# Copy production dependencies from the prod-deps stage
+COPY --from=prod-deps /app/node_modules /app/node_modules
+
+# Copy only the necessary files for running the Next.js application
+COPY --from=build --chown=nextjs:nodejs /app/.next/standalone /app/
+COPY --from=build --chown=nextjs:nodejs /app/.next/static /app/.next/static
+
+# Add public static files
+ADD --chown=nextjs:nodejs public /app/public
+
 ENV NODE_ENV=production
-RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
 
-# Copy production node_modules and standalone output
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/.next/standalone ./
-COPY --from=build /app/.next/static ./.next/static
-COPY --from=build /app/public ./public
-COPY --from=build /app/next.config.mjs ./next.config.mjs
+EXPOSE 3000
 
 ENV PORT=3000
-EXPOSE 3000
-USER nextjs
-CMD ["node", "server.js"]
+
+HEALTHCHECK --interval=5s --timeout=3s --retries=3  CMD curl -f http://localhost:3000/health || exit 1
+
+CMD HOSTNAME="0.0.0.0" node server.js
