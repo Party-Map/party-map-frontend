@@ -51,11 +51,6 @@ export type PlaceUpcomingEvent = {
     start: string
     kind: EventType
 }
-// TODO: remove and use GeoPoint
-export type LatLng = {
-    lat: number;
-    lng: number
-}
 
 export type PopupRect = {
     left: number;
@@ -71,7 +66,6 @@ export type TagDisplayPopup = {
     isKind: boolean
 }
 
-// TODO: event types will later come from backend, with color
 export type EventType = 'DISCO' | 'TECHNO' | 'FESTIVAL' | 'JAZZ' | 'ALTER' | 'HOME' | 'PUB'
 
 export const EVENT_TYPE_BADGE_CLASSES: Record<EventType, string> = {

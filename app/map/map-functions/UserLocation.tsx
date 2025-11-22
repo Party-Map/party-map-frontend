@@ -1,11 +1,11 @@
 import {useEffect, useState} from 'react'
 import {Circle, Marker, useMap} from 'react-leaflet'
 import L, {LatLngTuple} from 'leaflet'
-import type {LatLng} from '@/lib/types'
+import type {GeoPoint} from '@/lib/types'
 
 export function UserLocation({auto = true, onPosition}: {
     auto?: boolean
-    onPosition?: (pos: LatLng) => void
+    onPosition?: (pos: GeoPoint) => void
 }) {
     const map = useMap()
     const [pos, setPos] = useState<LatLngTuple | null>(null)
@@ -24,7 +24,7 @@ export function UserLocation({auto = true, onPosition}: {
             const p: LatLngTuple = [g.coords.latitude, g.coords.longitude]
             setPos(p)
             setAccuracy(g.coords.accuracy ?? null)
-            onPosition?.({lat: p[0], lng: p[1]})
+            onPosition?.({latitude: p[0], longitude: p[1]})
         }
 
         navigator.geolocation.getCurrentPosition(
