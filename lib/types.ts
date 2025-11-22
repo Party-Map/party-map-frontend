@@ -44,6 +44,13 @@ export type Event = {
     kind: EventType
     links?: Link[]
 }
+export type PlaceUpcomingEvent = {
+    id: ID
+    title: string
+    image: string | null
+    start: string
+    kind: EventType
+}
 // TODO: remove and use GeoPoint
 export type LatLng = {
     lat: number;
@@ -57,27 +64,34 @@ export type PopupRect = {
     bottom: number
 }
 
+export type TagDisplayPopup = {
+    key: string
+    label: string
+    kind?: EventType
+    isKind: boolean
+}
+
 // TODO: event types will later come from backend, with color
-export type EventType = 'disco' | 'techno' | 'festival' | 'jazz' | 'alter' | 'home' | 'pub'
+export type EventType = 'DISCO' | 'TECHNO' | 'FESTIVAL' | 'JAZZ' | 'ALTER' | 'HOME' | 'PUB'
 
 export const EVENT_TYPE_BADGE_CLASSES: Record<EventType, string> = {
-    disco: 'bg-pink-500 !text-white',
-    techno: 'bg-indigo-500 !text-white',
-    festival: 'bg-emerald-500 !text-white',
-    jazz: 'bg-amber-500 !text-white',
-    alter: 'bg-fuchsia-500 !text-white',
-    home: 'bg-cyan-500 !text-white',
-    pub: 'bg-amber-900 !text-amber-50',
+    DISCO: 'bg-pink-500 !text-white',
+    TECHNO: 'bg-indigo-500 !text-white',
+    FESTIVAL: 'bg-emerald-500 !text-white',
+    JAZZ: 'bg-amber-500 !text-white',
+    ALTER: 'bg-fuchsia-500 !text-white',
+    HOME: 'bg-cyan-500 !text-white',
+    PUB: 'bg-amber-900 !text-amber-50',
 }
 
 export const EVENT_TYPE_LABELS: Record<EventType, string> = {
-    disco: 'Disco',
-    techno: 'Techno',
-    festival: 'Festival',
-    jazz: 'Jazz',
-    alter: 'Alter',
-    home: 'House Party',
-    pub: 'Pub',
+    DISCO: 'Disco',
+    TECHNO: 'Techno',
+    FESTIVAL: 'Festival',
+    JAZZ: 'Jazz',
+    ALTER: 'Alter',
+    HOME: 'House Party',
+    PUB: 'Pub',
 }
 
 export type SearchHit = {

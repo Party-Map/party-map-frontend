@@ -186,7 +186,7 @@ export const events: Event[] = [
         image: 'https://images.unsplash.com/photo-1540040582279-4d6cdf2d1b8b?q=80&w=1280&auto=format&fit=crop',
         performerIds: ['a1'],
         price: '€15',
-        kind: 'disco',
+        kind: 'DISCO',
     },
     {
         id: 'e2',
@@ -198,7 +198,7 @@ export const events: Event[] = [
         image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1280&auto=format&fit=crop',
         performerIds: ['a3'],
         price: 'Free',
-        kind: 'alter',
+        kind: 'ALTER',
     },
     {
         id: 'e3',
@@ -210,7 +210,7 @@ export const events: Event[] = [
         image: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?q=80&w=1280&auto=format&fit=crop',
         performerIds: ['a1', 'a2'],
         price: '€20',
-        kind: 'techno',
+        kind: 'TECHNO',
     },
 
     // new — Lake Balaton
@@ -224,7 +224,7 @@ export const events: Event[] = [
         image: 'https://images.unsplash.com/photo-1515706886582-54c73c5eaf41?q=80&w=1280&auto=format&fit=crop',
         performerIds: ['a4'],
         price: 'HUF 4,500',
-        kind: 'festival',
+        kind: 'FESTIVAL',
     },
     {
         id: 'e5',
@@ -236,7 +236,7 @@ export const events: Event[] = [
         image: 'https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=1280&auto=format&fit=crop',
         performerIds: ['a1', 'a4'],
         price: 'HUF 3,900',
-        kind: 'disco',
+        kind: 'DISCO',
     },
     {
         id: 'e6',
@@ -248,7 +248,7 @@ export const events: Event[] = [
         image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1280&auto=format&fit=crop',
         performerIds: ['a3'],
         price: 'HUF 5,200',
-        kind: 'techno',
+        kind: 'TECHNO',
     },
 
     // new — Székesfehérvár
@@ -262,7 +262,7 @@ export const events: Event[] = [
         image: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?q=80&w=1280&auto=format&fit=crop',
         performerIds: ['a5'],
         price: 'HUF 3,500',
-        kind: 'alter',
+        kind: 'ALTER',
     },
 
     // new — Szeged
@@ -276,7 +276,7 @@ export const events: Event[] = [
         image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1280&auto=format&fit=crop',
         performerIds: ['a6'],
         price: 'HUF 4,200',
-        kind: 'jazz',
+        kind: 'JAZZ',
     },
     // New test events (home party kind)
     {
@@ -289,7 +289,7 @@ export const events: Event[] = [
         image: 'https://images.unsplash.com/photo-1646184466560-f81b1e495604?auto=format&fit=crop&w=1280&q=80', // updated basement image
         performerIds: [],
         price: 'Free',
-        kind: 'home', // new home party event type
+        kind: 'HOME', // new home party event type
     },
     {
         id: 'e15',
@@ -301,7 +301,7 @@ export const events: Event[] = [
         image: 'https://images.unsplash.com/photo-1646184466560-f81b1e495604?auto=format&fit=crop&w=1280&q=80', // updated basement image
         performerIds: [],
         price: 'Free',
-        kind: 'home', // new home party event type
+        kind: 'HOME', // new home party event type
     },
     {
         id: 'e10',
@@ -313,7 +313,7 @@ export const events: Event[] = [
         image: 'https://images.unsplash.com/photo-1667992403195-d2241a40ca2d?auto=format&fit=crop&w=1280&q=80', // fixed terrace image (was broken ID)
         performerIds: [],
         price: 'Free',
-        kind: 'home', // new home party event type
+        kind: 'HOME', // new home party event type
     },
     // New pub event
     {
@@ -326,6 +326,6 @@ export const events: Event[] = [
         image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1280&q=80',
         performerIds: [],
         price: 'Free',
-        kind: 'pub',
+        kind: 'PUB',
     },
 ]

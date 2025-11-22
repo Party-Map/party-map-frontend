@@ -1,65 +1,67 @@
 "use client"
 
 import Link from 'next/link'
-import type {EventType, Place} from '@/lib/types'
+import type {EventType, Place, PlaceUpcomingEvent, TagDisplayPopup} from '@/lib/types'
 import {EVENT_TYPE_BADGE_CLASSES, EVENT_TYPE_LABELS} from '@/lib/types'
 import {ArrowRight, CalendarDays, X} from 'lucide-react'
-import {useContext, useEffect, useState} from 'react'
 import {cn} from "@/lib/utils";
-import {fetchEventSByPlaceId} from "@/lib/api/events";
-import {SessionContext} from "@/lib/auth/session-provider";
-
-interface EventInfo {
-    id: string;
-    title: string;
-    image: string;
-    startIso: string;
-    startLabel: string;
-    kind?: EventType
-}
 
 function formatUpcoming(iso: string) {
-    const d = new Date(iso)
+    const date = new Date(iso)
     const now = new Date()
-    const sameDay = d.toDateString() === now.toDateString()
-    if (sameDay) return d.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
-    const inYear = d.getFullYear() === now.getFullYear()
-    return d.toLocaleDateString([], {month: 'short', day: 'numeric', ...(inYear ? {} : {year: 'numeric'})})
+    const sameDay = date.toDateString() === now.toDateString()
+
+    if (sameDay) return date.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+    })
+
+    const inYear = date.getFullYear() === now.getFullYear()
+    return date.toLocaleDateString([], {
+        month: 'short',
+        day: 'numeric',
+        ...(inYear ? {} : {
+            year: 'numeric'
+        })
+    })
 }
 
-export default function PlacePopupCard({place, onClose}: { place: Place; onClose: () => void }) {
-    const [eventInfo, setEventInfo] = useState<EventInfo | null>(null)
-    const longTitle = !!(eventInfo?.title && eventInfo.title.length > 28)
-    const session = useContext(SessionContext)
+export default function PlacePopupCard({place, upcomingEvent, onClose}: {
+    place: Place
+    upcomingEvent?: PlaceUpcomingEvent | null
+    onClose: () => void
+}) {
+    const title = upcomingEvent ? upcomingEvent.title : place.name
+    const longTitle = title.length > 28
+    const image = upcomingEvent?.image || place.image
+    const startLabel = upcomingEvent ? formatUpcoming(upcomingEvent.start) : null
 
-    useEffect(() => {
-        let active = true
-        setEventInfo(null)
-        ;(async () => {
-            try {
-                const events = await fetchEventSByPlaceId(place.id, session)
-                if (!events?.length) return
-                const now = Date.now()
-                const sorted = events.slice().sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
-                const upcoming = sorted.find(e => new Date(e.end).getTime() > now) || sorted[0]
-                if (!upcoming) return
-                if (active) {
-                    setEventInfo({
-                        id: upcoming.id,
-                        title: upcoming.title,
-                        image: upcoming.image || place.image,
-                        startIso: upcoming.start,
-                        startLabel: formatUpcoming(upcoming.start),
-                        kind: upcoming.kind,
-                    })
-                }
-            } catch {
-            }
-        })()
-        return () => {
-            active = false
+    const displayTags: TagDisplayPopup[] = (() => {
+        const tags: TagDisplayPopup[] = []
+
+        if (upcomingEvent?.kind) {
+            tags.push({
+                key: `kind-${upcomingEvent.kind}`,
+                label: upcomingEvent.kind,
+                kind: upcomingEvent.kind,
+                isKind: true,
+            })
         }
-    }, [place.id, place.image])
+
+        const kindLower = upcomingEvent?.kind?.toLowerCase()
+        const placeTagChips = place.tags
+            .filter(t => !kindLower || t.toLowerCase() !== kindLower)
+            .slice(0, 3)
+            .map<TagDisplayPopup>(t => ({
+                key: t,
+                label: t,
+                kind: undefined,
+                isKind: false,
+            }))
+
+        tags.push(...placeTagChips)
+        return tags
+    })()
 
     return (
         <div
@@ -67,24 +69,24 @@ export default function PlacePopupCard({place, onClose}: { place: Place; onClose
                  ring-1 ring-white/10 backdrop-blur-md`}
         >
             <Link
-                href={eventInfo ? `/events/${eventInfo.id}` : `/places/${place.id}`}
+                href={upcomingEvent ? `/events/${upcomingEvent.id}` : `/places/${place.id}`}
                 className="relative h-28 bg-cover bg-center block focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60
                    transition-transform duration-300 ease-out hover:scale-[1.04] will-change-transform
                    hover:brightness-105 overflow-hidden"
-                style={{backgroundImage: `url(${(eventInfo?.image) || place.image})`}}
-                aria-label={`Open ${eventInfo ? 'event ' + eventInfo.title : 'place ' + place.name}`}
-                title={eventInfo ? `View event: ${eventInfo.title}` : `View place: ${place.name}`}
+                style={{backgroundImage: `url(${image}`}}
+                aria-label={`Open ${upcomingEvent ? 'event ' + title : 'place ' + place.name}`}
+                title={upcomingEvent ? `View event: ${title}` : `View place: ${place.name}`}
             >
-                <span className="sr-only">{eventInfo ? 'View event' : 'View place'}</span>
+                <span className="sr-only">{upcomingEvent ? 'View event' : 'View place'}</span>
                 <span
                     aria-hidden="true"
                     className="pointer-events-none absolute left-2 top-2 inline-flex items-center gap-1.5 rounded-full
                      bg-black/45 dark:bg-black/55 backdrop-blur-sm px-2.5 py-1 text-[10px] font-medium tracking-wide
                      text-white ring-1 ring-white/15 shadow-sm select-none"
                 >
-          {eventInfo ? 'View event' : 'View place'}
+                  {upcomingEvent ? 'View event' : 'View place'}
                     <ArrowRight className="h-3 w-3 opacity-80"/>
-        </span>
+                </span>
                 <span
                     aria-hidden
                     className="pointer-events-none absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300
@@ -94,33 +96,33 @@ export default function PlacePopupCard({place, onClose}: { place: Place; onClose
                 {longTitle ? (
                     <div className="flex items-start gap-2">
                         <div className="flex-1 min-w-0">
-              <span
-                  className="block text-base leading-snug font-bold tracking-tight text-slate-900 dark:text-white drop-shadow-sm pm-line-clamp-2">
-                {eventInfo ? eventInfo.title : place.name}
-              </span>
+                          <span
+                              className="block text-base leading-snug font-bold tracking-tight text-slate-900 dark:text-white drop-shadow-sm pm-line-clamp-2">
+                            {upcomingEvent ? upcomingEvent.title : place.name}
+                          </span>
                         </div>
-                        {eventInfo && (
+                        {upcomingEvent && (
                             <span className="flex-shrink-0 self-start whitespace-nowrap inline-flex items-center gap-1 rounded-full
-              bg-violet-950/60 dark:bg-violet-800/40 text-violet-200 px-2 py-0.5 text-[10px] ring-1 ring-violet-500/30"
+                            bg-violet-950/60 dark:bg-violet-800/40 text-violet-200 px-2 py-0.5 text-[10px] ring-1 ring-violet-500/30"
                             >
-                <CalendarDays className="h-3 w-3"/>{eventInfo.startLabel}
-              </span>
+                            <CalendarDays className="h-3 w-3"/>{startLabel}
+                          </span>
                         )}
                     </div>
                 ) : (
                     <div className="relative">
-                        {eventInfo && (
+                        {upcomingEvent && (
                             <span className="absolute right-0 top-0 whitespace-nowrap inline-flex items-center gap-1 rounded-full
-              bg-violet-950/60 dark:bg-violet-800/40 text-violet-200 px-2 py-0.5 text-[10px] ring-1 ring-violet-500/30"
+                          bg-violet-950/60 dark:bg-violet-800/40 text-violet-200 px-2 py-0.5 text-[10px] ring-1 ring-violet-500/30"
                             >
-                <CalendarDays className="h-3 w-3"/>{eventInfo.startLabel}
-              </span>
+                            <CalendarDays className="h-3 w-3"/>{startLabel}
+                          </span>
                         )}
                         <span className="block pr-20 text-base leading-snug font-bold tracking-tight text-slate-900
-            dark:text-white drop-shadow-sm whitespace-nowrap"
+                        dark:text-white drop-shadow-sm whitespace-nowrap"
                         >
-              {eventInfo ? eventInfo.title : place.name}
-            </span>
+                          {upcomingEvent ? upcomingEvent.title : place.name}
+                        </span>
                     </div>
                 )}
                 <div className="mt-1 text-xs text-zinc-600 dark:text-zinc-300 flex items-center gap-2">
@@ -136,27 +138,18 @@ export default function PlacePopupCard({place, onClose}: { place: Place; onClose
                 </div>
                 <div className="mt-2 flex items-center">
                     <div className="flex flex-wrap items-center gap-1 flex-1 pr-2">
-                        {[
-                            eventInfo?.kind ? {
-                                key: `kind-${eventInfo.kind}`,
-                                label: eventInfo.kind,
-                                kind: eventInfo.kind,
-                                isKind: true
-                            } : null,
-                            ...place.tags
-                                .filter(t => !eventInfo?.kind || t.toLowerCase() !== eventInfo.kind.toLowerCase())
-                                .slice(0, 3)
-                                .map(t => ({key: t, label: t, kind: undefined, isKind: false}))
-                        ].filter(Boolean).map((t: any) => {
-                            const common = 'rounded-full px-2 py-0.5 text-[10px] font-medium ' +
-                                'transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500/50';
-                            if (t.isKind) {
-                                const rawKind = t.label as EventType
+                        {displayTags.map(tag => {
+                            const common =
+                                'rounded-full px-2 py-0.5 text-[10px] font-medium ' +
+                                'transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500/50'
+
+                            if (tag.isKind) {
+                                const rawKind = tag.label as EventType
 
                                 return (
                                     <Link
-                                        key={t.key}
-                                        href={`/tags/${encodeURIComponent(rawKind)}`}
+                                        key={tag.key}
+                                        href={`/tags/${encodeURIComponent(rawKind.toLowerCase())}`}
                                         className={cn(
                                             "px-2.5 py-0.5 text-[11px] font-semibold rounded-full",
                                             EVENT_TYPE_BADGE_CLASSES[rawKind],
@@ -170,15 +163,15 @@ export default function PlacePopupCard({place, onClose}: { place: Place; onClose
 
                             return (
                                 <Link
-                                    key={t.key}
-                                    href={`/tags/${encodeURIComponent(t.label)}`}
+                                    key={tag.key}
+                                    href={`/tags/${encodeURIComponent(tag.label.toLowerCase())}`}
                                     className={cn(
                                         "bg-violet-100/70 text-violet-800 dark:bg-violet-900/40 dark:text-violet-200 " +
                                         "hover:bg-violet-200/70 dark:hover:bg-violet-800/60",
                                         common
                                     )}
                                 >
-                                    {t.label}
+                                    {tag.label}
                                 </Link>
                             )
                         })}
@@ -192,9 +185,9 @@ export default function PlacePopupCard({place, onClose}: { place: Place; onClose
                        focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF2800]/70
                        transition-colors"
                     >
-            <span aria-hidden className="absolute inset-0 rounded-full bg-[#FF2800]/35 dark:bg-[#FF2800]/40 opacity-0
-            group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300"
-            />
+                        <span aria-hidden className="absolute inset-0 rounded-full bg-[#FF2800]/35 dark:bg-[#FF2800]/40 opacity-0
+                        group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300"
+                        />
                         <X className="h-3.5 w-3.5 relative z-[1] transition-colors group-hover:text-[#ff3d19] dark:group-hover:text-[#ff6a47]"/>
                     </button>
                 </div>

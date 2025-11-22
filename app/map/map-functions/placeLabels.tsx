@@ -201,15 +201,15 @@ export function PlaceLabels({
                             aria-label={`Open ${upcoming.title}`}
                             disabled={isActive}
                         >
-              <span
-                  className="block mx-auto text-[11px] font-semibold leading-tight whitespace-nowrap text-slate-800 dark:text-slate-100 drop-shadow-sm [text-shadow:0_1px_2px_rgba(0,0,0,0.55)] group-hover:text-pink-600 dark:group-hover:text-pink-300">
-                {upcoming.title}
-              </span>
+                            <span
+                                className="block mx-auto text-[11px] font-semibold leading-tight whitespace-nowrap text-slate-800 dark:text-slate-100 drop-shadow-sm [text-shadow:0_1px_2px_rgba(0,0,0,0.55)] group-hover:text-pink-600 dark:group-hover:text-pink-300">
+                                {upcoming.title}
+                            </span>
                             <div className="mt-0.5 flex items-center gap-1 justify-center">
-                <span
-                    className="text-[9px] uppercase tracking-wide font-medium text-slate-600 dark:text-slate-400 [text-shadow:0_1px_1px_rgba(0,0,0,0.4)]">
-                  {p.name}
-                </span>
+                            <span
+                                className="text-[9px] uppercase tracking-wide font-medium text-slate-600 dark:text-slate-400 [text-shadow:0_1px_1px_rgba(0,0,0,0.4)]">
+                              {p.name}
+                            </span>
                                 <span
                                     data-kind={upcoming.kind}
                                     className={cn(
@@ -218,8 +218,8 @@ export function PlaceLabels({
                                         EVENT_TYPE_BADGE_CLASSES[upcoming.kind]
                                     )}
                                 >
-                  {EVENT_TYPE_LABELS[upcoming.kind] || upcoming.kind}
-                </span>
+                                    {EVENT_TYPE_LABELS[upcoming.kind] || upcoming.kind}
+                                </span>
                             </div>
                         </button>
                     </div>

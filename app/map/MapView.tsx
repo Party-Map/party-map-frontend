@@ -2,7 +2,7 @@ import {MapContainer, Marker, Popup, TileLayer, useMapEvent} from 'react-leaflet
 import L, {LatLngTuple} from 'leaflet'
 import {useMemo} from 'react'
 
-import type {Event, LatLng, Place} from '@/lib/types'
+import type {Event, LatLng, Place, PlaceUpcomingEvent} from '@/lib/types'
 import PlacePopupCard from '../../components/PlacePopupCard'
 import {FitToHighlights} from "@/app/map/map-functions/FitToHighLights";
 import {UserLocation} from "@/app/map/map-functions/UserLocation";
@@ -44,6 +44,7 @@ interface Props {
     isDark?: boolean
     highlightIds?: string[]
     openPopupPlaceId?: string | null
+    openPopupUpcomingEvent?: PlaceUpcomingEvent | null
     onOpenPlace?: (id: string) => void
     onCloseAllPlaces?: () => void
     onUserPosition?: (pos: LatLng) => void
@@ -55,6 +56,7 @@ export default function MapView({
                                     isDark = false,
                                     highlightIds,
                                     openPopupPlaceId,
+                                    openPopupUpcomingEvent,
                                     onOpenPlace,
                                     onCloseAllPlaces,
                                     onUserPosition,
@@ -142,6 +144,7 @@ export default function MapView({
                         >
                             <PlacePopupCard
                                 place={p}
+                                upcomingEvent={openPopupUpcomingEvent}
                                 onClose={() => onCloseAllPlaces?.()}
                             />
                         </Popup>
