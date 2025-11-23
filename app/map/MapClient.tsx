@@ -1,29 +1,25 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import {useContext, useEffect, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 
-import type {Event, Place, PlaceUpcomingEvent} from '@/lib/types'
+import type {Place, UpcomingEventByPlace} from '@/lib/types'
 import {useTheme} from '@/components/ThemeProvider'
 import {useHighlight} from "@/components/HighlightContextProvider";
 import {useSearchParams} from "next/navigation";
-import {fetchUpcomingEventByPlaceId} from "@/lib/api/places";
-import {SessionContext} from "@/lib/auth/session-provider";
 
 const MapView = dynamic(() => import('@/app/map/MapView'), {ssr: false})
 
-export default function MapClient({places, events}: {
+export default function MapClient({places, upcomingMap}: {
     places: Place[];
-    events: Event[]
+    upcomingMap: Map<string, UpcomingEventByPlace>
 }) {
-    const session = useContext(SessionContext)
     const focusParam = useSearchParams()
     const focus = focusParam.get("focus")
     const {theme} = useTheme()
 
     const {highlightIds, setHighlightIds} = useHighlight()
     const [openPopupId, setOpenPopupId] = useState<string | null>(null)
-    const [openPopupUpcomingEvent, setOpenPopupUpcomingEvent] = useState<PlaceUpcomingEvent | null>(null)
 
     useEffect(() => {
         if (focus) {
@@ -31,32 +27,17 @@ export default function MapClient({places, events}: {
         }
     }, [focus, setHighlightIds])
 
+    const firstRender = useRef(true)
     useEffect(() => {
-        setOpenPopupId(null)
-        setOpenPopupUpcomingEvent(null)
-    }, [highlightIds])
-
-    useEffect(() => {
-        if (!openPopupId) {
-            setOpenPopupUpcomingEvent(null)
+        if (firstRender.current) {
+            firstRender.current = false
             return
         }
+        // Do not run on first render
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setOpenPopupId(null)
+    }, [highlightIds])
 
-        let active = true
-        ;(async () => {
-            try {
-                const upcoming = await fetchUpcomingEventByPlaceId(openPopupId, session)
-                if (!active) return
-                setOpenPopupUpcomingEvent(upcoming)
-            } catch {
-                if (active) setOpenPopupUpcomingEvent(null)
-            }
-        })()
-
-        return () => {
-            active = false
-        }
-    }, [openPopupId])
 
     const handleOpenPlace = (id: string) => {
         setOpenPopupId(prev => (prev === id ? null : id))
@@ -64,19 +45,15 @@ export default function MapClient({places, events}: {
 
     const handleCloseAllPlaces = () => {
         setOpenPopupId(null)
-        setOpenPopupUpcomingEvent(null)
     }
-
-    const openPlacePopupId = openPopupId ?? null
 
     return (
         <MapView
             places={places}
-            events={events}
+            upcomingMap={upcomingMap}
             isDark={theme === 'dark'}
             highlightIds={highlightIds}
-            openPopupPlaceId={openPlacePopupId}
-            openPopupUpcomingEvent={openPopupUpcomingEvent}
+            openPopupPlaceId={openPopupId}
             onOpenPlace={handleOpenPlace}
             onCloseAllPlaces={handleCloseAllPlaces}
         />

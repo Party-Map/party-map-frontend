@@ -1,4 +1,4 @@
-import {Place, PlaceUpcomingEvent} from "@/lib/types";
+import {Place, UpcomingEventByPlace} from "@/lib/types";
 import {apiGet} from "@/lib/api/api"
 import type {JwtSession} from "@/lib/auth/jwt-session";
 
@@ -15,5 +15,5 @@ export async function fetchPlaceByEventId(id: string, session: JwtSession | null
 }
 
 export async function fetchUpcomingEventByPlaceId(placeId: string, session: JwtSession | null) {
-    return await apiGet<PlaceUpcomingEvent>(`/places/${placeId}/upcoming-event`, session)
+    return await apiGet<UpcomingEventByPlace>(`/places/${placeId}/upcoming-event`, session)
 }

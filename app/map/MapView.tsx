@@ -1,8 +1,7 @@
 import {MapContainer, Marker, Popup, TileLayer, useMapEvent} from 'react-leaflet'
 import L, {LatLngTuple} from 'leaflet'
-import {useMemo} from 'react'
 
-import type {Event, GeoPoint, Place, PlaceUpcomingEvent} from '@/lib/types'
+import type {GeoPoint, Place, UpcomingEventByPlace} from '@/lib/types'
 import PlacePopupCard from '../../components/PlacePopupCard'
 import {FitToHighlights} from "@/app/map/map-functions/FitToHighLights";
 import {UserLocation} from "@/app/map/map-functions/UserLocation";
@@ -40,11 +39,10 @@ function MapBackgroundCloser({onClose}: { onClose: () => void }) {
 
 interface Props {
     places: Place[]
-    events: Event[]
+    upcomingMap: Map<string, UpcomingEventByPlace>
     isDark?: boolean
     highlightIds?: string[]
     openPopupPlaceId?: string | null
-    openPopupUpcomingEvent?: PlaceUpcomingEvent | null
     onOpenPlace?: (id: string) => void
     onCloseAllPlaces?: () => void
     onUserPosition?: (pos: GeoPoint) => void
@@ -52,23 +50,14 @@ interface Props {
 
 export default function MapView({
                                     places,
-                                    events,
+                                    upcomingMap,
                                     isDark = false,
                                     highlightIds,
                                     openPopupPlaceId,
-                                    openPopupUpcomingEvent,
                                     onOpenPlace,
                                     onCloseAllPlaces,
                                     onUserPosition,
                                 }: Props) {
-
-    const eventsByPlace = useMemo(() => {
-        const map = new Map<string, Event[]>()
-        for (const e of events) {
-            map.set(e.placeId, [...(map.get(e.placeId) || []), e])
-        }
-        return map
-    }, [events])
 
     const openPopupId = openPopupPlaceId ?? null
 
@@ -94,7 +83,7 @@ export default function MapView({
 
                 <PlaceLabels
                     places={places}
-                    eventsByPlace={eventsByPlace}
+                    upcomingMap={upcomingMap}
                     highlightIds={highlightIds}
                     openPopupId={openPopupId}
                     onOpen={id => onOpenPlace?.(id)}
@@ -128,6 +117,7 @@ export default function MapView({
                 {(() => {
                     const p = openPopupId ? places.find(x => x.id === openPopupId) : undefined
                     if (!p) return null
+                    const upcomingEvent = openPopupId ? upcomingMap.get(p.id) : null
                     return (
                         <Popup
                             key={`popup-${p.id}`}
@@ -144,7 +134,7 @@ export default function MapView({
                         >
                             <PlacePopupCard
                                 place={p}
-                                upcomingEvent={openPopupUpcomingEvent}
+                                upcomingEvent={upcomingEvent}
                                 onClose={() => onCloseAllPlaces?.()}
                             />
                         </Popup>

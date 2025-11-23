@@ -1,7 +1,7 @@
 "use client"
 
 import Link from 'next/link'
-import type {EventType, Place, PlaceUpcomingEvent, TagDisplayPopup} from '@/lib/types'
+import type {EventType, Place, TagDisplayPopup, UpcomingEventByPlace} from '@/lib/types'
 import {EVENT_TYPE_BADGE_CLASSES, EVENT_TYPE_LABELS} from '@/lib/types'
 import {ArrowRight, CalendarDays, X} from 'lucide-react'
 import {cn} from "@/lib/utils";
@@ -28,7 +28,7 @@ function formatUpcoming(iso: string) {
 
 export default function PlacePopupCard({place, upcomingEvent, onClose}: {
     place: Place
-    upcomingEvent?: PlaceUpcomingEvent | null
+    upcomingEvent?: UpcomingEventByPlace | null
     onClose: () => void
 }) {
     const title = upcomingEvent ? upcomingEvent.title : place.name
@@ -69,7 +69,7 @@ export default function PlacePopupCard({place, upcomingEvent, onClose}: {
                  ring-1 ring-white/10 backdrop-blur-md`}
         >
             <Link
-                href={upcomingEvent ? `/events/${upcomingEvent.id}` : `/places/${place.id}`}
+                href={upcomingEvent ? `/events/${upcomingEvent.eventId}` : `/places/${place.id}`}
                 className="relative h-28 bg-cover bg-center block focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60
                    transition-transform duration-300 ease-out hover:scale-[1.04] will-change-transform
                    hover:brightness-105 overflow-hidden"

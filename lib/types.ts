@@ -46,8 +46,9 @@ export type Event = {
     kind: EventType
     links?: Link[]
 }
-export type PlaceUpcomingEvent = {
-    id: ID
+export type UpcomingEventByPlace = {
+    placeId: ID
+    eventId: ID
     title: string
     image: string | null
     start: string

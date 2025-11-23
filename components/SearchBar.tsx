@@ -95,7 +95,9 @@ export default function SearchBar() {
         }, 300)
 
         return () => clearTimeout(t)
-    }, [query, session, setHighlightIds])
+        // Don't list session as dep for this effect
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [query, setHighlightIds])
 
     const clearAll = () => {
         setQuery('')
@@ -149,14 +151,9 @@ export default function SearchBar() {
         }
 
         setHighlightIds(placeIds)
-
-        if (pathname !== '/') {
-            const params = new URLSearchParams()
-            const q = query.trim()
-            if (q) params.set('q', q)
-
-            router.push('/?' + params.toString())
-        }
+        const params = new URLSearchParams()
+        params.set('q', q)
+        router.push('/?' + params.toString())
 
         dismissResults()
     }
