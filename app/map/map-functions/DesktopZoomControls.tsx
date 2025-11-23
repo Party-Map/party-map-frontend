@@ -28,7 +28,6 @@ export function DesktopZoomControls({
             L.DomEvent.disableClickPropagation(el)
             L.DomEvent.disableScrollPropagation(el)
         } catch {
-            // ignore
         }
     }, [])
 

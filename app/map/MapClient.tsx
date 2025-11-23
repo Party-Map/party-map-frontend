@@ -8,6 +8,7 @@ import {useTheme} from '@/components/ThemeProvider'
 import {useHighlight} from '@/components/HighlightContextProvider'
 import {useSearchParams} from 'next/navigation'
 
+// LeafLet uses window at import time, prevent SSR
 const MapView = dynamic(() => import('@/app/map/MapView'), {ssr: false})
 
 export default function MapClient({
