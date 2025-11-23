@@ -64,6 +64,7 @@ export default async function EventPage({params}: { params: Promise<{ id: string
 
                         <LikeToggleButton
                             target="events"
+                            targetName={event.title}
                             targetId={id}
                             initialLiked={isLiked}
                         />

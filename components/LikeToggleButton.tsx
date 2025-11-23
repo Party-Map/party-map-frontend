@@ -6,20 +6,22 @@ import {FcDislike} from "react-icons/fc"
 import {like, unlike} from "@/lib/api/likes"
 import {SessionContext} from "@/lib/auth/session-provider"
 import {LikeTarget} from "@/lib/types"
+import toast from "react-hot-toast";
 
-type LikeToggleButtonProps = {
-    target: LikeTarget
-    targetId: string
-    initialLiked: boolean
-    className?: string
-}
 
 export function LikeToggleButton({
                                      target,
                                      targetId,
                                      initialLiked,
+                                     targetName,
                                      className,
-                                 }: LikeToggleButtonProps) {
+                                 }: {
+    target: LikeTarget
+    targetId: string
+    initialLiked: boolean
+    targetName: string,
+    className?: string
+}) {
     const session = useContext(SessionContext)
     const [liked, setLiked] = useState(initialLiked)
     const [loading, setLoading] = useState(false)
@@ -37,6 +39,11 @@ export function LikeToggleButton({
                 : await like(target, targetId, session)
 
             setLiked(result.liked)
+            if (result.liked) {
+                toast.success(`You liked ${targetName}`, {style: {backgroundColor: '#333', color: 'white'}})
+            } else {
+                toast.error(`You broke up with ${targetName}`, {style: {backgroundColor: '#333', color: 'white'}})
+            }
         } catch (err) {
             console.error(err)
         } finally {

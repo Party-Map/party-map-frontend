@@ -51,6 +51,7 @@ export default async function PlacePage({params}: { params: Promise<{ id: string
                         <h1 className="text-2xl font-bold">{place.name}</h1>
                         <LikeToggleButton
                             target="places"
+                            targetName={place.name}
                             targetId={id}
                             initialLiked={isLiked}
                         />

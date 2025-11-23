@@ -7,6 +7,8 @@ import GdprConsent from '@/components/GdprConsent'
 import {HighlightProvider} from "@/components/HighlightContextProvider";
 import SessionProvider from "@/lib/auth/session-provider";
 import {cookies} from "next/headers";
+import {Toaster} from "react-hot-toast";
+
 
 export const metadata: Metadata = {
     title: 'PartyMap',
@@ -36,6 +38,7 @@ export default async function RootLayout({children}: { children: React.ReactNode
             </HighlightProvider>
             <GdprConsent/>
         </ThemeProvider>
+        <Toaster position="top-center" toastOptions={{duration: 1500}}/>
         </body>
         </html>
     )

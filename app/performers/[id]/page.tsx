@@ -62,6 +62,7 @@ export default async function PerformerPage({params}: { params: Promise<{ id: st
                         <h1 className="text-2xl font-bold">{performer.name}</h1>
                         <LikeToggleButton
                             target="performers"
+                            targetName={performer.name}
                             targetId={id}
                             initialLiked={isLiked}
                         />

@@ -6,6 +6,7 @@ import {fetchPlaces} from "@/lib/api/places";
 import {fetchEvents} from "@/lib/api/events";
 import {getJwtSession} from "@/lib/auth/server-session";
 
+
 export default async function HomePage() {
     const session = await getJwtSession()
 
