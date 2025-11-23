@@ -7,15 +7,23 @@ import {fetchEvent} from '@/lib/api/events'
 import {getJwtSession} from '@/lib/auth/server-session'
 import {fetchPlaceByEventId} from '@/lib/api/places'
 import {fetchPerformersByEventId} from '@/lib/api/performers'
+import {LikeToggleButton} from "@/components/LikeToggleButton";
+import {fetchLikeStatus} from "@/lib/api/likes";
 
 export default async function EventPage({params}: { params: Promise<{ id: string }> }) {
     const {id} = await params
     const session = await getJwtSession()
 
-    const event = await fetchEvent(id, session)
+    const [event, place, performerEntities, likeStatus] = await Promise.all([
+        fetchEvent(id, session),
+        fetchPlaceByEventId(id, session),
+        fetchPerformersByEventId(id, session),
+        session ? fetchLikeStatus("events", id, session) : Promise.resolve(null),
+    ])
+
     if (!event) return notFound()
-    const place = await fetchPlaceByEventId(id, session)
-    const performerEntities = await fetchPerformersByEventId(id, session)
+
+    const isLiked = likeStatus?.liked ?? false
 
     return (
         <DetailPageLayout
@@ -51,7 +59,16 @@ export default async function EventPage({params}: { params: Promise<{ id: string
                     className="h-56 w-full object-cover"
                 />
                 <div className="p-4">
-                    <h1 className="text-2xl font-bold">{event.title}</h1>
+                    <div className="flex items-center gap-2">
+                        <h1 className="text-2xl font-bold">{event.title}</h1>
+
+                        <LikeToggleButton
+                            target="events"
+                            targetId={id}
+                            initialLiked={isLiked}
+                        />
+                    </div>
+
                     <p className="text-sm text-zinc-600 dark:text-zinc-300">
                         {fmtRange(event.start, event.end)}
                     </p>

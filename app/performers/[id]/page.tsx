@@ -5,14 +5,22 @@ import DetailPageLayout from '@/components/DetailPageLayout'
 import {getJwtSession} from '@/lib/auth/server-session'
 import {fetchPerformer} from '@/lib/api/performers'
 import {fetchEventsByPerformerId} from '@/lib/api/events'
+import {fetchLikeStatus} from "@/lib/api/likes"
+import {LikeToggleButton} from "@/components/LikeToggleButton"
 
 export default async function PerformerPage({params}: { params: Promise<{ id: string }> }) {
     const {id} = await params
     const session = await getJwtSession()
 
-    const performer = await fetchPerformer(id, session)
+    const [performer, performerEvents, likeStatus] = await Promise.all([
+        fetchPerformer(id, session),
+        fetchEventsByPerformerId(id, session),
+        session ? fetchLikeStatus("performers", id, session) : Promise.resolve(null),
+    ])
+
     if (!performer) return notFound()
-    const performerEvents = await fetchEventsByPerformerId(id, session)
+
+    const isLiked = likeStatus?.liked ?? false
 
     return (
         <DetailPageLayout
@@ -50,7 +58,14 @@ export default async function PerformerPage({params}: { params: Promise<{ id: st
                     className="h-56 w-full object-cover"
                 />
                 <div className="p-4">
-                    <h1 className="text-2xl font-bold">{performer.name}</h1>
+                    <div className="flex items-center gap-2">
+                        <h1 className="text-2xl font-bold">{performer.name}</h1>
+                        <LikeToggleButton
+                            target="performers"
+                            targetId={id}
+                            initialLiked={isLiked}
+                        />
+                    </div>
                     <p className="text-sm text-zinc-600 dark:text-zinc-300">{performer.genre}</p>
                     <p className="mt-2 text-sm">{performer.bio}</p>
                     {performer.links && (

@@ -5,15 +5,21 @@ import DetailPageLayout from '@/components/DetailPageLayout'
 import {fetchPlace} from '@/lib/api/places'
 import {getJwtSession} from '@/lib/auth/server-session'
 import {fetchEventSByPlaceId} from '@/lib/api/events'
+import {LikeToggleButton} from "@/components/LikeToggleButton";
+import {fetchLikeStatus} from "@/lib/api/likes";
 
 
 export default async function PlacePage({params}: { params: Promise<{ id: string }> }) {
     const {id} = await params
     const session = await getJwtSession()
 
-    const place = await fetchPlace(id, session)
+    const [place, placeEvents, likeStatus] = await Promise.all([
+        fetchPlace(id, session),
+        fetchEventSByPlaceId(id, session),
+        session ? fetchLikeStatus("places", id, session) : Promise.resolve(null)
+    ])
     if (!place) return notFound()
-    const placeEvents = await fetchEventSByPlaceId(id, session)
+    const isLiked = likeStatus?.liked ?? false
 
     return (
         <DetailPageLayout
@@ -41,7 +47,14 @@ export default async function PlacePage({params}: { params: Promise<{ id: string
                     className="h-56 w-full object-cover"
                 />
                 <div className="p-4">
-                    <h1 className="text-2xl font-bold">{place.name}</h1>
+                    <div className="flex items-center gap-2">
+                        <h1 className="text-2xl font-bold">{place.name}</h1>
+                        <LikeToggleButton
+                            target="places"
+                            targetId={id}
+                            initialLiked={isLiked}
+                        />
+                    </div>
                     <p className="text-sm text-zinc-600 dark:text-zinc-300">
                         {place.address}, {place.city}
                     </p>

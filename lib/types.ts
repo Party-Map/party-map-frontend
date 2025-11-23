@@ -92,6 +92,12 @@ export const EVENT_TYPE_LABELS: Record<EventType, string> = {
 
 export type SearchHitType = 'PLACE' | 'EVENT' | 'PERFORMER'
 
+export type LikeTarget = "events" | "places" | "performers"
+
+export type LikeStatus = {
+    liked: boolean
+}
+
 export type SearchTypeMeta = {
     icon: ReactNode
     bg: string
