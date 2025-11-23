@@ -2,6 +2,7 @@ import {getJwtSession} from '@/lib/auth/server-session'
 import React from 'react'
 import {redirect} from 'next/navigation'
 import {ShieldCheck} from 'lucide-react'
+import Link from "next/link";
 
 export default async function LogoutSuccessfulPage() {
     const session = await getJwtSession()
@@ -19,12 +20,12 @@ export default async function LogoutSuccessfulPage() {
                     You are now logged out
                 </h1>
                 <div className="mt-10 flex items-center justify-center gap-x-6">
-                    <a
+                    <Link
                         href="/"
                         className="rounded-md bg-blue-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
                         Go back home
-                    </a>
+                    </Link>
                 </div>
             </div>
         </main>
