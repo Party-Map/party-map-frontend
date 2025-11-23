@@ -183,7 +183,7 @@ export default function PlacePopupCard({place, upcomingEvent, onClose}: {
                         className="ml-2 relative inline-flex h-6 w-6 items-center justify-center rounded-full group
                        text-[#FF2800] dark:text-[#FF4a26] ring-1 ring-[#FF2800]/70 dark:ring-[#FF2800]/60
                        focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF2800]/70
-                       transition-colors"
+                       transition-colors cursor-pointer"
                     >
                         <span aria-hidden className="absolute inset-0 rounded-full bg-[#FF2800]/35 dark:bg-[#FF2800]/40 opacity-0
                         group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300"

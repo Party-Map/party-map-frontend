@@ -209,7 +209,7 @@ export function PlaceLabels({
                         <button
                             type="button"
                             onClick={() => onOpen(p.id)}
-                            className="pointer-events-auto focus:outline-none group text-center"
+                            className="pointer-events-auto focus:outline-none group text-center cursor-pointer"
                             aria-label={`Open ${upcoming.title}`}
                             disabled={isActive}
                         >
@@ -218,10 +218,10 @@ export function PlaceLabels({
                             {upcoming.title}
                           </span>
                             <div className="mt-0.5 flex items-center gap-1 justify-center">
-                            <span
-                                className="text-[9px] uppercase tracking-wide font-medium text-slate-600 dark:text-slate-400 [text-shadow:0_1px_1px_rgba(0,0,0,0.4)]">
-                              {p.name}
-                            </span>
+                                <span
+                                    className="text-[9px] uppercase tracking-wide font-medium text-slate-600 dark:text-slate-400 [text-shadow:0_1px_1px_rgba(0,0,0,0.4)]">
+                                  {p.name}
+                                </span>
                                 <span
                                     data-kind={upcoming.kind}
                                     className={cn(
@@ -230,8 +230,8 @@ export function PlaceLabels({
                                         EVENT_TYPE_BADGE_CLASSES[upcoming.kind],
                                     )}
                                 >
-                              {EVENT_TYPE_LABELS[upcoming.kind] || upcoming.kind}
-                            </span>
+                                  {EVENT_TYPE_LABELS[upcoming.kind] || upcoming.kind}
+                                </span>
                             </div>
                         </button>
                     </div>

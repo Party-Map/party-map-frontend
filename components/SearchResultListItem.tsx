@@ -63,7 +63,7 @@ export function SearchResultListItem({
                 <button
                     type="button"
                     onClick={onPrimaryClick}
-                    className="flex flex-1 items-center gap-3 min-w-0 text-left group focus:outline-none"
+                    className="flex flex-1 items-center gap-3 min-w-0 text-left group focus:outline-none cursor-pointer"
                 >
                     <div
                         className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-md ring-1 ring-inset ring-white/20 group-hover:ring-violet-400/50 transition-colors">
@@ -120,7 +120,7 @@ export function SearchResultListItem({
                     }}
                     className="ml-2 flex-shrink-0 inline-flex items-center justify-center rounded-full px-3 py-1 text-[11px] font-medium
                      border border-violet-400/50 text-violet-700 dark:text-violet-200 bg-white/60 dark:bg-zinc-900/40
-                     hover:bg-violet-50/80 dark:hover:bg-violet-900/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/60 shadow-sm"
+                     hover:bg-violet-50/80 dark:hover:bg-violet-900/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/60 shadow-sm cursor-pointer"
                 >
                     View
                 </button>
