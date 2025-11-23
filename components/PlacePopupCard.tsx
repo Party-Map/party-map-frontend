@@ -68,30 +68,31 @@ export default function PlacePopupCard({place, upcomingEvent, onClose}: {
             className={`place-popup-card ${longTitle ? 'w-88 md:w-80' : 'w-80 md:w-72'} max-w-[calc(100vw-1.25rem)] overflow-hidden rounded-2xl
                  ring-1 ring-white/10 backdrop-blur-md`}
         >
-            <Link
-                href={upcomingEvent ? `/events/${upcomingEvent.eventId}` : `/places/${place.id}`}
-                className="relative h-28 bg-cover bg-center block focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60
-                   transition-transform duration-300 ease-out hover:scale-[1.04] will-change-transform
-                   hover:brightness-105 overflow-hidden"
-                style={{backgroundImage: `url(${image}`}}
-                aria-label={`Open ${upcomingEvent ? 'event ' + title : 'place ' + place.name}`}
-                title={upcomingEvent ? `View event: ${title}` : `View place: ${place.name}`}
-            >
-                <span className="sr-only">{upcomingEvent ? 'View event' : 'View place'}</span>
-                <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute left-2 top-2 inline-flex items-center gap-1.5 rounded-full
-                     bg-black/45 dark:bg-black/55 backdrop-blur-sm px-2.5 py-1 text-[10px] font-medium tracking-wide
-                     text-white ring-1 ring-white/15 shadow-sm select-none"
+            <div className="relative">
+                <Link
+                    href={upcomingEvent ? `/events/${upcomingEvent.eventId}` : `/places/${place.id}`}
+                    className="block h-28 overflow-hidden bg-cover bg-center transition-transform duration-300 hover:scale-105"
+                    style={{backgroundImage: `url(${image})`}}
+                    aria-label={`Open ${
+                        upcomingEvent ? 'event ' + title : 'place ' + place.name
+                    }`}
+                    title={upcomingEvent ? `View event: ${title}` : `View place: ${place.name}`}
                 >
-                  {upcomingEvent ? 'View event' : 'View place'}
-                    <ArrowRight className="h-3 w-3 opacity-80"/>
-                </span>
                 <span
                     aria-hidden
-                    className="pointer-events-none absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300
-                     bg-gradient-to-tr from-black/25 via-transparent to-black/10"/>
-            </Link>
+                    className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 bg-gradient-to-tr from-black/25 via-transparent to-black/10 hover:opacity-100"
+                />
+                </Link>
+
+                <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 text-[10px] text-white"
+                >
+                {upcomingEvent ? 'View event' : 'View place'}
+                    <ArrowRight className="h-3 w-3"/>
+              </span>
+            </div>
+
             <div className="p-3">
                 {longTitle ? (
                     <div className="flex items-start gap-2">
