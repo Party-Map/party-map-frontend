@@ -60,7 +60,7 @@ export function LikeToggleButton({
             disabled={loading}
             aria-pressed={liked}
             aria-label={liked ? "Remove from favorites" : "Add to favorites"}
-            className={className ?? "inline-flex items-center justify-center"}
+            className={className ?? "inline-flex items-center justify-center cursor-pointer"}
         >
             {/* Liked State */}
             {liked ? (
