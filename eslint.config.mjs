@@ -1,22 +1,23 @@
-import {dirname} from "path";
-import {fileURLToPath} from "url";
-import {FlatCompat} from "@eslint/eslintrc";
+// eslint.config.mjs
+import {defineConfig, globalIgnores} from "eslint/config"
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals"
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+export default defineConfig([
+    // Next.js core-web-vitals preset (includes React, TS support, etc.)
+    ...nextCoreWebVitals,
 
-const compat = new FlatCompat({baseDirectory: __dirname});
+    // Optional: override default ignores (this is the snippet from Next docs)
+    globalIgnores([
+        ".next/**",
+        "out/**",
+        "build/**",
+        "next-env.d.ts",
+    ]),
 
-const eslintConfig = [
-    // Bring in Next.js + TS configs
-    ...compat.extends("next/core-web-vitals", "next/typescript"),
-
-    // Your overrides go *after* the extends
+    // Your custom overrides
     {
         rules: {
             "@next/next/no-img-element": "off",
         },
     },
-];
-
-export default eslintConfig;
+])
