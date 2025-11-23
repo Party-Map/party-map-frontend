@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Make leaflet popup wrapper transparent */
 .leaflet-popup-content-wrapper {
     background: transparent !important;

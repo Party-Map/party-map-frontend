@@ -65,18 +65,29 @@ export default function PlacePopupCard({place, upcomingEvent, onClose}: {
 
     return (
         <div
-            className={`place-popup-card ${longTitle ? 'w-88 md:w-80' : 'w-80 md:w-72'} max-w-[calc(100vw-1.25rem)] overflow-hidden rounded-2xl
-                 ring-1 ring-white/10 backdrop-blur-md`}
+            className={cn(
+                "place-popup-card max-w-[calc(100vw-1.25rem)] overflow-hidden rounded-2xl",
+                "bg-slate-700/20 dark:bg-slate-950/60 text-white ring-1 ring-white/10 backdrop-blur-md",
+                longTitle ? "w-88 md:w-80" : "w-80 md:w-72"
+            )}
         >
             <div className="relative">
                 <Link
-                    href={upcomingEvent ? `/events/${upcomingEvent.eventId}` : `/places/${place.id}`}
+                    href={
+                        upcomingEvent
+                            ? `/events/${upcomingEvent.eventId}`
+                            : `/places/${place.id}`
+                    }
                     className="block h-28 overflow-hidden bg-cover bg-center transition-transform duration-300 hover:scale-105"
                     style={{backgroundImage: `url(${image})`}}
                     aria-label={`Open ${
-                        upcomingEvent ? 'event ' + title : 'place ' + place.name
+                        upcomingEvent ? "event " + title : "place " + place.name
                     }`}
-                    title={upcomingEvent ? `View event: ${title}` : `View place: ${place.name}`}
+                    title={
+                        upcomingEvent
+                            ? `View event: ${title}`
+                            : `View place: ${place.name}`
+                    }
                 >
                 <span
                     aria-hidden
@@ -88,61 +99,65 @@ export default function PlacePopupCard({place, upcomingEvent, onClose}: {
                     aria-hidden="true"
                     className="pointer-events-none absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 text-[10px] text-white"
                 >
-                {upcomingEvent ? 'View event' : 'View place'}
+                {upcomingEvent ? "View event" : "View place"}
                     <ArrowRight className="h-3 w-3"/>
-              </span>
+                </span>
             </div>
 
             <div className="p-3">
                 {longTitle ? (
                     <div className="flex items-start gap-2">
                         <div className="flex-1 min-w-0">
-                          <span
-                              className="block text-base leading-snug font-bold tracking-tight text-slate-900 dark:text-white drop-shadow-sm pm-line-clamp-2">
-                            {upcomingEvent ? upcomingEvent.title : place.name}
-                          </span>
+                            <span
+                                className="block text-base leading-snug font-bold tracking-tight text-white drop-shadow-sm pm-line-clamp-2">
+                              {upcomingEvent ? upcomingEvent.title : place.name}
+                            </span>
                         </div>
                         {upcomingEvent && (
-                            <span className="flex-shrink-0 self-start whitespace-nowrap inline-flex items-center gap-1 rounded-full
-                            bg-violet-950/60 dark:bg-violet-800/40 text-violet-200 px-2 py-0.5 text-[10px] ring-1 ring-violet-500/30"
+                            <span
+                                className="flex-shrink-0 self-start whitespace-nowrap inline-flex items-center gap-1 rounded-full
+                              bg-violet-800/40 text-violet-200 px-2 py-0.5 text-[10px] ring-1 ring-violet-500/30"
                             >
-                            <CalendarDays className="h-3 w-3"/>{startLabel}
-                          </span>
+                                <CalendarDays className="h-3 w-3"/>
+                                {startLabel}
+                            </span>
                         )}
                     </div>
                 ) : (
                     <div className="relative">
                         {upcomingEvent && (
-                            <span className="absolute right-0 top-0 whitespace-nowrap inline-flex items-center gap-1 rounded-full
-                          bg-violet-950/60 dark:bg-violet-800/40 text-violet-200 px-2 py-0.5 text-[10px] ring-1 ring-violet-500/30"
+                            <span
+                                className="absolute right-0 top-0 whitespace-nowrap inline-flex items-center gap-1 rounded-full
+                                bg-violet-800/40 text-violet-200 px-2 py-0.5 text-[10px] ring-1 ring-violet-500/30"
                             >
-                            <CalendarDays className="h-3 w-3"/>{startLabel}
-                          </span>
+                                <CalendarDays className="h-3 w-3"/>
+                                {startLabel}
+                            </span>
                         )}
-                        <span className="block pr-20 text-base leading-snug font-bold tracking-tight text-slate-900
-                        dark:text-white drop-shadow-sm whitespace-nowrap"
-                        >
-                          {upcomingEvent ? upcomingEvent.title : place.name}
+                        <span
+                            className="block pr-20 text-base leading-snug font-bold tracking-tight text-white drop-shadow-sm whitespace-nowrap">
+                            {upcomingEvent ? upcomingEvent.title : place.name}
                         </span>
                     </div>
                 )}
-                <div className="mt-1 text-xs text-zinc-600 dark:text-zinc-300 flex items-center gap-2">
+
+                <div className="mt-1 text-xs text-zinc-300 flex items-center gap-2">
                     <Link
                         href={`/places/${place.id}`}
                         className="inline-flex items-center gap-1 rounded-full px-3 py-0.5 text-[12px] font-semibold
-                       bg-violet-100/70 dark:bg-violet-900/40 text-violet-800 dark:text-violet-200
-                       border border-violet-300/50 dark:border-violet-700/40 shadow-sm
-                       hover:bg-violet-200/70 dark:hover:bg-violet-800/60 transition-colors"
+                                  bg-violet-900/40 text-violet-200! border border-violet-700/40 shadow-sm
+                                  hover:bg-violet-800/60 transition-colors"
                     >
                         {place.name}
                     </Link>
                 </div>
+
                 <div className="mt-2 flex items-center">
                     <div className="flex flex-wrap items-center gap-1 flex-1 pr-2">
                         {displayTags.map(tag => {
                             const common =
-                                'rounded-full px-2 py-0.5 text-[10px] font-medium ' +
-                                'transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500/50'
+                                "rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors " +
+                                "focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500/50"
 
                             if (tag.isKind) {
                                 const rawKind = tag.label as EventType
@@ -150,11 +165,13 @@ export default function PlacePopupCard({place, upcomingEvent, onClose}: {
                                 return (
                                     <Link
                                         key={tag.key}
-                                        href={`/tags/${encodeURIComponent(rawKind.toLowerCase())}`}
+                                        href={`/tags/${encodeURIComponent(
+                                            rawKind.toLowerCase(),
+                                        )}`}
                                         className={cn(
                                             "px-2.5 py-0.5 text-[11px] font-semibold rounded-full",
-                                            EVENT_TYPE_BADGE_CLASSES[rawKind],
-                                            common
+                                            EVENT_TYPE_BADGE_CLASSES[rawKind], // make sure these are also dark-ish
+                                            common,
                                         )}
                                     >
                                         {EVENT_TYPE_LABELS[rawKind]}
@@ -165,11 +182,12 @@ export default function PlacePopupCard({place, upcomingEvent, onClose}: {
                             return (
                                 <Link
                                     key={tag.key}
-                                    href={`/tags/${encodeURIComponent(tag.label.toLowerCase())}`}
+                                    href={`/tags/${encodeURIComponent(
+                                        tag.label.toLowerCase(),
+                                    )}`}
                                     className={cn(
-                                        "bg-violet-100/70 text-violet-800 dark:bg-violet-900/40 dark:text-violet-200 " +
-                                        "hover:bg-violet-200/70 dark:hover:bg-violet-800/60",
-                                        common
+                                        "bg-violet-900/40 text-violet-200! hover:bg-violet-800/60",
+                                        common,
                                     )}
                                 >
                                     {tag.label}
@@ -177,22 +195,26 @@ export default function PlacePopupCard({place, upcomingEvent, onClose}: {
                             )
                         })}
                     </div>
+
                     <button
                         type="button"
                         onClick={onClose}
                         aria-label="Close popup"
                         className="ml-2 relative inline-flex h-6 w-6 items-center justify-center rounded-full group
-                       text-[#FF2800] dark:text-[#FF4a26] ring-1 ring-[#FF2800]/70 dark:ring-[#FF2800]/60
-                       focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF2800]/70
-                       transition-colors cursor-pointer"
+                      text-[#FF4a26] ring-1 ring-[#FF2800]/60
+                      focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF2800]/70
+                      transition-colors cursor-pointer"
                     >
-                        <span aria-hidden className="absolute inset-0 rounded-full bg-[#FF2800]/35 dark:bg-[#FF2800]/40 opacity-0
+                      <span
+                          aria-hidden
+                          className="absolute inset-0 rounded-full bg-[#FF2800]/40 opacity-0
                         group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300"
-                        />
-                        <X className="h-3.5 w-3.5 relative z-[1] transition-colors group-hover:text-[#ff3d19] dark:group-hover:text-[#ff6a47]"/>
+                      />
+                        <X className="h-3.5 w-3.5 relative z-[1] transition-colors group-hover:text-white"/>
                     </button>
                 </div>
             </div>
         </div>
     )
+
 }
