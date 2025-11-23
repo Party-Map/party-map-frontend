@@ -3,14 +3,15 @@
 import React, {useContext, useEffect, useRef, useState} from 'react'
 import {Eraser, Minimize2, Search} from 'lucide-react'
 import type {SearchHit} from '@/lib/types'
-import {usePathname, useRouter} from 'next/navigation'
+import {usePathname, useRouter, useSearchParams} from 'next/navigation'
 import {SearchResultListItem} from '@/components/SearchResultListItem'
 import {useHighlight} from '@/components/HighlightContextProvider'
 import {SessionContext} from '@/lib/auth/session-provider'
 import {fetchSearch} from "@/lib/api/search";
 
 export default function SearchBar() {
-    const [query, setQuery] = useState('')
+    const searchParams = useSearchParams()
+    const [query, setQuery] = useState(() => searchParams.get('q') ?? '')
     const [open, setOpen] = useState(false)
     const [items, setItems] = useState<SearchHit[]>([])
     const rootRef = useRef<HTMLDivElement>(null)
@@ -101,6 +102,8 @@ export default function SearchBar() {
         setItems([])
         setOpen(false)
         setHighlightIds([])
+
+        router.replace(pathname)
     }
 
     const dismissResults = () => {
@@ -113,7 +116,12 @@ export default function SearchBar() {
 
         if (placeIdForFocus) {
             if (pathname !== '/') {
-                router.push(`/?focus=${encodeURIComponent(placeIdForFocus)}`)
+                const params = new URLSearchParams()
+                params.set('focus', placeIdForFocus)
+                const q = query.trim()
+                if (q) params.set('q', q)
+
+                router.push('/?' + params.toString())
             } else {
                 setHighlightIds([placeIdForFocus])
             }
@@ -143,7 +151,11 @@ export default function SearchBar() {
         setHighlightIds(placeIds)
 
         if (pathname !== '/') {
-            router.push('/')
+            const params = new URLSearchParams()
+            const q = query.trim()
+            if (q) params.set('q', q)
+
+            router.push('/?' + params.toString())
         }
 
         dismissResults()
