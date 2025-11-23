@@ -1,36 +1,87 @@
 @import "tailwindcss";
 
-:root {
-    --pin: #000; /* dummy default */
+/* Make leaflet popup wrapper transparent */
+.leaflet-popup-content-wrapper {
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
-@layer utilities {
-    .safe-bottom {
-        padding-bottom: env(safe-area-inset-bottom);
+.leaflet-popup-tip, .leaflet-popup-tip-container {
+    display: none !important;
+}
+
+.place-popup-card {
+    box-shadow: 0 4px 20px -4px rgba(0, 0, 0, .35), 0 0 0 1px rgba(255, 255, 255, .06);
+}
+
+html.dark .place-popup-card {
+    box-shadow: 0 4px 22px -4px rgba(0, 0, 0, .7), 0 0 0 1px rgba(255, 255, 255, .05);
+}
+
+/* Ensure dark mode map background is black while tiles load */
+html.dark .leaflet-container {
+    background: rgb(13, 13, 13);
+}
+
+@theme {
+    @keyframes pm-spark {
+        0% {
+            transform: scale(.4) rotate(0deg);
+            opacity: 0;
+        }
+        10% {
+            opacity: 1;
+            transform: scale(1) rotate(45deg);
+        }
+        35% {
+            opacity: .9;
+        }
+        60% {
+            opacity: 0;
+            transform: scale(.3) rotate(90deg);
+        }
+        100% {
+            opacity: 0;
+        }
     }
-}
 
-html, body, :root {
-    height: 100%;
-}
+    @keyframes pm-pulse {
+        0% {
+            transform: scale(.5);
+            opacity: .8;
+        }
+        60% {
+            opacity: 0;
+        }
+        100% {
+            transform: scale(1.4);
+            opacity: 0;
+        }
+    }
 
-/* Normalize all popups then customize our card */
-.leaflet-popup.place-popup .leaflet-popup-content-wrapper,
-.leaflet-popup-content-wrapper.place-popup,
-.place-popup .leaflet-popup-content-wrapper {
-    background: transparent !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    border: 0 !important;
-}
+    @keyframes pm-you-wave {
+        0% {
+            transform: scale(.5);
+            opacity: .8;
+        }
+        70% {
+            opacity: 0;
+        }
+        100% {
+            transform: scale(1.7);
+            opacity: 0;
+        }
+    }
 
-.leaflet-popup.place-popup .leaflet-popup-content,
-.place-popup .leaflet-popup-content {
-    margin: 0 !important;
-}
+    @keyframes pm-you-rotate {
+        to {
+            transform: rotate(360deg);
+        }
+    }
 
-.leaflet-popup.place-popup .leaflet-popup-tip,
-.place-popup .leaflet-popup-tip {
-    background: transparent !important;
-    box-shadow: none !important;
+    --animate-pm-spark: pm-spark 2.4s linear infinite;
+    --animate-pm-pulse: pm-pulse 2.2s ease-out infinite;
+    --animate-pm-you-wave: pm-you-wave 2.4s ease-out infinite;
+    --animate-pm-you-wave-delayed: pm-you-wave 2.4s ease-out 1.2s infinite;
+    --animate-pm-you-rotate: pm-you-rotate 6s linear infinite;
 }

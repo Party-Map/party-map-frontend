@@ -1,7 +1,5 @@
 import type {Metadata, Viewport} from 'next'
 import './globals.css'
-import 'leaflet/dist/leaflet.css'
-import './map.css'
 import {ThemeProvider} from '@/components/ThemeProvider'
 import GdprConsent from '@/components/GdprConsent'
 import {HighlightProvider} from "@/components/HighlightContextProvider";

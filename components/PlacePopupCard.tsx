@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import type {EventType, Place, TagDisplayPopup, UpcomingEventByPlace} from '@/lib/types'
-import {EVENT_TYPE_BADGE_CLASSES, EVENT_TYPE_LABELS} from '@/lib/types'
+import {EVENT_TYPE_BADGE_CLASSES, EVENT_TYPE_LABELS} from '@/lib/constants'
 import {ArrowRight, CalendarDays, X} from 'lucide-react'
 import {cn} from "@/lib/utils";
 

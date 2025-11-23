@@ -1,9 +1,16 @@
 import {useEffect, useRef, useState} from "react"
 import {useMap} from "react-leaflet"
 import L from "leaflet"
-import {EVENT_TYPE_BADGE_CLASSES, EVENT_TYPE_LABELS, Place, PopupRect, UpcomingEventByPlace,} from "@/lib/types"
+import {Place, PopupRect, UpcomingEventByPlace,} from "@/lib/types"
 import {cn} from "@/lib/utils"
-import {BASE_LABEL_ZOOM, HIGHLIGHT_LABEL_ZOOM, LABEL_BASE_OFFSET, LABEL_HIGHLIGHT_OFFSET,} from "@/lib/constants"
+import {
+    BASE_LABEL_ZOOM,
+    EVENT_TYPE_BADGE_CLASSES,
+    EVENT_TYPE_LABELS,
+    HIGHLIGHT_LABEL_ZOOM,
+    LABEL_BASE_OFFSET,
+    LABEL_HIGHLIGHT_OFFSET,
+} from "@/lib/constants"
 
 function useMapInteraction(map: L.Map) {
     const [, force] = useState(0)
@@ -207,7 +214,7 @@ export function PlaceLabels({
                             disabled={isActive}
                         >
                           <span
-                              className="block mx-auto text-[11px] font-semibold leading-tight whitespace-nowrap text-slate-800 dark:text-slate-100 drop-shadow-sm [text-shadow:0_1px_2px_rgba(0,0,0,0.55)] group-hover:text-pink-600 dark:group-hover:text-pink-300">
+                              className="block mx-auto text-[11px] font-semibold leading-tight whitespace-nowrap text-black dark:text-slate-100  drop-shadow-sm [text-shadow:0_1px_2px_rgba(0,0,0,0.55)] group-hover:text-pink-600 dark:group-hover:text-pink-300">
                             {upcoming.title}
                           </span>
                             <div className="mt-0.5 flex items-center gap-1 justify-center">

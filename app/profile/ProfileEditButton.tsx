@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export default function ProfileEditForm() {
+export default function ProfileEditButton() {
     const appBase = process.env.NEXT_PUBLIC_URL_BASE!
     const issuer = process.env.AUTH_KEYCLOAK_ISSUER!
     const clientId = process.env.AUTH_KEYCLOAK_ID!

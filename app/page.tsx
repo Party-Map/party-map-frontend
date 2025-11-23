@@ -1,3 +1,4 @@
+import 'leaflet/dist/leaflet.css'
 import MapClient from '@/app/map/MapClient'
 import TopBar from "@/components/TopBar";
 import BottomBar from "@/components/BottomBar";

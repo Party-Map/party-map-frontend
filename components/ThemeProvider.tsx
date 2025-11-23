@@ -11,7 +11,7 @@ export function ThemeProvider({children}: { children: React.ReactNode }) {
 
     useEffect(() => {
         const saved = localStorage.getItem('theme') as Theme | null
-
+        // https://tailwindcss.com/docs/dark-mode#with-system-theme-support
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setTheme(saved ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'))
     }, [])

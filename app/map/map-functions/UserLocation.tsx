@@ -1,7 +1,8 @@
 import {useEffect, useState} from 'react'
 import {Circle, Marker, useMap} from 'react-leaflet'
-import L, {LatLngTuple} from 'leaflet'
+import {LatLngTuple} from 'leaflet'
 import type {GeoPoint} from '@/lib/types'
+import {YouAreHereIcon} from "@/components/MapIcons";
 
 export function UserLocation({auto = true, onPosition}: {
     auto?: boolean
@@ -58,21 +59,6 @@ export function UserLocation({auto = true, onPosition}: {
 
     if (!pos) return null
 
-    const youIcon = L.divIcon({
-        className: 'pm-you-wrapper',
-        html: `
-            <div class='pm-you'>
-                <span class='glow'></span>
-                <span class='ring'></span>
-                <span class='core'></span>
-                <span class='wave w1'></span>
-                <span class='wave w2'></span>
-            </div>
-            `,
-        iconSize: [28, 28],
-        iconAnchor: [14, 14],
-    })
-
     return (
         <>
             {accuracy && (
@@ -88,7 +74,7 @@ export function UserLocation({auto = true, onPosition}: {
                     }}
                 />
             )}
-            <Marker position={pos} icon={youIcon as any}/>
+            <Marker position={pos} icon={YouAreHereIcon() as any}/>
         </>
     )
 }

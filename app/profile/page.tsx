@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import DetailPageLayout from '@/components/DetailPageLayout'
 import {getJwtSession} from '@/lib/auth/server-session'
-import ProfileEditForm from './ProfileEditForm'
+import ProfileEditButton from './ProfileEditButton'
 import {KeycloakJWTPayload} from "@/lib/auth/jwt-session";
 
 export default async function ProfilePage() {
@@ -40,7 +40,6 @@ export default async function ProfilePage() {
         'Unknown user'
 
     const email = token.email ?? 'Not provided'
-    const roles = token.realm_access?.roles ?? []
 
     const initials =
         fullName
@@ -68,7 +67,7 @@ export default async function ProfilePage() {
                             <p className="text-lg font-semibold">{fullName}</p>
                             <p className="text-sm text-zinc-600 dark:text-zinc-300">{email}</p>
                         </div>
-                        <ProfileEditForm/>
+                        <ProfileEditButton/>
                     </div>
                     <div className="mt-6 grid gap-4 md:grid-cols-2">
                         <div className="gap-2">

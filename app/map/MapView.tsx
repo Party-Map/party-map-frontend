@@ -1,5 +1,5 @@
 import {MapContainer, Marker, Popup, TileLayer, useMapEvent} from 'react-leaflet'
-import L, {LatLngTuple} from 'leaflet'
+import {LatLngTuple} from 'leaflet'
 
 import type {GeoPoint, Place, UpcomingEventByPlace} from '@/lib/types'
 import {toLatLngTuple} from '@/lib/utils'
@@ -7,31 +7,9 @@ import PlacePopupCard from '../../components/PlacePopupCard'
 import {FitToHighlights} from '@/app/map/map-functions/FitToHighLights'
 import {UserLocation} from '@/app/map/map-functions/UserLocation'
 import {DesktopZoomControls} from '@/app/map/map-functions/DesktopZoomControls'
-import {PlaceLabels} from '@/app/map/map-functions/placeLabels'
+import {PlaceLabels} from '@/app/map/map-functions/PlaceLabels'
 import {PanPopupMobile} from '@/app/map/map-functions/PanPopupMobile'
-
-function PinIcon(color: string, shiny: boolean) {
-    return L.divIcon({
-        className: 'pm-pin-wrapper',
-        html: `
-      <div class="pm-pin ${shiny ? 'pm-shiny' : ''}" style="--pin:${color}">
-        <div class='pm-pin-head'>
-          <div class='pm-pin-core'></div>
-          <div class='pm-pin-gloss'></div>
-          <div class='pm-pin-sparkles'>
-            <span class='sp s1'></span>
-            <span class='sp s2'></span>
-            <span class='sp s3'></span>
-          </div>
-        </div>
-        <div class='pm-pin-tail'></div>
-      </div>
-    `,
-        iconSize: [36, 48],
-        iconAnchor: [18, 44],
-        popupAnchor: [0, -38],
-    })
-}
+import {PinIcon} from '@/components/MapIcons'
 
 function MapBackgroundCloser({onClose}: { onClose: () => void }) {
     useMapEvent('click', () => onClose())
@@ -98,16 +76,16 @@ export default function MapView({
                 {places.map(p => {
                     const isHighlighted = !!highlightIds?.includes(p.id)
                     const isActive = openPopupId === p.id
-                    const shiny = isHighlighted || isActive
-                    const baseColor = isActive
-                        ? '#ec4899'
-                        : isHighlighted
-                            ? '#8b5cf6'
-                            : isDark
-                                ? '#475569'
-                                : '#334155'
-                    const icon = PinIcon(baseColor, shiny)
-                    const pos: LatLngTuple = [p.location.latitude, p.location.longitude]
+                    const icon = PinIcon({
+                        isActive,
+                        isHighlighted,
+                        isDark,
+                    })
+
+                    const pos: LatLngTuple = [
+                        p.location.latitude,
+                        p.location.longitude,
+                    ]
 
                     return (
                         <Marker

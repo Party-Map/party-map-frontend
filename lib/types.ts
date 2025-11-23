@@ -7,10 +7,12 @@ export type GeoPoint = {
     longitude: number
 }
 export type LinkType = 'instagram' | 'facebook' | 'twitter' | 'reddit' | 'website'
-export type Link = {
-    type: LinkType
-    url: string
-}
+
+export type EventType = 'DISCO' | 'TECHNO' | 'FESTIVAL' | 'JAZZ' | 'ALTER' | 'HOME' | 'PUB'
+
+export type SearchHitType = 'PLACE' | 'EVENT' | 'PERFORMER'
+
+export type LikeTarget = "events" | "places" | "performers"
 
 export type Place = {
     id: ID
@@ -38,8 +40,8 @@ export type Event = {
     title: string
     placeId: ID
     description: string
-    start: string // ISO
-    end: string // ISO
+    start: string
+    end: string
     image: string
     performerIds: ID[]
     price?: string
@@ -53,6 +55,15 @@ export type UpcomingEventByPlace = {
     image: string | null
     start: string
     kind: EventType
+}
+
+export type Link = {
+    type: LinkType
+    url: string
+}
+
+export type LikeStatus = {
+    liked: boolean
 }
 
 export type PopupRect = {
@@ -69,36 +80,6 @@ export type TagDisplayPopup = {
     isKind: boolean
 }
 
-export type EventType = 'DISCO' | 'TECHNO' | 'FESTIVAL' | 'JAZZ' | 'ALTER' | 'HOME' | 'PUB'
-
-export const EVENT_TYPE_BADGE_CLASSES: Record<EventType, string> = {
-    DISCO: 'bg-pink-500 !text-white',
-    TECHNO: 'bg-indigo-500 !text-white',
-    FESTIVAL: 'bg-emerald-500 !text-white',
-    JAZZ: 'bg-amber-500 !text-white',
-    ALTER: 'bg-fuchsia-500 !text-white',
-    HOME: 'bg-cyan-500 !text-white',
-    PUB: 'bg-amber-900 !text-amber-50',
-}
-
-export const EVENT_TYPE_LABELS: Record<EventType, string> = {
-    DISCO: 'Disco',
-    TECHNO: 'Techno',
-    FESTIVAL: 'Festival',
-    JAZZ: 'Jazz',
-    ALTER: 'Alter',
-    HOME: 'House Party',
-    PUB: 'Pub',
-}
-
-export type SearchHitType = 'PLACE' | 'EVENT' | 'PERFORMER'
-
-export type LikeTarget = "events" | "places" | "performers"
-
-export type LikeStatus = {
-    liked: boolean
-}
-
 export type SearchTypeMeta = {
     icon: ReactNode
     bg: string
@@ -107,7 +88,7 @@ export type SearchTypeMeta = {
     label: string
 }
 
-export interface SearchHit {
+export type SearchHit = {
     id: string
     type: SearchHitType
     title: string
@@ -117,7 +98,7 @@ export interface SearchHit {
     placeId: string | null
 }
 
-export interface SearchResponse {
+export type SearchResponse = {
     query: string
     hits: SearchHit[]
 }
@@ -125,4 +106,10 @@ export interface SearchResponse {
 export type HighlightContextType = {
     highlightIds: string[];
     setHighlightIds: (ids: ID[]) => void;
+}
+
+export type PinIconState = {
+    isActive: boolean
+    isHighlighted: boolean
+    isDark: boolean
 }
