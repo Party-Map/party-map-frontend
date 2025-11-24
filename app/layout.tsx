@@ -17,15 +17,11 @@ export const viewport: Viewport = {
     width: 'device-width',
     initialScale: 1,
     maximumScale: 1,
-    themeColor: [
-        {media: '(prefers-color-scheme: light)', color: '#ffffff'},
-        {media: '(prefers-color-scheme: dark)', color: '#000000'}
-    ]
 }
 export default async function RootLayout({children}: { children: React.ReactNode }) {
     return (
         <html lang="en">
-        <body className="min-h-dvh bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
+        <body className="min-h-dvh bg-amber-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
         <ThemeProvider>
             <HighlightProvider>
                 <SessionProvider

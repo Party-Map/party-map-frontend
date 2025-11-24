@@ -28,11 +28,11 @@ export function LikedTabs({
         `flex-1 px-3 py-2 text-sm font-medium text-center rounded-lg cursor-pointer ${
             activeTab === tab
                 ? "bg-violet-600 text-white"
-                : "bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-gray-200"
+                : "bg-gray-300 dark:bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-gray-200"
         }`
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 pb-4">
             <div className="flex gap-2">
                 <button
                     type="button"
@@ -58,7 +58,7 @@ export function LikedTabs({
             </div>
 
             <div
-                className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/90 dark:bg-zinc-950/80 p-4 space-y-6">
+                className="rounded-2xl border border-gray-300 dark:border-gray-800 bg-amber-50 dark:bg-zinc-950/80 p-4 space-y-6">
                 {activeTab === "events" && (
                     <div className="space-y-6">
                         <section>

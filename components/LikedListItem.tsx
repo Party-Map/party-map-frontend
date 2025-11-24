@@ -58,7 +58,7 @@ export function LikedListItem({
     if (!visible) return null
 
     return (
-        <li className="flex gap-3 sm:gap-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-zinc-950 p-3 sm:p-4">
+        <li className="flex gap-3 sm:gap-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white/90 dark:bg-zinc-950 p-3 sm:p-4">
             {image && (
                 <div
                     className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200 dark:bg-zinc-800">
