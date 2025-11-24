@@ -48,6 +48,10 @@ export type Event = {
     kind: EventType
     links?: Link[]
 }
+export type LikedEventsGrouped = {
+    upcoming: Event[]
+    past: Event[]
+}
 export type UpcomingEventByPlace = {
     placeId: ID
     eventId: ID

@@ -24,7 +24,7 @@ export default function NavActions({variant = 'desktop'}: { variant?: 'desktop' 
                     </Link>
 
                     <Link
-                        href="/likes"
+                        href="/profile/likes"
                         className="flex flex-col items-center justify-center gap-1 text-xs text-white/90 hover:text-white transition"
                     >
                         <MdFavoriteBorder className="h-5 w-5"/>
@@ -67,7 +67,7 @@ export default function NavActions({variant = 'desktop'}: { variant?: 'desktop' 
                     </Link>
 
                     <Link
-                        href="/likes"
+                        href="/profile/likes"
                         className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm
                      text-white/95 hover:text-white hover:bg-white/10 transition group"
                     >

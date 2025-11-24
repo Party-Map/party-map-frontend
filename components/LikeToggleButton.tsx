@@ -15,12 +15,14 @@ export function LikeToggleButton({
                                      initialLiked,
                                      targetName,
                                      className,
+                                     onChange,
                                  }: {
     target: LikeTarget
     targetId: string
     initialLiked: boolean
     targetName: string,
     className?: string
+    onChange?: (liked: boolean) => void
 }) {
     const session = useContext(SessionContext)
     const [liked, setLiked] = useState(initialLiked)
@@ -39,6 +41,8 @@ export function LikeToggleButton({
                 : await like(target, targetId, session)
 
             setLiked(result.liked)
+            onChange?.(result.liked)
+
             if (result.liked) {
                 toast.success(`You liked ${targetName}`, {style: {backgroundColor: '#333', color: 'white'}})
             } else {

@@ -170,7 +170,7 @@ export default function PlacePopupCard({place, upcomingEvent, onClose}: {
                                         )}`}
                                         className={cn(
                                             "px-2.5 py-0.5 text-[11px] font-semibold rounded-full",
-                                            EVENT_TYPE_BADGE_CLASSES[rawKind], // make sure these are also dark-ish
+                                            EVENT_TYPE_BADGE_CLASSES[rawKind],
                                             common,
                                         )}
                                     >
