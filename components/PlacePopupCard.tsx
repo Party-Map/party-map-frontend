@@ -165,7 +165,7 @@ export default function PlacePopupCard({place, upcomingEvent, onClose}: {
                                 return (
                                     <Link
                                         key={tag.key}
-                                        href={`/tags/${encodeURIComponent(
+                                        href={`/?q=${encodeURIComponent(
                                             rawKind.toLowerCase(),
                                         )}`}
                                         className={cn(
@@ -182,7 +182,7 @@ export default function PlacePopupCard({place, upcomingEvent, onClose}: {
                             return (
                                 <Link
                                     key={tag.key}
-                                    href={`/tags/${encodeURIComponent(
+                                    href={`/?q=${encodeURIComponent(
                                         tag.label.toLowerCase(),
                                     )}`}
                                     className={cn(
