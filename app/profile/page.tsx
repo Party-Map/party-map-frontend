@@ -3,32 +3,15 @@ import DetailPageLayout from '@/components/DetailPageLayout'
 import {getJwtSession} from '@/lib/auth/server-session'
 import ProfileEditButton from './ProfileEditButton'
 import {KeycloakJWTPayload} from "@/lib/auth/jwt-session";
+import {hasAnyAdminRole} from "@/lib/auth/admin-roles";
+import SignInRequired from "@/components/SignInRequired";
 
 export default async function ProfilePage() {
     const session = await getJwtSession()
-    const callback = '/profile'
+    const hasAdminRole = hasAnyAdminRole(session)
 
     if (!session) {
-        return (
-            <DetailPageLayout>
-                <div
-                    className="overflow-hidden rounded-2xl border border-gray-300/80 dark:border-white/10 bg-white/90 dark:bg-zinc-950/80 backdrop-blur shadow-sm">
-                    <div className="p-4">
-                        <h1 className="text-2xl font-bold">Sign in required</h1>
-                        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">
-                            You need to be signed in to view your profile.
-                        </p>
-
-                        <Link
-                            href={`/auth/login?callback=${encodeURIComponent(callback)}`}
-                            className="mt-4 inline-flex items-center rounded-full bg-violet-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-violet-700 dark:bg-violet-500 dark:hover:bg-violet-400"
-                        >
-                            Go to login
-                        </Link>
-                    </div>
-                </div>
-            </DetailPageLayout>
-        )
+        return <SignInRequired callback="/profile" message="You need to be signed in to view your profile."/>
     }
 
     const rawToken = session.getJwtClaims()
@@ -68,6 +51,15 @@ export default async function ProfilePage() {
                             <p className="text-sm text-zinc-600 dark:text-zinc-300">{email}</p>
                         </div>
                         <ProfileEditButton/>
+                        {hasAdminRole && (
+                            <button
+                                className="inline-flex items-center rounded-full bg-violet-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-violet-700 dark:bg-violet-500 dark:hover:bg-violet-400">
+                                <Link href="/admin">
+                                    Admin page
+                                </Link>
+                            </button>
+                        )
+                        }
                     </div>
                     <div className="mt-6 grid gap-4 md:grid-cols-2">
                         <div className="gap-2">
