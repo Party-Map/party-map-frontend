@@ -117,3 +117,33 @@ export type PinIconState = {
     isHighlighted: boolean
     isDark: boolean
 }
+
+export type GeocodeResult = {
+    displayName: string
+    addressLine?: string
+    location: GeoPoint
+    city?: string
+    postcode?: string
+}
+export type ReverseGeocodeResult = {
+    displayName: string
+    addressLine: string
+    city?: string
+}
+
+export type PlaceCreatePayload = {
+    name: string
+    address: string
+    city: string
+    location: GeoPoint
+    description: string
+    tags: string[]
+    image: string | null
+}
+
+export type PlaceAdminListItemData = {
+    id: string
+    name: string
+    address: string
+    city: string
+}

@@ -57,6 +57,34 @@ export async function apiPut<T>(
     return await res.json() as T
 }
 
+export async function apiPost<T>(
+    path: string,
+    session: JwtSession | null,
+    body?: unknown
+): Promise<T> {
+    if (!API_BASE) {
+        throw new Error("NEXT_PUBLIC_RESOURCE_API_BASE_URL is not defined")
+    }
+
+    const cleanPath = path.startsWith("/") ? path.slice(1) : path
+
+    const res = await fetch(`${API_BASE}/api/${cleanPath}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            ...authHeaders(session),
+        },
+        body: body ? JSON.stringify(body) : undefined,
+    })
+
+    if (!res.ok) {
+        throw new Error(`POST ${cleanPath} failed: ${res.status}`)
+    }
+
+    return await res.json() as T
+}
+
+
 export async function apiDelete<T>(
     path: string,
     session: JwtSession | null

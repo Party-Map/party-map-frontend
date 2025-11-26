@@ -144,7 +144,7 @@ export function PlaceLabels({
         <div className="absolute inset-0 pointer-events-none z-[600] select-none">
             {places.map(p => {
                 const upcoming = upcomingMap.get(p.id)
-                if (!upcoming) return null
+                const hasUpcoming = !!upcoming
 
                 const pt = map.latLngToContainerPoint([
                     p.location.latitude,
@@ -210,29 +210,38 @@ export function PlaceLabels({
                             type="button"
                             onClick={() => onOpen(p.id)}
                             className="pointer-events-auto focus:outline-none group text-center cursor-pointer"
-                            aria-label={`Open ${upcoming.title}`}
                             disabled={isActive}
                         >
-                          <span
-                              className="block mx-auto text-[11px] font-semibold leading-tight whitespace-nowrap text-black dark:text-slate-100  drop-shadow-sm [text-shadow:0_1px_2px_rgba(0,0,0,0.55)] group-hover:text-pink-600 dark:group-hover:text-pink-300">
-                            {upcoming.title}
-                          </span>
-                            <div className="mt-0.5 flex items-center gap-1 justify-center">
+                            {hasUpcoming ? (
+                                <>
+                                  <span
+                                      className="block mx-auto text-[11px] font-semibold leading-tight whitespace-nowrap text-black dark:text-slate-100 drop-shadow-sm [text-shadow:0_1px_2px_rgba(0,0,0,0.55)] group-hover:text-pink-600 dark:group-hover:text-pink-300">
+                                    {upcoming!.title}
+                                  </span>
+                                    <div className="mt-0.5 flex items-center gap-1 justify-center">
+                                        <span
+                                            className="text-[9px] uppercase tracking-wide font-medium text-slate-600 dark:text-slate-400 [text-shadow:0_1px_1px_rgba(0,0,0,0.4)]">
+                                          {p.name}
+                                        </span>
+                                        <span
+                                            data-kind={upcoming!.kind}
+                                            className={cn(
+                                                "text-[9px] leading-none font-semibold px-1 py-0.5 rounded shadow",
+                                                "[text-shadow:0_1px_1px_rgba(0,0,0,0.35)]",
+                                                EVENT_TYPE_BADGE_CLASSES[upcoming!.kind],
+                                            )}
+                                        >
+                                          {EVENT_TYPE_LABELS[upcoming!.kind] || upcoming!.kind}
+                                        </span>
+                                    </div>
+                                </>
+                            ) : (
                                 <span
-                                    className="text-[9px] uppercase tracking-wide font-medium text-slate-600 dark:text-slate-400 [text-shadow:0_1px_1px_rgba(0,0,0,0.4)]">
+                                    className="block mx-auto text-[11px] font-medium leading-tight whitespace-nowrap text-slate-500 dark:text-slate-400 drop-shadow-sm [text-shadow:0_1px_2px_rgba(0,0,0,0.45)]"
+                                >
                                   {p.name}
                                 </span>
-                                <span
-                                    data-kind={upcoming.kind}
-                                    className={cn(
-                                        "text-[9px] leading-none font-semibold px-1 py-0.5 rounded shadow",
-                                        "[text-shadow:0_1px_1px_rgba(0,0,0,0.35)]",
-                                        EVENT_TYPE_BADGE_CLASSES[upcoming.kind],
-                                    )}
-                                >
-                                  {EVENT_TYPE_LABELS[upcoming.kind] || upcoming.kind}
-                                </span>
-                            </div>
+                            )}
                         </button>
                     </div>
                 )

@@ -1,4 +1,4 @@
-import {EventType} from "@/lib/types";
+import {EventType, type GeoPoint} from "@/lib/types";
 
 export const BASE_LABEL_ZOOM = 13
 export const HIGHLIGHT_LABEL_ZOOM = 11
@@ -30,4 +30,8 @@ export const MAP_PIN_COLORS = {
     highlight: '#8b5cf6', // violet-500
     dark: '#475569', // slate-600
     light: '#334155', // slate-700
+}
+export const defaultMapCenter: GeoPoint = { // Budapest
+    latitude: 47.4979,
+    longitude: 19.0402,
 }

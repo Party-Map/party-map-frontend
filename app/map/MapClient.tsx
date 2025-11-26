@@ -3,10 +3,11 @@
 import dynamic from 'next/dynamic'
 import {useEffect, useMemo, useRef, useState} from 'react'
 
-import type {GeoPoint, Place, UpcomingEventByPlace} from '@/lib/types'
+import type {Place, UpcomingEventByPlace} from '@/lib/types'
 import {useTheme} from '@/components/ThemeProvider'
 import {useHighlight} from '@/components/HighlightContextProvider'
 import {useSearchParams} from 'next/navigation'
+import {defaultMapCenter} from "@/lib/constants";
 
 // LeafLet uses window at import time, prevent SSR
 const MapView = dynamic(() => import('@/app/map/MapView'), {ssr: false})
@@ -65,10 +66,7 @@ export default function MapClient({
                 : null,
         [popupPlace, upcomingMap],
     )
-    const defaultMapCenter: GeoPoint = { // Budapest
-        latitude: 47.4979,
-        longitude: 19.0402,
-    }
+
     // https://leaflet-extras.github.io/leaflet-providers/preview/
     const tileUrl =
         theme === 'dark'
