@@ -141,6 +141,16 @@ export type PlaceCreatePayload = {
     image: string | null
 }
 
+export type PlaceFormInitialValues = {
+    name?: string
+    address?: string
+    city?: string
+    location?: GeoPoint | null
+    description?: string
+    tags?: string[]
+    image?: string | null
+}
+
 export type PlaceAdminListItemData = {
     id: string
     name: string
