@@ -27,7 +27,7 @@ export class JwtSession {
     }
 
     public getRoles(): Role[] {
-        let rawRoles = this.getJwtClaims()?.realm_access?.roles
+        let rawRoles = this.getJwtClaims()?.roles as string[] | undefined
 
         // If there are no roles return an empty array
         if (!rawRoles?.length) return []
