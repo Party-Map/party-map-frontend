@@ -1,8 +1,8 @@
-import {requireAdminRole} from "@/lib/auth/admin-roles";
-import {Roles} from "@/lib/auth/roles";
+import {requireAdminRole} from "@/app/admin/admin-roles";
+import {Role} from "@/lib/auth/role";
 
 export default async function AdminPerformersPage() {
-    await requireAdminRole(Roles.PERFORMER_MANAGER_USER)
+    await requireAdminRole(Role.PERFORMER_MANAGER_USER)
 
     return (
         <div>

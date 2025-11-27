@@ -1,8 +1,8 @@
-import {requireAdminRole} from "@/lib/auth/admin-roles";
-import {Roles} from "@/lib/auth/roles";
+import {Role} from "@/lib/auth/role";
+import {requireAdminRole} from "@/app/admin/admin-roles";
 
 export default async function AdminEventsPage() {
-    await requireAdminRole(Roles.EVENT_ORGANIZER_USER)
+    await requireAdminRole(Role.EVENT_ORGANIZER_USER)
 
     return (
         <div>

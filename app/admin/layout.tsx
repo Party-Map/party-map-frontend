@@ -4,8 +4,7 @@ import {getJwtSession} from "@/lib/auth/server-session"
 import DetailPageLayout from "@/components/DetailPageLayout"
 import {AdminTabs} from "@/components/AdminTabs"
 import AdminPageLayout from "@/components/AdminPageLayout";
-import {getAdminRoles} from "@/lib/auth/admin-roles";
-import {AdminRole, Roles} from "@/lib/auth/roles";
+import {Role} from "@/lib/auth/role";
 import SignInRequired from "@/components/SignInRequired";
 
 export default async function AdminLayout({children}: {
@@ -17,9 +16,7 @@ export default async function AdminLayout({children}: {
         return <SignInRequired callback="/admin" message="You need to be signed in to view your Admin page."/>
     }
 
-    const adminRoles = getAdminRoles(session)
-
-    if (adminRoles.length === 0) {
+    if (!session.isAdmin()) {
         return (
             <DetailPageLayout>
                 <p className="text-2xl font-bold">You have no access to admin page.</p>
@@ -36,27 +33,29 @@ export default async function AdminLayout({children}: {
         )
     }
 
-    const roleToTab: Record<AdminRole, { href: string; label: string }> = {
-        [Roles.PLACE_MANAGER_USER]: {
+    const roleToTab: Partial<Record<Role, { href: string; label: string }>> = {
+        [Role.PLACE_MANAGER_USER]: {
             href: "/admin/places",
             label: "Manage your Places",
         },
-        [Roles.PERFORMER_MANAGER_USER]: {
+        [Role.PERFORMER_MANAGER_USER]: {
             href: "/admin/performers",
             label: "Manage your Performers",
         },
-        [Roles.EVENT_ORGANIZER_USER]: {
+        [Role.EVENT_ORGANIZER_USER]: {
             href: "/admin/events",
             label: "Manage your Events",
         },
     }
 
-    const tabs = adminRoles.map((role) => roleToTab[role])
+    const tabs = session.getRoles()
+        .map(role => roleToTab[role]) // Map to a role
+        .filter(v => !!v) // Make sure there are no undefined
 
     return (
         <AdminPageLayout>
             <>
-                {adminRoles.length > 1 && (
+                {tabs.length > 1 && (
                     <AdminTabs
                         tabs={tabs}
                         activeClassName="flex-1 px-3 py-2 text-sm font-medium text-center rounded-lg cursor-pointer bg-violet-600 text-white"

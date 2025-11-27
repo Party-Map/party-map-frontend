@@ -1,5 +1,5 @@
-import {requireAdminRole} from "@/lib/auth/admin-roles";
-import {Roles} from "@/lib/auth/roles";
+import {requireAdminRole} from "@/app/admin/admin-roles";
+import {Role} from "@/lib/auth/role";
 import Link from "next/link";
 import {PlaceAdminListItem} from "@/components/PlaceAdminListItem";
 import {PlaceAdminListItemData} from "@/lib/types";
@@ -7,7 +7,7 @@ import {fetchMyPlaces} from "@/lib/api/places";
 
 
 export default async function AdminPlacesPage() {
-    const {session} = await requireAdminRole(Roles.PLACE_MANAGER_USER)
+    const session = await requireAdminRole(Role.PLACE_MANAGER_USER)
 
     const ownedPlaces: PlaceAdminListItemData[] | null = await fetchMyPlaces(session)
     return (

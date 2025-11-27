@@ -3,12 +3,10 @@ import DetailPageLayout from '@/components/DetailPageLayout'
 import {getJwtSession} from '@/lib/auth/server-session'
 import ProfileEditButton from './ProfileEditButton'
 import {KeycloakJWTPayload} from "@/lib/auth/jwt-session";
-import {hasAnyAdminRole} from "@/lib/auth/admin-roles";
 import SignInRequired from "@/components/SignInRequired";
 
 export default async function ProfilePage() {
     const session = await getJwtSession()
-    const hasAdminRole = hasAnyAdminRole(session)
 
     if (!session) {
         return <SignInRequired callback="/profile" message="You need to be signed in to view your profile."/>
@@ -51,7 +49,7 @@ export default async function ProfilePage() {
                             <p className="text-sm text-zinc-600 dark:text-zinc-300">{email}</p>
                         </div>
                         <ProfileEditButton/>
-                        {hasAdminRole && (
+                        {session.isAdmin() && (
                             <button
                                 className="inline-flex items-center rounded-full bg-violet-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-violet-700 dark:bg-violet-500 dark:hover:bg-violet-400">
                                 <Link href="/admin">
