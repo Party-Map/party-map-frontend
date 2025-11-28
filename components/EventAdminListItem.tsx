@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import {fmtRange} from "@/lib/time";
+import {dateTimeDisplayFormat} from "@/lib/dateformat";
 
 export function EventAdminListItem({
                                        href,
@@ -24,7 +24,7 @@ export function EventAdminListItem({
                     {title}
                 </p>
                 <p className="mt-0.5 text-sm text-gray-700 dark:text-gray-200 truncate">
-                    {fmtRange(start, end)}
+                    {dateTimeDisplayFormat(start, end)}
                 </p>
                 <p className="mt-0.5 text-sm text-gray-700 dark:text-gray-200 truncate">
                     {placeName}

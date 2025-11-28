@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import type {Event, Place} from '@/lib/types'
-import {fmtRange} from '@/lib/time'
+import {eventDateTimeDisplayFormat} from "@/lib/dateformat";
 
 export default function EventCard({event, place}: { event: Event, place?: Place }) {
     return (
@@ -10,7 +10,7 @@ export default function EventCard({event, place}: { event: Event, place?: Place 
             <Image src={event.image} alt={event.title} width={1200} height={600} className="h-40 w-full object-cover"/>
             <div className="p-4">
                 <h3 className="text-lg font-semibold">{event.title}</h3>
-                <p className="text-sm text-gray-600">{fmtRange(event.start, event.end)}</p>
+                <p className="text-sm text-gray-600">{eventDateTimeDisplayFormat(event)}</p>
                 {place && (
                     <p className="text-sm text-gray-600">at <Link className="text-sky-600 hover:underline"
                                                                   href={`/places/${place.id}`}>{place.name}</Link></p>

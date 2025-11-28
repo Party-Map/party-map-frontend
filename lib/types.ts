@@ -43,7 +43,7 @@ export type Event = {
     start: string
     end: string
     image: string
-    performerIds: ID[]
+    lineupItems?: LineupItem[]
     price?: string
     kind: EventType
     links?: Link[]
@@ -186,9 +186,33 @@ export type PerformerFormInitialValues = {
     image?: string | null
     links?: Link[]
 }
-
+export type EventPlanCreatePayload = {
+    title: string
+    price?: string
+    kind: EventType
+    start: string
+    end: string
+    description: string
+    links?: Link[]
+    image?: string | null
+}
+export type EventPlanFormInitialValues = {
+    title?: string
+    price?: string
+    kind?: EventType
+    start?: string
+    end?: string
+    description?: string
+    links?: Link[]
+    image?: string | null
+}
 export type LinkConfig = {
     type: LinkType
     label: string
     prefix: string
+}
+export type LineupItem = {
+    startTime: string
+    endTime: string
+    performer: Performer
 }

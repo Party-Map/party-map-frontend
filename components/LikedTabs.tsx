@@ -2,9 +2,9 @@
 
 import {useState} from "react"
 import type {Event, LikeTarget as TabKey, Performer, Place} from "@/lib/types"
-import {fmtRange} from "@/lib/time"
 import {EVENT_TYPE_LABELS} from "@/lib/constants"
 import {LikedListItem} from "@/components/LikedListItem"
+import {eventDateTimeDisplayFormat} from "@/lib/dateformat";
 
 export function LikedTabs({
                               upcomingEvents,
@@ -71,7 +71,7 @@ export function LikedTabs({
                                 <ul className="space-y-2">
                                     {upcomingList.map((event) => {
                                         const kindLabel = EVENT_TYPE_LABELS[event.kind]
-                                        const timeLabel = fmtRange(event.start, event.end)
+                                        const timeLabel = eventDateTimeDisplayFormat(event)
 
                                         return (
                                             <LikedListItem
@@ -102,7 +102,7 @@ export function LikedTabs({
                                 <ul className="space-y-2">
                                     {pastList.map((event) => {
                                         const kindLabel = EVENT_TYPE_LABELS[event.kind]
-                                        const timeLabel = fmtRange(event.start, event.end)
+                                        const timeLabel = eventDateTimeDisplayFormat(event)
 
                                         return (
                                             <LikedListItem
