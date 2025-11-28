@@ -9,6 +9,7 @@ import {fetchPlaceByEventId} from '@/lib/api/places'
 import {fetchPerformersByEventId} from '@/lib/api/performers'
 import {LikeToggleButton} from "@/components/LikeToggleButton";
 import {fetchLikeStatus} from "@/lib/api/likes";
+import {SocialLinks} from "@/components/SocialLinks";
 
 export default async function EventPage({params}: { params: Promise<{ id: string }> }) {
     const {id} = await params
@@ -86,6 +87,10 @@ export default async function EventPage({params}: { params: Promise<{ id: string
                     )}
                     {event.price && <p className="mt-1 text-sm">Price: {event.price}</p>}
                     <p className="mt-2 text-sm">{event.description}</p>
+                    <SocialLinks
+                        links={event.links}
+                        className="mt-3"
+                    />
                 </div>
             </div>
         </DetailPageLayout>

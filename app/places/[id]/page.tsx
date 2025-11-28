@@ -7,6 +7,7 @@ import {getJwtSession} from '@/lib/auth/server-session'
 import {fetchEventSByPlaceId} from '@/lib/api/events'
 import {LikeToggleButton} from "@/components/LikeToggleButton";
 import {fetchLikeStatus} from "@/lib/api/likes";
+import {SocialLinks} from "@/components/SocialLinks";
 
 
 export default async function PlacePage({params}: { params: Promise<{ id: string }> }) {
@@ -66,10 +67,14 @@ export default async function PlacePage({params}: { params: Promise<{ id: string
                                 key={t}
                                 className="rounded-full bg-zinc-100/70 dark:bg-zinc-800/60 px-2 py-0.5 text-xs"
                             >
-                {t}
-              </span>
+                                {t}
+                          </span>
                         ))}
                     </div>
+                    <SocialLinks
+                        links={place.links}
+                        className="mt-3"
+                    />
                 </div>
             </div>
         </DetailPageLayout>

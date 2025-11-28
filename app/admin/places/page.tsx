@@ -15,8 +15,9 @@ export default async function AdminPlacesPage() {
             <div className="flex flex-row justify-between ">
                 <h1 className="text-2xl font-bold mb-2">Places admin</h1>
                 <button>
-                    <Link href="/admin/places/new">
-                        Add a new Place
+                    <Link href="/admin/places/new"
+                          className="flex-1 px-3 py-2 text-sm font-medium text-center rounded-lg cursor-pointer bg-violet-600 text-white">
+                        Add new Place
                     </Link>
                 </button>
             </div>

@@ -7,6 +7,7 @@ import {fetchPerformer} from '@/lib/api/performers'
 import {fetchEventsByPerformerId} from '@/lib/api/events'
 import {fetchLikeStatus} from "@/lib/api/likes"
 import {LikeToggleButton} from "@/components/LikeToggleButton"
+import {SocialLinks} from "@/components/SocialLinks";
 
 export default async function PerformerPage({params}: { params: Promise<{ id: string }> }) {
     const {id} = await params
@@ -69,20 +70,10 @@ export default async function PerformerPage({params}: { params: Promise<{ id: st
                     </div>
                     <p className="text-sm text-zinc-600 dark:text-zinc-300">{performer.genre}</p>
                     <p className="mt-2 text-sm">{performer.bio}</p>
-                    {performer.links && (
-                        <div className="mt-2 flex gap-3 text-sm">
-                            {performer.links.map((l) => (
-                                <a
-                                    key={l.url}
-                                    href={l.url}
-                                    target="_blank"
-                                    className="text-violet-600 dark:text-violet-300 hover:underline"
-                                >
-                                    {l.type}
-                                </a>
-                            ))}
-                        </div>
-                    )}
+                    <SocialLinks
+                        links={performer.links}
+                        className="mt-3"
+                    />
                 </div>
             </div>
         </DetailPageLayout>

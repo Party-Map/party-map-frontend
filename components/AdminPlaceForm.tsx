@@ -1,11 +1,13 @@
 "use client"
 
 import {useState} from "react"
-import type {GeoPoint, PlaceCreatePayload, PlaceFormInitialValues} from "@/lib/types"
+import type {GeoPoint, Link, PlaceCreatePayload, PlaceFormInitialValues} from "@/lib/types"
 import AddressSearchInput from "@/components/AddressSearchInput"
 import ImageUpload from "@/components/ImageUpload"
 import dynamic from "next/dynamic"
 import {reverseGeocode} from "@/lib/geocode"
+import {LinksInput} from "@/components/LinksInput";
+import {useRouter} from "next/navigation";
 
 const LocationMapPicker = dynamic(
     () => import("@/components/LocationMapPicker"),
@@ -25,6 +27,7 @@ export function AdminPlaceForm({
     onSubmit: (payload: PlaceCreatePayload) => Promise<void>
     imageHint?: string
 }) {
+    const router = useRouter()
     const [name, setName] = useState(initialValues?.name ?? "")
     const [address, setAddress] = useState(initialValues?.address ?? "")
     const [city, setCity] = useState(initialValues?.city ?? "")
@@ -37,6 +40,7 @@ export function AdminPlaceForm({
     const [tagsInput, setTagsInput] = useState(
         (initialValues?.tags ?? []).join(", "),
     )
+    const [links, setLinks] = useState<Link[]>(initialValues?.links ?? [])
     const [imageFile, setImageFile] = useState<File | null>(null)
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -82,6 +86,7 @@ export function AdminPlaceForm({
             location,
             description,
             tags,
+            links: links.length ? links : undefined,
             image: initialValues?.image ?? null,
         }
 
@@ -94,6 +99,9 @@ export function AdminPlaceForm({
         } finally {
             setSubmitting(false)
         }
+    }
+    const handleCancel = () => {
+        router.back()
     }
 
     return (
@@ -144,8 +152,8 @@ export function AdminPlaceForm({
                             Location on map
                         </label>
                         <span className="text-xs text-zinc-500 dark:text-zinc-400">
-              Click on the map to adjust the marker
-            </span>
+                          Click on the map to adjust the marker
+                        </span>
                     </div>
                     <LocationMapPicker
                         value={location}
@@ -184,7 +192,7 @@ export function AdminPlaceForm({
                         Separate tags with commas.
                     </p>
                 </div>
-
+                <LinksInput value={links} onChange={setLinks}/>
                 <div>
                     <label className="mb-1 block text-sm font-medium">
                         Cover image
@@ -202,14 +210,23 @@ export function AdminPlaceForm({
                         {error}
                     </p>
                 )}
-
-                <button
-                    type="submit"
-                    disabled={submitting}
-                    className="inline-flex items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 cursor-pointer"
-                >
-                    {submitting ? "Saving…" : submitLabel}
-                </button>
+                <div className="flex items-center gap-3">
+                    <button
+                        type="submit"
+                        disabled={submitting}
+                        className="inline-flex items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 cursor-pointer"
+                    >
+                        {submitting ? "Saving…" : submitLabel}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleCancel}
+                        disabled={submitting}
+                        className="inline-flex items-center justify-center rounded-xl border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800 cursor-pointer"
+                    >
+                        Cancel
+                    </button>
+                </div>
             </form>
         </main>
     )

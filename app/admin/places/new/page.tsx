@@ -22,7 +22,7 @@ export default function NewPlacePage() {
             },
             session,
         )
-        router.push(`/admin/places/${created.id}`)
+        router.push(`/places/${created.id}`)
     }
 
     return (

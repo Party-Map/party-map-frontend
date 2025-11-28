@@ -1,4 +1,4 @@
-import {Event, UpcomingEventByPlace} from '@/lib/types'
+import {Event, EventAdminListItemData, UpcomingEventByPlace} from '@/lib/types'
 import {apiGet} from "@/lib/api/api"
 import type {JwtSession} from "@/lib/auth/jwt-session";
 
@@ -20,4 +20,8 @@ export async function fetchEventsByPerformerId(id: string, session: JwtSession |
 
 export async function fetchUpcomingEventsForAllPlaces(session: JwtSession | null): Promise<UpcomingEventByPlace[]> {
     return apiGet<UpcomingEventByPlace[]>("/events/upcoming-events", session)
+}
+
+export async function fetchMyEvents(session: JwtSession | null) {
+    return apiGet<EventAdminListItemData[]>("/events/owned-events", session)
 }

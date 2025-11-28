@@ -4,6 +4,7 @@ import {Role} from "@/lib/auth/role"
 import {fetchPlace} from "@/lib/api/places"
 import PlaceEditForm from "./PlaceEditForm"
 
+
 export default async function AdminPlacePage({params}: { params: Promise<{ id: string }> }) {
     const session = await requireAdminRole(Role.PLACE_MANAGER_USER)
     const {id} = await params
@@ -13,5 +14,7 @@ export default async function AdminPlacePage({params}: { params: Promise<{ id: s
         return notFound()
     }
 
-    return <PlaceEditForm initialPlace={place}/>
+    return (
+        <PlaceEditForm initialPlace={place}/>
+    )
 }

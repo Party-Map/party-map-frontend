@@ -6,7 +6,7 @@ export type GeoPoint = {
     latitude: number
     longitude: number
 }
-export type LinkType = 'instagram' | 'facebook' | 'twitter' | 'reddit' | 'website'
+export type LinkType = 'INSTAGRAM' | 'FACEBOOK' | 'TWITTER' | 'REDDIT' | 'WEBSITE'
 
 export type EventType = 'DISCO' | 'TECHNO' | 'FESTIVAL' | 'JAZZ' | 'ALTER' | 'HOME' | 'PUB'
 
@@ -139,6 +139,7 @@ export type PlaceCreatePayload = {
     description: string
     tags: string[]
     image: string | null
+    links?: Link[]
 }
 
 export type PlaceFormInitialValues = {
@@ -149,11 +150,45 @@ export type PlaceFormInitialValues = {
     description?: string
     tags?: string[]
     image?: string | null
+    links?: Link[]
 }
 
 export type PlaceAdminListItemData = {
-    id: string
+    id: ID
     name: string
     address: string
     city: string
+}
+export type PerformerAdminListItemData = {
+    id: ID
+    name: string
+}
+export type EventAdminListItemData = {
+    id: ID
+    title: string
+    start: string
+    end: string
+    placeName: string
+}
+
+export type PerformerCreatePayload = {
+    name: string
+    genre: string
+    bio: string
+    image: string | null
+    links?: Link[]
+}
+
+export type PerformerFormInitialValues = {
+    name?: string
+    genre?: string
+    bio?: string
+    image?: string | null
+    links?: Link[]
+}
+
+export type LinkConfig = {
+    type: LinkType
+    label: string
+    prefix: string
 }
