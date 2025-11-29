@@ -255,3 +255,22 @@ export type EventPlanPlaceInvitationWithDate = {
     startDateTime: string;
     endDateTime: string;
 }
+export type PerformerLineupInvitationWithDate = {
+    eventPlanId: ID;
+    eventPlanTitle: string;
+    state: string;
+    startTime: string;
+    endTime: string;
+}
+export type EventPlanLineupInvitationCreatePayload = {
+    performerId: ID
+    startTime: string
+    endTime: string
+    state: string
+}
+export type InviteItem = {
+    performerId?: string
+    startTime: string // "HH:MM"
+    endTime: string   // "HH:MM"
+    inviteState?: string
+}

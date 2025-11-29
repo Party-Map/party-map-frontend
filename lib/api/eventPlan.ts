@@ -2,10 +2,12 @@ import {
     EventPlan,
     EventPlanAdminListItemData,
     EventPlanCreatePayload,
+    EventPlanLineupInvitation,
+    EventPlanLineupInvitationCreatePayload,
     EventPlanPlaceInvitationWithDate,
     PlaceAdminListItemData,
 } from "@/lib/types";
-import {apiGet, apiPost, apiPut} from "@/lib/api/api";
+import {apiDelete, apiGet, apiPost, apiPut} from "@/lib/api/api";
 import {JwtSession} from "@/lib/auth/jwt-session";
 
 
@@ -39,4 +41,24 @@ export async function getEventPlan(id: string, session: JwtSession | null) {
 
 export async function getInvitationForPlace(id: string, session: JwtSession | null) {
     return apiGet<EventPlanPlaceInvitationWithDate[]>(`/places/${id}/invitations`, session)
+}
+
+export async function fetchLineupInvitationsForEventPlan(id: string, session: JwtSession | null) {
+    return apiGet<EventPlanLineupInvitation[]>(`/event-plan/${id}/lineup-invitations`, session)
+}
+
+export async function addLineupInvitationToEventPlan(
+    id: string,
+    payload: EventPlanLineupInvitationCreatePayload,
+    session: JwtSession | null,
+) {
+    return apiPost(`/event-plan/${id}/add-lineup-invitation`, session, payload)
+}
+
+export async function deleteLineupInvitationFromEventPlan(
+    id: string,
+    performerId: string,
+    session: JwtSession | null,
+) {
+    return apiDelete(`/event-plan/${id}/lineup-invitation/${performerId}`, session)
 }

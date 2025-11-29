@@ -55,7 +55,7 @@ export function AdminPerformerForm({
     }
 
     return (
-        <main className="mx-auto max-w-3xl px-4 py-8">
+        <div className="flex flex-col w-full">
             <h1 className="mb-6 text-2xl font-bold">{title}</h1>
 
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -118,6 +118,6 @@ export function AdminPerformerForm({
                     </button>
                 </div>
             </form>
-        </main>
+        </div>
     )
 }

@@ -4,6 +4,8 @@ import {Role} from "@/lib/auth/role"
 import {fetchEventPlan} from "@/lib/api/eventPlan";
 import EventPlanEditForm from "@/app/admin/events/[id]/EventPlanEditForm";
 import InviteControls from "@/app/admin/events/[id]/InviteControls";
+import LineupCreator from "@/app/admin/events/[id]/LineupCreator";
+import {fetchPerformers} from "@/lib/api/performers";
 
 export default async function AdminEventPlanPage({
                                                      params,
@@ -14,30 +16,34 @@ export default async function AdminEventPlanPage({
     const {id} = await params
 
     const eventPlan = await fetchEventPlan(id, session)
+    const performers = await fetchPerformers(session)
 
     if (!eventPlan) {
         return notFound()
     }
 
     return (
-        <main className="flex flex-col mx-auto max-w-[90%] pb-5 gap-5">
-            {(eventPlan.placeInvitation && eventPlan.placeInvitation.state != 'REJECTED') ? (
-                <div>
-                    <h1 className="mb-6 text-2xl font-bold">Place invitation</h1>
-                    <p className="text-sm text-muted-foreground mb-2">
-                        This event plan has been invited to a place ({eventPlan.placeInvitation.place.name}) with a
-                        status of {eventPlan.placeInvitation.state}.
-                    </p>
-                </div>
-            ) : (
-                <div>
-                    <h1 className="mb-6 text-2xl font-bold">Place invitation</h1>
-                    <InviteControls initialEventPlan={eventPlan}/>
-                </div>
-            )}
-            <div>
+        <div className="flex flex-row mx-auto max-w-[90%] pb-5 gap-5">
+            <div className="flex flex-col w-full">
                 <EventPlanEditForm initialEventPlan={eventPlan}/>
             </div>
-        </main>
+            <div className="flex flex-col gap-6 items-start">
+                <div>
+                    <h1 className="mb-6 text-2xl font-bold">Place invitation</h1>
+                    {(eventPlan.placeInvitation && eventPlan.placeInvitation.state != 'REJECTED') ? (
+                        <p className="text-sm text-muted-foreground mb-2">
+                            This event plan has been invited to a place ({eventPlan.placeInvitation.place.name}) with a
+                            status of {eventPlan.placeInvitation.state}.
+                        </p>
+                    ) : (
+                        <InviteControls initialEventPlan={eventPlan}/>
+                    )}
+                </div>
+
+                <div>
+                    <LineupCreator eventPlan={eventPlan} performers={performers}/>
+                </div>
+            </div>
+        </div>
     )
 }
