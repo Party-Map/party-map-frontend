@@ -3,10 +3,13 @@ import {requireAdminRole} from "@/app/admin/admin-roles";
 import Link from "next/link";
 import {fetchMyEvents} from "@/lib/api/events";
 import {EventAdminListItem} from "@/components/EventAdminListItem";
+import {fetchMyEventPlans} from "@/lib/api/eventPlan";
+import EventPlanAdminListItem from "@/components/EventPlanAdminListItem";
 
 export default async function AdminEventsPage() {
     const session = await requireAdminRole(Role.EVENT_ORGANIZER_USER);
     const ownedEvents = await fetchMyEvents(session) || [];
+    const ownedEventPlans = await fetchMyEventPlans(session) || [];
     const now = new Date();
 
     const liveEvents = ownedEvents.filter((e) => new Date(e.end) >= now);
@@ -27,14 +30,13 @@ export default async function AdminEventsPage() {
                 </div>
 
                 <ul className="space-y-3">
-                    {ownedEvents.map((e) => (
-                        <EventAdminListItem
+                    {ownedEventPlans.map((e) => (
+                        <EventPlanAdminListItem
                             key={e.id}
                             href={`/admin/events/${e.id}`}
                             title={e.title}
-                            start={e.start}
-                            end={e.end}
-                            placeName={e.placeName}
+                            startDateTime={e.startDateTime}
+                            endDateTime={e.endDateTime}
                         />
                     ))}
                 </ul>

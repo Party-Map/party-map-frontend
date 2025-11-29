@@ -186,12 +186,23 @@ export type PerformerFormInitialValues = {
     image?: string | null
     links?: Link[]
 }
+export type EventPlan = {
+    id: ID
+    title: string
+    description: string
+    startDateTime: string
+    endDateTime: string
+    price?: string
+    kind: EventType
+    links?: Link[]
+    image?: string | null
+}
 export type EventPlanCreatePayload = {
     title: string
     price?: string
     kind: EventType
-    start: string
-    end: string
+    startDateTime: string
+    endDateTime: string
     description: string
     links?: Link[]
     image?: string | null
@@ -200,11 +211,17 @@ export type EventPlanFormInitialValues = {
     title?: string
     price?: string
     kind?: EventType
-    start?: string
-    end?: string
+    startDateTime?: string
+    endDateTime?: string
     description?: string
     links?: Link[]
     image?: string | null
+}
+export type EventPlanAdminListItemData = {
+    id: ID
+    title: string
+    startDateTime: string
+    endDateTime: string
 }
 export type LinkConfig = {
     type: LinkType

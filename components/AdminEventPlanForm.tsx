@@ -5,6 +5,7 @@ import {EventPlanCreatePayload, EventPlanFormInitialValues, EventType, Link,} fr
 import ImageUpload from "@/components/ImageUpload"
 import {LinksInput} from "@/components/LinksInput";
 import {useRouter} from "next/navigation";
+import DateTimeRangePicker from "@/components/DateTimeRangePicker";
 
 export function AdminEventPlanForm({
                                        title,
@@ -23,8 +24,8 @@ export function AdminEventPlanForm({
     const [eventTitle, setEventTitle] = useState(initialValues?.title ?? "")
     const [price, setPrice] = useState(initialValues?.price ?? "")
     const [kind, setKind] = useState(initialValues?.kind ?? "PUB")
-    const [start, setStart] = useState(initialValues?.start ?? "")
-    const [end, setEnd] = useState(initialValues?.end ?? "")
+    const [startDateTime, setStartDateTime] = useState(initialValues?.startDateTime ?? "")
+    const [endDateTime, setEndDateTime] = useState(initialValues?.endDateTime ?? "")
     const [description, setDescription] = useState(initialValues?.description ?? "")
     const [links, setLinks] = useState<Link[]>(initialValues?.links ?? [])
     const [imageFile, setImageFile] = useState<File | null>(null)
@@ -40,8 +41,8 @@ export function AdminEventPlanForm({
             price: price,
             kind: kind,
             description: description,
-            start: start,
-            end: end,
+            startDateTime: startDateTime,
+            endDateTime: endDateTime,
             links: links.length ? links : undefined,
             image: initialValues?.image ?? null,
         }
@@ -95,6 +96,14 @@ export function AdminEventPlanForm({
                         ))}
                     </select>
                 </div>
+                <DateTimeRangePicker
+                    start={startDateTime}
+                    end={endDateTime}
+                    onChange={(s, e) => {
+                        setStartDateTime(s)
+                        setEndDateTime(e)
+                    }}
+                />
 
                 <div>
                     <label className="mb-1 block text-sm font-medium">Description</label>
@@ -104,6 +113,7 @@ export function AdminEventPlanForm({
                         onChange={(e) => setDescription(e.target.value)}
                     />
                 </div>
+
                 <div>
                     <label className="mb-1 block text-sm font-medium">Price</label>
 
