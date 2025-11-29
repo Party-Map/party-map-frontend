@@ -3,18 +3,25 @@ import {requireAdminRole} from "@/app/admin/admin-roles"
 import {Role} from "@/lib/auth/role"
 import {fetchPlace} from "@/lib/api/places"
 import PlaceEditForm from "./PlaceEditForm"
+import PlaceEventInvitationRequests from "@/app/admin/performers/[id]/PlaceEventInvitationRequests";
+import {getInvitationForPlace} from "@/lib/api/eventPlan";
 
 
 export default async function AdminPlacePage({params}: { params: Promise<{ id: string }> }) {
     const session = await requireAdminRole(Role.PLACE_MANAGER_USER)
     const {id} = await params
     const place = await fetchPlace(id, session)
+    const invitationRequests = await getInvitationForPlace(place.id, session)
+    console.log(invitationRequests)
 
     if (!place) {
         return notFound()
     }
 
     return (
-        <PlaceEditForm initialPlace={place}/>
+        <div className="flex flex-row mx-auto px-4 py-8 gap-4">
+            <PlaceEditForm initialPlace={place}/>
+            <PlaceEventInvitationRequests placeId={place.id} invitationRequests={invitationRequests}/>
+        </div>
     )
 }

@@ -237,14 +237,21 @@ export type LineupItem = {
 }
 
 
-export interface EventPlanPlaceInvitation {
-    state: string;
-    place: Place;
+export type EventPlanPlaceInvitation = {
+    state: string
+    place: Place
 }
 
-export interface EventPlanLineupInvitation {
+export type EventPlanLineupInvitation = {
+    state: string
+    startTime: string
+    endTime: string
+    performer: Performer
+}
+export type EventPlanPlaceInvitationWithDate = {
+    eventPlanId: ID;
     state: string;
-    startTime: string;
-    endTime: string;
-    performer: Performer;
+    title: string;
+    startDateTime: string;
+    endDateTime: string;
 }

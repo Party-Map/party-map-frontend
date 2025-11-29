@@ -29,3 +29,8 @@ export async function addPlace(payload: PlaceCreatePayload, session: JwtSession 
 export async function updatePlace(id: string, payload: PlaceCreatePayload, session: JwtSession | null) {
     return apiPut<Place>(`/places/${id}`, session, payload)
 }
+
+export async function respondToEventInvitation(id: string, eventPlanId: string, state: string, session: JwtSession | null) {
+    return apiPut(`/places/${id}/invitations/${eventPlanId}/respond?state=${state}`, session)
+}
+

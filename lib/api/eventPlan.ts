@@ -1,4 +1,10 @@
-import {EventPlan, EventPlanAdminListItemData, EventPlanCreatePayload, PlaceAdminListItemData,} from "@/lib/types";
+import {
+    EventPlan,
+    EventPlanAdminListItemData,
+    EventPlanCreatePayload,
+    EventPlanPlaceInvitationWithDate,
+    PlaceAdminListItemData,
+} from "@/lib/types";
 import {apiGet, apiPost, apiPut} from "@/lib/api/api";
 import {JwtSession} from "@/lib/auth/jwt-session";
 
@@ -29,4 +35,8 @@ export async function invitePlace(id: string, placeId: string, session: JwtSessi
 
 export async function getEventPlan(id: string, session: JwtSession | null) {
     return apiGet<EventPlan | null>(`/event-plan/${id}`, session)
+}
+
+export async function getInvitationForPlace(id: string, session: JwtSession | null) {
+    return apiGet<EventPlanPlaceInvitationWithDate[]>(`/places/${id}/invitations`, session)
 }
