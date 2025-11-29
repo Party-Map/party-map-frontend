@@ -196,6 +196,8 @@ export type EventPlan = {
     kind: EventType
     links?: Link[]
     image?: string | null
+    placeInvitation: EventPlanPlaceInvitation | null
+    lineupInvitations: EventPlanLineupInvitation[]
 }
 export type EventPlanCreatePayload = {
     title: string
@@ -232,4 +234,17 @@ export type LineupItem = {
     startTime: string
     endTime: string
     performer: Performer
+}
+
+
+export interface EventPlanPlaceInvitation {
+    state: string;
+    place: Place;
+}
+
+export interface EventPlanLineupInvitation {
+    state: string;
+    startTime: string;
+    endTime: string;
+    performer: Performer;
 }

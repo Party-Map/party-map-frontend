@@ -22,7 +22,7 @@ export default function NewAdminPLanPage() {
             },
             session,
         )
-        router.push(`/event-plans/${created.id}`)
+        router.push(`/admin/events/${created.id}`)
     }
 
     return (

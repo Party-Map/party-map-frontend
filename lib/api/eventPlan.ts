@@ -22,3 +22,11 @@ export async function fetchEventPlan(id: string, session: JwtSession | null) {
 export async function fetchPlacesForAdminList(session: JwtSession | null) {
     return apiGet<PlaceAdminListItemData[]>("/event-plan/places", session)
 }
+
+export async function invitePlace(id: string, placeId: string, session: JwtSession | null) {
+    return apiPut(`/event-plan/${id}/invite-place/${placeId}`, session)
+}
+
+export async function getEventPlan(id: string, session: JwtSession | null) {
+    return apiGet<EventPlan | null>(`/event-plan/${id}`, session)
+}
