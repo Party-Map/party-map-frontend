@@ -62,3 +62,10 @@ export async function deleteLineupInvitationFromEventPlan(
 ) {
     return apiDelete(`/event-plan/${id}/lineup-invitation/${performerId}`, session)
 }
+
+export async function publishEventPlan(
+    id: string,
+    session: JwtSession | null,
+) {
+    return apiPost(`/event-plan/${id}/publish`, session);
+}
