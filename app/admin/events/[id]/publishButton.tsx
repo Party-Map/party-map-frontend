@@ -49,7 +49,7 @@ export default function PublishButton({eventPlan}: { eventPlan: EventPlan }) {
                 await publishEventPlan(eventPlan.id, session);
 
                 toast.success("Event plan published successfully!");
-                router.push(`/`);
+                router.push(`/?focus=${eventPlan.placeInvitation?.place.id}`);
 
             } catch {
                 toast.error("Failed to publish event plan. Check if place accepted invitation and there are no pending performer invitation!");
