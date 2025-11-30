@@ -44,6 +44,7 @@ export default async function ProfilePage() {
 
     try {
         places = await fetchLikedPlaces(session);
+        console.log(places);
     } catch (err) {
         console.error("Failed to fetch liked places:", err);
     }

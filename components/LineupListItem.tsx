@@ -3,10 +3,8 @@ import {LineupItem} from "@/lib/types";
 import moment from "moment";
 
 export function LineupListItem({item}: { item: LineupItem }) {
-
-    const TIME_DISPLAY_FORMAT = 'HH:mm';
-    const startTime = moment(item.startTime, moment.HTML5_FMT.TIME_SECONDS).format(TIME_DISPLAY_FORMAT)
-    const endTime = moment(item.endTime, moment.HTML5_FMT.TIME_SECONDS).format(TIME_DISPLAY_FORMAT)
+    const startTime = moment(item.startTime).format('HH:mm')
+    const endTime = moment(item.endTime).format('HH:mm')
 
     return (
         <li className="flex gap-3 sm:gap-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white/90 dark:bg-zinc-950 p-3 sm:p-4">

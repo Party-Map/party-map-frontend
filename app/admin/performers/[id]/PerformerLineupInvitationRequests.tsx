@@ -5,7 +5,7 @@ import {SessionContext} from "@/lib/auth/session-provider"
 import {useRouter} from "next/navigation"
 import {PerformerLineupInvitationWithDate} from "@/lib/types";
 import {respondToLineupInvitation} from "@/lib/api/performers";
-import moment from "moment";
+import {dateTimeDisplayFormat} from "@/lib/dateformat";
 
 export default function PerformerLineupInvitationRequests({
                                                               invitationRequests,
@@ -21,7 +21,6 @@ export default function PerformerLineupInvitationRequests({
         await respondToLineupInvitation(performerId, invitation?.eventPlanId!!, action, session)
         router.refresh()
     }
-    console.log(invitationRequests[0]?.startTime)
 
     return (
         <div className="w-[30%]">
@@ -45,7 +44,7 @@ export default function PerformerLineupInvitationRequests({
                                         <span className="text-sm font-semibold text-red-600">Rejected</span>
                                     )}
                                 </div>
-                                <p className="text-sm text-muted-foreground mb-2">{moment(invitation.startTime, "HH:mm:ss").format('HH:mm')} - {moment(invitation.endTime, "HH:mm:ss").format('HH:mm')}</p>
+                                <p className="text-sm text-muted-foreground mb-2">{dateTimeDisplayFormat(invitation.startTime, invitation.endTime)}</p>
                                 <p className="text-sm text-muted-foreground mb-3">An event organizer has invited this
                                     performer to play at an event. You can accept or reject the invitation.</p>
                                 <div className="flex gap-3">

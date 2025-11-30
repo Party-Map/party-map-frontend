@@ -12,6 +12,12 @@ import {SessionContext} from "@/lib/auth/session-provider"
 
 type InviteState = "ACCEPTED" | "PENDING" | "REJECTED"
 
+function toLocalDateTimeInputValue(dateTime: string | Date | moment.Moment) {
+    const m = moment(dateTime)
+    if (!m.isValid()) return ""
+    return m.format("YYYY-MM-DDTHH:mm")
+}
+
 export default function LineupCreator({
                                           performers = [],
                                           eventPlan,
@@ -23,11 +29,11 @@ export default function LineupCreator({
 
     const eventPlanId = eventPlan.id
 
-    const startTime = moment(eventPlan.startDateTime).format("HH:mm")
-    const endTime = moment(eventPlan.endDateTime).format("HH:mm")
+    const eventStart = moment(eventPlan.startDateTime)
+    const eventEnd = moment(eventPlan.endDateTime)
 
-    const globalStart = moment(startTime, "HH:mm")
-    const globalEnd = moment(endTime, "HH:mm")
+    const eventStartInput = toLocalDateTimeInputValue(eventStart)
+    const eventEndInput = toLocalDateTimeInputValue(eventEnd)
 
     const [items, setItems] = useState<InviteItem[]>([])
     const [initialLoading, setInitialLoading] = useState(true)
@@ -38,25 +44,40 @@ export default function LineupCreator({
 
         async function loadInitialInvites() {
             try {
-                const invitations = await fetchLineupInvitationsForEventPlan(eventPlanId, session)
+                const invitations = await fetchLineupInvitationsForEventPlan(
+                    eventPlanId,
+                    session,
+                )
                 if (cancelled) return
 
                 if (invitations.length > 0) {
                     setItems(
                         invitations.map((inv) => ({
                             performerId: inv.performer.id,
-                            startTime: moment(inv.startTime, "HH:mm").format("HH:mm"),
-                            endTime: moment(inv.endTime, "HH:mm").format("HH:mm"),
+                            startTime: toLocalDateTimeInputValue(inv.startTime),
+                            endTime: toLocalDateTimeInputValue(inv.endTime),
                             inviteState: inv.state as InviteState,
                         })),
                     )
                 } else {
-                    setItems([{performerId: undefined, startTime, endTime}])
+                    setItems([
+                        {
+                            performerId: undefined,
+                            startTime: eventStartInput,
+                            endTime: eventEndInput,
+                        } as InviteItem,
+                    ])
                 }
             } catch (e) {
                 if (!cancelled) {
                     setInitialError("Failed to load lineup invitations")
-                    setItems([{performerId: undefined, startTime, endTime}])
+                    setItems([
+                        {
+                            performerId: undefined,
+                            startTime: eventStartInput,
+                            endTime: eventEndInput,
+                        } as InviteItem,
+                    ])
                 }
             } finally {
                 if (!cancelled) {
@@ -70,16 +91,16 @@ export default function LineupCreator({
         return () => {
             cancelled = true
         }
-    }, [eventPlanId, session, startTime, endTime])
+    }, [eventPlanId, session, eventStartInput, eventEndInput])
 
     function addItem() {
         setItems((prev) => [
             ...prev,
             {
                 performerId: undefined,
-                startTime,
-                endTime,
-            },
+                startTime: eventStartInput,
+                endTime: eventEndInput,
+            } as InviteItem,
         ])
     }
 
@@ -87,7 +108,11 @@ export default function LineupCreator({
         const item = items[index]
         if (item?.performerId) {
             try {
-                await deleteLineupInvitationFromEventPlan(eventPlanId, item.performerId, session)
+                await deleteLineupInvitationFromEventPlan(
+                    eventPlanId,
+                    item.performerId,
+                    session,
+                )
             } catch (e) {
                 setInitialError("Failed to delete lineup invitation")
             }
@@ -96,16 +121,19 @@ export default function LineupCreator({
     }
 
     function clampToGlobalRange(start: string, end: string) {
-        let s = moment(start, "HH:mm")
-        let e = moment(end, "HH:mm")
+        let s = moment(start)
+        let e = moment(end)
 
-        if (s.isBefore(globalStart)) s = globalStart.clone()
-        if (e.isAfter(globalEnd)) e = globalEnd.clone()
+        if (!s.isValid()) s = eventStart.clone()
+        if (!e.isValid()) e = eventEnd.clone()
+
+        if (s.isBefore(eventStart)) s = eventStart.clone()
+        if (e.isAfter(eventEnd)) e = eventEnd.clone()
         if (e.isBefore(s)) e = s.clone()
 
         return {
-            startTime: s.format("HH:mm"),
-            endTime: e.format("HH:mm"),
+            startTime: s.format("YYYY-MM-DDTHH:mm"),
+            endTime: e.format("YYYY-MM-DDTHH:mm"),
         }
     }
 
@@ -131,9 +159,13 @@ export default function LineupCreator({
 
     async function sendInvite(item: InviteItem, index: number) {
         if (!item.performerId || !item.startTime || !item.endTime) {
-            setInitialError("Please select a performer and valid time range")
+            setInitialError("Please select a performer and valid date/time range")
             return
         }
+
+        const clamped = clampToGlobalRange(item.startTime, item.endTime)
+        const startToSend = clamped.startTime
+        const endToSend = clamped.endTime
 
         const previousState = item.inviteState
 
@@ -145,8 +177,8 @@ export default function LineupCreator({
                 eventPlanId,
                 {
                     performerId: item.performerId,
-                    startTime: item.startTime,
-                    endTime: item.endTime,
+                    startTime: startToSend,
+                    endTime: endToSend,
                     state: "PENDING",
                 },
                 session,
@@ -164,6 +196,9 @@ export default function LineupCreator({
     const selectedPerformerIds = items
         .map((i) => i.performerId)
         .filter((id): id is string => !!id)
+
+    const eventStartLabel = eventStart.format("YYYY-MM-DD HH:mm")
+    const eventEndLabel = eventEnd.format("YYYY-MM-DD HH:mm")
 
     return (
         <div className="w-full max-w-2xl">
@@ -194,7 +229,9 @@ export default function LineupCreator({
                             <select
                                 value={item.performerId ?? ""}
                                 onChange={(e) =>
-                                    updateItem(index, {performerId: e.target.value || undefined})
+                                    updateItem(index, {
+                                        performerId: e.target.value || undefined,
+                                    })
                                 }
                                 className="w-full rounded-md border px-2 py-1"
                                 disabled={item.inviteState === "PENDING"}
@@ -223,16 +260,16 @@ export default function LineupCreator({
                             </select>
                         </div>
 
-                        <div className="flex items-center gap-2 mb-3">
+                        <div className="flex flex-col items-center gap-2 mb-3">
                             <div className="flex-1">
                                 <label className="text-xs text-muted-foreground">
-                                    Start time (between {startTime} and {endTime})
+                                    Start (between {eventStartLabel} and {eventEndLabel})
                                 </label>
                                 <input
-                                    type="time"
-                                    min={startTime}
-                                    max={endTime}
-                                    value={item.startTime}
+                                    type="datetime-local"
+                                    min={eventStartInput}
+                                    max={eventEndInput}
+                                    value={item.startTime || ""}
                                     onChange={(e) =>
                                         updateItem(index, {startTime: e.target.value})
                                     }
@@ -242,13 +279,13 @@ export default function LineupCreator({
                             </div>
                             <div className="flex-1">
                                 <label className="text-xs text-muted-foreground">
-                                    End time (between {startTime} and {endTime})
+                                    End (between {eventStartLabel} and {eventEndLabel})
                                 </label>
                                 <input
-                                    type="time"
-                                    min={startTime}
-                                    max={endTime}
-                                    value={item.endTime}
+                                    type="datetime-local"
+                                    min={eventStartInput}
+                                    max={eventEndInput}
+                                    value={item.endTime || ""}
                                     onChange={(e) =>
                                         updateItem(index, {endTime: e.target.value})
                                     }
