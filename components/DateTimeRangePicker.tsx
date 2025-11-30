@@ -1,31 +1,25 @@
 "use client"
 
 import React from "react"
-import moment from "moment"
 
-function toLocalInputValue(iso?: string) {
-    if (!iso) return ""
-    const m = moment(iso)
-    if (!m.isValid()) return ""
-    // format YYYY-MM-DDTHH:mm
-    return m.format("YYYY-MM-DDTHH:mm")
-}
-
-export default function DateTimeRangePicker({start, end, onChange}: {
+export default function DateTimeRangePicker({
+                                                start,
+                                                end,
+                                                onChange,
+                                            }: {
     start?: string
     end?: string
-    onChange: (startIso: string, endIso: string) => void
+    onChange: (start: string, end: string) => void
 }) {
-    const startValue = toLocalInputValue(start)
-    const endValue = toLocalInputValue(end)
+    const startValue = start ?? ""
+    const endValue = end ?? ""
 
     const handleStart = (v: string) => {
-        const iso = v ? moment(v).toISOString() : ""
-        onChange(iso, end ?? "")
+        onChange(v || "", end ?? "")
     }
+
     const handleEnd = (v: string) => {
-        const iso = v ? moment(v).toISOString() : ""
-        onChange(start ?? "", iso)
+        onChange(start ?? "", v || "")
     }
 
     return (
