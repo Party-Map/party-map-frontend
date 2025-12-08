@@ -1,4 +1,4 @@
-import {Place, PlaceAdminListItemData, PlaceCreatePayload, UpcomingEventByPlace} from "@/lib/types";
+import {Place, PlaceAdminListItemData, PlaceCreatePayload} from "@/lib/types";
 import {apiGet, apiPost, apiPut} from "@/lib/api/api"
 import type {JwtSession} from "@/lib/auth/jwt-session";
 
@@ -12,10 +12,6 @@ export async function fetchPlace(id: string, session: JwtSession | null) {
 
 export async function fetchPlaceByEventId(id: string, session: JwtSession | null) {
     return await apiGet<Place>(`/events/${id}/place`, session)
-}
-
-export async function fetchUpcomingEventByPlaceId(placeId: string, session: JwtSession | null) {
-    return await apiGet<UpcomingEventByPlace>(`/places/${placeId}/upcoming-event`, session)
 }
 
 export async function fetchMyPlaces(session: JwtSession | null) {

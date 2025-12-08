@@ -15,10 +15,6 @@ export async function fetchPerformer(id: string, session: JwtSession | null): Pr
     return apiGet<Performer>(`/performers/${id}`, session)
 }
 
-export async function fetchPerformersByEventId(id: string, session: JwtSession | null): Promise<Performer[]> {
-    return apiGet<Performer[]>(`/events?performerId=${id}`, session)
-}
-
 export async function fetchMyPerformers(session: JwtSession | null) {
     return apiGet<PerformerAdminListItemData[]>("/performers/owned-performers", session)
 }

@@ -35,9 +35,6 @@ export async function invitePlace(id: string, placeId: string, session: JwtSessi
     return apiPut(`/event-plan/${id}/invite-place/${placeId}`, session)
 }
 
-export async function getEventPlan(id: string, session: JwtSession | null) {
-    return apiGet<EventPlan | null>(`/event-plan/${id}`, session)
-}
 
 export async function getInvitationForPlace(id: string, session: JwtSession | null) {
     return apiGet<EventPlanPlaceInvitationWithDate[]>(`/places/${id}/invitations`, session)

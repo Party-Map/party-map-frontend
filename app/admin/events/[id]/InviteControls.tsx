@@ -20,7 +20,6 @@ export default function InviteControls({initialEventPlan}: Props) {
     const handleSend = async () => {
         if (!selectedPlace) return
         try {
-            // Use the api helper which wraps the fetch and handles session headers
             await invitePlace(initialEventPlan.id, selectedPlace.id, session)
             // router.push(`/admin/events/${initialEventPlan.id}`)
             router.refresh()
