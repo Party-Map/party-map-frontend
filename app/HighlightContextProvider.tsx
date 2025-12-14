@@ -5,7 +5,7 @@ import {createContext, useCallback, useContext, useState} from "react";
 
 const HighlightContext = createContext<HighlightContextType | null>(null);
 
-export function HighlightProvider({children}: { children: React.ReactNode }) {
+export function HighlightContextProvider({children}: { children: React.ReactNode }) {
     const [highlightIds, _setHighlightIds] = useState<string[]>([]);
     // prevent unnecessary map fly on highlight changes
     const setHighlightIds = useCallback((next: string[]) => {
