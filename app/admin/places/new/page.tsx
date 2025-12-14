@@ -3,7 +3,7 @@
 import {useContext} from "react"
 import {useRouter} from "next/navigation"
 import type {PlaceCreatePayload} from "@/lib/types"
-import {SessionContext} from "@/lib/auth/session-provider"
+import {SessionContext} from "@/lib/auth/SessionContextProvider"
 import {addPlace} from "@/lib/api/places"
 import {AdminPlaceForm} from "@/app/admin/places/AdminPlaceForm"
 

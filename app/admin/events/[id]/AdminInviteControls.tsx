@@ -3,8 +3,8 @@
 import {useContext, useState} from "react"
 import AdminPlaceSelect from "@/app/admin/events/[id]/AdminPlaceSelect"
 import type {EventPlan, PlaceAdminListItemData} from "@/lib/types"
-import {SessionContext} from "@/lib/auth/session-provider"
-import {invitePlace} from "@/lib/api/eventPlan"
+import {SessionContext} from "@/lib/auth/SessionContextProvider"
+import {invitePlace} from "@/lib/api/event-plan"
 import toast from "react-hot-toast";
 import {useRouter} from "next/navigation";
 

@@ -7,7 +7,7 @@ import {getJwtSession} from '@/lib/auth/client-session'
 // @ts-ignore
 export const SessionContext = createContext<JwtSession | null>()
 
-export default function SessionProvider({
+export default function SessionContextProvider({
                                             children,
                                             jwtAccessToken,
                                         }: Readonly<{

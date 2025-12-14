@@ -4,7 +4,7 @@ import {useContext, useState} from "react"
 import {MdFavorite, MdFavoriteBorder} from "react-icons/md"
 import {FcDislike} from "react-icons/fc"
 import {like, unlike} from "@/lib/api/likes"
-import {SessionContext} from "@/lib/auth/session-provider"
+import {SessionContext} from "@/lib/auth/SessionContextProvider"
 import {LikeTarget} from "@/lib/types"
 import toast from "react-hot-toast";
 

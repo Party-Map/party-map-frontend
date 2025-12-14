@@ -3,7 +3,7 @@ import {requireAdminRole} from "@/app/admin/admin-roles";
 import Link from "next/link";
 import {fetchMyEvents} from "@/lib/api/events";
 import {AdminEventListItem} from "@/app/admin/events/AdminEventListItem";
-import {fetchMyEventPlans} from "@/lib/api/eventPlan";
+import {fetchMyEventPlans} from "@/lib/api/event-plan";
 import AdminEventPlanListItem from "@/app/admin/events/AdminEventPlanListItem";
 
 export default async function AdminEventsPage() {

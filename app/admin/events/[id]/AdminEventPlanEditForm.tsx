@@ -3,9 +3,9 @@
 import {useContext} from "react"
 import {useRouter} from "next/navigation"
 import type {EventPlan, EventPlanCreatePayload} from "@/lib/types"
-import {SessionContext} from "@/lib/auth/session-provider"
+import {SessionContext} from "@/lib/auth/SessionContextProvider"
 import {AdminEventPlanForm} from "@/app/admin/events/AdminEventPlanForm";
-import {updateEventPlan} from "@/lib/api/eventPlan";
+import {updateEventPlan} from "@/lib/api/event-plan";
 
 export default function AdminEventPlanEditForm({initialEventPlan}: { initialEventPlan: EventPlan }) {
     const router = useRouter()

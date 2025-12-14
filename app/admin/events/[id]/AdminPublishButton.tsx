@@ -5,8 +5,8 @@ import {useRouter} from "next/navigation";
 import toast from "react-hot-toast";
 
 import {EventPlan} from "@/lib/types";
-import {publishEventPlan} from "@/lib/api/eventPlan";
-import {SessionContext} from "@/lib/auth/session-provider";
+import {publishEventPlan} from "@/lib/api/event-plan";
+import {SessionContext} from "@/lib/auth/SessionContextProvider";
 
 export default function AdminPublishButton({eventPlan}: { eventPlan: EventPlan }) {
     const [isPending, startTransition] = useTransition();
