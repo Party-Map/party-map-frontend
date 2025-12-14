@@ -1,14 +1,14 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import {notFound} from 'next/navigation'
-import DetailPageLayout from '@/components/DetailPageLayout'
+import DetailPageLayout from '@/app/DetailPageLayout'
 import {fetchEvent} from '@/lib/api/events'
 import {getJwtSession} from '@/lib/auth/server-session'
 import {fetchPlaceByEventId} from '@/lib/api/places'
 import {LikeToggleButton} from "@/components/LikeToggleButton";
 import {fetchLikeStatus} from "@/lib/api/likes";
 import {SocialLinks} from "@/components/SocialLinks";
-import {LineupList} from "@/components/LineupList";
+import {LineupList} from "@/app/events/[id]/LineupList";
 import {eventDateTimeDisplayFormat} from "@/lib/dateformat";
 
 export default async function EventPage({params}: { params: Promise<{ id: string }> }) {

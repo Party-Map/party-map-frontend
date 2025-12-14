@@ -1,7 +1,7 @@
 "use client"
 
 import {useContext, useState} from "react"
-import AdminPlaceSelect from "@/components/AdminPlaceSelect"
+import AdminPlaceSelect from "@/app/admin/events/[id]/AdminPlaceSelect"
 import type {EventPlan, PlaceAdminListItemData} from "@/lib/types"
 import {SessionContext} from "@/lib/auth/session-provider"
 import {invitePlace} from "@/lib/api/eventPlan"
@@ -12,7 +12,7 @@ type Props = {
     initialEventPlan: EventPlan
 }
 
-export default function InviteControls({initialEventPlan}: Props) {
+export default function AdminInviteControls({initialEventPlan}: Props) {
     const session = useContext(SessionContext)
     const [selectedPlace, setSelectedPlace] = useState<PlaceAdminListItemData | null>(null)
     const router = useRouter()
@@ -21,7 +21,6 @@ export default function InviteControls({initialEventPlan}: Props) {
         if (!selectedPlace) return
         try {
             await invitePlace(initialEventPlan.id, selectedPlace.id, session)
-            // router.push(`/admin/events/${initialEventPlan.id}`)
             router.refresh()
 
         } catch (e: any) {

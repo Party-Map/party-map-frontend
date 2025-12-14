@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react'
 import {Circle, Marker, useMap} from 'react-leaflet'
 import {LatLngTuple} from 'leaflet'
 import type {GeoPoint} from '@/lib/types'
-import {YouAreHereIcon} from "@/components/MapIcons";
+import {YouAreHereIcon} from "@/app/map/MapIcons";
 
 export function UserLocation({auto = true, onPosition}: {
     auto?: boolean

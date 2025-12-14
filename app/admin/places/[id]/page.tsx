@@ -2,8 +2,8 @@ import {notFound} from "next/navigation"
 import {requireAdminRole} from "@/app/admin/admin-roles"
 import {Role} from "@/lib/auth/role"
 import {fetchPlace} from "@/lib/api/places"
-import PlaceEditForm from "./PlaceEditForm"
-import PlaceEventInvitationRequests from "@/app/admin/performers/[id]/PlaceEventInvitationRequests";
+import AdminPlaceEditForm from "./AdminPlaceEditForm"
+import AdminPlaceEventInvitationRequests from "@/app/admin/places/[id]/AdminPlaceEventInvitationRequests";
 import {getInvitationForPlace} from "@/lib/api/eventPlan";
 
 
@@ -20,8 +20,8 @@ export default async function AdminPlacePage({params}: { params: Promise<{ id: s
 
     return (
         <div className="flex flex-row mx-auto px-4 py-8 gap-4">
-            <PlaceEditForm initialPlace={place}/>
-            <PlaceEventInvitationRequests placeId={place.id} invitationRequests={invitationRequests}/>
+            <AdminPlaceEditForm initialPlace={place}/>
+            <AdminPlaceEventInvitationRequests placeId={place.id} invitationRequests={invitationRequests}/>
         </div>
     )
 }

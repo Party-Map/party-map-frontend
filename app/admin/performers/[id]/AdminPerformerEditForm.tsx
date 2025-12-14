@@ -5,9 +5,9 @@ import {useRouter} from "next/navigation"
 import type {Performer, PerformerCreatePayload} from "@/lib/types"
 import {SessionContext} from "@/lib/auth/session-provider"
 import {updatePerformer} from "@/lib/api/performers"
-import {AdminPerformerForm} from "@/components/AdminPerformerForm"
+import {AdminPerformerForm} from "@/app/admin/performers/AdminPerformerForm"
 
-export default function PerformerEditForm({
+export default function AdminPerformerEditForm({
                                               initialPerformer,
                                           }: {
     initialPerformer: Performer

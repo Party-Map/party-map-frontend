@@ -2,8 +2,8 @@
 
 import {useState} from "react"
 import {EventPlanCreatePayload, EventPlanFormInitialValues, EventType, Link,} from "@/lib/types"
-import ImageUpload from "@/components/ImageUpload"
-import {LinksInput} from "@/components/LinksInput";
+import ImageUpload from "@/app/admin/ImageUpload"
+import {LinksInput} from "@/app/admin/LinksInput";
 import {useRouter} from "next/navigation";
 import DateTimeRangePicker from "@/components/DateTimeRangePicker";
 

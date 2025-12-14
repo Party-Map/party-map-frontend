@@ -3,7 +3,7 @@
 import Link from "next/link"
 import {dateTimeDisplayFormat} from "@/lib/dateformat"
 
-export default function EventPlanAdminListItem({
+export default function AdminEventPlanListItem({
                                                    href,
                                                    title,
                                                    startDateTime,

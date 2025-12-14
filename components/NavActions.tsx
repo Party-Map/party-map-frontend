@@ -4,7 +4,7 @@ import React, {useContext} from 'react'
 import Link from 'next/link'
 import {LogIn, LogOut, User} from 'lucide-react'
 import {SessionContext} from "@/lib/auth/session-provider";
-import {SignInButton, SignOutButton} from "@/components/AuthButtons";
+import {SignInButton, SignOutButton} from "@/app/auth/AuthButtons";
 import {MdFavoriteBorder} from "react-icons/md";
 
 export default function NavActions({variant = 'desktop'}: { variant?: 'desktop' | 'mobile' }) {

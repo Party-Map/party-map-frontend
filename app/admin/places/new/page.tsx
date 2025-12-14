@@ -5,7 +5,7 @@ import {useRouter} from "next/navigation"
 import type {PlaceCreatePayload} from "@/lib/types"
 import {SessionContext} from "@/lib/auth/session-provider"
 import {addPlace} from "@/lib/api/places"
-import {AdminPlaceForm} from "@/components/AdminPlaceForm"
+import {AdminPlaceForm} from "@/app/admin/places/AdminPlaceForm"
 
 const FALLBACK_IMAGE =
     "https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=870&auto=format&fit=crop"

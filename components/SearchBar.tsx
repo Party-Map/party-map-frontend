@@ -5,7 +5,7 @@ import {Eraser, Minimize2, Search} from 'lucide-react'
 import type {SearchHit} from '@/lib/types'
 import {usePathname, useRouter, useSearchParams} from 'next/navigation'
 import {SearchResultListItem} from '@/components/SearchResultListItem'
-import {useHighlight} from '@/components/HighlightContextProvider'
+import {useHighlight} from '@/app/HighlightContextProvider'
 import {SessionContext} from '@/lib/auth/session-provider'
 import {fetchSearch} from '@/lib/api/search'
 

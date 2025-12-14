@@ -2,8 +2,8 @@ import {notFound} from "next/navigation"
 import {requireAdminRole} from "@/app/admin/admin-roles"
 import {Role} from "@/lib/auth/role"
 import {fetchPerformer, getLineupInvitationsForPerformer} from "@/lib/api/performers"
-import PerformerEditForm from "./PerformerEditForm"
-import PerformerLineupInvitationRequests from "@/app/admin/performers/[id]/PerformerLineupInvitationRequests";
+import AdminPerformerEditForm from "./AdminPerformerEditForm"
+import AdminPerformerLineupInvitationRequests from "@/app/admin/performers/[id]/AdminPerformerLineupInvitationRequests";
 
 export default async function AdminPerformerPage({
                                                      params,
@@ -21,8 +21,8 @@ export default async function AdminPerformerPage({
     console.log(invitationRequests)
     return (
         <div className="flex flex-row mx-auto px-4 py-8 gap-4">
-            <PerformerEditForm initialPerformer={performer}/>
-            <PerformerLineupInvitationRequests invitationRequests={invitationRequests} performerId={performer.id}/>
+            <AdminPerformerEditForm initialPerformer={performer}/>
+            <AdminPerformerLineupInvitationRequests invitationRequests={invitationRequests} performerId={performer.id}/>
         </div>
     )
 }

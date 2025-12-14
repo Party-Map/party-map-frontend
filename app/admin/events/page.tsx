@@ -2,9 +2,9 @@ import {Role} from "@/lib/auth/role";
 import {requireAdminRole} from "@/app/admin/admin-roles";
 import Link from "next/link";
 import {fetchMyEvents} from "@/lib/api/events";
-import {EventAdminListItem} from "@/components/EventAdminListItem";
+import {AdminEventListItem} from "@/app/admin/events/AdminEventListItem";
 import {fetchMyEventPlans} from "@/lib/api/eventPlan";
-import EventPlanAdminListItem from "@/components/EventPlanAdminListItem";
+import AdminEventPlanListItem from "@/app/admin/events/AdminEventPlanListItem";
 
 export default async function AdminEventsPage() {
     const session = await requireAdminRole(Role.EVENT_ORGANIZER_USER);
@@ -31,7 +31,7 @@ export default async function AdminEventsPage() {
 
                 <ul className="space-y-3">
                     {ownedEventPlans.map((e) => (
-                        <EventPlanAdminListItem
+                        <AdminEventPlanListItem
                             key={e.id}
                             href={`/admin/events/${e.id}`}
                             title={e.title}
@@ -49,7 +49,7 @@ export default async function AdminEventsPage() {
                 {/* Live / upcoming events */}
                 <ul className="space-y-3">
                     {liveEvents.map((e) => (
-                        <EventAdminListItem
+                        <AdminEventListItem
                             key={e.id}
                             href={`/events/${e.id}`}
                             title={e.title}
@@ -72,7 +72,7 @@ export default async function AdminEventsPage() {
                     </summary>
                     <ul className="mt-3 space-y-3">
                         {pastEvents.map((e) => (
-                            <EventAdminListItem
+                            <AdminEventListItem
                                 key={e.id}
                                 href={`/events/${e.id}`}
                                 title={e.title}

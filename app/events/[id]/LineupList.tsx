@@ -1,5 +1,5 @@
 import {LineupItem} from "@/lib/types";
-import {LineupListItem} from "@/components/LineupListItem";
+import {LineupListItem} from "@/app/events/[id]/LineupListItem";
 
 export function LineupList({items}: { items: LineupItem[] }) {
     const sorted = [...items].sort(

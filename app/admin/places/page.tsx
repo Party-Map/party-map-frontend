@@ -1,7 +1,7 @@
 import {requireAdminRole} from "@/app/admin/admin-roles";
 import {Role} from "@/lib/auth/role";
 import Link from "next/link";
-import {PlaceAdminListItem} from "@/components/PlaceAdminListItem";
+import {AdminPlaceListItem} from "@/app/admin/places/AdminPlaceListItem";
 import {PlaceAdminListItemData} from "@/lib/types";
 import {fetchMyPlaces} from "@/lib/api/places";
 
@@ -23,7 +23,7 @@ export default async function AdminPlacesPage() {
             </div>
             <ul className="space-y-3">
                 {ownedPlaces && ownedPlaces.map((p) => (
-                    <PlaceAdminListItem
+                    <AdminPlaceListItem
                         key={p.id}
                         href={`/admin/places/${p.id}`}
                         name={p.name}

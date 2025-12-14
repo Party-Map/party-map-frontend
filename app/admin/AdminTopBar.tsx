@@ -1,5 +1,5 @@
-import ThemeToggle from "./ThemeToggle"
-import NavActions from "./NavActions"
+import ThemeToggle from "../../components/ThemeToggle"
+import NavActions from "../../components/NavActions"
 import Link from "next/link"
 import {Baloo_2} from "next/font/google"
 

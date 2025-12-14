@@ -7,7 +7,7 @@ import {EventPlanPlaceInvitationWithDate} from "@/lib/types";
 import {dateTimeDisplayFormat} from "@/lib/dateformat";
 import {respondToEventInvitation} from "@/lib/api/places";
 
-export default function PlaceEventInvitationRequests({invitationRequests, placeId}:
+export default function AdminPlaceEventInvitationRequests({invitationRequests, placeId}:
                                                      {
                                                          invitationRequests: EventPlanPlaceInvitationWithDate[],
                                                          placeId: string

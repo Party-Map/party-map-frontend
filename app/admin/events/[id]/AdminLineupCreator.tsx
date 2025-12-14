@@ -18,7 +18,7 @@ function toLocalDateTimeInputValue(dateTime: string | Date | moment.Moment) {
     return m.format("YYYY-MM-DDTHH:mm")
 }
 
-export default function LineupCreator({
+export default function AdminLineupCreator({
                                           performers = [],
                                           eventPlan,
                                       }: {

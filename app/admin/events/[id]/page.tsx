@@ -2,11 +2,11 @@ import {notFound} from "next/navigation"
 import {requireAdminRole} from "@/app/admin/admin-roles"
 import {Role} from "@/lib/auth/role"
 import {fetchEventPlan} from "@/lib/api/eventPlan";
-import EventPlanEditForm from "@/app/admin/events/[id]/EventPlanEditForm";
-import InviteControls from "@/app/admin/events/[id]/InviteControls";
-import LineupCreator from "@/app/admin/events/[id]/LineupCreator";
+import AdminEventPlanEditForm from "@/app/admin/events/[id]/AdminEventPlanEditForm";
+import AdminInviteControls from "@/app/admin/events/[id]/AdminInviteControls";
+import AdminLineupCreator from "@/app/admin/events/[id]/AdminLineupCreator";
 import {fetchPerformers} from "@/lib/api/performers";
-import PublishButton from "@/app/admin/events/[id]/publishButton";
+import AdminPublishButton from "@/app/admin/events/[id]/AdminPublishButton";
 
 export default async function AdminEventPlanPage({
                                                      params,
@@ -26,8 +26,8 @@ export default async function AdminEventPlanPage({
     return (
         <div className="flex flex-row mx-auto max-w-[90%] pb-5 gap-5">
             <div className="flex flex-col w-full">
-                <PublishButton eventPlan={eventPlan}/>
-                <EventPlanEditForm initialEventPlan={eventPlan}/>
+                <AdminPublishButton eventPlan={eventPlan}/>
+                <AdminEventPlanEditForm initialEventPlan={eventPlan}/>
             </div>
             <div className="flex flex-col gap-6 items-start">
                 <div>
@@ -38,12 +38,12 @@ export default async function AdminEventPlanPage({
                             status of {eventPlan.placeInvitation.state}.
                         </p>
                     ) : (
-                        <InviteControls initialEventPlan={eventPlan}/>
+                        <AdminInviteControls initialEventPlan={eventPlan}/>
                     )}
                 </div>
 
                 <div>
-                    <LineupCreator eventPlan={eventPlan} performers={performers}/>
+                    <AdminLineupCreator eventPlan={eventPlan} performers={performers}/>
                 </div>
             </div>
         </div>

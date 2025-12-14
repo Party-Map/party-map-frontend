@@ -1,5 +1,5 @@
 import Link from "next/link"
-import DetailPageLayout from "@/components/DetailPageLayout"
+import DetailPageLayout from "@/app/DetailPageLayout"
 
 export default function SignInRequired({
                                            callback,

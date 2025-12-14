@@ -7,7 +7,7 @@ import {PerformerLineupInvitationWithDate} from "@/lib/types";
 import {respondToLineupInvitation} from "@/lib/api/performers";
 import {dateTimeDisplayFormat} from "@/lib/dateformat";
 
-export default function PerformerLineupInvitationRequests({
+export default function AdminPerformerLineupInvitationRequests({
                                                               invitationRequests,
                                                               performerId,
                                                           }: {

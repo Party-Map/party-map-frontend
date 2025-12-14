@@ -1,9 +1,9 @@
 import {getJwtSession} from "@/lib/auth/server-session";
-import DetailPageLayout from "@/components/DetailPageLayout";
+import DetailPageLayout from "@/app/DetailPageLayout";
 import Link from "next/link";
 import {fetchLikedEvents, fetchLikedPerformers, fetchLikedPlaces} from "@/lib/api/likes";
 import type {Event as PartyEvent, LikedEventsGrouped, Performer, Place} from "@/lib/types";
-import {LikedTabs} from "@/components/LikedTabs";
+import {LikedTabs} from "@/app/profile/likes/LikedTabs";
 
 export default async function ProfilePage() {
     const session = await getJwtSession();

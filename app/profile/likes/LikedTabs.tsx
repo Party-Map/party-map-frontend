@@ -3,7 +3,7 @@
 import {useState} from "react"
 import type {Event, LikeTarget as TabKey, Performer, Place} from "@/lib/types"
 import {EVENT_TYPE_LABELS} from "@/lib/constants"
-import {LikedListItem} from "@/components/LikedListItem"
+import {LikedListItem} from "@/app/profile/likes/LikedListItem"
 import {eventDateTimeDisplayFormat} from "@/lib/dateformat";
 
 export function LikedTabs({
@@ -91,7 +91,6 @@ export function LikedTabs({
                             )}
                         </section>
 
-                        {/* Past */}
                         <section>
                             <h2 className="text-lg font-semibold mb-2">Past events</h2>
                             {pastList.length === 0 ? (

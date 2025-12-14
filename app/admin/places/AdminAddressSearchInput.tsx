@@ -5,7 +5,7 @@ import {geocodeAddress} from "@/lib/geocode"
 import {GeocodeResult} from "@/lib/types";
 
 
-export default function AddressSearchInput({value, onChange, onSelectResult}: {
+export default function AdminAddressSearchInput({value, onChange, onSelectResult}: {
     value: string
     onChange: (val: string) => void
     onSelectResult: (result: GeocodeResult) => void

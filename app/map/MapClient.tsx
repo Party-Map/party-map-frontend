@@ -4,8 +4,8 @@ import dynamic from 'next/dynamic'
 import {useEffect, useMemo, useRef, useState} from 'react'
 
 import type {Place, UpcomingEventByPlace} from '@/lib/types'
-import {useTheme} from '@/components/ThemeProvider'
-import {useHighlight} from '@/components/HighlightContextProvider'
+import {useTheme} from '@/app/ThemeContextProvider'
+import {useHighlight} from '@/app/HighlightContextProvider'
 import {useSearchParams} from 'next/navigation'
 import {defaultMapCenter} from "@/lib/constants";
 

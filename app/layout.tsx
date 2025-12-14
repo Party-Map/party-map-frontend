@@ -1,8 +1,8 @@
 import type {Metadata, Viewport} from 'next'
 import './globals.css'
-import {ThemeProvider} from '@/components/ThemeProvider'
+import {ThemeContextProvider} from '@/app/ThemeContextProvider'
 import GdprConsent from '@/components/GdprConsent'
-import {HighlightProvider} from "@/components/HighlightContextProvider";
+import {HighlightProvider} from "@/app/HighlightContextProvider";
 import SessionProvider from "@/lib/auth/session-provider";
 import {cookies} from "next/headers";
 import {Toaster} from "react-hot-toast";
@@ -22,7 +22,7 @@ export default async function RootLayout({children}: { children: React.ReactNode
     return (
         <html lang="en">
         <body className="min-h-dvh bg-amber-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
-        <ThemeProvider>
+        <ThemeContextProvider>
             <HighlightProvider>
                 <SessionProvider
                     jwtAccessToken={(await cookies()).get('access_token')?.value!}
@@ -31,7 +31,7 @@ export default async function RootLayout({children}: { children: React.ReactNode
                 </SessionProvider>
             </HighlightProvider>
             <GdprConsent/>
-        </ThemeProvider>
+        </ThemeContextProvider>
         <Toaster position="top-center" toastOptions={{duration: 1500}}/>
         </body>
         </html>

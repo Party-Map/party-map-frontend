@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 
-export function PlaceAdminListItem({
+export function AdminPlaceListItem({
                                        href,
                                        name,
                                        address,

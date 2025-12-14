@@ -4,7 +4,7 @@ import {useContext} from "react"
 import {useRouter} from "next/navigation"
 import type {EventPlanCreatePayload} from "@/lib/types"
 import {SessionContext} from "@/lib/auth/session-provider"
-import {AdminEventPlanForm} from "@/components/AdminEventPlanForm";
+import {AdminEventPlanForm} from "@/app/admin/events/AdminEventPlanForm";
 import {addEventPlan} from "@/lib/api/eventPlan";
 
 const FALLBACK_IMAGE =

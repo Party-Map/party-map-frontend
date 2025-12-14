@@ -3,7 +3,7 @@ import {Role} from "@/lib/auth/role";
 import {PerformerAdminListItemData} from "@/lib/types";
 import {fetchMyPerformers} from "@/lib/api/performers";
 import Link from "next/link";
-import {PerformerAdminListItem} from "@/components/PerformerAdminListItem";
+import {AdminPerformerListItem} from "@/app/admin/performers/AdminPerformerListItem";
 
 export default async function AdminPerformersPage() {
     const session = await requireAdminRole(Role.PERFORMER_MANAGER_USER)
@@ -21,7 +21,7 @@ export default async function AdminPerformersPage() {
             </div>
             <ul className="space-y-3">
                 {ownedPerformers && ownedPerformers.map((p) => (
-                    <PerformerAdminListItem
+                    <AdminPerformerListItem
                         key={p.id}
                         href={`/admin/performers/${p.id}`}
                         name={p.name}

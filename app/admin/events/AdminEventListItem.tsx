@@ -1,20 +1,33 @@
 "use client"
 
 import Link from "next/link"
+import {dateTimeDisplayFormat} from "@/lib/dateformat";
 
-export function PerformerAdminListItem({
-                                           href,
-                                           name,
-                                       }: {
+export function AdminEventListItem({
+                                       href,
+                                       title,
+                                       start,
+                                       end,
+                                       placeName
+                                   }: {
     href: string
-    name: string
+    title: string
+    start: string
+    end: string
+    placeName: string
 
 }) {
     return (
         <li className="flex items-center justify-between gap-3 sm:gap-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white/90 dark:bg-zinc-950 px-3 py-3 sm:px-4 sm:py-4">
             <div className="min-w-0">
                 <p className="font-semibold break-words">
-                    {name}
+                    {title}
+                </p>
+                <p className="mt-0.5 text-sm text-gray-700 dark:text-gray-200 truncate">
+                    {dateTimeDisplayFormat(start, end)}
+                </p>
+                <p className="mt-0.5 text-sm text-gray-700 dark:text-gray-200 truncate">
+                    {placeName}
                 </p>
             </div>
 

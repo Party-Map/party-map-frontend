@@ -2,15 +2,15 @@
 
 import {useState} from "react"
 import type {GeoPoint, Link, PlaceCreatePayload, PlaceFormInitialValues} from "@/lib/types"
-import AddressSearchInput from "@/components/AddressSearchInput"
-import ImageUpload from "@/components/ImageUpload"
+import AdminAddressSearchInput from "@/app/admin/places/AdminAddressSearchInput"
+import ImageUpload from "@/app/admin/ImageUpload"
 import dynamic from "next/dynamic"
 import {reverseGeocode} from "@/lib/geocode"
-import {LinksInput} from "@/components/LinksInput";
+import {LinksInput} from "@/app/admin/LinksInput";
 import {useRouter} from "next/navigation";
 
 const LocationMapPicker = dynamic(
-    () => import("@/components/LocationMapPicker"),
+    () => import("@/app/admin/places/AdminLocationMapPicker"),
     {ssr: false},
 )
 
@@ -123,7 +123,7 @@ export function AdminPlaceForm({
                     <label className="mb-1 block text-sm font-medium">
                         Address
                     </label>
-                    <AddressSearchInput
+                    <AdminAddressSearchInput
                         value={address}
                         onChange={setAddress}
                         onSelectResult={(r) => {

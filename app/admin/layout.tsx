@@ -1,11 +1,11 @@
 import React from "react"
 import Link from "next/link"
 import {getJwtSession} from "@/lib/auth/server-session"
-import DetailPageLayout from "@/components/DetailPageLayout"
-import {AdminTabs} from "@/components/AdminTabs"
-import AdminPageLayout from "@/components/AdminPageLayout";
+import DetailPageLayout from "@/app/DetailPageLayout"
+import {AdminTabs} from "@/app/admin/AdminTabs"
 import {Role} from "@/lib/auth/role";
-import SignInRequired from "@/components/SignInRequired";
+import SignInRequired from "@/app/auth/SignInRequired";
+import AdminTopBar from "@/app/admin/AdminTopBar";
 
 export default async function AdminLayout({children}: {
     children: React.ReactNode
@@ -53,19 +53,25 @@ export default async function AdminLayout({children}: {
         .filter(v => !!v) // Make sure there are no undefined
 
     return (
-        <AdminPageLayout>
-            <>
-                {tabs.length > 1 && (
-                    <AdminTabs
-                        tabs={tabs}
-                        activeClassName="flex-1 px-3 py-2 text-sm font-medium text-center rounded-lg cursor-pointer bg-violet-600 text-white"
-                        inactiveClassName="flex-1 px-3 py-2 text-sm font-medium text-center rounded-lg cursor-pointer bg-gray-300 dark:bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-gray-200"
-                    />
-                )}
-                <div className="mt-6">
-                    {children}
+        <>
+            <AdminTopBar/>
+            <main className="pt-4 px-4 pb-24 md:pb-0">
+                <Link href="/" className="text-violet-600 dark:text-violet-300 text-sm">
+                    ← Back to Map
+                </Link>
+                <div className="mt-2">
+                    {tabs.length > 1 && (
+                        <AdminTabs
+                            tabs={tabs}
+                            activeClassName="flex-1 px-3 py-2 text-sm font-medium text-center rounded-lg cursor-pointer bg-violet-600 text-white"
+                            inactiveClassName="flex-1 px-3 py-2 text-sm font-medium text-center rounded-lg cursor-pointer bg-gray-300 dark:bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-gray-200"
+                        />
+                    )}
+                    <div className="mt-6">
+                        {children}
+                    </div>
                 </div>
-            </>
-        </AdminPageLayout>
+            </main>
+        </>
     )
 }

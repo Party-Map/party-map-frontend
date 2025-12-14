@@ -4,7 +4,7 @@ import {MapContainer, Marker, TileLayer, useMap, useMapEvents} from "react-leafl
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import type {GeoPoint} from "@/lib/types"
-import {useTheme} from "@/components/ThemeProvider";
+import {useTheme} from "@/app/ThemeContextProvider";
 import {defaultMapCenter} from "@/lib/constants";
 import {toLatLngTuple} from "@/lib/utils";
 import {useEffect} from "react";
@@ -38,7 +38,7 @@ const markerIcon = L.icon({
     iconAnchor: [15, 40],
 })
 
-export default function LocationMapPicker({value, onChange}: {
+export default function AdminLocationMapPicker({value, onChange}: {
     value: GeoPoint | null
     onChange: (val: GeoPoint) => void
 }) {

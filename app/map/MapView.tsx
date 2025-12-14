@@ -3,13 +3,13 @@ import {LatLngTuple} from 'leaflet'
 
 import type {GeoPoint, Place, UpcomingEventByPlace} from '@/lib/types'
 import {toLatLngTuple} from '@/lib/utils'
-import PlacePopupCard from '../../components/PlacePopupCard'
+import PlacePopupCard from './PlacePopupCard'
 import {FitToHighlights} from '@/app/map/map-functions/FitToHighLights'
 import {UserLocation} from '@/app/map/map-functions/UserLocation'
 import {DesktopZoomControls} from '@/app/map/map-functions/DesktopZoomControls'
 import {PlaceLabels} from '@/app/map/map-functions/PlaceLabels'
 import {PanPopupMobile} from '@/app/map/map-functions/PanPopupMobile'
-import {PinIcon} from '@/components/MapIcons'
+import {PinIcon} from '@/app/map/MapIcons'
 
 function MapBackgroundCloser({onClose}: { onClose: () => void }) {
     useMapEvent('click', () => onClose())

@@ -66,7 +66,6 @@ export function LikeToggleButton({
             aria-label={liked ? "Remove from favorites" : "Add to favorites"}
             className={className ?? "inline-flex items-center justify-center cursor-pointer"}
         >
-            {/* Liked State */}
             {liked ? (
                 hovering ? (
                     <FcDislike className="h-5 w-5 transition-all duration-150"/>
@@ -74,7 +73,6 @@ export function LikeToggleButton({
                     <MdFavorite className="h-5 w-5 text-red-500 transition-all duration-150"/>
                 )
             ) : (
-                // Not Liked State
                 <MdFavoriteBorder
                     className="h-5 w-5 text-red-500 hover:text-red-400 transition-all duration-150"
                 />

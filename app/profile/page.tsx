@@ -1,9 +1,9 @@
 import Link from 'next/link'
-import DetailPageLayout from '@/components/DetailPageLayout'
+import DetailPageLayout from '@/app/DetailPageLayout'
 import {getJwtSession} from '@/lib/auth/server-session'
 import ProfileEditButton from './ProfileEditButton'
 import {KeycloakJWTPayload} from "@/lib/auth/jwt-session";
-import SignInRequired from "@/components/SignInRequired";
+import SignInRequired from "@/app/auth/SignInRequired";
 
 export default async function ProfilePage() {
     const session = await getJwtSession()

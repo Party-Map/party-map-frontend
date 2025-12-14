@@ -4,15 +4,15 @@ import {useContext} from "react"
 import {useRouter} from "next/navigation"
 import type {EventPlan, EventPlanCreatePayload} from "@/lib/types"
 import {SessionContext} from "@/lib/auth/session-provider"
-import {AdminEventPlanForm} from "@/components/AdminEventPlanForm";
+import {AdminEventPlanForm} from "@/app/admin/events/AdminEventPlanForm";
 import {updateEventPlan} from "@/lib/api/eventPlan";
 
-export default function EventPlanEditForm({initialEventPlan}: { initialEventPlan: EventPlan }) {
+export default function AdminEventPlanEditForm({initialEventPlan}: { initialEventPlan: EventPlan }) {
     const router = useRouter()
     const session = useContext(SessionContext)
 
     const handleSubmit = async (payload: EventPlanCreatePayload) => {
-        const updated = await updateEventPlan(
+        await updateEventPlan(
             initialEventPlan.id,
             {
                 ...payload,

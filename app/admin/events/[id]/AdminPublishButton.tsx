@@ -8,7 +8,7 @@ import {EventPlan} from "@/lib/types";
 import {publishEventPlan} from "@/lib/api/eventPlan";
 import {SessionContext} from "@/lib/auth/session-provider";
 
-export default function PublishButton({eventPlan}: { eventPlan: EventPlan }) {
+export default function AdminPublishButton({eventPlan}: { eventPlan: EventPlan }) {
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
     const session = useContext(SessionContext);

@@ -5,9 +5,9 @@ import {useRouter} from "next/navigation"
 import type {Place, PlaceCreatePayload} from "@/lib/types"
 import {SessionContext} from "@/lib/auth/session-provider"
 import {updatePlace} from "@/lib/api/places"
-import {AdminPlaceForm} from "@/components/AdminPlaceForm"
+import {AdminPlaceForm} from "@/app/admin/places/AdminPlaceForm"
 
-export default function PlaceEditForm({initialPlace}: { initialPlace: Place }) {
+export default function AdminPlaceEditForm({initialPlace}: { initialPlace: Place }) {
     const router = useRouter()
     const session = useContext(SessionContext)
 

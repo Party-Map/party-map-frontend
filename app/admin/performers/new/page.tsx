@@ -4,7 +4,7 @@ import {useContext} from "react"
 import {useRouter} from "next/navigation"
 import type {PerformerCreatePayload} from "@/lib/types"
 import {SessionContext} from "@/lib/auth/session-provider"
-import {AdminPerformerForm} from "@/components/AdminPerformerForm";
+import {AdminPerformerForm} from "@/app/admin/performers/AdminPerformerForm";
 import {addPerformer} from "@/lib/api/performers";
 
 const FALLBACK_IMAGE =
