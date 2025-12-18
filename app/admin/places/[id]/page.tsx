@@ -4,7 +4,7 @@ import {Role} from "@/lib/auth/role"
 import {fetchPlace} from "@/lib/api/places"
 import AdminPlaceEditForm from "./AdminPlaceEditForm"
 import AdminPlaceEventInvitationRequests from "@/app/admin/places/[id]/AdminPlaceEventInvitationRequests";
-import {getInvitationForPlace} from "@/lib/api/eventPlan";
+import {getInvitationForPlace} from "@/lib/api/event-plan";
 
 
 export default async function AdminPlacePage({params}: { params: Promise<{ id: string }> }) {

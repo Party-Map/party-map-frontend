@@ -77,36 +77,5 @@ export async function GET(req: NextRequest) {
         maxAge: 0,
     })
 
-    // Update user in the database
-    try {
-        await updateUser(fetchTokenResponse.access_token)
-    } catch (error) {
-        /* empty */
-    }
-
     return response
-}
-
-/**
- * Update the user in the database
- * @param accessToken
- */
-async function updateUser(accessToken: string) {
-    // Update user
-    const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL_POSTGREST}/rpc/update_user`,
-        {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${accessToken}`,
-            },
-        }
-    )
-
-    if (response.status != 204) {
-        throw new Error(
-            `Unable to update user with access token ${accessToken}, got ${response.status}`
-        )
-    }
 }
