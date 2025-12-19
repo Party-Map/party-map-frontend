@@ -270,7 +270,7 @@ export type EventPlanLineupInvitationCreatePayload = {
 }
 export type InviteItem = {
     performerId?: string
-    startTime: string // "HH:MM"
-    endTime: string   // "HH:MM"
+    startTime: string
+    endTime: string
     inviteState?: string
 }

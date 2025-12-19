@@ -1,14 +1,14 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import {useMap} from 'react-leaflet'
 import L from 'leaflet'
-import type {Place} from '@/lib/types'
+import type {ID, Place} from '@/lib/types'
 import {MapPin} from "lucide-react";
 
 export function DesktopZoomControls({
                                         openPopupId,
                                         places,
                                     }: {
-    openPopupId: string | null
+    openPopupId: ID | null
     places: Place[]
 }) {
     const map = useMap()
@@ -21,7 +21,7 @@ export function DesktopZoomControls({
         [openPopupId, places],
     )
 
-    // Stop map interaction leaking through the controls
+    // Stop interaction leak to the map
     useEffect(() => {
         const el = containerRef.current
         if (!el) return
@@ -67,7 +67,7 @@ export function DesktopZoomControls({
         [map, selectedPlace, anchorActive],
     )
 
-    // Centers to the selected pin (with vertical offset) and activates anchor
+    // Centers to the selected pin and activates anchor
     const recenter = useCallback(() => {
         if (!selectedPlace) return
 
@@ -78,7 +78,7 @@ export function DesktopZoomControls({
                 zoomLevel,
             )
 
-            // positive y moves the map center down (marker appears higher)
+            // positive y moves the map center down (marker higher)
             const offsetY = -100
             const adjustedPoint = point.add([0, offsetY])
             const adjustedLatLng = map.unproject(adjustedPoint, zoomLevel)
@@ -111,7 +111,7 @@ export function DesktopZoomControls({
     return (
         <div
             ref={containerRef}
-            className="flex absolute right-4 top-24 z-[1000] select-none pm-zoom-controls flex-col gap-3"
+            className="flex absolute right-4 top-24 z-1000 select-none pm-zoom-controls flex-col gap-3"
         >
             {/* Zoom controls */}
             <div
@@ -119,7 +119,7 @@ export function DesktopZoomControls({
                 dark:bg-slate-900/50 border border-black/10 dark:border-white/10 shadow-lg divide-y
                 divide-black/10 dark:divide-white/10"
             >
-                {/* Zoom in */}
+                {/* In */}
                 <div className="relative group">
                     <button
                         aria-label="Zoom in"
@@ -161,7 +161,7 @@ export function DesktopZoomControls({
                   </span>
                 </div>
 
-                {/* Zoom out */}
+                {/* Out */}
                 <div className="relative group">
                     <button
                         aria-label="Zoom out"
@@ -202,7 +202,7 @@ export function DesktopZoomControls({
                 </div>
             </div>
 
-            {/* Center selected */}
+            {/* Center */}
             {selectedPlace && (
                 <div className="relative group">
                     <button

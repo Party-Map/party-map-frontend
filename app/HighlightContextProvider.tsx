@@ -1,14 +1,14 @@
 'use client'
 
-import {HighlightContextType} from "@/lib/types";
+import {HighlightContextType, ID} from "@/lib/types";
 import {createContext, useCallback, useContext, useState} from "react";
 
 const HighlightContext = createContext<HighlightContextType | null>(null);
 
 export function HighlightContextProvider({children}: Readonly<{ children: React.ReactNode }>) {
-    const [highlightIds, _setHighlightIds] = useState<string[]>([]);
+    const [highlightIds, _setHighlightIds] = useState<ID[]>([]);
     // prevent unnecessary map fly on highlight changes
-    const setHighlightIds = useCallback((next: string[]) => {
+    const setHighlightIds = useCallback((next: ID[]) => {
         _setHighlightIds(prev => {
 
             const same =

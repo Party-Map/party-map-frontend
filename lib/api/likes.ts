@@ -1,14 +1,14 @@
 import {apiDelete, apiGet, apiPut} from "@/lib/api/api"
 import type {JwtSession} from "@/lib/auth/jwt-session"
-import {LikedEventsGrouped, LikeStatus, LikeTarget, Performer, Place} from "@/lib/types";
+import {ID, LikedEventsGrouped, LikeStatus, LikeTarget, Performer, Place} from "@/lib/types";
 
-function likePath(target: LikeTarget, id: string): string {
+function likePath(target: LikeTarget, id: ID): string {
     return `/me/likes/${target}/${id}`
 }
 
 export async function fetchLikeStatus(
     target: LikeTarget,
-    id: string,
+    id: ID,
     session: JwtSession | null
 ): Promise<LikeStatus> {
     return apiGet<LikeStatus>(likePath(target, id), session)
@@ -16,7 +16,7 @@ export async function fetchLikeStatus(
 
 export async function like(
     target: LikeTarget,
-    id: string,
+    id: ID,
     session: JwtSession | null
 ): Promise<LikeStatus> {
     return apiPut<LikeStatus>(likePath(target, id), session)
@@ -24,7 +24,7 @@ export async function like(
 
 export async function unlike(
     target: LikeTarget,
-    id: string,
+    id: ID,
     session: JwtSession | null
 ): Promise<LikeStatus> {
     return apiDelete<LikeStatus>(likePath(target, id), session)

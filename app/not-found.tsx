@@ -3,7 +3,7 @@ import Link from 'next/link'
 export default function NotFound() {
     return (
         <main
-            className="min-h-dvh grid place-items-center bg-gradient-to-br from-indigo-900 via-violet-900 to-fuchsia-900 text-white relative overflow-hidden p-6">
+            className="min-h-dvh grid place-items-center bg-linear-to-br from-indigo-900 via-violet-900 to-fuchsia-900 text-white relative overflow-hidden p-6">
             <div className="pointer-events-none absolute inset-0">
                 <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-pink-500/30 blur-3xl"/>
                 <div className="absolute -bottom-20 -right-16 h-80 w-80 rounded-full bg-indigo-500/30 blur-3xl"/>
@@ -25,7 +25,7 @@ export default function NotFound() {
                 </p>
                 <h1 className="text-7xl sm:text-8xl font-extrabold tracking-tight leading-none">
                     <span
-                        className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-white to-fuchsia-200 drop-shadow-[0_4px_14px_rgba(255,255,255,0.25)]">404</span>
+                        className="text-transparent bg-clip-text bg-linear-to-r from-amber-200 via-white to-fuchsia-200 drop-shadow-[0_4px_14px_rgba(255,255,255,0.25)]">404</span>
                 </h1>
                 <p className="mt-4 text-lg text-white/90">This page didn’t make the guest list. Let’s take you back to
                     the map.</p>

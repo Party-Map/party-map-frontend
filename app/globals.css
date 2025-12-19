@@ -2,7 +2,7 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Make leaflet popup wrapper transparent */
+/* Leaflet popup wrapper transparent */
 .leaflet-popup-content-wrapper {
     background: transparent !important;
     box-shadow: none !important;
@@ -20,7 +20,6 @@ html.dark .place-popup-card {
     box-shadow: 0 4px 22px -4px rgba(0, 0, 0, .7), 0 0 0 1px rgba(255, 255, 255, .05);
 }
 
-/* Ensure dark mode map background is black while tiles load */
 html.dark .leaflet-container {
     background: rgb(13, 13, 13);
 }

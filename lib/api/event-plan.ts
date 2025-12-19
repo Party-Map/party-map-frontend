@@ -5,6 +5,7 @@ import {
     EventPlanLineupInvitation,
     EventPlanLineupInvitationCreatePayload,
     EventPlanPlaceInvitationWithDate,
+    ID,
     PlaceAdminListItemData,
 } from "@/lib/types";
 import {apiDelete, apiGet, apiPost, apiPut} from "@/lib/api/api";
@@ -15,7 +16,7 @@ export async function addEventPlan(payload: EventPlanCreatePayload, session: Jwt
     return apiPost<EventPlan>("/event-plan", session, payload)
 }
 
-export async function updateEventPlan(id: string, payload: EventPlanCreatePayload, session: JwtSession | null) {
+export async function updateEventPlan(id: ID, payload: EventPlanCreatePayload, session: JwtSession | null) {
     return apiPut<EventPlan>(`/event-plan/${id}`, session, payload)
 }
 
@@ -23,7 +24,7 @@ export async function fetchMyEventPlans(session: JwtSession | null) {
     return apiGet<EventPlanAdminListItemData[]>("/event-plan/owned-event-plans", session)
 }
 
-export async function fetchEventPlan(id: string, session: JwtSession | null) {
+export async function fetchEventPlan(id: ID, session: JwtSession | null) {
     return apiGet<EventPlan>(`/event-plan/${id}`, session)
 }
 
@@ -31,21 +32,21 @@ export async function fetchPlacesForAdminList(session: JwtSession | null) {
     return apiGet<PlaceAdminListItemData[]>("/event-plan/places", session)
 }
 
-export async function invitePlace(id: string, placeId: string, session: JwtSession | null) {
+export async function invitePlace(id: ID, placeId: ID, session: JwtSession | null) {
     return apiPut(`/event-plan/${id}/invite-place/${placeId}`, session)
 }
 
 
-export async function getInvitationForPlace(id: string, session: JwtSession | null) {
+export async function getInvitationForPlace(id: ID, session: JwtSession | null) {
     return apiGet<EventPlanPlaceInvitationWithDate[]>(`/places/${id}/invitations`, session)
 }
 
-export async function fetchLineupInvitationsForEventPlan(id: string, session: JwtSession | null) {
+export async function fetchLineupInvitationsForEventPlan(id: ID, session: JwtSession | null) {
     return apiGet<EventPlanLineupInvitation[]>(`/event-plan/${id}/lineup-invitations`, session)
 }
 
 export async function addLineupInvitationToEventPlan(
-    id: string,
+    id: ID,
     payload: EventPlanLineupInvitationCreatePayload,
     session: JwtSession | null,
 ) {

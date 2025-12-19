@@ -134,28 +134,28 @@ export function PinIcon(state: PinIconState) {
     return L.divIcon({
         className: 'pm-pin-wrapper',
         html: `
-      <div class="${pin}" style="--pin:${color}">
-        <div class="${shadow}"></div>
-
-        <div class="${head}">
-          <div class="${core}"></div>
-          <div class="${gloss}"></div>
-
-          ${
+              <div class="${pin}" style="--pin:${color}">
+                <div class="${shadow}"></div>
+        
+                <div class="${head}">
+                  <div class="${core}"></div>
+                  <div class="${gloss}"></div>
+        
+                  ${
             shiny
                 ? `<span class="${pulseRing}"></span>`
                 : ''
         }
-
-          <div class="${sparkWrapper}">
-            <span class="${spark1}"></span>
-            <span class="${spark2}"></span>
-            <span class="${spark3}"></span>
-          </div>
-        </div>
-
-        <div class="${tail}"></div>
-      </div>
+        
+                  <div class="${sparkWrapper}">
+                    <span class="${spark1}"></span>
+                    <span class="${spark2}"></span>
+                    <span class="${spark3}"></span>
+                  </div>
+                </div>
+        
+                <div class="${tail}"></div>
+              </div>
     `,
         iconSize: [36, 48],
         iconAnchor: [18, 44],

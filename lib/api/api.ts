@@ -2,10 +2,19 @@ import type {JwtSession} from "@/lib/auth/jwt-session"
 
 const API_BASE = process.env.NEXT_PUBLIC_RESOURCE_API_BASE_URL
 
+/**
+ * Return authorization headers if session is provided
+ * @param session
+ */
 function authHeaders(session: JwtSession | null): HeadersInit {
     return session ? session.authorizationHeader() : {}
 }
 
+/**
+ * Perform a GET request to the API
+ * @param path
+ * @param session
+ */
 export async function apiGet<T>(
     path: string,
     session: JwtSession | null
@@ -30,6 +39,12 @@ export async function apiGet<T>(
     return await res.json() as T
 }
 
+/**
+ * Perform a PUT request to the API
+ * @param path
+ * @param session
+ * @param body
+ */
 export async function apiPut<T>(
     path: string,
     session: JwtSession | null,
@@ -57,6 +72,12 @@ export async function apiPut<T>(
     return await res.json() as T
 }
 
+/**
+ * Perform a POST request to the API
+ * @param path
+ * @param session
+ * @param body
+ */
 export async function apiPost<T>(
     path: string,
     session: JwtSession | null,
@@ -84,7 +105,11 @@ export async function apiPost<T>(
     return await res.json() as T
 }
 
-
+/**
+ * Perform a DELETE request to the API
+ * @param path
+ * @param session
+ */
 export async function apiDelete<T>(
     path: string,
     session: JwtSession | null

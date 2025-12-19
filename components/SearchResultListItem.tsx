@@ -2,24 +2,7 @@ import Image from 'next/image'
 import type {SearchHit, SearchTypeMeta} from '@/lib/types'
 import {cn} from '@/lib/utils'
 import {CalendarDays, MapPin, User2} from "lucide-react";
-
-function formatDateLabel(hit: SearchHit): string | null {
-    if (!hit.nextEventStart) return null
-    const d = new Date(hit.nextEventStart)
-    const now = new Date()
-    const sameDay = d.toDateString() === now.toDateString()
-
-    if (sameDay) {
-        return d.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
-    }
-
-    const inYear = d.getFullYear() === now.getFullYear()
-    return d.toLocaleDateString([], {
-        month: 'short',
-        day: 'numeric',
-        ...(inYear ? {} : {year: 'numeric'}),
-    })
-}
+import {formatNextEventStartLabel} from "@/lib/dateformat";
 
 export function SearchResultListItem({
                                          hit,
@@ -54,7 +37,7 @@ export function SearchResultListItem({
         }
     }
     const meta = SEARCH_TYPE_META[hit.type]
-    const dateLabel = formatDateLabel(hit)
+    const dateLabel = formatNextEventStartLabel(hit.nextEventStart)
 
     return (
         <li>
@@ -66,7 +49,7 @@ export function SearchResultListItem({
                     className="flex flex-1 items-center gap-3 min-w-0 text-left group focus:outline-none cursor-pointer"
                 >
                     <div
-                        className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-md ring-1 ring-inset ring-white/20 group-hover:ring-violet-400/50 transition-colors">
+                        className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md ring-1 ring-inset ring-white/20 group-hover:ring-violet-400/50 transition-colors">
                         <Image
                             src={hit.image || '/images/placeholder.png'}
                             alt={hit.title}
@@ -118,7 +101,7 @@ export function SearchResultListItem({
                         e.stopPropagation()
                         onViewClick()
                     }}
-                    className="ml-2 flex-shrink-0 inline-flex items-center justify-center rounded-full px-3 py-1 text-[11px] font-medium
+                    className="ml-2 shrink-0 inline-flex items-center justify-center rounded-full px-3 py-1 text-[11px] font-medium
                      border border-violet-400/50 text-violet-700 dark:text-violet-200 bg-white/60 dark:bg-zinc-900/40
                      hover:bg-violet-50/80 dark:hover:bg-violet-900/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/60 shadow-sm cursor-pointer"
                 >

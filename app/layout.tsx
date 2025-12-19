@@ -10,7 +10,7 @@ import {Toaster} from "react-hot-toast";
 
 export const metadata: Metadata = {
     title: 'PartyMap',
-    description: 'Find parties on the map — places, events, performers',
+    description: 'Find your place at the party with PartyMap!',
 }
 
 export const viewport: Viewport = {

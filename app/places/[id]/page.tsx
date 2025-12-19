@@ -8,9 +8,10 @@ import {fetchEventSByPlaceId} from '@/lib/api/events'
 import {LikeToggleButton} from "@/components/LikeToggleButton";
 import {fetchLikeStatus} from "@/lib/api/likes";
 import {SocialLinks} from "@/components/SocialLinks";
+import {ID} from "@/lib/types";
 
 
-export default async function PlacePage({params}: { params: Promise<{ id: string }> }) {
+export default async function PlacePage({params}: { params: Promise<{ id: ID }> }) {
     const {id} = await params
     const session = await getJwtSession()
 

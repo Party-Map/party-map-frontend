@@ -17,15 +17,6 @@ export default function ImageUpload({value, onChange}: Props) {
             if (!files || files.length === 0) return
             const file = files[0]
 
-            if (!file.type.startsWith("image/")) {
-                setError("Please upload an image file.")
-                return
-            }
-            if (file.size > 5 * 1024 * 1024) {
-                setError("Max file size is 5 MB.")
-                return
-            }
-
             setError(null)
             onChange(file)
             const url = URL.createObjectURL(file)

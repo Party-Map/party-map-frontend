@@ -287,7 +287,7 @@ export default function SearchBar() {
                         onClick={open ? dismissResults : undefined}
                         aria-label={open ? 'Hide results' : 'Results hidden'}
                         aria-disabled={!open}
-                        className={`flex-shrink-0 inline-flex items-center justify-center rounded-full h-7 w-7 transition-colors 
+                        className={`shrink-0 inline-flex items-center justify-center rounded-full h-7 w-7 transition-colors 
                                     focus:outline-none focus-visible:ring-2 cursor-pointer 
                         ${
                             open
@@ -303,7 +303,7 @@ export default function SearchBar() {
                     type="button"
                     onClick={clearAll}
                     aria-label="Clear selection"
-                    className="flex-shrink-0 inline-flex items-center justify-center rounded-full h-7 w-7 text-zinc-700
+                    className="shrink-0 inline-flex items-center justify-center rounded-full h-7 w-7 text-zinc-700
                             dark:text-zinc-300 hover:bg-zinc-200/70 dark:hover:bg-zinc-800/60 focus:outline-none focus-visible:ring-2
                             focus-visible:ring-violet-500/60 cursor-pointer"
                 >
@@ -315,7 +315,7 @@ export default function SearchBar() {
             {open && (
                 <div
                     className="absolute left-0 top-full mt-2 w-full max-h-96 overflow-auto rounded-xl border border-violet-300/50
-                               dark:border-violet-400/20 bg-white/85 dark:bg-zinc-950/90 shadow-2xl backdrop-blur-lg z-[2000]"
+                               dark:border-violet-400/20 bg-white/85 dark:bg-zinc-950/90 shadow-2xl backdrop-blur-lg z-2000"
                     role="listbox"
                 >
                     {items.length === 0 ? (

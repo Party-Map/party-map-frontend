@@ -8,8 +8,9 @@ import {fetchEventsByPerformerId} from '@/lib/api/events'
 import {fetchLikeStatus} from "@/lib/api/likes"
 import {LikeToggleButton} from "@/components/LikeToggleButton"
 import {SocialLinks} from "@/components/SocialLinks";
+import {ID} from "@/lib/types";
 
-export default async function PerformerPage({params}: { params: Promise<{ id: string }> }) {
+export default async function PerformerPage({params}: { params: Promise<{ id: ID }> }) {
     const {id} = await params
     const session = await getJwtSession()
 

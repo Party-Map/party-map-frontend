@@ -2,29 +2,29 @@ import ThemeToggle from "../../components/ThemeToggle"
 import NavActions from "../../components/NavActions"
 import Link from "next/link"
 import {Baloo_2} from "next/font/google"
+import {cn} from "@/lib/utils"
 
-const partyFont = Baloo_2({subsets: ["latin"], weight: ["400", "600", "700"], variable: "--font-party"})
+const partyFont = Baloo_2({
+    subsets: ["latin"],
+    weight: ["400", "600", "700"],
+    variable: "--font-party",
+})
+
+const barBase = "h-16 rounded-2xl px-3 ring-1 ring-white/10 shadow-lg"
+const barGradient = "bg-gradient-to-r from-violet-700 via-fuchsia-700 to-indigo-700 dark:from-violet-900 dark:via-fuchsia-900 dark:to-indigo-900"
 
 export default function AdminTopBar() {
     return (
         <div className="w-full px-4 py-3">
-            <div
-                className="h-16 flex items-center justify-between rounded-2xl
-                bg-gradient-to-r from-violet-700 via-fuchsia-700 to-indigo-700
-                dark:from-violet-900 dark:via-fuchsia-900 dark:to-indigo-900
-                px-3 ring-1 ring-white/10 shadow-lg"
-            >
+            <div className={cn("flex items-center justify-between", barBase, barGradient)}>
                 <Link
                     href="/admin"
-                    className={`party-logo flex items-center gap-2 pl-1 pr-3 py-1 rounded-xl ${partyFont.className}`}
+                    className={cn("group relative flex items-center pl-1 pr-3 py-1 rounded-xl", partyFont.className)}
                 >
-                    <span
-                        className="font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r
-                        from-amber-200 via-white to-fuchsia-200 drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]
-                        text-2xl leading-none select-none [letter-spacing:-0.02em]"
-                    >
-                            Admin Panel
-                    </span>
+          <span
+              className="text-2xl leading-none font-extrabold tracking-tight select-none text-white transition-colors duration-200 group-hover:text-indigo-100">
+            Admin Panel
+          </span>
                 </Link>
 
                 <div className="flex items-center gap-1">

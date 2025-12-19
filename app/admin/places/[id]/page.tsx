@@ -5,9 +5,10 @@ import {fetchPlace} from "@/lib/api/places"
 import AdminPlaceEditForm from "./AdminPlaceEditForm"
 import AdminPlaceEventInvitationRequests from "@/app/admin/places/[id]/AdminPlaceEventInvitationRequests";
 import {getInvitationForPlace} from "@/lib/api/event-plan";
+import {ID} from "@/lib/types";
 
 
-export default async function AdminPlacePage({params}: { params: Promise<{ id: string }> }) {
+export default async function AdminPlacePage({params}: { params: Promise<{ id: ID }> }) {
     const session = await requireAdminRole(Role.PLACE_MANAGER_USER)
     const {id} = await params
     const place = await fetchPlace(id, session)

@@ -5,7 +5,7 @@ import {MdFavorite, MdFavoriteBorder} from "react-icons/md"
 import {FcDislike} from "react-icons/fc"
 import {like, unlike} from "@/lib/api/likes"
 import {SessionContext} from "@/app/SessionContextProvider"
-import {LikeTarget} from "@/lib/types"
+import {ID, LikeTarget} from "@/lib/types"
 import toast from "react-hot-toast";
 
 
@@ -18,7 +18,7 @@ export function LikeToggleButton({
                                      onChange,
                                  }: {
     target: LikeTarget
-    targetId: string
+    targetId: ID
     initialLiked: boolean
     targetName: string,
     className?: string

@@ -5,62 +5,55 @@ import type {PlaceAdminListItemData} from "@/lib/types"
 import {SessionContext} from "@/app/SessionContextProvider"
 import {fetchPlacesForAdminList} from "@/lib/api/event-plan"
 
-type Props = {
+export default function AdminPlaceSelect({
+                                             value,
+                                             onChange,
+                                             placeholder = "Select place",
+                                         }: {
     value?: PlaceAdminListItemData | null
     onChange?: (place: PlaceAdminListItemData | null) => void
     placeholder?: string
-}
-
-export default function AdminPlaceSelect({value, onChange, placeholder = "Select place"}: Props) {
+}) {
     const session = useContext(SessionContext)
-    const [places, setPlaces] = useState<PlaceAdminListItemData[] | null>(null)
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState<string | null>(null)
-    const [selectedId, setSelectedId] = useState<string | null>(value?.id ?? null)
+    const [places, setPlaces] = useState<PlaceAdminListItemData[]>([])
+    const [selectedId, setSelectedId] = useState<string>(value?.id ?? "")
 
     useEffect(() => {
         let mounted = true
 
-        async function load() {
-            setLoading(true)
-            setError(null)
+        ;(async () => {
             try {
                 const res = await fetchPlacesForAdminList(session)
-                if (mounted) setPlaces(res)
-            } catch (e) {
-                if (mounted) setError("Failed to load places")
-            } finally {
-                if (mounted) setLoading(false)
+                if (mounted) setPlaces(res ?? [])
+            } catch {
+                if (mounted) setPlaces([])
             }
-        }
+        })()
 
-        load()
         return () => {
             mounted = false
         }
     }, [session])
 
     useEffect(() => {
-        setSelectedId(value?.id ?? null)
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setSelectedId(value?.id ?? "")
     }, [value])
 
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const id = e.target.value || null
+        const id = e.target.value
         setSelectedId(id)
-        const found = places?.find(p => p.id === id) ?? null
-        onChange?.(found)
+        const found = places.find((p) => p.id === id) ?? null
+        onChange?.(id ? found : null)
     }
-
-    if (loading) return <div>Loading places…</div>
-    if (error) return <div>{error}</div>
 
     return (
         <div>
             <label>
                 <span className="sr-only">{placeholder}</span>
-                <select value={selectedId ?? ""} onChange={handleChange}>
+                <select value={selectedId} onChange={handleChange}>
                     <option value="">{placeholder}</option>
-                    {places?.map(p => (
+                    {places.map((p) => (
                         <option key={p.id} value={p.id}>
                             {p.name} {p.city ? `— ${p.city}` : ""} {p.address ? `(${p.address})` : ""}
                         </option>
@@ -70,4 +63,3 @@ export default function AdminPlaceSelect({value, onChange, placeholder = "Select
         </div>
     )
 }
-

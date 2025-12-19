@@ -5,26 +5,7 @@ import type {EventType, Place, TagDisplayPopup, UpcomingEventByPlace} from '@/li
 import {EVENT_TYPE_BADGE_CLASSES, EVENT_TYPE_LABELS} from '@/lib/constants'
 import {ArrowRight, CalendarDays, X} from 'lucide-react'
 import {cn} from "@/lib/utils";
-
-function formatUpcoming(iso: string) {
-    const date = new Date(iso)
-    const now = new Date()
-    const sameDay = date.toDateString() === now.toDateString()
-
-    if (sameDay) return date.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit'
-    })
-
-    const inYear = date.getFullYear() === now.getFullYear()
-    return date.toLocaleDateString([], {
-        month: 'short',
-        day: 'numeric',
-        ...(inYear ? {} : {
-            year: 'numeric'
-        })
-    })
-}
+import {formatNextEventStartLabel} from "@/lib/dateformat";
 
 export default function PlacePopupCard({place, upcomingEvent, onClose}: {
     place: Place
@@ -34,7 +15,7 @@ export default function PlacePopupCard({place, upcomingEvent, onClose}: {
     const title = upcomingEvent ? upcomingEvent.title : place.name
     const longTitle = title.length > 28
     const image = upcomingEvent?.image || place.image
-    const startLabel = upcomingEvent ? formatUpcoming(upcomingEvent.start) : null
+    const startLabel = formatNextEventStartLabel(upcomingEvent?.start || null)
 
     const displayTags: TagDisplayPopup[] = (() => {
         const tags: TagDisplayPopup[] = []
@@ -91,7 +72,7 @@ export default function PlacePopupCard({place, upcomingEvent, onClose}: {
                 >
                 <span
                     aria-hidden
-                    className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 bg-gradient-to-tr from-black/25 via-transparent to-black/10 hover:opacity-100"
+                    className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 bg-linear-to-tr from-black/25 via-transparent to-black/10 hover:opacity-100"
                 />
                 </Link>
 
@@ -115,7 +96,7 @@ export default function PlacePopupCard({place, upcomingEvent, onClose}: {
                         </div>
                         {upcomingEvent && (
                             <span
-                                className="flex-shrink-0 self-start whitespace-nowrap inline-flex items-center gap-1 rounded-full
+                                className="shrink-0 self-start whitespace-nowrap inline-flex items-center gap-1 rounded-full
                               bg-violet-800/40 text-violet-200 px-2 py-0.5 text-[10px] ring-1 ring-violet-500/30"
                             >
                                 <CalendarDays className="h-3 w-3"/>
@@ -165,7 +146,7 @@ export default function PlacePopupCard({place, upcomingEvent, onClose}: {
                                 return (
                                     <Link
                                         key={tag.key}
-                                        href={`/public?q=${encodeURIComponent(
+                                        href={`?q=${encodeURIComponent(
                                             rawKind.toLowerCase(),
                                         )}`}
                                         className={cn(
@@ -182,7 +163,7 @@ export default function PlacePopupCard({place, upcomingEvent, onClose}: {
                             return (
                                 <Link
                                     key={tag.key}
-                                    href={`/public?q=${encodeURIComponent(
+                                    href={`?q=${encodeURIComponent(
                                         tag.label.toLowerCase(),
                                     )}`}
                                     className={cn(
@@ -210,7 +191,7 @@ export default function PlacePopupCard({place, upcomingEvent, onClose}: {
                           className="absolute inset-0 rounded-full bg-[#FF2800]/40 opacity-0
                         group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300"
                       />
-                        <X className="h-3.5 w-3.5 relative z-[1] transition-colors group-hover:text-white"/>
+                        <X className="h-3.5 w-3.5 relative z-1 transition-colors group-hover:text-white"/>
                     </button>
                 </div>
             </div>

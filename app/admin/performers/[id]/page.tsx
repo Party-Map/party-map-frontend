@@ -4,11 +4,12 @@ import {Role} from "@/lib/auth/role"
 import {fetchPerformer, getLineupInvitationsForPerformer} from "@/lib/api/performers"
 import AdminPerformerEditForm from "./AdminPerformerEditForm"
 import AdminPerformerLineupInvitationRequests from "@/app/admin/performers/[id]/AdminPerformerLineupInvitationRequests";
+import {ID} from "@/lib/types";
 
 export default async function AdminPerformerPage({
                                                      params,
                                                  }: {
-    params: Promise<{ id: string }>
+    params: Promise<{ id: ID }>
 }) {
     const session = await requireAdminRole(Role.PERFORMER_MANAGER_USER)
     const {id} = await params

@@ -3,7 +3,7 @@
 import {useContext} from "react"
 import {SessionContext} from "@/app/SessionContextProvider"
 import {useRouter} from "next/navigation"
-import {PerformerLineupInvitationWithDate} from "@/lib/types";
+import {ID, PerformerLineupInvitationWithDate} from "@/lib/types";
 import {respondToLineupInvitation} from "@/lib/api/performers";
 import {dateTimeDisplayFormat} from "@/lib/dateformat";
 
@@ -12,7 +12,7 @@ export default function AdminPerformerLineupInvitationRequests({
                                                               performerId,
                                                           }: {
     invitationRequests: PerformerLineupInvitationWithDate[],
-    performerId: string
+    performerId: ID
 }) {
     const session = useContext(SessionContext)
     const router = useRouter()

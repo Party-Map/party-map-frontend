@@ -7,6 +7,10 @@ import {
 } from "@/lib/auth/server-jwt-utils";
 import {NextURL} from "next/dist/server/web/next-url";
 
+/**
+ * Handle login route
+ * @param request
+ */
 export async function GET(request: NextRequest) {
     const {searchParams} = request.nextUrl;
     const callback = searchParams.get("callback") || "/";

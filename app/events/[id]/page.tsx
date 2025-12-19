@@ -10,8 +10,9 @@ import {fetchLikeStatus} from "@/lib/api/likes";
 import {SocialLinks} from "@/components/SocialLinks";
 import {LineupList} from "@/app/events/[id]/LineupList";
 import {eventDateTimeDisplayFormat} from "@/lib/dateformat";
+import {ID} from "@/lib/types";
 
-export default async function EventPage({params}: { params: Promise<{ id: string }> }) {
+export default async function EventPage({params}: { params: Promise<{ id: ID }> }) {
     const {id} = await params
     const session = await getJwtSession()
 

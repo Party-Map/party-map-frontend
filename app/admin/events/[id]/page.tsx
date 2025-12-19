@@ -7,11 +7,12 @@ import AdminInviteControls from "@/app/admin/events/[id]/AdminInviteControls";
 import AdminLineupCreator from "@/app/admin/events/[id]/AdminLineupCreator";
 import {fetchPerformers} from "@/lib/api/performers";
 import AdminPublishButton from "@/app/admin/events/[id]/AdminPublishButton";
+import {ID} from "@/lib/types";
 
 export default async function AdminEventPlanPage({
                                                      params,
                                                  }: {
-    params: Promise<{ id: string }>
+    params: Promise<{ id: ID }>
 }) {
     const session = await requireAdminRole(Role.PERFORMER_MANAGER_USER)
     const {id} = await params

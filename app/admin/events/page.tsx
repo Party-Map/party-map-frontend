@@ -12,7 +12,7 @@ export default async function AdminEventsPage() {
     const ownedEventPlans = await fetchMyEventPlans(session) || [];
     const now = new Date();
 
-    const liveEvents = ownedEvents.filter((e) => new Date(e.end) >= now);
+    const upComingEvents = ownedEvents.filter((e) => new Date(e.end) >= now);
 
     const pastEvents = ownedEvents.filter((e) => new Date(e.end) < now);
 
@@ -46,9 +46,9 @@ export default async function AdminEventsPage() {
             <div className="flex flex-col flex-1">
                 <h1 className="text-2xl font-bold mb-4">Your live events</h1>
 
-                {/* Live / upcoming events */}
+                {/* Upcoming events */}
                 <ul className="space-y-3">
-                    {liveEvents.map((e) => (
+                    {upComingEvents.map((e) => (
                         <AdminEventListItem
                             key={e.id}
                             href={`/events/${e.id}`}
@@ -58,14 +58,14 @@ export default async function AdminEventsPage() {
                             placeName={e.placeName}
                         />
                     ))}
-                    {liveEvents.length === 0 && (
+                    {upComingEvents.length === 0 && (
                         <li className="text-sm text-gray-500">
                             You have no live events.
                         </li>
                     )}
                 </ul>
 
-                {/* Collapsible past events */}
+                {/* Past events */}
                 <details className="mt-6">
                     <summary className="text-lg font-semibold cursor-pointer select-none">
                         Past events ({pastEvents.length})
