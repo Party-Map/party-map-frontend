@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic'
 import {useEffect, useMemo, useRef, useState} from 'react'
 
-import type {Place, UpcomingEventByPlace} from '@/lib/types'
+import type {ID, Place, UpcomingEventByPlace} from '@/lib/types'
 import {useTheme} from '@/app/ThemeContextProvider'
 import {useHighlight} from '@/app/HighlightContextProvider'
 import {useSearchParams} from 'next/navigation'
@@ -17,14 +17,16 @@ export default function MapClient({
                                       upcomingMap,
                                   }: {
     places: Place[]
-    upcomingMap: Map<string, UpcomingEventByPlace>
+    upcomingMap: Map<ID, UpcomingEventByPlace>
 }) {
+    // If search from other page keep search params through navigation
     const searchParams = useSearchParams()
+    // If search from other page with focus param, highlight that place
     const focus = searchParams.get('focus')
     const {theme} = useTheme()
 
     const {highlightIds, setHighlightIds} = useHighlight()
-    const [openPopupId, setOpenPopupId] = useState<string | null>(null)
+    const [openPopupId, setOpenPopupId] = useState<ID | null>(null)
 
     useEffect(() => {
         if (focus) {

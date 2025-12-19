@@ -2,7 +2,7 @@
 
 import {useContext, useEffect, useState} from "react"
 import type {PlaceAdminListItemData} from "@/lib/types"
-import {SessionContext} from "@/lib/auth/SessionContextProvider"
+import {SessionContext} from "@/app/SessionContextProvider"
 import {fetchPlacesForAdminList} from "@/lib/api/event-plan"
 
 type Props = {

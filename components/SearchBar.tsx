@@ -6,7 +6,7 @@ import type {SearchHit} from '@/lib/types'
 import {usePathname, useRouter, useSearchParams} from 'next/navigation'
 import {SearchResultListItem} from '@/components/SearchResultListItem'
 import {useHighlight} from '@/app/HighlightContextProvider'
-import {SessionContext} from '@/lib/auth/SessionContextProvider'
+import {SessionContext} from '@/app/SessionContextProvider'
 import {fetchSearch} from '@/lib/api/search'
 
 function useDebouncedValue(value: String) {

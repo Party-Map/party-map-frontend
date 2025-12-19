@@ -3,7 +3,7 @@
 import React, {useContext} from 'react'
 import Link from 'next/link'
 import {LogIn, LogOut, User} from 'lucide-react'
-import {SessionContext} from "@/lib/auth/SessionContextProvider";
+import {SessionContext} from "@/app/SessionContextProvider";
 import {SignInButton, SignOutButton} from "@/app/auth/AuthButtons";
 import {MdFavoriteBorder} from "react-icons/md";
 

@@ -3,7 +3,7 @@
 import {useContext} from "react"
 import {useRouter} from "next/navigation"
 import type {EventPlanCreatePayload} from "@/lib/types"
-import {SessionContext} from "@/lib/auth/SessionContextProvider"
+import {SessionContext} from "@/app/SessionContextProvider"
 import {AdminEventPlanForm} from "@/app/admin/events/AdminEventPlanForm";
 import {addEventPlan} from "@/lib/api/event-plan";
 

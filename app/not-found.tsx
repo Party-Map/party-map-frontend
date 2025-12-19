@@ -4,18 +4,16 @@ export default function NotFound() {
     return (
         <main
             className="min-h-dvh grid place-items-center bg-gradient-to-br from-indigo-900 via-violet-900 to-fuchsia-900 text-white relative overflow-hidden p-6">
-            {/* floating shapes and overlays */}
             <div className="pointer-events-none absolute inset-0">
                 <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-pink-500/30 blur-3xl"/>
                 <div className="absolute -bottom-20 -right-16 h-80 w-80 rounded-full bg-indigo-500/30 blur-3xl"/>
                 <div className="absolute top-1/3 left-1/4 h-40 w-40 rounded-full bg-fuchsia-400/20 blur-2xl"/>
-                {/* gradient overlay (was ::after) */}
                 <div
                     aria-hidden
                     className="absolute inset-0"
                     style={{
                         background:
-                            'radial-gradient(1200px 400px at 50% 100%, rgba(255,255,255,0.08), transparent 60%),\n               radial-gradient(800px 300px at 0% 0%, rgba(255,255,255,0.06), transparent 50%),\n               radial-gradient(800px 300px at 100% 0%, rgba(255,255,255,0.06), transparent 50%)',
+                            'radial-gradient(1200px 400px at 50% 100%, rgba(255,255,255,0.08), transparent 60%),radial-gradient(800px 300px at 0% 0%, rgba(255,255,255,0.06), transparent 50%),radial-gradient(800px 300px at 100% 0%, rgba(255,255,255,0.06), transparent 50%)',
                     }}
                 />
             </div>
@@ -37,13 +35,10 @@ export default function NotFound() {
                         href="/"
                         className="relative inline-flex items-center gap-2 rounded-full bg-white text-zinc-900 px-5 py-2.5 text-sm font-semibold shadow-lg ring-1 ring-white/50 transition-colors duration-700 hover:bg-emerald-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
                     >
-                        {/* label */}
                         <span className="relative z-10">Back to Map</span>
                     </Link>
                 </div>
             </section>
-
-            {/* Removed shiny button animations and styles */}
         </main>
     )
 }

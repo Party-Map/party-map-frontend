@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 
 import {EventPlan} from "@/lib/types";
 import {publishEventPlan} from "@/lib/api/event-plan";
-import {SessionContext} from "@/lib/auth/SessionContextProvider";
+import {SessionContext} from "@/app/SessionContextProvider";
 
 export default function AdminPublishButton({eventPlan}: { eventPlan: EventPlan }) {
     const [isPending, startTransition] = useTransition();

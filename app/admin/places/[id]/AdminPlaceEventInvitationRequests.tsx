@@ -1,7 +1,7 @@
 "use client"
 
 import {useContext} from "react"
-import {SessionContext} from "@/lib/auth/SessionContextProvider"
+import {SessionContext} from "@/app/SessionContextProvider"
 import {useRouter} from "next/navigation"
 import {EventPlanPlaceInvitationWithDate} from "@/lib/types";
 import {dateTimeDisplayFormat} from "@/lib/dateformat";

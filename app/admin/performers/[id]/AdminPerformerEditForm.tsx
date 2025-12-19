@@ -3,7 +3,7 @@
 import {useContext} from "react"
 import {useRouter} from "next/navigation"
 import type {Performer, PerformerCreatePayload} from "@/lib/types"
-import {SessionContext} from "@/lib/auth/SessionContextProvider"
+import {SessionContext} from "@/app/SessionContextProvider"
 import {updatePerformer} from "@/lib/api/performers"
 import {AdminPerformerForm} from "@/app/admin/performers/AdminPerformerForm"
 

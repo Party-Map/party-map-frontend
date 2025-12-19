@@ -3,7 +3,7 @@ import './globals.css'
 import {ThemeContextProvider} from '@/app/ThemeContextProvider'
 import GdprConsent from '@/components/GdprConsent'
 import {HighlightContextProvider} from "@/app/HighlightContextProvider";
-import SessionContextProvider from "@/lib/auth/SessionContextProvider";
+import SessionContextProvider from "@/app/SessionContextProvider";
 import {cookies} from "next/headers";
 import {Toaster} from "react-hot-toast";
 

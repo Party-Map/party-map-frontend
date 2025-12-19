@@ -4,8 +4,7 @@ import {JwtSession} from '@/lib/auth/jwt-session'
 import React, {createContext, useEffect, useState} from 'react'
 import {getJwtSession} from '@/lib/auth/client-session'
 
-// @ts-ignore
-export const SessionContext = createContext<JwtSession | null>()
+export const SessionContext = createContext<JwtSession | null>(null)
 
 export default function SessionContextProvider({
                                             children,

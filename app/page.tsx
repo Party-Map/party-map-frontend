@@ -5,7 +5,7 @@ import BottomBar from "@/components/BottomBar";
 import {fetchPlaces} from "@/lib/api/places";
 import {fetchUpcomingEventsForAllPlaces} from "@/lib/api/events";
 import {getJwtSession} from "@/lib/auth/server-session";
-import {UpcomingEventByPlace} from "@/lib/types";
+import {ID, UpcomingEventByPlace} from "@/lib/types";
 
 
 export default async function HomePage() {
@@ -13,7 +13,7 @@ export default async function HomePage() {
 
     const places = await fetchPlaces(session)
     const upComingEventsByPlaces = await fetchUpcomingEventsForAllPlaces(session)
-    const upcomingMap = new Map<string, UpcomingEventByPlace>
+    const upcomingMap = new Map<ID, UpcomingEventByPlace>
     for (const u of upComingEventsByPlaces) {
         upcomingMap.set(u.placeId, u)
     }

@@ -8,7 +8,7 @@ import {
     deleteLineupInvitationFromEventPlan,
     fetchLineupInvitationsForEventPlan
 } from "@/lib/api/event-plan"
-import {SessionContext} from "@/lib/auth/SessionContextProvider"
+import {SessionContext} from "@/app/SessionContextProvider"
 
 type InviteState = "ACCEPTED" | "PENDING" | "REJECTED"
 

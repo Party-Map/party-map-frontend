@@ -6,7 +6,7 @@ type ThemeContext = { theme: Theme; toggle: () => void }
 
 const ThemeCtx = createContext<ThemeContext | null>(null)
 
-export function ThemeContextProvider({children}: { children: React.ReactNode }) {
+export function ThemeContextProvider({children}: Readonly<{ children: React.ReactNode }>) {
     const [theme, setTheme] = useState<Theme>('dark')
 
     useEffect(() => {
