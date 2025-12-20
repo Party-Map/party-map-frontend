@@ -2,9 +2,7 @@ import {decodeJwt, JWTPayload} from 'jose'
 import {ADMIN_ROLES, Role} from '@/lib/auth/role'
 
 export type KeycloakJWTPayload = JWTPayload & {
-    realm_access?: {
-        roles?: string[]
-    }
+    roles?: string[]
     email?: string
     name?: string
     family_name?: string

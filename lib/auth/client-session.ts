@@ -33,13 +33,6 @@ export async function getJwtSession(): Promise<JwtSession> {
         }
     }
 
-    return getStaticJwtSession()
-}
-
-/**
- * This function is used to get the JWT session from the client side. Only use this function where there are no operations made with it.
- */
-export function getStaticJwtSession(): JwtSession {
     return new JwtSession(extractAccessTokenFromCookie()!)
 }
 

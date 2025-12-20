@@ -45,7 +45,7 @@ export async function geocodeAddress(q: string): Promise<GeocodeResult[]> {
         }
 
         return {
-            displayName: d.display_name as string, // raw Nominatim long form
+            displayName: d.display_name as string,
             addressLine,
             location,
             city,
