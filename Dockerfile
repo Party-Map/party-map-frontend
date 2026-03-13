@@ -15,6 +15,12 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-l
 
 # Build the application
 FROM base AS build
+ARG AUTH_KEYCLOAK_ISSUER
+ARG AUTH_KEYCLOAK_ID
+ARG NEXT_PUBLIC_URL_BASE
+ENV AUTH_KEYCLOAK_ISSUER=$AUTH_KEYCLOAK_ISSUER
+ENV AUTH_KEYCLOAK_ID=$AUTH_KEYCLOAK_ID
+ENV NEXT_PUBLIC_URL_BASE=$NEXT_PUBLIC_URL_BASE
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run build
 

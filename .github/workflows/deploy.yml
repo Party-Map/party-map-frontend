@@ -34,3 +34,7 @@ jobs:
           context: .
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_ID }}:latest
+          build-args: |
+            AUTH_KEYCLOAK_ISSUER=https://auth.terkep.party/realms/party-map
+            AUTH_KEYCLOAK_ID=partymap
+            NEXT_PUBLIC_URL_BASE=https://terkep.party
