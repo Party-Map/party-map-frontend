@@ -14,6 +14,7 @@ export function SignInButton({design = "", children}: AuthButtonProps) {
 
     return (
         <Link
+            prefetch={false}
             href={`/auth/login?callback=${encodeURIComponent(pathName)}`}
             className={cn("cursor-pointer", design)}
         >
