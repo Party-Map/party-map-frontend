@@ -38,3 +38,4 @@ jobs:
             AUTH_KEYCLOAK_ISSUER=https://auth.terkep.party/realms/party-map
             AUTH_KEYCLOAK_ID=partymap
             NEXT_PUBLIC_URL_BASE=https://terkep.party
+            NEXT_PUBLIC_RESOURCE_API_BASE_URL=https://api.terkep.party
