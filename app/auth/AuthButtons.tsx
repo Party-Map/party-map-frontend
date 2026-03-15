@@ -28,6 +28,7 @@ export function SignOutButton({design = "", children}: AuthButtonProps) {
 
     return (
         <Link
+            prefetch={false}
             href={`/auth/logout?callback=${encodeURIComponent(pathName)}`}
             className={cn("cursor-pointer", design)}
         >
