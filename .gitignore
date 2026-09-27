@@ -32,3 +32,6 @@ e2e/visual.spec.ts-snapshots
 
 # typescript incremental state
 *.tsbuildinfo
+
+# pnpm content-addressable store created by the Docker dev server
+.pnpm-store

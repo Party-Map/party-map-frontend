@@ -5,7 +5,12 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   resolve: { tsconfigPaths: true },
-  server: { port: 3000, strictPort: true },
+  server: {
+    port: 3000,
+    strictPort: true,
+    // Set VITE_WATCH_POLL=true when file events do not reach the process (Docker bind mounts).
+    watch: { usePolling: process.env.VITE_WATCH_POLL === 'true' },
+  },
   preview: { port: 3000 },
   build: {
     target: 'es2022',

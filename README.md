@@ -6,8 +6,16 @@ authenticated against Keycloak (public client, PKCE) and talking to the Party Ma
 
 ## Run locally
 
-Prerequisites: Node 22.12+ (Node 24 recommended), pnpm via corepack, the backend on
-http://localhost:8080 and Keycloak on http://localhost:8081 (see `../party-map-infra`).
+The backend and Keycloak come from the backend repo: `docker compose up` in `../party-map-backend`
+starts both (ports 8080 and 8081) with the dev realm and users.
+
+With Docker (no Node on the host needed):
+
+```bash
+docker compose up               # http://localhost:3000, hot reload, node_modules kept in a volume
+```
+
+With Node on the host (Node 22.12+, pnpm via corepack):
 
 ```bash
 corepack enable
