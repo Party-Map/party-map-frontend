@@ -1,0 +1,1 @@
+export { PerformerPage } from './PerformerPage'

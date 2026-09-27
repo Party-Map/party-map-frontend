@@ -1,0 +1,30 @@
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--fg);
+  font-size: 0.875rem;
+  backdrop-filter: blur(6px);
+  box-shadow: var(--shadow-sm);
+  transition: background-color 150ms var(--ease);
+}
+
+.toggle:hover {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+:global([data-theme='dark']) .toggle {
+  background: rgba(39, 39, 42, 0.6);
+}
+
+:global([data-theme='dark']) .toggle:hover {
+  background: rgba(39, 39, 42, 0.8);
+}
+
+.compact {
+  padding: 0.5rem;
+}

@@ -1,0 +1,14 @@
+/* Own stacking context so Leaflet's panes and controls never rise above the app bars or dropdowns. */
+.frame {
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+}
+
+.map {
+  width: 100%;
+  height: 16.25rem;
+  background: var(--map-bg);
+}

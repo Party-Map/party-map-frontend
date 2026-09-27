@@ -1,0 +1,29 @@
+.state {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+  color: var(--fg-muted);
+  font-size: 0.875rem;
+}
+
+.spinner {
+  width: 1.25rem;
+  height: 1.25rem;
+  animation: spin 900ms linear infinite;
+}
+
+.error {
+  color: var(--danger);
+}
+
+.empty {
+  color: var(--fg-muted);
+  font-size: 0.875rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

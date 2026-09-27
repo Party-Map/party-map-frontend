@@ -1,0 +1,50 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--kind-fg);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
+}
+
+.md {
+  padding: 0.25rem 0.625rem;
+  font-size: 0.6875rem;
+}
+
+.sm {
+  padding: 0.125rem 0.375rem;
+  font-size: 0.5625rem;
+  border-radius: var(--radius-sm);
+}
+
+.badge[data-kind='DISCO'] {
+  background: var(--kind-disco);
+}
+
+.badge[data-kind='TECHNO'] {
+  background: var(--kind-techno);
+}
+
+.badge[data-kind='FESTIVAL'] {
+  background: var(--kind-festival);
+}
+
+.badge[data-kind='JAZZ'] {
+  background: var(--kind-jazz);
+}
+
+.badge[data-kind='ALTER'] {
+  background: var(--kind-alter);
+}
+
+.badge[data-kind='HOME'] {
+  background: var(--kind-home);
+}
+
+.badge[data-kind='PUB'] {
+  background: var(--kind-pub);
+  color: var(--kind-pub-fg);
+}

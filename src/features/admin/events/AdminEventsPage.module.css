@@ -1,0 +1,33 @@
+.columns {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+  padding-bottom: var(--space-6);
+}
+
+@media (min-width: 1024px) {
+  .columns {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+.column {
+  min-width: 0;
+}
+
+.past {
+  margin-top: var(--space-6);
+}
+
+.summary {
+  cursor: pointer;
+  user-select: none;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: var(--space-3);
+}
+
+.pastList {
+  margin-top: var(--space-3);
+}

@@ -1,0 +1,36 @@
+.wrapper {
+  position: relative;
+}
+
+.loading {
+  position: absolute;
+  top: 50%;
+  right: var(--space-3);
+  transform: translateY(-50%);
+  font-size: 0.75rem;
+  color: var(--fg-subtle);
+}
+
+.results {
+  position: absolute;
+  z-index: var(--z-dropdown);
+  top: calc(100% + var(--space-1));
+  left: 0;
+  right: 0;
+  max-height: 15rem;
+  overflow: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-solid);
+  box-shadow: var(--shadow-lg);
+  font-size: 0.875rem;
+}
+
+.result {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+}
+
+.result:hover {
+  background: var(--surface-hover);
+}

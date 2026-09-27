@@ -1,0 +1,45 @@
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.title {
+  flex: 1;
+  min-width: 0;
+}
+
+.metaLine {
+  font-size: 0.875rem;
+  color: var(--fg-muted);
+}
+
+.bio {
+  margin-top: var(--space-2);
+  font-size: 0.875rem;
+}
+
+.links {
+  margin-top: var(--space-3);
+}
+
+.events {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+.eventLink {
+  font-weight: 500;
+  color: var(--link);
+}
+
+.eventLink:hover {
+  text-decoration: underline;
+}
+
+@media (min-width: 640px) {
+  .events {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
