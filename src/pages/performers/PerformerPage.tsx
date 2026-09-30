@@ -1,10 +1,7 @@
 import { Link, useParams } from "react-router";
 
 import { ApiError } from "@/api/client";
-import { fetchEventsByPerformer } from "@/api/events";
-import { fetchLikeStatus } from "@/api/likes";
-import { fetchPerformer } from "@/api/performers";
-import type { Event, ID, Performer } from "@/api/types";
+import { useLikeStatus, usePerformerPage } from "@/api/hooks";
 import { useAuth } from "@/auth/provider";
 import { Card, CardBody } from "@/components/Card";
 import { CoverImage } from "@/components/CoverImage";
@@ -13,34 +10,21 @@ import { EmptyState, ErrorState, LoadingState } from "@/components/States";
 import text from "@/components/typography.module.scss";
 import { LikeButton } from "@/layout/LikeButton";
 import { PageShell } from "@/layout/PageShell";
-import { useResource } from "@/lib/hooks/useResource";
 import { cn } from "@/lib/utils";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 
 import styles from "./PerformerPage.module.scss";
 
-interface PerformerPageData {
-    performer: Performer;
-    events: Event[];
-}
-
-async function loadPerformerPage(id: ID): Promise<PerformerPageData> {
-    const [performer, events] = await Promise.all([fetchPerformer(id), fetchEventsByPerformer(id)]);
-    return { performer, events };
-}
-
 /** Public detail page of a performer with the events they play at. */
 export function PerformerPage() {
     const { id = "" } = useParams();
     const { status } = useAuth();
-    const page = useResource(() => loadPerformerPage(id), [id]);
-    const likeStatus = useResource(() => fetchLikeStatus("performers", id), [id], {
-        enabled: status === "authenticated",
-    });
+    const page = usePerformerPage(id);
+    const likeStatus = useLikeStatus("performers", id, { enabled: status === "authenticated" });
 
     if (page.error instanceof ApiError && page.error.status === 404) return <NotFoundPage />;
 
-    if (page.loading) {
+    if (page.isPending) {
         return (
             <PageShell>
                 <LoadingState />
@@ -51,7 +35,7 @@ export function PerformerPage() {
     if (!page.data) {
         return (
             <PageShell>
-                <ErrorState message="Could not load this performer." onRetry={page.reload} />
+                <ErrorState message="Could not load this performer." onRetry={() => void page.refetch()} />
             </PageShell>
         );
     }
@@ -86,7 +70,7 @@ export function PerformerPage() {
                 <CardBody>
                     <div className={styles.titleRow}>
                         <h1 className={cn(text.pageTitle, styles.title)}>{performer.name}</h1>
-                        {!likeStatus.loading && (
+                        {!likeStatus.isLoading && (
                             <LikeButton
                                 target="performers"
                                 targetId={id}

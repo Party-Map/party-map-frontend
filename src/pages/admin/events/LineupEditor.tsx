@@ -1,13 +1,12 @@
 import { useState } from "react";
 
-import { addLineupInvitation, deleteLineupInvitation, fetchLineupInvitations } from "@/api/eventPlans";
+import { useAddLineupInvitation, useDeleteLineupInvitation, useLineupInvitations } from "@/api/hooks";
 import type { EventPlan, EventPlanLineupInvitation, InvitationState, Performer } from "@/api/types";
 import { Button } from "@/components/Button";
 import { Field, FormError, Select } from "@/components/Field";
 import formStyles from "@/components/forms.module.scss";
 import { ErrorState, LoadingState } from "@/components/States";
 import { clampDateTimeRange, formatDateTime, toDateTimeLocalInput } from "@/lib/dates";
-import { useResource } from "@/lib/hooks/useResource";
 import adminStyles from "@/pages/admin/shared/admin.module.scss";
 import { DateTimeRangeFields } from "@/pages/admin/shared/DateTimeRangeFields";
 import { InvitationStateLabel } from "@/pages/admin/shared/InvitationStateLabel";
@@ -59,18 +58,19 @@ interface LineupEditorProps {
 
 /** Invite performers to time slots within the plan; loads the existing invitations first. */
 export function LineupEditor({ plan, performers }: LineupEditorProps) {
-    const invitations = useResource(() => fetchLineupInvitations(plan.id), [plan.id]);
+    const invitations = useLineupInvitations(plan.id);
 
     return (
         <section className={styles.editor}>
             <h2 className={adminStyles.panelTitle}>Create a line up</h2>
-            {invitations.loading && <LoadingState label="Loading lineup invitations…" />}
+            {invitations.isPending && <LoadingState label="Loading lineup invitations…" />}
             {invitations.error && (
-                <ErrorState message="Failed to load lineup invitations." onRetry={invitations.reload} />
+                <ErrorState message="Failed to load lineup invitations." onRetry={() => void invitations.refetch()} />
             )}
-            {!invitations.loading && (
+            {!invitations.isPending && (
                 <LineupItems
-                    key={plan.id}
+                    // Fresh rows whenever the invitations (re)arrive, e.g. after a failed load is retried.
+                    key={`${plan.id}-${invitations.dataUpdatedAt}`}
                     plan={plan}
                     performers={performers}
                     initialInvitations={invitations.data ?? []}
@@ -83,6 +83,8 @@ export function LineupEditor({ plan, performers }: LineupEditorProps) {
 type LineupItemsProps = LineupEditorProps & { initialInvitations: EventPlanLineupInvitation[] };
 
 function LineupItems({ plan, performers, initialInvitations }: LineupItemsProps) {
+    const addInvitation = useAddLineupInvitation(plan.id);
+    const removeInvitation = useDeleteLineupInvitation(plan.id);
     const [rows, setRows] = useState(() => toRows(initialInvitations, plan));
     const [error, setError] = useState<string | null>(null);
     const chosen = new Set(rows.map((row) => row.performerId).filter(Boolean));
@@ -100,7 +102,7 @@ function LineupItems({ plan, performers, initialInvitations }: LineupItemsProps)
     const removeRow = async (row: LineupRow) => {
         if (row.state !== null) {
             try {
-                await deleteLineupInvitation(plan.id, row.performerId);
+                await removeInvitation.mutateAsync(row.performerId);
             } catch {
                 setError("Failed to delete the lineup invitation.");
                 return;
@@ -119,7 +121,7 @@ function LineupItems({ plan, performers, initialInvitations }: LineupItemsProps)
         setError(null);
         updateRow(row.key, { ...times, state: "PENDING" });
         try {
-            await addLineupInvitation(plan.id, { performerId: row.performerId, ...times });
+            await addInvitation.mutateAsync({ performerId: row.performerId, ...times });
         } catch {
             updateRow(row.key, { state: row.state });
             setError("Failed to send the invitation.");

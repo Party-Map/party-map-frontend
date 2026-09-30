@@ -1,14 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 
-import { fetchUpcomingEventsByPlace } from "@/api/events";
-import { fetchPlaces } from "@/api/places";
+import { usePlaces, useUpcomingEvents } from "@/api/hooks";
 import type { ID, Place, UpcomingEventByPlace } from "@/api/types";
 import { ErrorState, LoadingState } from "@/components/States";
 import { BottomBar } from "@/layout/BottomBar";
 import { useHighlight } from "@/layout/HighlightProvider";
 import { TopBar } from "@/layout/TopBar";
-import { useResource } from "@/lib/hooks/useResource";
 import { MapView } from "@/map/MapView";
 
 import styles from "./MapPage.module.scss";
@@ -30,8 +28,8 @@ export function MapPage() {
     const focus = searchParams.get("focus");
     const { highlightIds, setHighlightIds } = useHighlight();
 
-    const placesResource = useResource(fetchPlaces, []);
-    const upcomingResource = useResource(fetchUpcomingEventsByPlace, []);
+    const placesQuery = usePlaces();
+    const upcomingQuery = useUpcomingEvents();
     const [popup, setPopup] = useState<PopupState | null>(null);
 
     // Arriving with ?focus=<placeId> (from search on another page) highlights that place.
@@ -40,21 +38,21 @@ export function MapPage() {
     }, [focus, setHighlightIds]);
 
     const upcomingMap = useMemo(
-        () => new Map<ID, UpcomingEventByPlace>((upcomingResource.data ?? []).map((u) => [u.placeId, u])),
-        [upcomingResource.data],
+        () => new Map<ID, UpcomingEventByPlace>((upcomingQuery.data ?? []).map((u) => [u.placeId, u])),
+        [upcomingQuery.data],
     );
 
-    const error = placesResource.error ?? upcomingResource.error;
-    const loading = placesResource.loading || upcomingResource.loading;
-    const places = !error && placesResource.data && upcomingResource.data ? placesResource.data : NO_PLACES;
+    const error = placesQuery.error ?? upcomingQuery.error;
+    const loading = placesQuery.isPending || upcomingQuery.isPending;
+    const places = !error && placesQuery.data && upcomingQuery.data ? placesQuery.data : NO_PLACES;
 
     const openPopupId = popup !== null && popup.forHighlights === highlightIds ? popup.id : null;
     const togglePopup = (id: ID) => setPopup(openPopupId === id ? null : { id, forHighlights: highlightIds });
     const closePopup = useCallback(() => setPopup(null), []);
 
     const reload = () => {
-        placesResource.reload();
-        upcomingResource.reload();
+        void placesQuery.refetch();
+        void upcomingQuery.refetch();
     };
 
     return (

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 
-import { createEventPlan } from "@/api/eventPlans";
+import { useCreateEventPlan } from "@/api/hooks";
 import type { EventPlanPayload } from "@/api/types";
 import { Role } from "@/auth/roles";
 import { useToast } from "@/layout/ToastProvider";
@@ -11,9 +11,10 @@ import { EventPlanForm } from "./EventPlanForm";
 export function NewEventPlanPage() {
     const navigate = useNavigate();
     const toast = useToast();
+    const create = useCreateEventPlan();
 
     const handleSubmit = async (payload: EventPlanPayload) => {
-        const created = await createEventPlan(payload);
+        const created = await create.mutateAsync(payload);
         toast.success("Event plan created.");
         void navigate(`/admin/events/${created.id}`);
     };

@@ -1,9 +1,8 @@
-import { fetchOwnedPerformers } from "@/api/performers";
+import { useOwnedPerformers } from "@/api/hooks";
 import { Role } from "@/auth/roles";
 import { ButtonLink } from "@/components/Button";
 import { EmptyState, ErrorState, LoadingState } from "@/components/States";
 import text from "@/components/typography.module.scss";
-import { useResource } from "@/lib/hooks/useResource";
 import { RequireRole } from "@/pages/admin/RequireRole";
 import styles from "@/pages/admin/shared/admin.module.scss";
 import { AdminListItem } from "@/pages/admin/shared/AdminListItem";
@@ -23,10 +22,10 @@ export function AdminPerformersPage() {
 
 /** Loads only once the role guard has let the user through. */
 function OwnedPerformersList() {
-    const { data, loading, reload } = useResource(fetchOwnedPerformers, []);
+    const { data, isPending, refetch } = useOwnedPerformers();
 
-    if (loading) return <LoadingState />;
-    if (!data) return <ErrorState message="Could not load your performers." onRetry={reload} />;
+    if (isPending) return <LoadingState />;
+    if (!data) return <ErrorState message="Could not load your performers." onRetry={() => void refetch()} />;
     if (data.length === 0) return <EmptyState message="You do not manage any performers yet." />;
 
     return (

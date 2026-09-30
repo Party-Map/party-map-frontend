@@ -1,15 +1,13 @@
 import { useNavigate, useParams } from "react-router";
 
 import { ApiError } from "@/api/client";
-import { fetchEventPlan, updateEventPlan } from "@/api/eventPlans";
-import { fetchPerformers } from "@/api/performers";
+import { useEventPlan, usePerformers, useUpdateEventPlan } from "@/api/hooks";
 import type { EventPlanPayload } from "@/api/types";
 import { Role } from "@/auth/roles";
 import layout from "@/components/layout.module.scss";
 import { ErrorState, LoadingState } from "@/components/States";
 import text from "@/components/typography.module.scss";
 import { useToast } from "@/layout/ToastProvider";
-import { useResource } from "@/lib/hooks/useResource";
 import { RequireRole } from "@/pages/admin/RequireRole";
 import adminStyles from "@/pages/admin/shared/admin.module.scss";
 import { InvitationStateLabel } from "@/pages/admin/shared/InvitationStateLabel";
@@ -33,16 +31,17 @@ function EventPlanDetail() {
     const { id = "" } = useParams();
     const navigate = useNavigate();
     const toast = useToast();
-    const plan = useResource(() => fetchEventPlan(id), [id]);
-    const performers = useResource(fetchPerformers, []);
+    const plan = useEventPlan(id);
+    const performers = usePerformers();
+    const save = useUpdateEventPlan(id);
 
     const retry = () => {
-        plan.reload();
-        performers.reload();
+        void plan.refetch();
+        void performers.refetch();
     };
 
     const handleSubmit = async (payload: EventPlanPayload) => {
-        await updateEventPlan(id, payload);
+        await save.mutateAsync(payload);
         toast.success("Event plan saved.");
         void navigate("/admin/events");
     };
@@ -76,7 +75,7 @@ function EventPlanDetail() {
                             <InvitationStateLabel state={invitation.state} />.
                         </p>
                     ) : (
-                        <InvitePlace planId={id} onChanged={plan.reload} />
+                        <InvitePlace planId={id} />
                     )}
                 </section>
 

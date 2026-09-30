@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
 
-import { respondToPlaceInvitation } from "@/api/places";
+import { useRespondToPlaceInvitation } from "@/api/hooks";
 import type { ID, PlaceInvitationRequest } from "@/api/types";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
@@ -15,24 +15,22 @@ import styles from "./PlaceInvitationRequests.module.scss";
 interface PlaceInvitationRequestsProps {
     placeId: ID;
     requests: PlaceInvitationRequest[];
-    /** Called after an answer was saved so the owner can reload the list. */
-    onChanged: () => void;
 }
 
 type Answer = "accept" | "reject";
 
 /** Side panel listing the event plans that asked to be hosted at this place. */
-export function PlaceInvitationRequests({ placeId, requests, onChanged }: PlaceInvitationRequestsProps) {
+export function PlaceInvitationRequests({ placeId, requests }: PlaceInvitationRequestsProps) {
     const toast = useToast();
+    const answerInvitation = useRespondToPlaceInvitation(placeId);
     const titleId = useId();
     const [busyId, setBusyId] = useState<ID | null>(null);
 
     const respond = async (request: PlaceInvitationRequest, answer: Answer) => {
         setBusyId(request.eventPlanId);
         try {
-            await respondToPlaceInvitation(placeId, request.eventPlanId, answer);
+            await answerInvitation.mutateAsync({ eventPlanId: request.eventPlanId, answer });
             toast.success(answer === "accept" ? "Invitation accepted." : "Invitation rejected.");
-            onChanged();
         } catch {
             toast.error("Could not answer the invitation. Please try again.");
         } finally {

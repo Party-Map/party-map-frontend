@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 
-import { createPerformer } from "@/api/performers";
+import { useCreatePerformer } from "@/api/hooks";
 import type { PerformerPayload } from "@/api/types";
 import { Role } from "@/auth/roles";
 import { useToast } from "@/layout/ToastProvider";
@@ -12,9 +12,10 @@ import { PerformerForm } from "./PerformerForm";
 export function NewPerformerPage() {
     const navigate = useNavigate();
     const toast = useToast();
+    const create = useCreatePerformer();
 
     const handleSubmit = async (payload: PerformerPayload) => {
-        const created = await createPerformer(payload);
+        const created = await create.mutateAsync(payload);
         toast.success("Performer created.");
         void navigate(`/performers/${created.id}`);
     };

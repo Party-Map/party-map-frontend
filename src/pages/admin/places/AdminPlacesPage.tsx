@@ -1,9 +1,8 @@
-import { fetchOwnedPlaces } from "@/api/places";
+import { useOwnedPlaces } from "@/api/hooks";
 import { Role } from "@/auth/roles";
 import { ButtonLink } from "@/components/Button";
 import { EmptyState, ErrorState, LoadingState } from "@/components/States";
 import text from "@/components/typography.module.scss";
-import { useResource } from "@/lib/hooks/useResource";
 import { RequireRole } from "@/pages/admin/RequireRole";
 import styles from "@/pages/admin/shared/admin.module.scss";
 import { AdminListItem } from "@/pages/admin/shared/AdminListItem";
@@ -23,10 +22,10 @@ export function AdminPlacesPage() {
 
 /** Loads only once the role guard has let the user through. */
 function OwnedPlacesList() {
-    const { data, loading, reload } = useResource(fetchOwnedPlaces, []);
+    const { data, isPending, refetch } = useOwnedPlaces();
 
-    if (loading) return <LoadingState />;
-    if (!data) return <ErrorState message="Could not load your places." onRetry={reload} />;
+    if (isPending) return <LoadingState />;
+    if (!data) return <ErrorState message="Could not load your places." onRetry={() => void refetch()} />;
     if (data.length === 0) return <EmptyState message="You do not manage any places yet." />;
 
     return (

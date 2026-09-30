@@ -1,11 +1,10 @@
 import { useNavigate, useParams } from "react-router";
 
-import { fetchPerformer, fetchPerformerInvitations, updatePerformer } from "@/api/performers";
+import { usePerformer, usePerformerInvitations, useUpdatePerformer } from "@/api/hooks";
 import type { PerformerPayload } from "@/api/types";
 import { Role } from "@/auth/roles";
 import { ErrorState, LoadingState } from "@/components/States";
 import { useToast } from "@/layout/ToastProvider";
-import { useResource } from "@/lib/hooks/useResource";
 import { RequireRole } from "@/pages/admin/RequireRole";
 import styles from "@/pages/admin/shared/admin.module.scss";
 
@@ -26,20 +25,21 @@ function PerformerEditor() {
     const id = useParams<"id">().id ?? "";
     const navigate = useNavigate();
     const toast = useToast();
-    const performer = useResource(() => fetchPerformer(id), [id]);
-    const invitations = useResource(() => fetchPerformerInvitations(id), [id]);
+    const performer = usePerformer(id);
+    const invitations = usePerformerInvitations(id);
+    const save = useUpdatePerformer(id);
 
-    if (performer.loading || invitations.loading) return <LoadingState />;
+    if (performer.isPending || invitations.isPending) return <LoadingState />;
     if (!performer.data || !invitations.data) {
         const reload = () => {
-            performer.reload();
-            invitations.reload();
+            void performer.refetch();
+            void invitations.refetch();
         };
         return <ErrorState message="Could not load this performer." onRetry={reload} />;
     }
 
     const handleSubmit = async (payload: PerformerPayload) => {
-        const updated = await updatePerformer(id, payload);
+        const updated = await save.mutateAsync(payload);
         toast.success("Performer saved.");
         void navigate(`/performers/${updated.id}`);
     };
@@ -52,7 +52,7 @@ function PerformerEditor() {
                 initialValues={performer.data}
                 onSubmit={handleSubmit}
             />
-            <PerformerInvitationRequests performerId={id} requests={invitations.data} onChanged={invitations.reload} />
+            <PerformerInvitationRequests performerId={id} requests={invitations.data} />
         </div>
     );
 }

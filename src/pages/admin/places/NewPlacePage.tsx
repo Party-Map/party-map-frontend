@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 
-import { createPlace } from "@/api/places";
+import { useCreatePlace } from "@/api/hooks";
 import type { PlacePayload } from "@/api/types";
 import { Role } from "@/auth/roles";
 import { useToast } from "@/layout/ToastProvider";
@@ -12,9 +12,10 @@ import { PlaceForm } from "./PlaceForm";
 export function NewPlacePage() {
     const navigate = useNavigate();
     const toast = useToast();
+    const create = useCreatePlace();
 
     const handleSubmit = async (payload: PlacePayload) => {
-        const created = await createPlace(payload);
+        const created = await create.mutateAsync(payload);
         toast.success("Place created.");
         void navigate(`/places/${created.id}`);
     };

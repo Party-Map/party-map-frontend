@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
 
-import { respondToPerformerInvitation } from "@/api/performers";
+import { useRespondToPerformerInvitation } from "@/api/hooks";
 import type { ID, PerformerInvitationRequest } from "@/api/types";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
@@ -15,24 +15,22 @@ import styles from "./PerformerInvitationRequests.module.scss";
 interface PerformerInvitationRequestsProps {
     performerId: ID;
     requests: PerformerInvitationRequest[];
-    /** Called after an answer was saved so the owner can reload the list. */
-    onChanged: () => void;
 }
 
 type Answer = "accept" | "reject";
 
 /** Side panel listing the event plans that asked this performer to play. */
-export function PerformerInvitationRequests({ performerId, requests, onChanged }: PerformerInvitationRequestsProps) {
+export function PerformerInvitationRequests({ performerId, requests }: PerformerInvitationRequestsProps) {
     const toast = useToast();
+    const answerInvitation = useRespondToPerformerInvitation(performerId);
     const titleId = useId();
     const [busyId, setBusyId] = useState<ID | null>(null);
 
     const respond = async (request: PerformerInvitationRequest, answer: Answer) => {
         setBusyId(request.eventPlanId);
         try {
-            await respondToPerformerInvitation(performerId, request.eventPlanId, answer);
+            await answerInvitation.mutateAsync({ eventPlanId: request.eventPlanId, answer });
             toast.success(answer === "accept" ? "Invitation accepted." : "Invitation rejected.");
-            onChanged();
         } catch {
             toast.error("Could not answer the invitation. Please try again.");
         } finally {

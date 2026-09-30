@@ -1,10 +1,7 @@
 import { useParams } from "react-router";
 
 import { ApiError } from "@/api/client";
-import { fetchEventsByPlace } from "@/api/events";
-import { fetchLikeStatus } from "@/api/likes";
-import { fetchPlace } from "@/api/places";
-import type { Event, ID, Place } from "@/api/types";
+import { useLikeStatus, usePlacePage } from "@/api/hooks";
 import { useAuth } from "@/auth/provider";
 import { Card, CardBody } from "@/components/Card";
 import { CoverImage } from "@/components/CoverImage";
@@ -13,33 +10,22 @@ import { EmptyState, ErrorState, LoadingState } from "@/components/States";
 import text from "@/components/typography.module.scss";
 import { LikeButton } from "@/layout/LikeButton";
 import { PageShell } from "@/layout/PageShell";
-import { useResource } from "@/lib/hooks/useResource";
 import { cn } from "@/lib/utils";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 
 import { EventCard } from "./EventCard";
 import styles from "./PlacePage.module.scss";
 
-interface PlacePageData {
-    place: Place;
-    events: Event[];
-}
-
-async function loadPlacePage(id: ID): Promise<PlacePageData> {
-    const [place, events] = await Promise.all([fetchPlace(id), fetchEventsByPlace(id)]);
-    return { place, events };
-}
-
 /** Public detail page of a place with its upcoming events. */
 export function PlacePage() {
     const { id = "" } = useParams();
     const { status } = useAuth();
-    const page = useResource(() => loadPlacePage(id), [id]);
-    const likeStatus = useResource(() => fetchLikeStatus("places", id), [id], { enabled: status === "authenticated" });
+    const page = usePlacePage(id);
+    const likeStatus = useLikeStatus("places", id, { enabled: status === "authenticated" });
 
     if (page.error instanceof ApiError && page.error.status === 404) return <NotFoundPage />;
 
-    if (page.loading) {
+    if (page.isPending) {
         return (
             <PageShell>
                 <LoadingState />
@@ -50,7 +36,7 @@ export function PlacePage() {
     if (!page.data) {
         return (
             <PageShell>
-                <ErrorState message="Could not load this place." onRetry={page.reload} />
+                <ErrorState message="Could not load this place." onRetry={() => void page.refetch()} />
             </PageShell>
         );
     }
@@ -79,7 +65,7 @@ export function PlacePage() {
                 <CardBody>
                     <div className={styles.titleRow}>
                         <h1 className={cn(text.pageTitle, styles.title)}>{place.name}</h1>
-                        {!likeStatus.loading && (
+                        {!likeStatus.isLoading && (
                             <LikeButton
                                 target="places"
                                 targetId={id}

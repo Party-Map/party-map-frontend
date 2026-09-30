@@ -1,5 +1,6 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, type RenderOptions, type RenderResult } from "@testing-library/react";
-import type { ReactElement, ReactNode } from "react";
+import { type ReactElement, type ReactNode, useState } from "react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { type Mock, vi } from "vitest";
 
@@ -54,6 +55,12 @@ interface ProviderOptions {
     auth?: AuthSnapshot;
     authPending?: boolean;
     client?: MockAuthClient;
+    queryClient?: QueryClient;
+}
+
+/** A fresh cache per test; failures surface at once instead of being retried. */
+export function createTestQueryClient(): QueryClient {
+    return new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
 }
 
 export function AppProviders({
@@ -63,19 +70,23 @@ export function AppProviders({
     auth = ANONYMOUS,
     authPending = false,
     client,
+    queryClient,
 }: ProviderOptions & { children: ReactNode }) {
     const authClient = client ?? createMockAuthClient(auth, { pending: authPending });
+    const [cache] = useState(() => queryClient ?? createTestQueryClient());
     return (
         <ToastProvider>
             <AuthProvider client={authClient}>
-                <HighlightProvider>
-                    <MemoryRouter initialEntries={[route]}>
-                        <Routes>
-                            <Route path={path} element={children} />
-                            <Route path="*" element={<p>other page</p>} />
-                        </Routes>
-                    </MemoryRouter>
-                </HighlightProvider>
+                <QueryClientProvider client={cache}>
+                    <HighlightProvider>
+                        <MemoryRouter initialEntries={[route]}>
+                            <Routes>
+                                <Route path={path} element={children} />
+                                <Route path="*" element={<p>other page</p>} />
+                            </Routes>
+                        </MemoryRouter>
+                    </HighlightProvider>
+                </QueryClientProvider>
             </AuthProvider>
         </ToastProvider>
     );
@@ -85,14 +96,16 @@ export function AppProviders({
 export function renderWithProviders(
     ui: ReactElement,
     options: ProviderOptions & Omit<RenderOptions, "wrapper"> = {},
-): RenderResult & { client: MockAuthClient } {
-    const { route, path, auth, authPending, client: givenClient, ...renderOptions } = options;
+): RenderResult & { client: MockAuthClient; queryClient: QueryClient } {
+    const { route, path, auth, authPending, client: givenClient, queryClient: givenCache, ...renderOptions } = options;
     const client = givenClient ?? createMockAuthClient(auth ?? ANONYMOUS, { pending: authPending ?? false });
+    const queryClient = givenCache ?? createTestQueryClient();
     const result = render(ui, {
         ...renderOptions,
         wrapper: ({ children }) => (
             <AppProviders
                 client={client}
+                queryClient={queryClient}
                 {...(route !== undefined ? { route } : {})}
                 {...(path !== undefined ? { path } : {})}
             >
@@ -100,7 +113,7 @@ export function renderWithProviders(
             </AppProviders>
         ),
     });
-    return { ...result, client };
+    return { ...result, client, queryClient };
 }
 
 /** A request the app sent, as the API would see it. `body` is parsed when it is JSON. */

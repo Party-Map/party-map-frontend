@@ -2,9 +2,8 @@ import { useId, useState } from "react";
 
 import { Input } from "@/components/Field";
 import { GEOCODE_DEBOUNCE_MS } from "@/lib/constants";
-import { geocodeAddress, type GeocodeResult } from "@/lib/geocode";
+import { type GeocodeResult, useAddressSearch } from "@/lib/geocode";
 import { useDebouncedValue } from "@/lib/hooks/useDebouncedValue";
-import { useResource } from "@/lib/hooks/useResource";
 
 import styles from "./AddressSearchInput.module.scss";
 
@@ -24,7 +23,7 @@ export function AddressSearchInput({ id, value, onChange, onSelect }: AddressSea
     const query = typed === value ? value : "";
     const debouncedQuery = useDebouncedValue(query, GEOCODE_DEBOUNCE_MS);
     const hasQuery = debouncedQuery.trim() !== "";
-    const results = useResource(() => geocodeAddress(debouncedQuery), [debouncedQuery], { enabled: hasQuery });
+    const results = useAddressSearch(debouncedQuery);
 
     const items = hasQuery ? (results.data ?? []) : [];
     const showList = open && items.length > 0;
@@ -57,7 +56,7 @@ export function AddressSearchInput({ id, value, onChange, onSelect }: AddressSea
                 aria-expanded={showList}
                 aria-controls={listId}
             />
-            {results.loading && (
+            {results.isLoading && (
                 <span className={styles.loading} aria-hidden>
                     …
                 </span>

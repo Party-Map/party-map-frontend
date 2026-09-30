@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 
-import { publishEventPlan } from "@/api/eventPlans";
+import { usePublishEventPlan } from "@/api/hooks";
 import type { EventPlan } from "@/api/types";
 import { Button } from "@/components/Button";
 import { useToast } from "@/layout/ToastProvider";
@@ -10,6 +10,7 @@ import { useToast } from "@/layout/ToastProvider";
 export function PublishButton({ plan }: { plan: EventPlan }) {
     const navigate = useNavigate();
     const toast = useToast();
+    const publishPlan = usePublishEventPlan(plan.id);
     const [pending, setPending] = useState(false);
 
     const publish = async () => {
@@ -22,7 +23,7 @@ export function PublishButton({ plan }: { plan: EventPlan }) {
 
         setPending(true);
         try {
-            await publishEventPlan(plan.id);
+            await publishPlan.mutateAsync();
             toast.success("Event plan published successfully!");
             const placeId = plan.placeInvitation?.place.id;
             void navigate(placeId ? `/?focus=${encodeURIComponent(placeId)}` : "/");

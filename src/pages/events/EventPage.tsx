@@ -1,10 +1,7 @@
 import { Link, useParams } from "react-router";
 
 import { ApiError } from "@/api/client";
-import { fetchEvent } from "@/api/events";
-import { fetchLikeStatus } from "@/api/likes";
-import { fetchPlaceByEventId } from "@/api/places";
-import type { Event, ID, Place } from "@/api/types";
+import { useEventPage, useLikeStatus } from "@/api/hooks";
 import { useAuth } from "@/auth/provider";
 import { Card, CardBody } from "@/components/Card";
 import { CoverImage } from "@/components/CoverImage";
@@ -14,43 +11,22 @@ import text from "@/components/typography.module.scss";
 import { LikeButton } from "@/layout/LikeButton";
 import { PageShell } from "@/layout/PageShell";
 import { formatDateTimeRange } from "@/lib/dates";
-import { useResource } from "@/lib/hooks/useResource";
 import { cn } from "@/lib/utils";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 
 import styles from "./EventPage.module.scss";
 import { LineupList } from "./LineupList";
 
-interface EventPageData {
-    event: Event;
-    place: Place | null;
-}
-
-/** An event without a venue is unusual but not fatal; only the event itself decides "not found". */
-async function loadPlaceIfAny(eventId: ID): Promise<Place | null> {
-    try {
-        return await fetchPlaceByEventId(eventId);
-    } catch (error) {
-        if (error instanceof ApiError && error.status === 404) return null;
-        throw error;
-    }
-}
-
-async function loadEventPage(id: ID): Promise<EventPageData> {
-    const [event, place] = await Promise.all([fetchEvent(id), loadPlaceIfAny(id)]);
-    return { event, place };
-}
-
 /** Public detail page of an event with its lineup. */
 export function EventPage() {
     const { id = "" } = useParams();
     const { status } = useAuth();
-    const page = useResource(() => loadEventPage(id), [id]);
-    const likeStatus = useResource(() => fetchLikeStatus("events", id), [id], { enabled: status === "authenticated" });
+    const page = useEventPage(id);
+    const likeStatus = useLikeStatus("events", id, { enabled: status === "authenticated" });
 
     if (page.error instanceof ApiError && page.error.status === 404) return <NotFoundPage />;
 
-    if (page.loading) {
+    if (page.isPending) {
         return (
             <PageShell>
                 <LoadingState />
@@ -61,7 +37,7 @@ export function EventPage() {
     if (!page.data) {
         return (
             <PageShell>
-                <ErrorState message="Could not load this event." onRetry={page.reload} />
+                <ErrorState message="Could not load this event." onRetry={() => void page.refetch()} />
             </PageShell>
         );
     }
@@ -75,7 +51,7 @@ export function EventPage() {
                 <CardBody>
                     <div className={styles.titleRow}>
                         <h1 className={cn(text.pageTitle, styles.title)}>{event.title}</h1>
-                        {!likeStatus.loading && (
+                        {!likeStatus.isLoading && (
                             <LikeButton
                                 target="events"
                                 targetId={id}

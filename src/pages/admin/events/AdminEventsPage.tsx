@@ -1,12 +1,10 @@
-import { fetchOwnedEventPlans } from "@/api/eventPlans";
-import { fetchOwnedEvents } from "@/api/events";
+import { useOwnedEventPlans, useOwnedEvents } from "@/api/hooks";
 import type { OwnedEventListItem } from "@/api/types";
 import { Role } from "@/auth/roles";
 import { ButtonLink } from "@/components/Button";
 import { EmptyState, ErrorState, LoadingState } from "@/components/States";
 import text from "@/components/typography.module.scss";
 import { formatDateTimeRange, parseDate } from "@/lib/dates";
-import { useResource } from "@/lib/hooks/useResource";
 import { cn } from "@/lib/utils";
 import { RequireRole } from "@/pages/admin/RequireRole";
 import adminStyles from "@/pages/admin/shared/admin.module.scss";
@@ -41,8 +39,8 @@ function EventRow({ event }: { event: OwnedEventListItem }) {
 }
 
 function EventsOverview() {
-    const plans = useResource(fetchOwnedEventPlans, []);
-    const events = useResource(fetchOwnedEvents, []);
+    const plans = useOwnedEventPlans();
+    const events = useOwnedEvents();
     const live = events.data ? splitByNow(events.data, new Date()) : null;
 
     return (
@@ -53,8 +51,10 @@ function EventsOverview() {
                     <ButtonLink to="/admin/events/new">Add a new Event Plan</ButtonLink>
                 </div>
 
-                {plans.loading && <LoadingState label="Loading event plans…" />}
-                {plans.error && <ErrorState message="Could not load your event plans." onRetry={plans.reload} />}
+                {plans.isPending && <LoadingState label="Loading event plans…" />}
+                {plans.error && (
+                    <ErrorState message="Could not load your event plans." onRetry={() => void plans.refetch()} />
+                )}
                 {plans.data &&
                     (plans.data.length === 0 ? (
                         <EmptyState message="You have no event plans yet." />
@@ -77,8 +77,10 @@ function EventsOverview() {
                     <h1 className={text.pageTitle}>Your live events</h1>
                 </div>
 
-                {events.loading && <LoadingState label="Loading your events…" />}
-                {events.error && <ErrorState message="Could not load your events." onRetry={events.reload} />}
+                {events.isPending && <LoadingState label="Loading your events…" />}
+                {events.error && (
+                    <ErrorState message="Could not load your events." onRetry={() => void events.refetch()} />
+                )}
                 {live && (
                     <>
                         {live.upcoming.length === 0 ? (

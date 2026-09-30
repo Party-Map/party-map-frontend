@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
+
 import type { GeoPoint } from "@/api/types";
 
 /** An address found by Nominatim (OpenStreetMap), not by our API. */
@@ -92,4 +94,14 @@ export async function reverseGeocode(point: GeoPoint): Promise<ReverseGeocodeRes
     const result: ReverseGeocodeResult = { displayName: data.display_name ?? addressLine, addressLine };
     if (city) result.city = city;
     return result;
+}
+
+/** Addresses matching a query, cached per query for a few minutes (Nominatim asks for light use). */
+export function useAddressSearch(query: string) {
+    return useQuery({
+        queryKey: ["geocode", query],
+        queryFn: () => geocodeAddress(query),
+        enabled: query.trim() !== "",
+        staleTime: 5 * 60_000,
+    });
 }

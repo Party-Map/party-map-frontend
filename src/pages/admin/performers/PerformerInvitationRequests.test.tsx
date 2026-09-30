@@ -40,20 +40,14 @@ const buttonsOf = (title: string) => {
 
 describe("PerformerInvitationRequests", () => {
     it("shows an empty message without requests", () => {
-        renderWithProviders(
-            <PerformerInvitationRequests performerId="performer-1" requests={[]} onChanged={() => {}} />,
-        );
+        renderWithProviders(<PerformerInvitationRequests performerId="performer-1" requests={[]} />);
         expect(screen.getByRole("heading", { name: "Event requests" })).toBeInTheDocument();
         expect(screen.getByText("No event requests at the moment for this performer.")).toBeInTheDocument();
     });
 
     it("renders one card per request with its state, slot and the matching action disabled", () => {
         renderWithProviders(
-            <PerformerInvitationRequests
-                performerId="performer-1"
-                requests={[pending, accepted, rejected]}
-                onChanged={() => {}}
-            />,
+            <PerformerInvitationRequests performerId="performer-1" requests={[pending, accepted, rejected]} />,
         );
 
         expect(screen.getByText("Summer Opening")).toBeInTheDocument();
@@ -71,16 +65,16 @@ describe("PerformerInvitationRequests", () => {
         expect(buttonsOf("Rejected Night").reject).toBeDisabled();
     });
 
-    it("accepts an invitation and asks the owner to reload", async () => {
+    it("accepts an invitation and refreshes the lists that show it", async () => {
         const fetchMock = mockApi({ "PUT /api/performers/performer-1/invitations/plan-1/respond?state=accept": null });
-        const onChanged = vi.fn();
-        renderWithProviders(
-            <PerformerInvitationRequests performerId="performer-1" requests={[pending]} onChanged={onChanged} />,
+        const { queryClient } = renderWithProviders(
+            <PerformerInvitationRequests performerId="performer-1" requests={[pending]} />,
         );
+        const invalidate = vi.spyOn(queryClient, "invalidateQueries");
 
         await userEvent.click(screen.getByRole("button", { name: "Accept" }));
 
-        await waitFor(() => expect(onChanged).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(invalidate).toHaveBeenCalled());
         expect(fetchMock).toHaveBeenCalledTimes(1);
         expect(fetchMock.requests[0]?.url).toBe(
             "http://api.test/api/performers/performer-1/invitations/plan-1/respond?state=accept",
@@ -91,14 +85,14 @@ describe("PerformerInvitationRequests", () => {
 
     it("rejects an invitation", async () => {
         const fetchMock = mockApi({ "PUT /api/performers/performer-1/invitations/plan-1/respond?state=reject": null });
-        const onChanged = vi.fn();
-        renderWithProviders(
-            <PerformerInvitationRequests performerId="performer-1" requests={[pending]} onChanged={onChanged} />,
+        const { queryClient } = renderWithProviders(
+            <PerformerInvitationRequests performerId="performer-1" requests={[pending]} />,
         );
+        const invalidate = vi.spyOn(queryClient, "invalidateQueries");
 
         await userEvent.click(screen.getByRole("button", { name: "Reject" }));
 
-        await waitFor(() => expect(onChanged).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(invalidate).toHaveBeenCalled());
         expect(fetchMock.requests[0]?.url).toContain("/respond?state=reject");
         expect(screen.getByText("Invitation rejected.")).toBeInTheDocument();
     });
@@ -108,9 +102,7 @@ describe("PerformerInvitationRequests", () => {
             "fetch",
             vi.fn(() => new Promise<Response>(() => {})),
         );
-        renderWithProviders(
-            <PerformerInvitationRequests performerId="performer-1" requests={[pending]} onChanged={() => {}} />,
-        );
+        renderWithProviders(<PerformerInvitationRequests performerId="performer-1" requests={[pending]} />);
 
         await userEvent.click(screen.getByRole("button", { name: "Reject" }));
 
@@ -123,15 +115,15 @@ describe("PerformerInvitationRequests", () => {
             "PUT /api/performers/performer-1/invitations/plan-1/respond?state=accept": () =>
                 new Response("nope", { status: 500 }),
         });
-        const onChanged = vi.fn();
-        renderWithProviders(
-            <PerformerInvitationRequests performerId="performer-1" requests={[pending]} onChanged={onChanged} />,
+        const { queryClient } = renderWithProviders(
+            <PerformerInvitationRequests performerId="performer-1" requests={[pending]} />,
         );
+        const invalidate = vi.spyOn(queryClient, "invalidateQueries");
 
         await userEvent.click(screen.getByRole("button", { name: "Accept" }));
 
         expect(await screen.findByText("Could not answer the invitation. Please try again.")).toBeInTheDocument();
-        expect(onChanged).not.toHaveBeenCalled();
+        expect(invalidate).not.toHaveBeenCalled();
         expect(screen.getByRole("button", { name: "Accept" })).toBeEnabled();
     });
 });

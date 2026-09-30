@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { fetchInvitablePlaces, invitePlace } from "@/api/eventPlans";
+import { useInvitablePlaces, useInvitePlace } from "@/api/hooks";
 import type { ID } from "@/api/types";
 import { Button } from "@/components/Button";
 import { Field, FormError, Select } from "@/components/Field";
@@ -8,27 +8,24 @@ import formStyles from "@/components/forms.module.scss";
 import layout from "@/components/layout.module.scss";
 import text from "@/components/typography.module.scss";
 import { useToast } from "@/layout/ToastProvider";
-import { useResource } from "@/lib/hooks/useResource";
 
 interface InvitePlaceProps {
     planId: ID;
-    /** Called after an invitation was sent so the page can reload the plan. */
-    onChanged: () => void;
 }
 
 /** Pick one of the places that can host this plan and send it an invitation. */
-export function InvitePlace({ planId, onChanged }: InvitePlaceProps) {
+export function InvitePlace({ planId }: InvitePlaceProps) {
     const toast = useToast();
-    const places = useResource(fetchInvitablePlaces, []);
+    const places = useInvitablePlaces();
+    const invite = useInvitePlace(planId);
     const [placeId, setPlaceId] = useState("");
     const [sending, setSending] = useState(false);
 
     const send = async () => {
         setSending(true);
         try {
-            await invitePlace(planId, placeId);
+            await invite.mutateAsync(placeId);
             toast.success("Invitation sent.");
-            onChanged();
         } catch {
             toast.error("Could not send the invitation. Please try again.");
         } finally {
@@ -46,7 +43,7 @@ export function InvitePlace({ planId, onChanged }: InvitePlaceProps) {
                         id={id}
                         value={placeId}
                         onChange={(e) => setPlaceId(e.target.value)}
-                        disabled={places.loading}
+                        disabled={places.isPending}
                     >
                         <option value="">Choose place to invite</option>
                         {(places.data ?? []).map((place) => (
