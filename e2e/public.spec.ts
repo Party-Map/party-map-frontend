@@ -5,10 +5,10 @@ test("map home renders pins and the search finds places", async ({ page }) => {
     await expect(page.locator(".leaflet-container")).toBeVisible();
     await expect(page.locator(".pm-pin").first()).toBeVisible();
 
-    await page.getByRole("textbox", { name: "Search" }).fill("balaton");
+    await page.getByRole("combobox", { name: "Search" }).fill("balaton");
     const results = page.getByRole("listbox", { name: "Search results" });
     await expect(results).toBeVisible();
-    await expect(results.getByRole("listitem").first()).toBeVisible();
+    await expect(results.getByRole("option").first()).toBeVisible();
 });
 
 test("a place page shows its details and events", async ({ page }) => {

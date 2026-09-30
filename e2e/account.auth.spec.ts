@@ -23,7 +23,7 @@ test("the backend accepts the Keycloak token: liking a place round-trips", async
     const wasLiked = (await like.getAttribute("aria-pressed")) === "true";
 
     await like.click();
-    await expect(page.getByRole("status")).toContainText(wasLiked ? "You broke up with" : "You liked");
+    await expect(page.getByText(wasLiked ? /^You broke up with/ : /^You liked/)).toBeVisible();
     await expect(like).toHaveAttribute("aria-pressed", String(!wasLiked));
 
     // Leave the seed data as we found it.
