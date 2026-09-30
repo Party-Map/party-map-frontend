@@ -1,2 +1,2 @@
-export { EventPage } from './EventPage'
-export { LineupList } from './LineupList'
+export { EventPage } from "./EventPage";
+export { LineupList } from "./LineupList";

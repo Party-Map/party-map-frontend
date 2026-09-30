@@ -17,7 +17,11 @@ const eslintConfig = defineConfig([
     tseslint.configs.stylisticTypeChecked,
     reactHooks.configs.flat.recommended,
     // eslint-plugin-react and jsx-a11y still call context methods eslint 10 removed; @eslint/compat restores them.
-    fixupConfigRules([react.configs.flat.recommended, react.configs.flat["jsx-runtime"], jsxA11y.flatConfigs.recommended]),
+    fixupConfigRules([
+        react.configs.flat.recommended,
+        react.configs.flat["jsx-runtime"],
+        jsxA11y.flatConfigs.recommended,
+    ]),
     prettier,
     ...boundaries,
     globalIgnores([

@@ -20,31 +20,31 @@
   border-radius: var(--radius-sm);
 }
 
-.badge[data-kind='DISCO'] {
+.badge[data-kind="DISCO"] {
   background: var(--kind-disco);
 }
 
-.badge[data-kind='TECHNO'] {
+.badge[data-kind="TECHNO"] {
   background: var(--kind-techno);
 }
 
-.badge[data-kind='FESTIVAL'] {
+.badge[data-kind="FESTIVAL"] {
   background: var(--kind-festival);
 }
 
-.badge[data-kind='JAZZ'] {
+.badge[data-kind="JAZZ"] {
   background: var(--kind-jazz);
 }
 
-.badge[data-kind='ALTER'] {
+.badge[data-kind="ALTER"] {
   background: var(--kind-alter);
 }
 
-.badge[data-kind='HOME'] {
+.badge[data-kind="HOME"] {
   background: var(--kind-home);
 }
 
-.badge[data-kind='PUB'] {
+.badge[data-kind="PUB"] {
   background: var(--kind-pub);
   color: var(--kind-pub-fg);
 }

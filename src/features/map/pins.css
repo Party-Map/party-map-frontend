@@ -19,12 +19,12 @@
   margin: 0;
 }
 
-[data-theme='dark'] .leaflet-container {
+[data-theme="dark"] .leaflet-container {
   background: var(--map-bg);
 }
 
 /* OpenStreetMap has no dark tile set; invert the light tiles and mute them instead. */
-[data-theme='dark'] .leaflet-tile-pane {
+[data-theme="dark"] .leaflet-tile-pane {
   filter: invert(1) hue-rotate(180deg) brightness(0.8) contrast(0.9) saturate(0.5);
 }
 

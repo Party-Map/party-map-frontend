@@ -2,8 +2,8 @@
 :root {
   color-scheme: light;
 
-  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-brand: 'Baloo 2', var(--font-sans);
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-brand: "Baloo 2", var(--font-sans);
 
   --bg: #fffbeb;
   --fg: #18181b;
@@ -83,7 +83,7 @@
   --ease: cubic-bezier(0.4, 0.2, 0.2, 1);
 }
 
-:root[data-theme='dark'] {
+:root[data-theme="dark"] {
   color-scheme: dark;
 
   --bg: #09090b;

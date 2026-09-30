@@ -1,2 +1,2 @@
-export { LikesPage } from './LikesPage'
-export { ProfilePage } from './ProfilePage'
+export { LikesPage } from "./LikesPage";
+export { ProfilePage } from "./ProfilePage";

@@ -1,2 +1,2 @@
-export { EventCard } from './EventCard'
-export { PlacePage } from './PlacePage'
+export { EventCard } from "./EventCard";
+export { PlacePage } from "./PlacePage";

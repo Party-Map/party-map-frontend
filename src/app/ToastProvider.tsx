@@ -1,111 +1,124 @@
-import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react'
-import { cx } from '@/lib/cx'
-import styles from './Toast.module.css'
+import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
+import { cx } from "@/lib/cx";
+import styles from "./Toast.module.css";
 
-type ToastKind = 'success' | 'error' | 'info'
+type ToastKind = "success" | "error" | "info";
 
-type MessageToast = { id: number; type: 'message'; kind: ToastKind; text: string }
+type MessageToast = { id: number; type: "message"; kind: ToastKind; text: string };
 type ConfirmToast = {
-  id: number
-  type: 'confirm'
-  title: string
-  text: string
-  confirmLabel: string
-  resolve: (answer: boolean) => void
-}
-type Toast = MessageToast | ConfirmToast
+    id: number;
+    type: "confirm";
+    title: string;
+    text: string;
+    confirmLabel: string;
+    resolve: (answer: boolean) => void;
+};
+type Toast = MessageToast | ConfirmToast;
 
-export type ConfirmOptions = { title: string; text: string; confirmLabel?: string }
+export type ConfirmOptions = { title: string; text: string; confirmLabel?: string };
 
 export type ToastApi = {
-  success: (text: string) => void
-  error: (text: string) => void
-  info: (text: string) => void
-  confirm: (options: ConfirmOptions) => Promise<boolean>
-}
+    success: (text: string) => void;
+    error: (text: string) => void;
+    info: (text: string) => void;
+    confirm: (options: ConfirmOptions) => Promise<boolean>;
+};
 
-const ToastContext = createContext<ToastApi | null>(null)
+const ToastContext = createContext<ToastApi | null>(null);
 
-const MESSAGE_DURATION_MS = 2500
+const MESSAGE_DURATION_MS = 2500;
 
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const [toasts, setToasts] = useState<Toast[]>([])
-  const nextId = useRef(1)
+    const [toasts, setToasts] = useState<Toast[]>([]);
+    const nextId = useRef(1);
 
-  const dismiss = useCallback((id: number) => setToasts((list) => list.filter((t) => t.id !== id)), [])
+    const dismiss = useCallback((id: number) => setToasts((list) => list.filter((t) => t.id !== id)), []);
 
-  const push = useCallback(
-    (kind: ToastKind, text: string) => {
-      const id = nextId.current++
-      setToasts((list) => [...list, { id, type: 'message', kind, text }])
-      setTimeout(() => dismiss(id), MESSAGE_DURATION_MS)
-    },
-    [dismiss],
-  )
+    const push = useCallback(
+        (kind: ToastKind, text: string) => {
+            const id = nextId.current++;
+            setToasts((list) => [...list, { id, type: "message", kind, text }]);
+            setTimeout(() => dismiss(id), MESSAGE_DURATION_MS);
+        },
+        [dismiss],
+    );
 
-  const confirm = useCallback(
-    (options: ConfirmOptions) =>
-      new Promise<boolean>((resolve) => {
-        const id = nextId.current++
-        setToasts((list) => [
-          ...list,
-          {
-            id,
-            type: 'confirm',
-            title: options.title,
-            text: options.text,
-            confirmLabel: options.confirmLabel ?? 'Confirm',
-            resolve: (answer) => {
-              dismiss(id)
-              resolve(answer)
-            },
-          },
-        ])
-      }),
-    [dismiss],
-  )
+    const confirm = useCallback(
+        (options: ConfirmOptions) =>
+            new Promise<boolean>((resolve) => {
+                const id = nextId.current++;
+                setToasts((list) => [
+                    ...list,
+                    {
+                        id,
+                        type: "confirm",
+                        title: options.title,
+                        text: options.text,
+                        confirmLabel: options.confirmLabel ?? "Confirm",
+                        resolve: (answer) => {
+                            dismiss(id);
+                            resolve(answer);
+                        },
+                    },
+                ]);
+            }),
+        [dismiss],
+    );
 
-  const api = useMemo<ToastApi>(
-    () => ({
-      success: (text) => push('success', text),
-      error: (text) => push('error', text),
-      info: (text) => push('info', text),
-      confirm,
-    }),
-    [push, confirm],
-  )
+    const api = useMemo<ToastApi>(
+        () => ({
+            success: (text) => push("success", text),
+            error: (text) => push("error", text),
+            info: (text) => push("info", text),
+            confirm,
+        }),
+        [push, confirm],
+    );
 
-  return (
-    <ToastContext.Provider value={api}>
-      {children}
-      <div className={styles.viewport} aria-live="polite">
-        {toasts.map((toast) =>
-          toast.type === 'message' ? (
-            <div key={toast.id} role="status" className={cx(styles.toast, styles[toast.kind])}>
-              {toast.text}
+    return (
+        <ToastContext.Provider value={api}>
+            {children}
+            <div className={styles.viewport} aria-live="polite">
+                {toasts.map((toast) =>
+                    toast.type === "message" ? (
+                        <div key={toast.id} role="status" className={cx(styles.toast, styles[toast.kind])}>
+                            {toast.text}
+                        </div>
+                    ) : (
+                        <div
+                            key={toast.id}
+                            role="alertdialog"
+                            aria-label={toast.title}
+                            className={cx(styles.toast, styles.confirm)}
+                        >
+                            <p className={styles.confirmTitle}>{toast.title}</p>
+                            <p className={styles.confirmText}>{toast.text}</p>
+                            <div className={styles.confirmActions}>
+                                <button
+                                    type="button"
+                                    className={styles.cancelButton}
+                                    onClick={() => toast.resolve(false)}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    className={styles.confirmButton}
+                                    onClick={() => toast.resolve(true)}
+                                >
+                                    {toast.confirmLabel}
+                                </button>
+                            </div>
+                        </div>
+                    ),
+                )}
             </div>
-          ) : (
-            <div key={toast.id} role="alertdialog" aria-label={toast.title} className={cx(styles.toast, styles.confirm)}>
-              <p className={styles.confirmTitle}>{toast.title}</p>
-              <p className={styles.confirmText}>{toast.text}</p>
-              <div className={styles.confirmActions}>
-                <button type="button" className={styles.cancelButton} onClick={() => toast.resolve(false)}>
-                  Cancel
-                </button>
-                <button type="button" className={styles.confirmButton} onClick={() => toast.resolve(true)}>
-                  {toast.confirmLabel}
-                </button>
-              </div>
-            </div>
-          ),
-        )}
-      </div>
-    </ToastContext.Provider>
-  )
+        </ToastContext.Provider>
+    );
 }
 
 export function useToast(): ToastApi {
-  const ctx = useContext(ToastContext)
-  if (!ctx) throw new Error('useToast must be used inside ToastProvider')
-  return ctx
+    const ctx = useContext(ToastContext);
+    if (!ctx) throw new Error("useToast must be used inside ToastProvider");
+    return ctx;
 }

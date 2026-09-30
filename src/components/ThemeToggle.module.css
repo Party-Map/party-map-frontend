@@ -17,11 +17,11 @@
   background: rgba(255, 255, 255, 0.75);
 }
 
-:global([data-theme='dark']) .toggle {
+:global([data-theme="dark"]) .toggle {
   background: rgba(39, 39, 42, 0.6);
 }
 
-:global([data-theme='dark']) .toggle:hover {
+:global([data-theme="dark"]) .toggle:hover {
   background: rgba(39, 39, 42, 0.8);
 }
 

@@ -1,37 +1,37 @@
-import type { ReactNode } from 'react'
-import { ChevronLeft } from 'lucide-react'
-import { Link } from 'react-router'
-import { BottomBar } from '@/components/BottomBar'
-import { TopBar } from '@/components/TopBar'
-import { cx } from '@/lib/cx'
-import styles from './PageShell.module.css'
+import type { ReactNode } from "react";
+import { ChevronLeft } from "lucide-react";
+import { Link } from "react-router";
+import { BottomBar } from "@/components/BottomBar";
+import { TopBar } from "@/components/TopBar";
+import { cx } from "@/lib/cx";
+import styles from "./PageShell.module.css";
 
 type PageShellProps = {
-  children: ReactNode
-  /** Where the back link points; omit to hide it. */
-  backTo?: string | null
-  backLabel?: string
-  /** Extra content rendered under the main block. */
-  footer?: ReactNode
-  wide?: boolean
-}
+    children: ReactNode;
+    /** Where the back link points; omit to hide it. */
+    backTo?: string | null;
+    backLabel?: string;
+    /** Extra content rendered under the main block. */
+    footer?: ReactNode;
+    wide?: boolean;
+};
 
 /** Standard page frame: top bar, bottom bar (phones), padded content column with a back link. */
-export function PageShell({ children, backTo = '/', backLabel = 'Back', footer, wide = false }: PageShellProps) {
-  return (
-    <>
-      <TopBar />
-      <BottomBar />
-      <main className={cx(styles.main, wide && styles.wide)}>
-        {backTo && (
-          <Link to={backTo} className={styles.back}>
-            <ChevronLeft size={16} aria-hidden />
-            {backLabel}
-          </Link>
-        )}
-        <div className={styles.content}>{children}</div>
-        {footer && <section className={styles.footer}>{footer}</section>}
-      </main>
-    </>
-  )
+export function PageShell({ children, backTo = "/", backLabel = "Back", footer, wide = false }: PageShellProps) {
+    return (
+        <>
+            <TopBar />
+            <BottomBar />
+            <main className={cx(styles.main, wide && styles.wide)}>
+                {backTo && (
+                    <Link to={backTo} className={styles.back}>
+                        <ChevronLeft size={16} aria-hidden />
+                        {backLabel}
+                    </Link>
+                )}
+                <div className={styles.content}>{children}</div>
+                {footer && <section className={styles.footer}>{footer}</section>}
+            </main>
+        </>
+    );
 }

@@ -1,6 +1,6 @@
-type ClassValue = string | false | null | undefined
+type ClassValue = string | false | null | undefined;
 
 /** Join class names, skipping falsy values. */
 export function cx(...values: ClassValue[]): string {
-  return values.filter(Boolean).join(' ')
+    return values.filter(Boolean).join(" ");
 }
