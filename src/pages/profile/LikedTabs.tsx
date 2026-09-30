@@ -3,11 +3,12 @@ import { useState } from "react";
 import type { Event, LikedEventsGrouped, LikeTarget, Performer, Place } from "@/api/types";
 import { Card } from "@/components/Card";
 import { EmptyState } from "@/components/States";
+import text from "@/components/typography.module.scss";
 import { formatDateTimeRange } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
 import { LikedListItem } from "./LikedListItem";
-import styles from "./LikedTabs.module.css";
+import styles from "./LikedTabs.module.scss";
 
 interface LikedTabsProps {
     events: LikedEventsGrouped;
@@ -67,11 +68,11 @@ export function LikedTabs({ events, places, performers }: LikedTabsProps) {
                 {active === "events" && (
                     <div className={styles.sections}>
                         <section>
-                            <h2 className="section-title">Upcoming events</h2>
+                            <h2 className={text.sectionTitle}>Upcoming events</h2>
                             {eventRows(events.upcoming, "No upcoming events.")}
                         </section>
                         <section>
-                            <h2 className="section-title">Past events</h2>
+                            <h2 className={text.sectionTitle}>Past events</h2>
                             {eventRows(events.past, "No past events.")}
                         </section>
                     </div>
@@ -79,7 +80,7 @@ export function LikedTabs({ events, places, performers }: LikedTabsProps) {
 
                 {active === "places" && (
                     <section>
-                        <h2 className="section-title">Places</h2>
+                        <h2 className={text.sectionTitle}>Places</h2>
                         {places.length === 0 ? (
                             <EmptyState message="You haven’t liked any places yet." />
                         ) : (
@@ -103,7 +104,7 @@ export function LikedTabs({ events, places, performers }: LikedTabsProps) {
 
                 {active === "performers" && (
                     <section>
-                        <h2 className="section-title">Performers</h2>
+                        <h2 className={text.sectionTitle}>Performers</h2>
                         {performers.length === 0 ? (
                             <EmptyState message="You haven’t liked any performers yet." />
                         ) : (

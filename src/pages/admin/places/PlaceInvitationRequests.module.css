@@ -1,8 +1,0 @@
-.text {
-  font-size: 0.875rem;
-  color: var(--fg-muted);
-}
-
-.text + .text {
-  margin-top: var(--space-2);
-}

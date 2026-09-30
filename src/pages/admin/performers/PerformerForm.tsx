@@ -3,7 +3,9 @@ import { useNavigate } from "react-router";
 
 import type { Link, Performer, PerformerPayload } from "@/api/types";
 import { Button } from "@/components/Button";
-import { Field, FormError, formStyles, Input, Textarea } from "@/components/Field";
+import { Field, FormError, Input, Textarea } from "@/components/Field";
+import formStyles from "@/components/forms.module.scss";
+import text from "@/components/typography.module.scss";
 import { ImageUrlField } from "@/pages/admin/shared/ImageUrlField";
 import { LinksInput } from "@/pages/admin/shared/LinksInput";
 
@@ -65,7 +67,7 @@ export function PerformerForm({ title, submitLabel, initialValues, onSubmit }: P
 
     return (
         <div>
-            <h1 className="page-title">{title}</h1>
+            <h1 className={text.pageTitle}>{title}</h1>
 
             <form onSubmit={handleSubmit} className={formStyles.form}>
                 <Field label="Name">

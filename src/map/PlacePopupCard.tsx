@@ -7,7 +7,7 @@ import { KindBadge } from "@/components/KindBadge";
 import { formatNextEventStart } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
-import styles from "./PlacePopupCard.module.css";
+import styles from "./PlacePopupCard.module.scss";
 
 /** Titles longer than this wrap onto two lines and widen the card. */
 export const LONG_TITLE_LENGTH = 28;

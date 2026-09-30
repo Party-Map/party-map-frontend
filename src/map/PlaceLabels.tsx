@@ -8,7 +8,7 @@ import { BASE_LABEL_ZOOM, HIGHLIGHT_LABEL_ZOOM, LABEL_BASE_OFFSET, LABEL_HIGHLIG
 import { cn } from "@/lib/utils";
 
 import { toLatLngTuple } from "./geo";
-import styles from "./PlaceLabels.module.css";
+import styles from "./PlaceLabels.module.scss";
 
 export interface PopupRect {
     left: number;

@@ -6,7 +6,7 @@ import { CoverImage } from "@/components/CoverImage";
 import { KindBadge } from "@/components/KindBadge";
 import { LikeButton } from "@/layout/LikeButton";
 
-import styles from "./LikedListItem.module.css";
+import styles from "./LikedListItem.module.scss";
 
 interface LikedListItemProps {
     target: LikeTarget;

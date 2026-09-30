@@ -1,0 +1,13 @@
+// Shared layout helpers.
+@layer components {
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  // The call to action under a message.
+  .action {
+    margin-top: var(--space-4);
+  }
+}

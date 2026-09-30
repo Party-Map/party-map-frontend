@@ -5,7 +5,6 @@ import { RouterProvider } from "react-router/dom";
 import { AuthProvider } from "@/auth/provider";
 import { HighlightProvider } from "@/layout/HighlightProvider";
 import { ToastProvider } from "@/layout/ToastProvider";
-import { ThemeProvider } from "@/lib/theme";
 import { createMockAuthClient, mockApi } from "@/test/helpers";
 
 import { router, routes } from "./routes";
@@ -37,15 +36,13 @@ describe("routes", () => {
         mockApi({});
         const memoryRouter = createMemoryRouter(routes, { initialEntries: ["/logged-out"] });
         render(
-            <ThemeProvider>
-                <ToastProvider>
-                    <AuthProvider client={createMockAuthClient()}>
-                        <HighlightProvider>
-                            <RouterProvider router={memoryRouter} />
-                        </HighlightProvider>
-                    </AuthProvider>
-                </ToastProvider>
-            </ThemeProvider>,
+            <ToastProvider>
+                <AuthProvider client={createMockAuthClient()}>
+                    <HighlightProvider>
+                        <RouterProvider router={memoryRouter} />
+                    </HighlightProvider>
+                </AuthProvider>
+            </ToastProvider>,
         );
         expect(await screen.findByRole("heading", { name: "You are now logged out" })).toBeInTheDocument();
         expect(screen.getByRole("dialog", { name: "Privacy & Cookies" })).toBeInTheDocument();

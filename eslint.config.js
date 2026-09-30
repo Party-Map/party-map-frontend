@@ -96,6 +96,8 @@ const eslintConfig = defineConfig([
             "@typescript-eslint/no-unsafe-assignment": "off",
         },
     },
+    // Command-line scripts report on stdout.
+    { files: ["scripts/*.mjs"], rules: { "no-console": "off" } },
 ]);
 
 export default eslintConfig;

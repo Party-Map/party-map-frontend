@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 
-import styles from "./AdminListItem.module.css";
+import styles from "./AdminListItem.module.scss";
 
 interface AdminListItemProps {
     title: string;

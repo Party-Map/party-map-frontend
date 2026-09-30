@@ -8,7 +8,7 @@ describe("BottomBar", () => {
     it("holds the mobile account actions and a compact theme toggle", async () => {
         renderWithProviders(<BottomBar />);
         const nav = await screen.findByRole("navigation", { name: "Mobile navigation" });
-        expect(nav).toHaveClass("bottomWrapper");
+        expect(nav).toHaveClass("bottom-wrapper");
         expect(within(nav).getByRole("button", { name: "Sign in" })).toHaveClass("item", "mobile");
         const toggle = within(nav).getByRole("button", { name: "Toggle theme" });
         expect(toggle).toHaveClass("toggle", "compact");

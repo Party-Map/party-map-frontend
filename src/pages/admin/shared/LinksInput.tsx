@@ -1,9 +1,10 @@
 import { type Link, LINK_TYPES, type LinkType } from "@/api/types";
 import { Button } from "@/components/Button";
-import { formStyles, Select } from "@/components/Field";
+import { Select } from "@/components/Field";
+import formStyles from "@/components/forms.module.scss";
 import { LINK_TYPE_LABELS, LINK_TYPE_PREFIXES } from "@/lib/constants";
 
-import styles from "./LinksInput.module.css";
+import styles from "./LinksInput.module.scss";
 
 export function toSuffix(type: LinkType, url: string): string {
     const prefix = LINK_TYPE_PREFIXES[type];

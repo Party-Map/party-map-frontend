@@ -8,7 +8,7 @@ import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from "react-lea
 import type { GeoPoint } from "@/api/types";
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, TILE_ATTRIBUTION, TILE_URL } from "@/lib/constants";
 
-import styles from "./LocationMapPicker.module.css";
+import styles from "./LocationMapPicker.module.scss";
 
 interface LocationMapPickerProps {
     value: GeoPoint | null;

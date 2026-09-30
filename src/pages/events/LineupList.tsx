@@ -2,9 +2,10 @@ import { Link } from "react-router";
 
 import type { LineupItem } from "@/api/types";
 import { EmptyState } from "@/components/States";
+import text from "@/components/typography.module.scss";
 import { formatTime, parseDate } from "@/lib/dates";
 
-import styles from "./LineupList.module.css";
+import styles from "./LineupList.module.scss";
 
 function byStartTime(a: LineupItem, b: LineupItem): number {
     return parseDate(a.startTime).getTime() - parseDate(b.startTime).getTime();
@@ -16,7 +17,7 @@ export function LineupList({ items }: { items: LineupItem[] }) {
 
     return (
         <>
-            <h2 className="section-title">Lineup &amp; Set Times</h2>
+            <h2 className={text.sectionTitle}>Lineup &amp; Set Times</h2>
             {sorted.length === 0 ? (
                 <EmptyState message="No lineup announced yet." />
             ) : (

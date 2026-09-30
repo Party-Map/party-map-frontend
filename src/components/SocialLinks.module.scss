@@ -1,0 +1,45 @@
+@use "@/styles/mixins" as *;
+
+@layer parts {
+  .list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    border: 1px solid fade(violet-500, 40%);
+    color: var(--link);
+    font-size: var(--text-12);
+    font-weight: 500;
+    transition: background-color var(--duration-fast) var(--ease);
+  }
+
+  .link:hover {
+    background: var(--accent-soft);
+  }
+
+  .glyph {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    border-radius: var(--radius-xs);
+    background: currentcolor;
+    color: var(--surface-solid);
+    font-size: var(--text-9);
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .glyph::first-letter {
+    color: var(--surface-solid);
+  }
+}

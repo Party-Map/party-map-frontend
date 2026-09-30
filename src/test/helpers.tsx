@@ -8,7 +8,6 @@ import { AuthProvider } from "@/auth/provider";
 import type { Role } from "@/auth/roles";
 import { HighlightProvider } from "@/layout/HighlightProvider";
 import { ToastProvider } from "@/layout/ToastProvider";
-import { ThemeProvider } from "@/lib/theme";
 
 export type MockAuthClient = AuthClient & {
     emit: (snapshot: AuthSnapshot) => void;
@@ -67,20 +66,18 @@ export function AppProviders({
 }: ProviderOptions & { children: ReactNode }) {
     const authClient = client ?? createMockAuthClient(auth, { pending: authPending });
     return (
-        <ThemeProvider>
-            <ToastProvider>
-                <AuthProvider client={authClient}>
-                    <HighlightProvider>
-                        <MemoryRouter initialEntries={[route]}>
-                            <Routes>
-                                <Route path={path} element={children} />
-                                <Route path="*" element={<p>other page</p>} />
-                            </Routes>
-                        </MemoryRouter>
-                    </HighlightProvider>
-                </AuthProvider>
-            </ToastProvider>
-        </ThemeProvider>
+        <ToastProvider>
+            <AuthProvider client={authClient}>
+                <HighlightProvider>
+                    <MemoryRouter initialEntries={[route]}>
+                        <Routes>
+                            <Route path={path} element={children} />
+                            <Route path="*" element={<p>other page</p>} />
+                        </Routes>
+                    </MemoryRouter>
+                </HighlightProvider>
+            </AuthProvider>
+        </ToastProvider>
     );
 }
 

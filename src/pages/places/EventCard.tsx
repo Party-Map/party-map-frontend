@@ -3,9 +3,10 @@ import { Link } from "react-router";
 import type { Event, Place } from "@/api/types";
 import { Card, CardBody } from "@/components/Card";
 import { CoverImage } from "@/components/CoverImage";
+import text from "@/components/typography.module.scss";
 import { formatDateTimeRange } from "@/lib/dates";
 
-import styles from "./EventCard.module.css";
+import styles from "./EventCard.module.scss";
 
 interface EventCardProps {
     event: Event;
@@ -24,7 +25,7 @@ export function EventCard({ event, place }: EventCardProps) {
                 {place && (
                     <p className={styles.metaLine}>
                         at{" "}
-                        <Link to={`/places/${place.id}`} className="link">
+                        <Link to={`/places/${place.id}`} className={text.link}>
                             {place.name}
                         </Link>
                     </p>

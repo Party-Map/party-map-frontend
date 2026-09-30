@@ -2,7 +2,7 @@ import type { HTMLAttributes, ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
-import styles from "./Card.module.css";
+import styles from "./Card.module.scss";
 
 type CardProps = HTMLAttributes<HTMLDivElement> & { children: ReactNode; padded?: boolean };
 

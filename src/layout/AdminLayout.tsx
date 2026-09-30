@@ -4,10 +4,12 @@ import { Link, NavLink, Outlet } from "react-router";
 import { useAuth } from "@/auth/provider";
 import { ButtonLink } from "@/components/Button";
 import { Card } from "@/components/Card";
+import layout from "@/components/layout.module.scss";
 import { LoadingState } from "@/components/States";
+import text from "@/components/typography.module.scss";
 import { cn } from "@/lib/utils";
 
-import styles from "./AdminLayout.module.css";
+import styles from "./AdminLayout.module.scss";
 import { sectionsForRoles } from "./adminSections";
 import { BottomBar } from "./BottomBar";
 import { PageShell } from "./PageShell";
@@ -34,11 +36,9 @@ export function AdminLayout() {
         return (
             <PageShell>
                 <Card padded>
-                    <h1 className="page-title">You have no access to the admin page.</h1>
-                    <p className="text-muted" style={{ marginTop: "var(--space-2)" }}>
-                        Please contact an admin to acquire access to the admin page.
-                    </p>
-                    <ButtonLink to="/profile" style={{ marginTop: "var(--space-4)" }}>
+                    <h1 className={text.pageTitle}>You have no access to the admin page.</h1>
+                    <p className={text.lead}>Please contact an admin to acquire access to the admin page.</p>
+                    <ButtonLink to="/profile" className={layout.action}>
                         Go to Profile
                     </ButtonLink>
                 </Card>

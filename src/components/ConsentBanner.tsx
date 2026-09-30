@@ -3,7 +3,7 @@ import { useState } from "react";
 import { CONSENT_STORAGE_KEY } from "@/lib/constants";
 
 import { Button } from "./Button";
-import styles from "./ConsentBanner.module.css";
+import styles from "./ConsentBanner.module.scss";
 
 function hasStoredConsent(): boolean {
     try {

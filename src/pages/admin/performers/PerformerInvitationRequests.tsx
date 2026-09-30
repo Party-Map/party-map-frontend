@@ -7,10 +7,10 @@ import { Card } from "@/components/Card";
 import { EmptyState } from "@/components/States";
 import { useToast } from "@/layout/ToastProvider";
 import { formatDateTimeRange } from "@/lib/dates";
-import adminStyles from "@/pages/admin/shared/admin.module.css";
+import adminStyles from "@/pages/admin/shared/admin.module.scss";
 import { InvitationStateLabel } from "@/pages/admin/shared/InvitationStateLabel";
 
-import styles from "./PerformerInvitationRequests.module.css";
+import styles from "./PerformerInvitationRequests.module.scss";
 
 interface PerformerInvitationRequestsProps {
     performerId: ID;

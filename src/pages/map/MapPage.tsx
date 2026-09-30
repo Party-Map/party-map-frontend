@@ -11,7 +11,7 @@ import { TopBar } from "@/layout/TopBar";
 import { useResource } from "@/lib/hooks/useResource";
 import { MapView } from "@/map/MapView";
 
-import styles from "./MapPage.module.css";
+import styles from "./MapPage.module.scss";
 
 const NO_PLACES: Place[] = [];
 

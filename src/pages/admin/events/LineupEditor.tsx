@@ -3,15 +3,16 @@ import { useState } from "react";
 import { addLineupInvitation, deleteLineupInvitation, fetchLineupInvitations } from "@/api/eventPlans";
 import type { EventPlan, EventPlanLineupInvitation, InvitationState, Performer } from "@/api/types";
 import { Button } from "@/components/Button";
-import { Field, FormError, formStyles, Select } from "@/components/Field";
+import { Field, FormError, Select } from "@/components/Field";
+import formStyles from "@/components/forms.module.scss";
 import { ErrorState, LoadingState } from "@/components/States";
 import { clampDateTimeRange, formatDateTime, toDateTimeLocalInput } from "@/lib/dates";
 import { useResource } from "@/lib/hooks/useResource";
-import adminStyles from "@/pages/admin/shared/admin.module.css";
+import adminStyles from "@/pages/admin/shared/admin.module.scss";
 import { DateTimeRangeFields } from "@/pages/admin/shared/DateTimeRangeFields";
 import { InvitationStateLabel } from "@/pages/admin/shared/InvitationStateLabel";
 
-import styles from "./LineupEditor.module.css";
+import styles from "./LineupEditor.module.scss";
 
 interface LineupRow {
     /** Stable identity for React; rows have no id of their own until they are invited. */

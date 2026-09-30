@@ -1,6 +1,8 @@
 import { useAuth } from "@/auth/provider";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
+import layout from "@/components/layout.module.scss";
+import text from "@/components/typography.module.scss";
 
 import { PageShell } from "./PageShell";
 
@@ -17,11 +19,9 @@ export function SignInRequired({
     return (
         <PageShell>
             <Card padded>
-                <h1 className="page-title">Sign in required</h1>
-                <p className="text-muted" style={{ marginTop: "var(--space-2)" }}>
-                    {message}
-                </p>
-                <Button style={{ marginTop: "var(--space-4)" }} onClick={() => login(returnTo)}>
+                <h1 className={text.pageTitle}>Sign in required</h1>
+                <p className={text.lead}>{message}</p>
+                <Button className={layout.action} onClick={() => login(returnTo)}>
                     Go to login
                 </Button>
             </Card>

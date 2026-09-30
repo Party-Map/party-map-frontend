@@ -10,6 +10,7 @@ import { Card, CardBody } from "@/components/Card";
 import { CoverImage } from "@/components/CoverImage";
 import { SocialLinks } from "@/components/SocialLinks";
 import { ErrorState, LoadingState } from "@/components/States";
+import text from "@/components/typography.module.scss";
 import { LikeButton } from "@/layout/LikeButton";
 import { PageShell } from "@/layout/PageShell";
 import { formatDateTimeRange } from "@/lib/dates";
@@ -17,7 +18,7 @@ import { useResource } from "@/lib/hooks/useResource";
 import { cn } from "@/lib/utils";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 
-import styles from "./EventPage.module.css";
+import styles from "./EventPage.module.scss";
 import { LineupList } from "./LineupList";
 
 interface EventPageData {
@@ -73,7 +74,7 @@ export function EventPage() {
                 <CoverImage src={event.image} alt={event.title} />
                 <CardBody>
                     <div className={styles.titleRow}>
-                        <h1 className={cn("page-title", styles.title)}>{event.title}</h1>
+                        <h1 className={cn(text.pageTitle, styles.title)}>{event.title}</h1>
                         {!likeStatus.loading && (
                             <LikeButton
                                 target="events"
@@ -87,7 +88,7 @@ export function EventPage() {
                     {place && (
                         <p className={styles.metaLine}>
                             at{" "}
-                            <Link to={`/places/${place.id}`} className="link">
+                            <Link to={`/places/${place.id}`} className={text.link}>
                                 {place.name}
                             </Link>
                         </p>

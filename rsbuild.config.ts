@@ -1,6 +1,7 @@
 import { defineConfig } from "@rsbuild/core";
 import { pluginReact } from "@rsbuild/plugin-react";
 import { pluginSass } from "@rsbuild/plugin-sass";
+import { pluginTypedCSSModules } from "@rsbuild/plugin-typed-css-modules";
 
 // The dev server proxies /api to the backend. The backend mounts every route under /api itself, so the
 // prefix is kept (no pathRewrite). Keycloak stays on its own origin: the browser follows its redirects.
@@ -15,7 +16,9 @@ const publicEnv = {
 };
 
 export default defineConfig({
-    plugins: [pluginReact(), pluginSass()],
+    // Sass compiles each part's module (src/**/*.module.scss) beside its component; the typed plugin writes the
+    // X.module.scss.d.ts next to it (committed, so tsc works without a build).
+    plugins: [pluginReact(), pluginSass(), pluginTypedCSSModules()],
     html: {
         // index.html carries the meta tags, the fonts and the pre-paint theme script.
         template: "./index.html",

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import { Field, FormError, formStyles, Input, Select, Textarea } from "./Field";
+import { Field, FormError, Input, Select, Textarea } from "./Field";
 
 describe("Field", () => {
     it("links the label to the control and shows the hint", () => {
@@ -67,12 +67,5 @@ describe("FormError", () => {
     it("announces the message", () => {
         render(<FormError message="Saving failed" />);
         expect(screen.getByRole("alert")).toHaveTextContent("Saving failed");
-    });
-});
-
-describe("formStyles", () => {
-    it("exposes the form class names", () => {
-        expect(formStyles.control).toBe("control");
-        expect(formStyles.form).toBe("form");
     });
 });

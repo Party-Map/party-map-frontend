@@ -1,0 +1,45 @@
+@layer parts {
+  .item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .text {
+    min-width: 0;
+  }
+
+  .title {
+    font-weight: 600;
+  }
+
+  .line {
+    margin-top: 0.125rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--text-14);
+    color: var(--fg-muted);
+  }
+
+  .link {
+    flex-shrink: 0;
+    padding: 0.375rem 0.75rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background: var(--surface-solid);
+    font-size: var(--text-12);
+    font-weight: 500;
+    box-shadow: var(--shadow-sm);
+    transition: background-color var(--duration-fast) var(--ease);
+  }
+
+  .link:hover {
+    background: var(--surface-hover);
+  }
+}

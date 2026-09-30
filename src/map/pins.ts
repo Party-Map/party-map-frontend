@@ -9,7 +9,7 @@ export interface PinState {
 
 /**
  * Gradient map pin with sparks and a pulse ring while highlighted or active. Colours are the
- * --pin-default / --pin-highlight / --pin-active tokens, resolved in pins.css, so pins follow the
+ * --pin-default / --pin-highlight / --pin-active tokens, resolved in leaflet.scss, so pins follow the
  * theme without being rebuilt.
  */
 export function createPinIcon({ isActive, isHighlighted }: PinState): DivIcon {

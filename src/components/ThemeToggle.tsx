@@ -3,7 +3,7 @@ import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
-import styles from "./ThemeToggle.module.css";
+import styles from "./ThemeToggle.module.scss";
 
 export function ThemeToggle({ compact = false }: { compact?: boolean }) {
     const { theme, toggle } = useTheme();

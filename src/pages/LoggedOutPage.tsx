@@ -4,7 +4,7 @@ import { Navigate } from "react-router";
 import { useAuth } from "@/auth/provider";
 import { ButtonLink } from "@/components/Button";
 
-import styles from "./LoggedOutPage.module.css";
+import styles from "./LoggedOutPage.module.scss";
 
 export function LoggedOutPage() {
     const { status } = useAuth();

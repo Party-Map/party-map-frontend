@@ -1,7 +1,9 @@
 import { fetchLikedEvents, fetchLikedPerformers, fetchLikedPlaces } from "@/api/likes";
 import type { LikedEventsGrouped, Performer, Place } from "@/api/types";
 import { useAuth } from "@/auth/provider";
+import layout from "@/components/layout.module.scss";
 import { LoadingState } from "@/components/States";
+import text from "@/components/typography.module.scss";
 import { PageShell } from "@/layout/PageShell";
 import { RequireAuth } from "@/layout/RequireAuth";
 import { useResource } from "@/lib/hooks/useResource";
@@ -42,9 +44,9 @@ export function LikesPage() {
     return (
         <RequireAuth message="You need to be signed in to view your likes.">
             <PageShell>
-                <div className="stack">
-                    <h1 className="page-title">Your likes</h1>
-                    <p className="text-muted">View and manage the events, places and performers you’ve liked.</p>
+                <div className={layout.stack}>
+                    <h1 className={text.pageTitle}>Your likes</h1>
+                    <p className={text.muted}>View and manage the events, places and performers you’ve liked.</p>
                     {likes.data ? <LikedTabs {...likes.data} /> : <LoadingState />}
                 </div>
             </PageShell>

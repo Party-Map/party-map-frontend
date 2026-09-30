@@ -1,10 +1,11 @@
 import { useAuth } from "@/auth/provider";
 import { buttonClass, ButtonLink } from "@/components/Button";
 import { Card } from "@/components/Card";
+import text from "@/components/typography.module.scss";
 import { PageShell } from "@/layout/PageShell";
 import { RequireAuth } from "@/layout/RequireAuth";
 
-import styles from "./ProfilePage.module.css";
+import styles from "./ProfilePage.module.scss";
 
 const EMPTY_VALUE = "—";
 
@@ -29,7 +30,7 @@ export function ProfilePage() {
         <RequireAuth message="You need to be signed in to view your profile.">
             <PageShell>
                 <Card padded>
-                    <h1 className="page-title">Profile</h1>
+                    <h1 className={text.pageTitle}>Profile</h1>
 
                     <div className={styles.header}>
                         <div className={styles.avatar} aria-hidden>

@@ -1,0 +1,35 @@
+@layer parts {
+  .main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    min-height: 100dvh;
+    padding: var(--space-6);
+    text-align: center;
+  }
+
+  .title {
+    font-size: var(--text-28);
+    font-weight: 700;
+  }
+
+  .text {
+    color: var(--fg-muted);
+  }
+
+  .detail {
+    max-width: 40rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: var(--text-12);
+    color: var(--fg-subtle);
+    overflow-wrap: anywhere;
+  }
+
+  .actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+  }
+}

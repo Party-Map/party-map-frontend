@@ -7,7 +7,7 @@ import type { ID, Place } from "@/api/types";
 import { cn } from "@/lib/utils";
 
 import { toLatLngTuple } from "./geo";
-import styles from "./ZoomControls.module.css";
+import styles from "./ZoomControls.module.scss";
 
 /** After recentering the selected pin sits this many pixels above the viewport centre, leaving room for its popup. */
 const RECENTER_OFFSET_Y = -100;

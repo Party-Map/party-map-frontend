@@ -1,6 +1,6 @@
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-import styles from "./bars.module.css";
+import styles from "./bars.module.scss";
 import { NavActions } from "./NavActions";
 
 /** Phone-only navigation bar pinned to the bottom of the screen. */

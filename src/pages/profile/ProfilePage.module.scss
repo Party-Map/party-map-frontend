@@ -1,0 +1,76 @@
+@use "@/styles/mixins" as *;
+
+@layer parts {
+  .header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+  }
+
+  .avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: var(--radius-full);
+    background: var(--accent-soft);
+    color: var(--link);
+    font-size: var(--text-20);
+    font-weight: 600;
+  }
+
+  .identity {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .name {
+    font-size: var(--text-18);
+    font-weight: 600;
+  }
+
+  .email {
+    font-size: var(--text-14);
+    color: var(--fg-muted);
+    overflow-wrap: anywhere;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    width: 100%;
+  }
+
+  .fields {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+  }
+
+  .field-label {
+    font-size: var(--text-14);
+    font-weight: 600;
+  }
+
+  .field-value {
+    margin-top: var(--space-1);
+    font-size: var(--text-14);
+    color: var(--fg-muted);
+  }
+
+  @include from-sm {
+    .actions {
+      width: auto;
+    }
+
+    .fields {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}

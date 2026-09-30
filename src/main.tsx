@@ -1,5 +1,5 @@
 import "leaflet/dist/leaflet.css";
-import "@/styles/global.css";
+import "@/styles/base.scss";
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";

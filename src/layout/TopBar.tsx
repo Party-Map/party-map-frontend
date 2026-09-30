@@ -2,7 +2,7 @@ import { Link, useSearchParams } from "react-router";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-import styles from "./bars.module.css";
+import styles from "./bars.module.scss";
 import { NavActions } from "./NavActions";
 import { SearchBar } from "./SearchBar";
 

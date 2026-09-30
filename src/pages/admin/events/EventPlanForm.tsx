@@ -3,10 +3,12 @@ import { useNavigate } from "react-router";
 
 import { EVENT_TYPES, type EventPlanPayload, type EventType, type Link } from "@/api/types";
 import { Button } from "@/components/Button";
-import { Field, FormError, formStyles, Input, Select, Textarea } from "@/components/Field";
+import { Field, FormError, Input, Select, Textarea } from "@/components/Field";
+import formStyles from "@/components/forms.module.scss";
+import text from "@/components/typography.module.scss";
 import { EVENT_TYPE_LABELS } from "@/lib/constants";
 import { toDateTimeLocalInput } from "@/lib/dates";
-import adminStyles from "@/pages/admin/shared/admin.module.css";
+import adminStyles from "@/pages/admin/shared/admin.module.scss";
 import { DateTimeRangeFields } from "@/pages/admin/shared/DateTimeRangeFields";
 import { ImageUrlField } from "@/pages/admin/shared/ImageUrlField";
 import { LinksInput } from "@/pages/admin/shared/LinksInput";
@@ -80,7 +82,7 @@ export function EventPlanForm({ title, submitLabel, initialValues, onSubmit }: E
     return (
         <>
             <div className={adminStyles.header}>
-                <h1 className="page-title">{title}</h1>
+                <h1 className={text.pageTitle}>{title}</h1>
             </div>
 
             <form onSubmit={handleSubmit} className={formStyles.form}>

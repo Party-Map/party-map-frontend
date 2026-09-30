@@ -28,7 +28,7 @@ const rejected: PlaceInvitationRequest = {
 };
 
 const buttonsOf = (title: string) => {
-    const card = screen.getByRole("heading", { name: title }).closest('div[class*="requestCard"]');
+    const card = screen.getByRole("heading", { name: title }).closest('div[class*="request-card"]');
     if (!card) throw new Error(`no card for ${title}`);
     return {
         accept: screen.getAllByRole("button", { name: "Accept" }).find((b) => card.contains(b)),

@@ -1,4 +1,5 @@
-import { Field, formStyles, Input } from "@/components/Field";
+import { Field, Input } from "@/components/Field";
+import formStyles from "@/components/forms.module.scss";
 
 interface DateTimeRangeFieldsProps {
     start: string;

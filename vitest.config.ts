@@ -14,8 +14,8 @@ export default defineConfig({
             PUBLIC_KEYCLOAK_REALM: "party-map",
             PUBLIC_KEYCLOAK_CLIENT_ID: "partymap-web",
         },
-        // A component test sees the module's class names as written.
-        css: { modules: { classNameStrategy: "non-scoped" } },
+        // A component test sees the module's class names as written (kebab-case), so the modules are compiled.
+        css: { include: [/\.module\.scss$/], modules: { classNameStrategy: "non-scoped" } },
         coverage: {
             provider: "v8",
             include: ["src/**/*.{ts,tsx}"],

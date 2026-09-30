@@ -62,11 +62,11 @@ describe("AdminLayout", () => {
         expect(tabs).toContainElement(placesTab);
         expect(tabs).toContainElement(performersTab);
         expect(screen.queryByRole("link", { name: "Manage your Events" })).not.toBeInTheDocument();
-        expect(placesTab).toHaveClass("tabActive");
-        expect(performersTab).not.toHaveClass("tabActive");
+        expect(placesTab).toHaveClass("tab-active");
+        expect(performersTab).not.toHaveClass("tab-active");
 
         await userEvent.click(performersTab);
         expect(await screen.findByText("performers content")).toBeInTheDocument();
-        expect(performersTab).toHaveClass("tabActive");
+        expect(performersTab).toHaveClass("tab-active");
     });
 });

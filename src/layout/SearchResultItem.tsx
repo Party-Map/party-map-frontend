@@ -5,7 +5,7 @@ import { CoverImage } from "@/components/CoverImage";
 import { formatNextEventStart } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
-import styles from "./SearchBar.module.css";
+import styles from "./SearchBar.module.scss";
 
 const TYPE_META: Record<SearchHitType, { label: string; Icon: typeof MapPin; className: string | undefined }> = {
     PLACE: { label: "Place", Icon: MapPin, className: styles.typePlace },

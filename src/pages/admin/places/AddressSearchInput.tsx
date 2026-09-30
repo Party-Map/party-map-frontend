@@ -6,7 +6,7 @@ import { geocodeAddress, type GeocodeResult } from "@/lib/geocode";
 import { useDebouncedValue } from "@/lib/hooks/useDebouncedValue";
 import { useResource } from "@/lib/hooks/useResource";
 
-import styles from "./AddressSearchInput.module.css";
+import styles from "./AddressSearchInput.module.scss";
 
 interface AddressSearchInputProps {
     id?: string;

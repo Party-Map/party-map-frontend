@@ -10,7 +10,7 @@ describe("NavActions", () => {
         it("offers a sign-in button that starts the login", async () => {
             const { client } = renderWithProviders(<NavActions variant="desktop" />);
             const button = await screen.findByRole("button", { name: "Sign in" });
-            expect(screen.getByRole("navigation", { name: "Account" })).toHaveClass("nav", "desktopNav");
+            expect(screen.getByRole("navigation", { name: "Account" })).toHaveClass("nav", "desktop-nav");
             expect(button).toHaveClass("item", "desktop");
             expect(screen.queryByRole("link")).toBeNull();
 
@@ -22,7 +22,7 @@ describe("NavActions", () => {
         it("uses the mobile classes", async () => {
             renderWithProviders(<NavActions variant="mobile" />);
             const button = await screen.findByRole("button", { name: "Sign in" });
-            expect(screen.getByRole("navigation", { name: "Account" })).toHaveClass("nav", "mobileNav");
+            expect(screen.getByRole("navigation", { name: "Account" })).toHaveClass("nav", "mobile-nav");
             expect(button).toHaveClass("item", "mobile");
         });
     });
@@ -48,7 +48,7 @@ describe("NavActions", () => {
             const likes = await screen.findByRole("link", { name: "Likes" });
             expect(likes).toHaveClass("item", "mobile", "active");
             expect(screen.getByRole("link", { name: "Profile" })).not.toHaveClass("active");
-            expect(screen.getByRole("navigation", { name: "Account" })).toHaveClass("nav", "mobileNav");
+            expect(screen.getByRole("navigation", { name: "Account" })).toHaveClass("nav", "mobile-nav");
         });
 
         it("marks only the exact profile route as active", async () => {

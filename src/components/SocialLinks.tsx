@@ -4,7 +4,7 @@ import type { Link, LinkType } from "@/api/types";
 import { LINK_TYPE_LABELS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-import styles from "./SocialLinks.module.css";
+import styles from "./SocialLinks.module.scss";
 
 const GLYPHS: Record<Exclude<LinkType, "WEBSITE">, string> = {
     INSTAGRAM: "IG",

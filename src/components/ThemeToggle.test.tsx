@@ -2,16 +2,11 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { THEME_STORAGE_KEY } from "@/lib/constants";
-import { ThemeProvider } from "@/lib/theme";
 
 import { ThemeToggle } from "./ThemeToggle";
 
 function renderToggle(compact = false) {
-    return render(
-        <ThemeProvider>
-            <ThemeToggle compact={compact} />
-        </ThemeProvider>,
-    );
+    return render(<ThemeToggle compact={compact} />);
 }
 
 describe("ThemeToggle", () => {
@@ -26,12 +21,12 @@ describe("ThemeToggle", () => {
         expect(button).toHaveTextContent("Light");
         expect(button).toHaveAttribute("aria-pressed", "true");
         expect(container.querySelector("svg")?.getAttribute("class")).toMatch(/sun/);
-        expect(document.documentElement.dataset.theme).toBe("dark");
+        expect(document.documentElement).toHaveClass("dark");
         expect(window.localStorage.getItem(THEME_STORAGE_KEY)).toBe("dark");
 
         await userEvent.click(button);
         expect(button).toHaveTextContent("Dark");
-        expect(document.documentElement.dataset.theme).toBe("light");
+        expect(document.documentElement).not.toHaveClass("dark");
     });
 
     it("hides the label and grows the icon in the compact variant", () => {

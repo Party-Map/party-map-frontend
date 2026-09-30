@@ -1,0 +1,40 @@
+@use "@/styles/mixins" as *;
+
+@layer parts {
+  .main {
+    width: 100%;
+    max-width: var(--page-max-w);
+    margin: 0 auto;
+    padding: calc(var(--topbar-h) + var(--space-6)) var(--space-4) calc(var(--bottombar-h) + var(--space-6));
+  }
+
+  .wide {
+    max-width: 80rem;
+  }
+
+  @include desktop {
+    .main {
+      padding-bottom: var(--space-8);
+    }
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: var(--text-14);
+    color: var(--link);
+  }
+
+  .back:hover {
+    text-decoration: underline;
+  }
+
+  .content {
+    margin-top: var(--space-2);
+  }
+
+  .footer {
+    margin-top: var(--space-4);
+  }
+}

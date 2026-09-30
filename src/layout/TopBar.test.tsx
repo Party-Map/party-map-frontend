@@ -10,7 +10,7 @@ describe("TopBar", () => {
         mockApi({});
         renderWithProviders(<TopBar />);
         expect(await screen.findByRole("button", { name: "Sign in" })).toHaveClass("item", "desktop");
-        expect(screen.getByRole("banner")).toHaveClass("topWrapper");
+        expect(screen.getByRole("banner")).toHaveClass("top-wrapper");
         expect(screen.getByRole("link", { name: "PartyMap home" })).toHaveAttribute("href", "/");
         expect(screen.getByRole("textbox", { name: "Search" })).toHaveValue("");
         expect(screen.getByRole("button", { name: "Toggle theme" })).toBeInTheDocument();
@@ -28,7 +28,7 @@ describe("AdminTopBar", () => {
     it("links to the admin home without a search box", async () => {
         renderWithProviders(<AdminTopBar />);
         expect(await screen.findByRole("button", { name: "Sign in" })).toBeInTheDocument();
-        expect(screen.getByRole("banner")).toHaveClass("adminWrapper");
+        expect(screen.getByRole("banner")).toHaveClass("admin-wrapper");
         expect(screen.getByRole("link", { name: "Admin Panel" })).toHaveAttribute("href", "/admin");
         expect(screen.queryByRole("textbox")).toBeNull();
         expect(screen.getByRole("button", { name: "Toggle theme" })).toBeInTheDocument();

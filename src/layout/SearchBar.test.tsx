@@ -287,14 +287,14 @@ describe("SearchBar", () => {
         const { user, input } = await setup();
         await typeAndWait(user, input);
         const hide = screen.getByRole("button", { name: "Hide results" });
-        expect(hide).toHaveClass("roundActive");
+        expect(hide).toHaveClass("round-active");
 
         await user.click(hide);
         expect(listbox()).toBeNull();
         expect(input).toHaveValue("techno");
         const hidden = screen.getByRole("button", { name: "Results hidden" });
         expect(hidden).toBeDisabled();
-        expect(hidden).toHaveClass("roundMuted");
+        expect(hidden).toHaveClass("round-muted");
     });
 
     it("stays quiet while a place is focused and resumes after typing", async () => {

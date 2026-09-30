@@ -3,7 +3,7 @@ import { Link, type LinkProps } from "react-router";
 
 import { cn } from "@/lib/utils";
 
-import styles from "./Button.module.css";
+import styles from "./Button.module.scss";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "success" | "bar";
 export type ButtonSize = "sm" | "md";
@@ -15,8 +15,18 @@ interface StyleProps {
     className?: string;
 }
 
+const VARIANTS: Record<ButtonVariant, string> = {
+    primary: styles.primary,
+    secondary: styles.secondary,
+    ghost: styles.ghost,
+    danger: styles.danger,
+    success: styles.success,
+    bar: styles.bar,
+};
+const SIZES: Record<ButtonSize, string> = { sm: styles.sm, md: styles.md };
+
 export function buttonClass({ variant = "primary", size = "md", block = false, className }: StyleProps): string {
-    return cn(styles.button, styles[variant], styles[size], block && styles.block, className);
+    return cn(styles.button, VARIANTS[variant], SIZES[size], block && styles.block, className);
 }
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & StyleProps & { children: ReactNode };

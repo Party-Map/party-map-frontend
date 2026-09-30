@@ -2,7 +2,7 @@ import { createContext, type ReactNode, useCallback, useContext, useMemo, useRef
 
 import { cn } from "@/lib/utils";
 
-import styles from "./Toast.module.css";
+import styles from "./Toast.module.scss";
 
 type ToastKind = "success" | "error" | "info";
 
@@ -36,6 +36,8 @@ export interface ToastApi {
 }
 
 const ToastContext = createContext<ToastApi | null>(null);
+
+const KIND_CLASS: Record<ToastKind, string> = { success: styles.success, error: styles.error, info: styles.info };
 
 const MESSAGE_DURATION_MS = 2500;
 
@@ -92,7 +94,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             <div className={styles.viewport} aria-live="polite">
                 {toasts.map((toast) =>
                     toast.type === "message" ? (
-                        <div key={toast.id} role="status" className={cn(styles.toast, styles[toast.kind])}>
+                        <div key={toast.id} role="status" className={cn(styles.toast, KIND_CLASS[toast.kind])}>
                             {toast.text}
                         </div>
                     ) : (

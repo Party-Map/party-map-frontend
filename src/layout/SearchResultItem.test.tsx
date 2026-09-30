@@ -58,24 +58,24 @@ afterEach(() => {
 describe("SearchResultItem", () => {
     it("shows the title, subtitle, type pill, thumbnail letter and next event date", () => {
         const { item } = renderItem(placeHit);
-        expect(within(item).getByText("A38 Hajó")).toHaveClass("itemTitle");
-        expect(within(item).getByText("Budapest")).toHaveClass("itemSubtitle");
-        expect(within(item).getByText("Place")).toHaveClass("typePill", "typePlace");
-        expect(within(item).getByText("P")).toHaveClass("thumbLetter");
-        expect(within(item).getByText("1 Jun")).toHaveClass("itemDate");
+        expect(within(item).getByText("A38 Hajó")).toHaveClass("item-title");
+        expect(within(item).getByText("Budapest")).toHaveClass("item-subtitle");
+        expect(within(item).getByText("Place")).toHaveClass("type-pill", "type-place");
+        expect(within(item).getByText("P")).toHaveClass("thumb-letter");
+        expect(within(item).getByText("1 Jun")).toHaveClass("item-date");
         expect(item.querySelector("img")).toHaveAttribute("src", place.image);
     });
 
     it("labels events and performers by type", () => {
-        expect(within(renderItem(eventHit).item).getByText("Event")).toHaveClass("typeEvent");
-        expect(within(renderItem(performerHit).item).getByText("Performer")).toHaveClass("typePerformer");
+        expect(within(renderItem(eventHit).item).getByText("Event")).toHaveClass("type-event");
+        expect(within(renderItem(performerHit).item).getByText("Performer")).toHaveClass("type-performer");
     });
 
     it("omits the date without an upcoming event and uses the placeholder image", () => {
         const { item } = renderItem(performerHit);
-        expect(item.querySelector(".itemDate")).toBeNull();
+        expect(item.querySelector(".item-date")).toBeNull();
         expect(item.querySelector("img")).toHaveAttribute("src", PLACEHOLDER_IMAGE);
-        expect(within(item).getByText("techno")).toHaveClass("itemSubtitle");
+        expect(within(item).getByText("techno")).toHaveClass("item-subtitle");
     });
 
     it("picks from the main button and views from the view button independently", () => {

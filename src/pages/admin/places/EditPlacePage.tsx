@@ -7,7 +7,7 @@ import { ErrorState, LoadingState } from "@/components/States";
 import { useToast } from "@/layout/ToastProvider";
 import { useResource } from "@/lib/hooks/useResource";
 import { RequireRole } from "@/pages/admin/RequireRole";
-import styles from "@/pages/admin/shared/admin.module.css";
+import styles from "@/pages/admin/shared/admin.module.scss";
 
 import { PlaceForm } from "./PlaceForm";
 import { PlaceInvitationRequests } from "./PlaceInvitationRequests";

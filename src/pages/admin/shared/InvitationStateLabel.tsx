@@ -1,6 +1,6 @@
 import type { InvitationState } from "@/api/types";
 
-import styles from "./admin.module.css";
+import styles from "./admin.module.scss";
 
 const LABELS: Record<InvitationState, { text: string; className: string | undefined }> = {
     ACCEPTED: { text: "Accepted", className: styles.stateAccepted },

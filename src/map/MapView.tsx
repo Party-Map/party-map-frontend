@@ -1,4 +1,4 @@
-import "./pins.css";
+import "./leaflet.scss";
 
 import type { PointTuple } from "leaflet";
 import { useMemo } from "react";
@@ -9,7 +9,7 @@ import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, TILE_ATTRIBUTION, TILE_URL } from
 
 import { FitToHighlights } from "./FitToHighlights";
 import { toLatLngTuple } from "./geo";
-import styles from "./MapView.module.css";
+import styles from "./MapView.module.scss";
 import { PanPopupMobile } from "./PanPopupMobile";
 import { getPinIcon } from "./pins";
 import { PlaceLabels } from "./PlaceLabels";

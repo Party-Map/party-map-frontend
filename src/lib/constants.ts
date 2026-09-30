@@ -32,7 +32,7 @@ export const DEFAULT_MAP_ZOOM = 13;
 
 /**
  * OpenStreetMap's standard tiles need no API key (CARTO basemaps do since 2026). Dark mode is a
- * CSS filter on the tile pane, see features/map/pins.css.
+ * CSS filter on the tile pane, see map/leaflet.scss.
  */
 export const TILE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 export const TILE_ATTRIBUTION =
@@ -51,5 +51,5 @@ export const GEOCODE_DEBOUNCE_MS = 400;
 export const CONSENT_STORAGE_KEY = "pm:consent:v1";
 export const THEME_STORAGE_KEY = "theme";
 
-/** Breakpoint at which the desktop top bar replaces the mobile bottom bar (matches global.css). */
+/** Breakpoint at which the desktop top bar replaces the mobile bottom bar (matches the desktop mixin in styles/_mixins.scss). */
 export const DESKTOP_MIN_WIDTH = 1024;

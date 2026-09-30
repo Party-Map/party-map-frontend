@@ -38,7 +38,7 @@ describe("PlacePopupCard", () => {
             `/events/${upcoming.eventId}`,
         );
         expect(screen.getByText("View event")).toBeInTheDocument();
-        expect(screen.getByText(upcoming.title)).toHaveClass("titleNowrap");
+        expect(screen.getByText(upcoming.title)).toHaveClass("title-nowrap");
         expect(screen.getByText(String(startLabel))).toBeInTheDocument();
         expect(screen.getByRole("link", { name: "Techno" })).toHaveAttribute("href", "/?q=techno");
         expect(screen.getByRole("link", { name: place.name })).toHaveAttribute("href", `/places/${place.id}`);
@@ -61,7 +61,7 @@ describe("PlacePopupCard", () => {
             `/places/${place.id}`,
         );
         expect(screen.getByText("View place")).toBeInTheDocument();
-        expect(screen.getByText(place.name, { selector: "span" })).toHaveClass("titleNowrap");
+        expect(screen.getByText(place.name, { selector: "span" })).toHaveClass("title-nowrap");
         expect(screen.queryByText("Techno")).not.toBeInTheDocument();
         expect(screen.queryByText(String(formatNextEventStart(upcoming.start)))).not.toBeInTheDocument();
         expect(screen.getByRole("link", { name: "techno" })).toHaveAttribute("href", "/?q=techno");
@@ -77,7 +77,7 @@ describe("PlacePopupCard", () => {
         const title = "x".repeat(LONG_TITLE_LENGTH + 1);
         await renderCard({ upcomingEvent: { ...upcoming, title } });
         const heading = screen.getByText(title);
-        expect(heading).toHaveClass("titleClamp");
+        expect(heading).toHaveClass("title-clamp");
         expect(heading.closest(".card")).toHaveClass("wide");
     });
 

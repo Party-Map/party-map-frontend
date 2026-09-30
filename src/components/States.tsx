@@ -1,7 +1,7 @@
 import { LoaderCircle } from "lucide-react";
 
 import { Button } from "./Button";
-import styles from "./States.module.css";
+import styles from "./States.module.scss";
 
 export function LoadingState({ label = "Loading…" }: { label?: string }) {
     return (

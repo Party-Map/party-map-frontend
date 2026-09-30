@@ -10,6 +10,7 @@ import { Card, CardBody } from "@/components/Card";
 import { CoverImage } from "@/components/CoverImage";
 import { SocialLinks } from "@/components/SocialLinks";
 import { EmptyState, ErrorState, LoadingState } from "@/components/States";
+import text from "@/components/typography.module.scss";
 import { LikeButton } from "@/layout/LikeButton";
 import { PageShell } from "@/layout/PageShell";
 import { useResource } from "@/lib/hooks/useResource";
@@ -17,7 +18,7 @@ import { cn } from "@/lib/utils";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 
 import { EventCard } from "./EventCard";
-import styles from "./PlacePage.module.css";
+import styles from "./PlacePage.module.scss";
 
 interface PlacePageData {
     place: Place;
@@ -60,7 +61,7 @@ export function PlacePage() {
         <PageShell
             footer={
                 <>
-                    <h2 className="section-title">Upcoming events</h2>
+                    <h2 className={text.sectionTitle}>Upcoming events</h2>
                     {events.length === 0 ? (
                         <EmptyState message="No events yet." />
                     ) : (
@@ -77,7 +78,7 @@ export function PlacePage() {
                 <CoverImage src={place.image} alt={place.name} />
                 <CardBody>
                     <div className={styles.titleRow}>
-                        <h1 className={cn("page-title", styles.title)}>{place.name}</h1>
+                        <h1 className={cn(text.pageTitle, styles.title)}>{place.name}</h1>
                         {!likeStatus.loading && (
                             <LikeButton
                                 target="places"

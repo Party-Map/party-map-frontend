@@ -10,15 +10,21 @@
         <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet" />
         <title>PartyMap</title>
         <script>
-            // Apply the saved theme before first paint to avoid a flash of the wrong colours.
-            try {
-                var saved = localStorage.getItem("theme");
-                var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-                document.documentElement.dataset.theme =
-                    saved === "light" || saved === "dark" ? saved : prefersDark ? "dark" : "light";
-            } catch (e) {
-                document.documentElement.dataset.theme = "light";
-            }
+            // Apply the theme before first paint (same rule as src/lib/theme.ts): the stored choice, else the system's.
+            (function () {
+                var theme = "light";
+                try {
+                    var saved = localStorage.getItem("theme");
+                    theme =
+                        saved === "light" || saved === "dark"
+                            ? saved
+                            : window.matchMedia("(prefers-color-scheme: dark)").matches
+                              ? "dark"
+                              : "light";
+                } catch (e) {}
+                document.documentElement.classList.toggle("dark", theme === "dark");
+                document.documentElement.style.colorScheme = theme;
+            })();
         </script>
     </head>
     <body>

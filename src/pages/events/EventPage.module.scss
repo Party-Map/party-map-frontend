@@ -1,0 +1,31 @@
+@layer parts {
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .title {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .meta-line {
+    font-size: var(--text-14);
+    color: var(--fg-muted);
+  }
+
+  .price {
+    margin-top: var(--space-1);
+    font-size: var(--text-14);
+  }
+
+  .description {
+    margin-top: var(--space-2);
+    font-size: var(--text-14);
+  }
+
+  .links {
+    margin-top: var(--space-3);
+  }
+}

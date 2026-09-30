@@ -4,14 +4,15 @@ import type { OwnedEventListItem } from "@/api/types";
 import { Role } from "@/auth/roles";
 import { ButtonLink } from "@/components/Button";
 import { EmptyState, ErrorState, LoadingState } from "@/components/States";
+import text from "@/components/typography.module.scss";
 import { formatDateTimeRange, parseDate } from "@/lib/dates";
 import { useResource } from "@/lib/hooks/useResource";
 import { cn } from "@/lib/utils";
 import { RequireRole } from "@/pages/admin/RequireRole";
-import adminStyles from "@/pages/admin/shared/admin.module.css";
+import adminStyles from "@/pages/admin/shared/admin.module.scss";
 import { AdminListItem } from "@/pages/admin/shared/AdminListItem";
 
-import styles from "./AdminEventsPage.module.css";
+import styles from "./AdminEventsPage.module.scss";
 
 /** Event plans on the left, published events (upcoming, then past behind a toggle) on the right. */
 export function AdminEventsPage() {
@@ -48,7 +49,7 @@ function EventsOverview() {
         <div className={styles.columns}>
             <section className={styles.column}>
                 <div className={adminStyles.header}>
-                    <h1 className="page-title">Event planning</h1>
+                    <h1 className={text.pageTitle}>Event planning</h1>
                     <ButtonLink to="/admin/events/new">Add a new Event Plan</ButtonLink>
                 </div>
 
@@ -73,7 +74,7 @@ function EventsOverview() {
 
             <section className={styles.column}>
                 <div className={adminStyles.header}>
-                    <h1 className="page-title">Your live events</h1>
+                    <h1 className={text.pageTitle}>Your live events</h1>
                 </div>
 
                 {events.loading && <LoadingState label="Loading your events…" />}

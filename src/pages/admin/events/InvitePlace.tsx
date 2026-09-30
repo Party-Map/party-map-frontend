@@ -3,7 +3,10 @@ import { useState } from "react";
 import { fetchInvitablePlaces, invitePlace } from "@/api/eventPlans";
 import type { ID } from "@/api/types";
 import { Button } from "@/components/Button";
-import { Field, FormError, formStyles, Select } from "@/components/Field";
+import { Field, FormError, Select } from "@/components/Field";
+import formStyles from "@/components/forms.module.scss";
+import layout from "@/components/layout.module.scss";
+import text from "@/components/typography.module.scss";
 import { useToast } from "@/layout/ToastProvider";
 import { useResource } from "@/lib/hooks/useResource";
 
@@ -34,8 +37,8 @@ export function InvitePlace({ planId, onChanged }: InvitePlaceProps) {
     };
 
     return (
-        <div className="stack">
-            <p className="text-muted">Select a place and send an invitation for this event plan.</p>
+        <div className={layout.stack}>
+            <p className={text.muted}>Select a place and send an invitation for this event plan.</p>
 
             <Field label="Place">
                 {(id) => (

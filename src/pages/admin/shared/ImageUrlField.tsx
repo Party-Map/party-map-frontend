@@ -1,7 +1,7 @@
 import { CoverImage } from "@/components/CoverImage";
 import { Field, Input } from "@/components/Field";
 
-import styles from "./ImageUrlField.module.css";
+import styles from "./ImageUrlField.module.scss";
 
 interface ImageUrlFieldProps {
     label?: string;

@@ -5,11 +5,13 @@ import { fetchEventPlan, updateEventPlan } from "@/api/eventPlans";
 import { fetchPerformers } from "@/api/performers";
 import type { EventPlanPayload } from "@/api/types";
 import { Role } from "@/auth/roles";
+import layout from "@/components/layout.module.scss";
 import { ErrorState, LoadingState } from "@/components/States";
+import text from "@/components/typography.module.scss";
 import { useToast } from "@/layout/ToastProvider";
 import { useResource } from "@/lib/hooks/useResource";
 import { RequireRole } from "@/pages/admin/RequireRole";
-import adminStyles from "@/pages/admin/shared/admin.module.css";
+import adminStyles from "@/pages/admin/shared/admin.module.scss";
 import { InvitationStateLabel } from "@/pages/admin/shared/InvitationStateLabel";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 
@@ -66,10 +68,10 @@ function EventPlanDetail() {
             </div>
 
             <aside className={adminStyles.panel}>
-                <section className="stack">
+                <section className={layout.stack}>
                     <h2 className={adminStyles.panelTitle}>Place invitation</h2>
                     {invitation && invitation.state !== "REJECTED" ? (
-                        <p className="text-muted">
+                        <p className={text.muted}>
                             This event plan has been invited to a place ({invitation.place.name}) with a status of{" "}
                             <InvitationStateLabel state={invitation.state} />.
                         </p>

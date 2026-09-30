@@ -20,6 +20,8 @@ jobs:
       - run: corepack enable
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
+      # The build regenerates the CSS Module declarations; the committed ones must match.
+      - run: git diff --exit-code -- 'src/**/*.module.scss.d.ts'
       - uses: actions/upload-artifact@v4
         if: always()
         with:

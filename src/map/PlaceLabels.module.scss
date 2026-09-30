@@ -1,0 +1,82 @@
+@use "@/styles/mixins" as *;
+
+@layer parts {
+  .layer {
+    position: absolute;
+    inset: 0;
+    z-index: var(--z-labels);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .label {
+    position: absolute;
+    pointer-events: auto;
+    will-change: transform;
+  }
+
+  .active {
+    pointer-events: none;
+  }
+
+  .moving {
+    transition: opacity var(--duration-fast) linear;
+  }
+
+  .settled {
+    transition:
+      opacity 260ms var(--ease),
+      transform 260ms var(--ease);
+  }
+
+  .button {
+    pointer-events: auto;
+    text-align: center;
+  }
+
+  .button:disabled {
+    cursor: default;
+  }
+
+  .event-title,
+  .place-only {
+    display: block;
+    font-size: var(--text-11);
+    line-height: 1.2;
+    white-space: nowrap;
+    transition: color var(--duration-fast) var(--ease);
+  }
+
+  .event-title {
+    font-weight: 600;
+    color: var(--fg);
+    text-shadow: 0 1px 2px fade(black, 55%);
+  }
+
+  .button:hover .event-title {
+    color: var(--pin-active);
+  }
+
+  .place-only {
+    font-weight: 500;
+    color: var(--fg-subtle);
+    text-shadow: 0 1px 2px fade(black, 45%);
+  }
+
+  .meta {
+    margin-top: 0.125rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+  }
+
+  .place-name {
+    font-size: var(--text-9);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--fg-muted);
+    text-shadow: 0 1px 1px fade(black, 40%);
+  }
+}

@@ -2,9 +2,10 @@ import { fetchOwnedPerformers } from "@/api/performers";
 import { Role } from "@/auth/roles";
 import { ButtonLink } from "@/components/Button";
 import { EmptyState, ErrorState, LoadingState } from "@/components/States";
+import text from "@/components/typography.module.scss";
 import { useResource } from "@/lib/hooks/useResource";
 import { RequireRole } from "@/pages/admin/RequireRole";
-import styles from "@/pages/admin/shared/admin.module.css";
+import styles from "@/pages/admin/shared/admin.module.scss";
 import { AdminListItem } from "@/pages/admin/shared/AdminListItem";
 
 /** /admin/performers: the performers the signed-in manager owns. */
@@ -12,7 +13,7 @@ export function AdminPerformersPage() {
     return (
         <RequireRole role={Role.PERFORMER_MANAGER}>
             <div className={styles.header}>
-                <h1 className="page-title">Performers admin</h1>
+                <h1 className={text.pageTitle}>Performers admin</h1>
                 <ButtonLink to="/admin/performers/new">Add new Performer</ButtonLink>
             </div>
             <OwnedPerformersList />

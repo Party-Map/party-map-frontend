@@ -9,7 +9,7 @@ import { useDebouncedValue } from "@/lib/hooks/useDebouncedValue";
 import { cn } from "@/lib/utils";
 
 import { useHighlight } from "./HighlightProvider";
-import styles from "./SearchBar.module.css";
+import styles from "./SearchBar.module.scss";
 import { SearchResultItem } from "./SearchResultItem";
 
 interface Results {

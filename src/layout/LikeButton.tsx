@@ -6,7 +6,7 @@ import type { ID, LikeTarget } from "@/api/types";
 import { useAuth } from "@/auth/provider";
 import { cn } from "@/lib/utils";
 
-import styles from "./LikeButton.module.css";
+import styles from "./LikeButton.module.scss";
 import { useToast } from "./ToastProvider";
 
 interface LikeButtonProps {

@@ -8,7 +8,7 @@ import {
 
 import { cn } from "@/lib/utils";
 
-import styles from "./forms.module.css";
+import styles from "./forms.module.scss";
 
 interface FieldProps {
     label: string;
@@ -65,5 +65,3 @@ export function FormError({ message }: { message: string | null }) {
         </p>
     );
 }
-
-export const formStyles = styles;

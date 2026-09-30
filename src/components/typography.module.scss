@@ -1,0 +1,33 @@
+// Shared text styles: page and section titles, secondary text, inline links.
+@layer components {
+  .page-title {
+    font-size: var(--text-24);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .section-title {
+    font-size: var(--text-18);
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+  }
+
+  .muted {
+    color: var(--fg-muted);
+  }
+
+  // A muted line that follows a title.
+  .lead {
+    margin-top: var(--space-2);
+    color: var(--fg-muted);
+  }
+
+  .link {
+    color: var(--link);
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

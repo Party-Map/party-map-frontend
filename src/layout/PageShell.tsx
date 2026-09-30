@@ -5,7 +5,7 @@ import { Link } from "react-router";
 import { cn } from "@/lib/utils";
 
 import { BottomBar } from "./BottomBar";
-import styles from "./PageShell.module.css";
+import styles from "./PageShell.module.scss";
 import { TopBar } from "./TopBar";
 
 interface PageShellProps {

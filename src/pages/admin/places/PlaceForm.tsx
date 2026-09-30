@@ -3,7 +3,9 @@ import { useNavigate } from "react-router";
 
 import type { GeoPoint, Link, Place, PlacePayload } from "@/api/types";
 import { Button } from "@/components/Button";
-import { Field, FormError, formStyles, Input, Textarea } from "@/components/Field";
+import { Field, FormError, Input, Textarea } from "@/components/Field";
+import formStyles from "@/components/forms.module.scss";
+import text from "@/components/typography.module.scss";
 import type { GeocodeResult } from "@/lib/geocode";
 import { reverseGeocode } from "@/lib/geocode";
 import { ImageUrlField } from "@/pages/admin/shared/ImageUrlField";
@@ -129,7 +131,7 @@ export function PlaceForm({ title, submitLabel, initialValues, onSubmit }: Place
 
     return (
         <div>
-            <h1 className="page-title">{title}</h1>
+            <h1 className={text.pageTitle}>{title}</h1>
 
             <form onSubmit={handleSubmit} className={formStyles.form}>
                 <Field label="Name">
