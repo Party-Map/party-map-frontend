@@ -37,3 +37,6 @@ minimumReleaseAgeExclude:
   - sass-embedded@1.105.1
   - sass@1.105.1
   - vitest@5.0.3
+  - "@microsoft/tsdoc-config@0.18.3"
+  - "@microsoft/tsdoc@0.17.1"
+  - eslint-plugin-tsdoc@0.5.4
