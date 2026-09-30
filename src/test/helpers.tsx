@@ -103,35 +103,63 @@ export function renderWithProviders(
     return { ...result, client };
 }
 
+/** A request the app sent, as the API would see it. `body` is parsed when it is JSON. */
+export interface SentRequest {
+    method: string;
+    url: string;
+    headers: Headers;
+    body: unknown;
+}
+
 /** A JSON body to answer with, null for 204, or a function computing either (or a Response). */
 type RouteHandler = unknown;
-type RouteFn = (init: RequestInit | undefined, url: string) => unknown;
+type RouteFn = (request: SentRequest) => unknown;
+
+export type ApiMock = Mock<typeof fetch> & { requests: SentRequest[] };
+
+async function readBody(request: Request): Promise<unknown> {
+    const text = await request.text();
+    if (!text) return undefined;
+    try {
+        return JSON.parse(text);
+    } catch {
+        return text;
+    }
+}
 
 /**
  * Stub `fetch` with a table of "METHOD /api/path" handlers. Paths are matched against the URL's
- * pathname + search. Unknown routes answer 404. Returns the fetch mock for call assertions.
+ * pathname + search. Unknown routes answer 404. Every request is recorded in `requests`, in order.
  */
-export function mockApi(routes: Record<string, RouteHandler>): Mock {
+export function mockApi(routes: Record<string, RouteHandler>): ApiMock {
+    const requests: SentRequest[] = [];
     const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-        const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
-        const parsed = new URL(url);
-        const method = (init?.method ?? "GET").toUpperCase();
-        const keyWithQuery = `${method} ${parsed.pathname}${parsed.search}`;
-        const keyNoQuery = `${method} ${parsed.pathname}`;
+        const request = input instanceof Request ? input : new Request(input, init);
+        const sent: SentRequest = {
+            method: request.method,
+            url: request.url,
+            headers: request.headers,
+            body: undefined,
+        };
+        requests.push(sent);
+        sent.body = await readBody(request);
+
+        const parsed = new URL(request.url);
+        const keyWithQuery = `${sent.method} ${parsed.pathname}${parsed.search}`;
+        const keyNoQuery = `${sent.method} ${parsed.pathname}`;
         const handler = keyWithQuery in routes ? routes[keyWithQuery] : routes[keyNoQuery];
 
         if (handler === undefined) return new Response("not found", { status: 404 });
-        const body = typeof handler === "function" ? (handler as RouteFn)(init, url) : handler;
+        const body = typeof handler === "function" ? (handler as RouteFn)(sent) : handler;
         if (body instanceof Response) return body;
         if (body === null) return new Response(null, { status: 204 });
         return new Response(JSON.stringify(body), { status: 200, headers: { "Content-Type": "application/json" } });
     });
     vi.stubGlobal("fetch", fetchMock);
-    return fetchMock;
+    return Object.assign(fetchMock, { requests });
 }
 
-/** Body sent with a fetch call, parsed. */
-export function requestBody(fetchMock: Mock, callIndex = 0): unknown {
-    const init = fetchMock.mock.calls[callIndex]?.[1] as RequestInit | undefined;
-    return typeof init?.body === "string" ? JSON.parse(init.body) : undefined;
+/** The parsed body of a recorded request. */
+export function requestBody(fetchMock: ApiMock, index = 0): unknown {
+    return fetchMock.requests[index]?.body;
 }

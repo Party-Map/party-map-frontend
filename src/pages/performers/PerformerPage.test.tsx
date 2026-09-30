@@ -70,9 +70,8 @@ describe("PerformerPage", () => {
         renderWithProviders(<PerformerPage />, { ...ROUTE, auth: authenticatedSnapshot() });
 
         expect(await screen.findByRole("button", { name: "Remove from favorites" })).toBeInTheDocument();
-        expect(fetchMock).toHaveBeenCalledWith(
+        expect(fetchMock.requests.map((request) => request.url)).toContain(
             "http://api.test/api/me/likes/performers/performer-1",
-            expect.anything(),
         );
     });
 });

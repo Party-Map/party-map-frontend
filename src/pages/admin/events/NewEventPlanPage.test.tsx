@@ -5,7 +5,7 @@ import { vi } from "vitest";
 
 import { Role } from "@/auth/roles";
 import { eventPlan } from "@/test/fixtures";
-import { authenticatedSnapshot, mockApi, renderWithProviders } from "@/test/helpers";
+import { authenticatedSnapshot, mockApi, renderWithProviders, type SentRequest } from "@/test/helpers";
 
 import { NewEventPlanPage } from "./NewEventPlanPage";
 
@@ -44,8 +44,8 @@ describe("NewEventPlanPage", () => {
     it("creates the plan and opens it", async () => {
         let body: unknown;
         mockApi({
-            "POST /api/event-plan": (init: RequestInit | undefined) => {
-                body = JSON.parse(init?.body as string);
+            "POST /api/event-plan": (request: SentRequest) => {
+                body = request.body;
                 return { ...eventPlan, id: "plan-9" };
             },
         });

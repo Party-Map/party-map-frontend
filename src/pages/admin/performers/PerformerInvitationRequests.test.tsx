@@ -3,12 +3,14 @@ import userEvent from "@testing-library/user-event";
 
 import type { PerformerInvitationRequest } from "@/api/types";
 import { formatDateTimeRange } from "@/lib/dates";
+import { performer } from "@/test/fixtures";
 import { mockApi, renderWithProviders } from "@/test/helpers";
 
 import { PerformerInvitationRequests } from "./PerformerInvitationRequests";
 
 const pending: PerformerInvitationRequest = {
     eventPlanId: "plan-1",
+    performer,
     eventPlanTitle: "Summer Opening",
     state: "PENDING",
     startTime: "2030-07-01T22:00:00",
@@ -80,10 +82,10 @@ describe("PerformerInvitationRequests", () => {
 
         await waitFor(() => expect(onChanged).toHaveBeenCalledTimes(1));
         expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(String(fetchMock.mock.calls[0]?.[0])).toBe(
+        expect(fetchMock.requests[0]?.url).toBe(
             "http://api.test/api/performers/performer-1/invitations/plan-1/respond?state=accept",
         );
-        expect((fetchMock.mock.calls[0]?.[1] as RequestInit | undefined)?.method).toBe("PUT");
+        expect(fetchMock.requests[0]?.method).toBe("PUT");
         expect(screen.getByText("Invitation accepted.")).toBeInTheDocument();
     });
 
@@ -97,7 +99,7 @@ describe("PerformerInvitationRequests", () => {
         await userEvent.click(screen.getByRole("button", { name: "Reject" }));
 
         await waitFor(() => expect(onChanged).toHaveBeenCalledTimes(1));
-        expect(String(fetchMock.mock.calls[0]?.[0])).toContain("/respond?state=reject");
+        expect(fetchMock.requests[0]?.url).toContain("/respond?state=reject");
         expect(screen.getByText("Invitation rejected.")).toBeInTheDocument();
     });
 

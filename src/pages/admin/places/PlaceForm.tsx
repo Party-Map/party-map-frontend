@@ -54,10 +54,10 @@ function toFormState(values: PlaceFormValues | undefined): FormState {
         address: values.address,
         city: values.city,
         location: values.location,
-        description: values.description,
+        description: values.description ?? "",
         tags: values.tags.join(", "),
-        image: values.image,
-        links: values.links ?? [],
+        image: values.image ?? "",
+        links: values.links,
     };
 }
 

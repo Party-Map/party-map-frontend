@@ -69,7 +69,7 @@ export function EventPage() {
     const { event, place } = page.data;
 
     return (
-        <PageShell footer={event.lineupItems && <LineupList items={event.lineupItems} />}>
+        <PageShell footer={<LineupList items={event.lineupItems} />}>
             <Card>
                 <CoverImage src={event.image} alt={event.title} />
                 <CardBody>

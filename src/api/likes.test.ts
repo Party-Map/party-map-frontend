@@ -1,17 +1,12 @@
-import type { Mock } from "vitest";
-
 import { event, performer, place } from "@/test/fixtures";
-import { mockApi, requestBody } from "@/test/helpers";
+import { type ApiMock, mockApi, requestBody } from "@/test/helpers";
 
 import { fetchLikedEvents, fetchLikedPerformers, fetchLikedPlaces, fetchLikeStatus, like, unlike } from "./likes";
 
 const BASE = "http://api.test/api";
 
-function sentRequests(fetchMock: Mock): string[] {
-    return fetchMock.mock.calls.map((call) => {
-        const [url, init] = call as [unknown, RequestInit | undefined];
-        return `${init?.method ?? "GET"} ${String(url)}`;
-    });
+function sentRequests(fetchMock: ApiMock): string[] {
+    return fetchMock.requests.map((request) => `${request.method} ${request.url}`);
 }
 
 describe("likes api", () => {

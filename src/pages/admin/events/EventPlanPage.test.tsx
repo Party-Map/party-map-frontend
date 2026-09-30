@@ -6,7 +6,7 @@ import { vi } from "vitest";
 import type { EventPlan, PlaceListItem } from "@/api/types";
 import { Role } from "@/auth/roles";
 import { eventPlan, performer, place } from "@/test/fixtures";
-import { authenticatedSnapshot, mockApi, renderWithProviders } from "@/test/helpers";
+import { authenticatedSnapshot, mockApi, renderWithProviders, type SentRequest } from "@/test/helpers";
 
 import { EventPlanPage } from "./EventPlanPage";
 
@@ -81,8 +81,8 @@ describe("EventPlanPage", () => {
         let body: unknown;
         mockApi({
             ...routes,
-            "PUT /api/event-plan/plan-1": (init: RequestInit | undefined) => {
-                body = JSON.parse(init?.body as string);
+            "PUT /api/event-plan/plan-1": (request: SentRequest) => {
+                body = request.body;
                 return eventPlan;
             },
         });

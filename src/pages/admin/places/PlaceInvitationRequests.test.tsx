@@ -72,10 +72,10 @@ describe("PlaceInvitationRequests", () => {
 
         await waitFor(() => expect(onChanged).toHaveBeenCalledTimes(1));
         expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(String(fetchMock.mock.calls[0]?.[0])).toBe(
+        expect(fetchMock.requests[0]?.url).toBe(
             "http://api.test/api/places/place-1/invitations/plan-1/respond?state=accept",
         );
-        expect((fetchMock.mock.calls[0]?.[1] as RequestInit | undefined)?.method).toBe("PUT");
+        expect(fetchMock.requests[0]?.method).toBe("PUT");
         expect(screen.getByText("Invitation accepted.")).toBeInTheDocument();
     });
 
@@ -87,7 +87,7 @@ describe("PlaceInvitationRequests", () => {
         await userEvent.click(screen.getByRole("button", { name: "Reject" }));
 
         await waitFor(() => expect(onChanged).toHaveBeenCalledTimes(1));
-        expect(String(fetchMock.mock.calls[0]?.[0])).toContain("/respond?state=reject");
+        expect(fetchMock.requests[0]?.url).toContain("/respond?state=reject");
         expect(screen.getByText("Invitation rejected.")).toBeInTheDocument();
     });
 

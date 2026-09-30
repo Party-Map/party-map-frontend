@@ -48,8 +48,8 @@ describe("NewPerformerPage", () => {
         expect(screen.getByText("Performer created.")).toBeInTheDocument();
 
         expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(String(fetchMock.mock.calls[0]?.[0])).toBe("http://api.test/api/performers");
-        expect((fetchMock.mock.calls[0]?.[1] as RequestInit | undefined)?.method).toBe("POST");
+        expect(fetchMock.requests[0]?.url).toBe("http://api.test/api/performers");
+        expect(fetchMock.requests[0]?.method).toBe("POST");
         expect(requestBody(fetchMock)).toEqual({
             name: "DJ New",
             genre: "house",

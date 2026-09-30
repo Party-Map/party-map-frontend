@@ -1,7 +1,7 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { api } from "@/api/client";
+import { fetchPlaces } from "@/api/places";
 import { ANONYMOUS, authenticatedSnapshot, createMockAuthClient, mockApi } from "@/test/helpers";
 
 import type { AuthClient, AuthSnapshot } from "./keycloak";
@@ -154,19 +154,17 @@ describe("AuthProvider", () => {
     it("wires the token provider so API calls carry the bearer token", async () => {
         renderAuth(createMockAuthClient(authenticatedSnapshot()));
         await waitFor(() => expect(status()).toHaveTextContent("authenticated"));
-        const fetchMock = mockApi({ "GET /api/ping": { ok: true } });
-        await expect(api.get("/ping")).resolves.toEqual({ ok: true });
-        const init = fetchMock.mock.calls[0]?.[1] as RequestInit | undefined;
-        expect(init?.headers).toMatchObject({ Authorization: "Bearer test-token" });
+        const fetchMock = mockApi({ "GET /api/places": [] });
+        await expect(fetchPlaces()).resolves.toEqual([]);
+        expect(fetchMock.requests[0]?.headers.get("Authorization")).toBe("Bearer test-token");
     });
 
     it("sends no bearer token for anonymous visitors", async () => {
         renderAuth(createMockAuthClient());
         await waitFor(() => expect(status()).toHaveTextContent("anonymous"));
-        const fetchMock = mockApi({ "GET /api/ping": { ok: true } });
-        await api.get("/ping");
-        const init = fetchMock.mock.calls[0]?.[1] as RequestInit | undefined;
-        expect(init?.headers).not.toHaveProperty("Authorization");
+        const fetchMock = mockApi({ "GET /api/places": [] });
+        await fetchPlaces();
+        expect(fetchMock.requests[0]?.headers.has("Authorization")).toBe(false);
     });
 });
 

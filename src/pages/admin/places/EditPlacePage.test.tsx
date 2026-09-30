@@ -97,10 +97,8 @@ describe("EditPlacePage", () => {
         expect(await screen.findByText("other page")).toBeInTheDocument();
         expect(screen.getByText("Place saved.")).toBeInTheDocument();
 
-        const putIndex = fetchMock.mock.calls.findIndex(
-            ([, init]) => (init as RequestInit | undefined)?.method === "PUT",
-        );
-        expect(String(fetchMock.mock.calls[putIndex]?.[0])).toBe("http://api.test/api/places/place-1");
+        const putIndex = fetchMock.requests.findIndex((request) => request.method === "PUT");
+        expect(fetchMock.requests[putIndex]?.url).toBe("http://api.test/api/places/place-1");
         expect(requestBody(fetchMock, putIndex)).toEqual({
             name: "A38 Hajó Renamed",
             address: place.address,
@@ -132,10 +130,8 @@ describe("EditPlacePage", () => {
         expect(screen.getByText("Invitation accepted.")).toBeInTheDocument();
         expect(screen.getByRole("button", { name: "Accept" })).toBeDisabled();
         expect(screen.getByRole("button", { name: "Reject" })).toBeEnabled();
-        const respondCall = fetchMock.mock.calls.find(([url]) => String(url).includes("/respond"));
-        expect(String(respondCall?.[0])).toBe(
-            "http://api.test/api/places/place-1/invitations/plan-1/respond?state=accept",
-        );
-        expect((respondCall?.[1] as RequestInit | undefined)?.method).toBe("PUT");
+        const respondCall = fetchMock.requests.find((request) => request.url.includes("/respond"));
+        expect(respondCall?.url).toBe("http://api.test/api/places/place-1/invitations/plan-1/respond?state=accept");
+        expect(respondCall?.method).toBe("PUT");
     });
 });

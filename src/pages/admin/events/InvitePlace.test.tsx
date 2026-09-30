@@ -55,9 +55,11 @@ describe("InvitePlace", () => {
         await user.click(screen.getByRole("button", { name: "Send Invitation" }));
 
         await waitFor(() => expect(onChanged).toHaveBeenCalledTimes(1));
-        expect(fetchMock).toHaveBeenCalledWith(
-            "http://api.test/api/event-plan/plan-1/invite-place/place-1",
-            expect.objectContaining({ method: "PUT" }),
+        expect(fetchMock.requests).toContainEqual(
+            expect.objectContaining({
+                method: "PUT",
+                url: "http://api.test/api/event-plan/plan-1/invite-place/place-1",
+            }),
         );
         expect(screen.getByText("Invitation sent.")).toBeInTheDocument();
         expect(screen.getByRole("button", { name: "Send Invitation" })).toBeEnabled();

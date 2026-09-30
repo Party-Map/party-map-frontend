@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 
 import type { EventPlanLineupInvitation, Performer } from "@/api/types";
 import { eventPlan, performer } from "@/test/fixtures";
-import { mockApi, renderWithProviders } from "@/test/helpers";
+import { mockApi, renderWithProviders, type SentRequest } from "@/test/helpers";
 
 import { LineupEditor } from "./LineupEditor";
 
@@ -116,8 +116,8 @@ describe("LineupEditor", () => {
     it("sends the invitation and locks the row while it is pending", async () => {
         let body: unknown;
         const { user } = await renderEditor({
-            [ADD]: (init: RequestInit | undefined) => {
-                body = JSON.parse(init?.body as string);
+            [ADD]: (request: SentRequest) => {
+                body = request.body;
                 return null;
             },
         });
@@ -132,7 +132,6 @@ describe("LineupEditor", () => {
                 performerId: "performer-1",
                 startTime: "2030-07-01T18:00",
                 endTime: "2030-07-01T22:00",
-                state: "PENDING",
             }),
         );
         expect(at(performerSelects(), 0)).toBeDisabled();
@@ -180,9 +179,11 @@ describe("LineupEditor", () => {
         await user.click(at(removeButtons(), 0));
 
         await waitFor(() => expect(screen.queryByRole("combobox", { name: "Performer" })).not.toBeInTheDocument());
-        expect(fetchMock).toHaveBeenCalledWith(
-            "http://api.test/api/event-plan/plan-1/lineup-invitation/performer-1",
-            expect.objectContaining({ method: "DELETE" }),
+        expect(fetchMock.requests).toContainEqual(
+            expect.objectContaining({
+                method: "DELETE",
+                url: "http://api.test/api/event-plan/plan-1/lineup-invitation/performer-1",
+            }),
         );
     });
 

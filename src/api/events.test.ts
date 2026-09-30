@@ -1,7 +1,5 @@
-import type { Mock } from "vitest";
-
 import { event, upcoming } from "@/test/fixtures";
-import { mockApi, requestBody } from "@/test/helpers";
+import { type ApiMock, mockApi, requestBody } from "@/test/helpers";
 
 import {
     fetchEvent,
@@ -14,11 +12,8 @@ import type { OwnedEventListItem } from "./types";
 
 const BASE = "http://api.test/api";
 
-function sentRequests(fetchMock: Mock): string[] {
-    return fetchMock.mock.calls.map((call) => {
-        const [url, init] = call as [unknown, RequestInit | undefined];
-        return `${init?.method ?? "GET"} ${String(url)}`;
-    });
+function sentRequests(fetchMock: ApiMock): string[] {
+    return fetchMock.requests.map((request) => `${request.method} ${request.url}`);
 }
 
 describe("events api", () => {

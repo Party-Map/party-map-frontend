@@ -1,7 +1,5 @@
-import type { Mock } from "vitest";
-
 import { performer } from "@/test/fixtures";
-import { mockApi, requestBody } from "@/test/helpers";
+import { type ApiMock, mockApi, requestBody } from "@/test/helpers";
 
 import {
     createPerformer,
@@ -16,11 +14,8 @@ import type { PerformerInvitationRequest, PerformerPayload } from "./types";
 
 const BASE = "http://api.test/api";
 
-function sentRequests(fetchMock: Mock): string[] {
-    return fetchMock.mock.calls.map((call) => {
-        const [url, init] = call as [unknown, RequestInit | undefined];
-        return `${init?.method ?? "GET"} ${String(url)}`;
-    });
+function sentRequests(fetchMock: ApiMock): string[] {
+    return fetchMock.requests.map((request) => `${request.method} ${request.url}`);
 }
 
 const payload: PerformerPayload = {
@@ -61,6 +56,7 @@ describe("performers api", () => {
     it("reads and answers invitations", async () => {
         const invitation: PerformerInvitationRequest = {
             eventPlanId: "plan-1",
+            performer,
             eventPlanTitle: "Summer Opening",
             state: "PENDING",
             startTime: "2030-07-01T20:00:00",

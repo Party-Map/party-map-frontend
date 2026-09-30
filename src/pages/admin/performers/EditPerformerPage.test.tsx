@@ -12,6 +12,7 @@ import { EditPerformerPage } from "./EditPerformerPage";
 const manager = authenticatedSnapshot([Role.PERFORMER_MANAGER]);
 const request: PerformerInvitationRequest = {
     eventPlanId: "plan-1",
+    performer,
     eventPlanTitle: "Summer Opening",
     state: "PENDING",
     startTime: "2030-07-01T22:00:00",
@@ -96,10 +97,8 @@ describe("EditPerformerPage", () => {
         expect(await screen.findByText("other page")).toBeInTheDocument();
         expect(screen.getByText("Performer saved.")).toBeInTheDocument();
 
-        const putIndex = fetchMock.mock.calls.findIndex(
-            ([, init]) => (init as RequestInit | undefined)?.method === "PUT",
-        );
-        expect(String(fetchMock.mock.calls[putIndex]?.[0])).toBe("http://api.test/api/performers/performer-1");
+        const putIndex = fetchMock.requests.findIndex((request) => request.method === "PUT");
+        expect(fetchMock.requests[putIndex]?.url).toBe("http://api.test/api/performers/performer-1");
         expect(requestBody(fetchMock, putIndex)).toEqual({
             name: performer.name,
             genre: "minimal",
@@ -128,10 +127,10 @@ describe("EditPerformerPage", () => {
         expect(screen.getByText("Invitation rejected.")).toBeInTheDocument();
         expect(screen.getByRole("button", { name: "Reject" })).toBeDisabled();
         expect(screen.getByRole("button", { name: "Accept" })).toBeEnabled();
-        const respondCall = fetchMock.mock.calls.find(([url]) => String(url).includes("/respond"));
-        expect(String(respondCall?.[0])).toBe(
+        const respondCall = fetchMock.requests.find((request) => request.url.includes("/respond"));
+        expect(respondCall?.url).toBe(
             "http://api.test/api/performers/performer-1/invitations/plan-1/respond?state=reject",
         );
-        expect((respondCall?.[1] as RequestInit | undefined)?.method).toBe("PUT");
+        expect(respondCall?.method).toBe("PUT");
     });
 });

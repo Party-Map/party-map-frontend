@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import type { ComponentProps } from "react";
 
 import type { AuthSnapshot } from "@/auth/keycloak";
-import { ANONYMOUS, authenticatedSnapshot, mockApi, renderWithProviders } from "@/test/helpers";
+import { ANONYMOUS, type ApiMock, authenticatedSnapshot, mockApi, renderWithProviders } from "@/test/helpers";
 
 import { LikeButton } from "./LikeButton";
 
@@ -27,11 +27,9 @@ function renderLike(props: Partial<Props> = {}, auth: AuthSnapshot = authenticat
 }
 
 function sentRequest(index = 0) {
-    const call = (globalThis.fetch as unknown as { mock: { calls: [unknown, RequestInit | undefined][] } }).mock.calls[
-        index
-    ];
-    if (!call) throw new Error(`fetch call ${index} is missing`);
-    return `${call[1]?.method ?? "GET"} ${String(call[0])}`;
+    const request = (globalThis.fetch as ApiMock).requests[index];
+    if (!request) throw new Error(`request ${index} is missing`);
+    return `${request.method} ${request.url}`;
 }
 
 describe("LikeButton", () => {

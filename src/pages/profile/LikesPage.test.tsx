@@ -56,7 +56,7 @@ describe("LikesPage", () => {
             "/api/places/liked-places",
             "/api/performers/liked-performers",
         ]) {
-            expect(fetchMock).toHaveBeenCalledWith(`http://api.test${path}`, expect.anything());
+            expect(fetchMock.requests.map((request) => request.url)).toContain(`http://api.test${path}`);
         }
 
         await userEvent.click(screen.getByRole("tab", { name: "Places" }));

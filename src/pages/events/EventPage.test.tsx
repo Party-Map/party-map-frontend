@@ -28,14 +28,14 @@ describe("EventPage", () => {
         expect(screen.getByRole("link", { name: performer.name })).toHaveAttribute("href", "/performers/performer-1");
     });
 
-    it("tolerates a missing venue and omits price and lineup when absent", async () => {
-        mockApi({ "GET /api/events/event-1": { ...event, price: undefined, lineupItems: undefined } });
+    it("tolerates a missing venue, omits a missing price and says when no lineup is announced", async () => {
+        mockApi({ "GET /api/events/event-1": { ...event, price: undefined, lineupItems: [] } });
         renderWithProviders(<EventPage />, ROUTE);
 
         await screen.findByRole("heading", { level: 1, name: event.title });
         expect(screen.queryByText(/^at /)).not.toBeInTheDocument();
         expect(screen.queryByText(/^Price:/)).not.toBeInTheDocument();
-        expect(screen.queryByRole("heading", { name: "Lineup & Set Times" })).not.toBeInTheDocument();
+        expect(screen.getByText("No lineup announced yet.")).toBeInTheDocument();
     });
 
     it("renders the 404 page when the event does not exist", async () => {
@@ -72,6 +72,8 @@ describe("EventPage", () => {
         renderWithProviders(<EventPage />, { ...ROUTE, auth: authenticatedSnapshot() });
 
         expect(await screen.findByRole("button", { name: "Add to favorites" })).toBeInTheDocument();
-        expect(fetchMock).toHaveBeenCalledWith("http://api.test/api/me/likes/events/event-1", expect.anything());
+        expect(fetchMock.requests.map((request) => request.url)).toContain(
+            "http://api.test/api/me/likes/events/event-1",
+        );
     });
 });

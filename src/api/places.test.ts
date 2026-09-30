@@ -1,7 +1,5 @@
-import type { Mock } from "vitest";
-
 import { place, place2 } from "@/test/fixtures";
-import { mockApi, requestBody } from "@/test/helpers";
+import { type ApiMock, mockApi, requestBody } from "@/test/helpers";
 
 import {
     createPlace,
@@ -17,11 +15,8 @@ import type { PlaceInvitationRequest, PlacePayload } from "./types";
 
 const BASE = "http://api.test/api";
 
-function sentRequests(fetchMock: Mock): string[] {
-    return fetchMock.mock.calls.map((call) => {
-        const [url, init] = call as [unknown, RequestInit | undefined];
-        return `${init?.method ?? "GET"} ${String(url)}`;
-    });
+function sentRequests(fetchMock: ApiMock): string[] {
+    return fetchMock.requests.map((request) => `${request.method} ${request.url}`);
 }
 
 const payload: PlacePayload = {

@@ -1,203 +1,61 @@
+// The API's shapes, as named in the app. Every type here is an alias of the schema generated from the backend's
+// OpenAPI document (pnpm api:types), never a hand-written copy: when the backend changes, tsc points at the code
+// to update.
+import type { components } from "./schema";
+
+type Schemas = components["schemas"];
+
 export type ID = string;
 
-export interface GeoPoint {
-    latitude: number;
-    longitude: number;
-}
+export type GeoPoint = Schemas["GeoPointDto"];
+export type Link = Schemas["LinkDto"];
+export type LinkType = Link["type"];
+export type EventType = Schemas["EventDto"]["kind"];
+export type InvitationState = Schemas["EventPlanLineupInvitationDto"]["state"];
+export type SearchHitType = Schemas["SearchHitDto"]["type"];
 
-export const LINK_TYPES = ["INSTAGRAM", "FACEBOOK", "TWITTER", "REDDIT", "WEBSITE"] as const;
-export type LinkType = (typeof LINK_TYPES)[number];
-
-export const EVENT_TYPES = ["DISCO", "TECHNO", "FESTIVAL", "JAZZ", "ALTER", "HOME", "PUB"] as const;
-export type EventType = (typeof EVENT_TYPES)[number];
-
-export type SearchHitType = "PLACE" | "EVENT" | "PERFORMER";
-
+/** The liked-thing segment of the /api/me/likes paths. */
 export type LikeTarget = "events" | "places" | "performers";
 
-export type InvitationState = "PENDING" | "ACCEPTED" | "REJECTED";
+// Every value of an enum, in display order. `satisfies Record<…>` makes tsc fail when the API adds or drops one.
+const LINK_TYPE_ORDER = { INSTAGRAM: 0, FACEBOOK: 1, TWITTER: 2, REDDIT: 3, WEBSITE: 4 } satisfies Record<
+    LinkType,
+    number
+>;
+const EVENT_TYPE_ORDER = {
+    DISCO: 0,
+    TECHNO: 1,
+    FESTIVAL: 2,
+    JAZZ: 3,
+    ALTER: 4,
+    HOME: 5,
+    PUB: 6,
+} satisfies Record<EventType, number>;
+export const LINK_TYPES = Object.keys(LINK_TYPE_ORDER) as LinkType[];
+export const EVENT_TYPES = Object.keys(EVENT_TYPE_ORDER) as EventType[];
 
-export interface Link {
-    type: LinkType;
-    url: string;
-}
+export type Place = Schemas["PlaceDto"];
+export type Performer = Schemas["PerformerDto"];
+export type Event = Schemas["EventDto"];
+export type LineupItem = Schemas["EventLineupItemDto"];
+export type EventPlan = Schemas["EventPlanDto"];
+export type EventPlanPlaceInvitation = Schemas["EventPlanPlaceInvitationDto"];
+export type EventPlanLineupInvitation = Schemas["EventPlanLineupInvitationDto"];
 
-export interface Place {
-    id: ID;
-    name: string;
-    location: GeoPoint;
-    address: string;
-    city: string;
-    description: string;
-    image: string;
-    tags: string[];
-    links?: Link[];
-}
+export type LikedEventsGrouped = Schemas["LikedEventsGroupedDto"];
+export type LikeStatus = Schemas["LikeStatusDto"];
+export type UpcomingEventByPlace = Schemas["PlaceUpcomingEventDto"];
+export type SearchHit = Schemas["SearchHitDto"];
+export type SearchResponse = Schemas["SearchResponseDto"];
 
-export interface Performer {
-    id: ID;
-    name: string;
-    genre: string;
-    bio: string;
-    image: string;
-    links?: Link[];
-}
+export type PlaceListItem = Schemas["PlaceAdminListItemDto"];
+export type PerformerListItem = Schemas["PerformerAdminListItemDto"];
+export type OwnedEventListItem = Schemas["EventAdminListItemDto"];
+export type EventPlanListItem = Schemas["EventPlanAdminListItemDto"];
+export type PlaceInvitationRequest = Schemas["EventPlanPlaceInvitationWithDateDto"];
+export type PerformerInvitationRequest = Schemas["EventPlanLineupInvitationForPerformerDto"];
 
-export interface LineupItem {
-    startTime: string;
-    endTime: string;
-    performer: Performer;
-}
-
-export interface Event {
-    id: ID;
-    title: string;
-    placeId: ID;
-    description: string;
-    start: string;
-    end: string;
-    image: string;
-    lineupItems?: LineupItem[];
-    price?: string;
-    kind: EventType;
-    links?: Link[];
-}
-
-export interface LikedEventsGrouped {
-    upcoming: Event[];
-    past: Event[];
-}
-
-export interface UpcomingEventByPlace {
-    placeId: ID;
-    eventId: ID;
-    title: string;
-    image: string | null;
-    start: string;
-    kind: EventType;
-}
-
-export interface LikeStatus {
-    liked: boolean;
-}
-
-export interface SearchHit {
-    id: ID;
-    type: SearchHitType;
-    title: string;
-    subtitle: string;
-    image: string | null;
-    nextEventStart: string | null;
-    placeId: ID | null;
-}
-
-export interface SearchResponse {
-    query: string;
-    hits: SearchHit[];
-}
-
-export interface PlacePayload {
-    name: string;
-    address: string;
-    city: string;
-    location: GeoPoint;
-    description: string;
-    tags: string[];
-    image: string | null;
-    links?: Link[];
-}
-
-export interface PerformerPayload {
-    name: string;
-    genre: string;
-    bio: string;
-    image: string | null;
-    links?: Link[];
-}
-
-export interface EventPlanPayload {
-    title: string;
-    price?: string;
-    kind: EventType;
-    startDateTime: string;
-    endDateTime: string;
-    description: string;
-    image?: string | null;
-    links?: Link[];
-}
-
-export interface PlaceListItem {
-    id: ID;
-    name: string;
-    address: string;
-    city: string;
-}
-
-export interface PerformerListItem {
-    id: ID;
-    name: string;
-}
-
-export interface OwnedEventListItem {
-    id: ID;
-    title: string;
-    start: string;
-    end: string;
-    placeName: string;
-}
-
-export interface EventPlanListItem {
-    id: ID;
-    title: string;
-    startDateTime: string;
-    endDateTime: string;
-}
-
-export interface EventPlanPlaceInvitation {
-    state: InvitationState;
-    place: Place;
-}
-
-export interface EventPlanLineupInvitation {
-    state: InvitationState;
-    startTime: string;
-    endTime: string;
-    performer: Performer;
-}
-
-export interface EventPlan {
-    id: ID;
-    title: string;
-    description: string;
-    startDateTime: string;
-    endDateTime: string;
-    price?: string;
-    kind: EventType;
-    links?: Link[];
-    image?: string | null;
-    placeInvitation: EventPlanPlaceInvitation | null;
-    lineupInvitations: EventPlanLineupInvitation[];
-}
-
-export interface PlaceInvitationRequest {
-    eventPlanId: ID;
-    state: InvitationState;
-    title: string;
-    startDateTime: string;
-    endDateTime: string;
-}
-
-export interface PerformerInvitationRequest {
-    eventPlanId: ID;
-    eventPlanTitle: string;
-    state: InvitationState;
-    startTime: string;
-    endTime: string;
-}
-
-export interface LineupInvitationPayload {
-    performerId: ID;
-    startTime: string;
-    endTime: string;
-    state: InvitationState;
-}
+export type PlacePayload = Schemas["PlaceCreateDto"];
+export type PerformerPayload = Schemas["PerformerCreateDto"];
+export type EventPlanPayload = Schemas["EventPlanCreateDto"];
+export type LineupInvitationPayload = Schemas["EventPlanLineupInvitationCreatePayloadDto"];

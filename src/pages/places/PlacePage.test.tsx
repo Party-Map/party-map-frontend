@@ -19,7 +19,7 @@ describe("PlacePage", () => {
         expect(await screen.findByRole("heading", { level: 1, name: place.name })).toBeInTheDocument();
         expect(screen.getByRole("img", { name: place.name })).toHaveAttribute("src", place.image);
         expect(screen.getByText(`${place.address}, ${place.city}`)).toBeInTheDocument();
-        expect(screen.getByText(place.description)).toBeInTheDocument();
+        expect(screen.getByText(place.description!)).toBeInTheDocument();
         expect(within(screen.getByRole("list", { name: "Tags" })).getAllByRole("listitem")).toHaveLength(3);
         expect(screen.getByRole("link", { name: "Website" })).toHaveAttribute("href", "https://a38.hu");
         expect(screen.getByRole("heading", { name: "Upcoming events" })).toBeInTheDocument();
@@ -69,6 +69,8 @@ describe("PlacePage", () => {
         renderWithProviders(<PlacePage />, { ...ROUTE, auth: authenticatedSnapshot() });
 
         expect(await screen.findByRole("button", { name: "Remove from favorites" })).toBeInTheDocument();
-        expect(fetchMock).toHaveBeenCalledWith("http://api.test/api/me/likes/places/place-1", expect.anything());
+        expect(fetchMock.requests.map((request) => request.url)).toContain(
+            "http://api.test/api/me/likes/places/place-1",
+        );
     });
 });

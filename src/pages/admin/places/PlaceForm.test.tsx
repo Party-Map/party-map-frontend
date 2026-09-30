@@ -46,7 +46,7 @@ describe("PlaceForm", () => {
     it("submits a prefilled place unchanged, without links when there are none", async () => {
         mockApi({});
         const onSubmit = vi.fn(async () => {});
-        const { links: _links, ...withoutLinks } = place;
+        const withoutLinks = { ...place, links: [] };
         renderWithProviders(
             <PlaceForm
                 title="Edit place"

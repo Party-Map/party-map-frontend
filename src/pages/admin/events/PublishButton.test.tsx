@@ -48,9 +48,8 @@ describe("PublishButton", () => {
         await user.click(within(dialog).getByRole("button", { name: "Yes, publish" }));
 
         await waitFor(() => expect(navigate).toHaveBeenCalledWith("/?focus=place-1"));
-        expect(fetchMock).toHaveBeenCalledWith(
-            "http://api.test/api/event-plan/plan-1/publish",
-            expect.objectContaining({ method: "POST" }),
+        expect(fetchMock.requests).toContainEqual(
+            expect.objectContaining({ method: "POST", url: "http://api.test/api/event-plan/plan-1/publish" }),
         );
         expect(screen.getByText("Event plan published successfully!")).toBeInTheDocument();
     });

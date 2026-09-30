@@ -1,12 +1,20 @@
-import { api } from "./client";
-import type { ID, Place, PlaceInvitationRequest, PlaceListItem, PlacePayload } from "./types";
+// Places: the public list and detail, and the owner's CRUD and invitation answers.
+import { client, unwrap } from "./client";
+import type { ID, PlacePayload } from "./types";
 
-export const fetchPlaces = () => api.get<Place[]>("/places");
-export const fetchPlace = (id: ID) => api.get<Place>(`/places/${id}`);
-export const fetchPlaceByEventId = (eventId: ID) => api.get<Place>(`/events/${eventId}/place`);
-export const fetchOwnedPlaces = () => api.get<PlaceListItem[]>("/places/owned-places");
-export const createPlace = (payload: PlacePayload) => api.post<Place>("/places", payload);
-export const updatePlace = (id: ID, payload: PlacePayload) => api.put<Place>(`/places/${id}`, payload);
-export const fetchPlaceInvitations = (id: ID) => api.get<PlaceInvitationRequest[]>(`/places/${id}/invitations`);
+const byId = (id: ID) => ({ params: { path: { id } } });
+
+export const fetchPlaces = () => unwrap(client.GET("/api/places"));
+export const fetchPlace = (id: ID) => unwrap(client.GET("/api/places/{id}", byId(id)));
+export const fetchPlaceByEventId = (eventId: ID) => unwrap(client.GET("/api/events/{id}/place", byId(eventId)));
+export const fetchOwnedPlaces = () => unwrap(client.GET("/api/places/owned-places"));
+export const createPlace = (payload: PlacePayload) => unwrap(client.POST("/api/places", { body: payload }));
+export const updatePlace = (id: ID, payload: PlacePayload) =>
+    unwrap(client.PUT("/api/places/{id}", { ...byId(id), body: payload }));
+export const fetchPlaceInvitations = (id: ID) => unwrap(client.GET("/api/places/{id}/invitations", byId(id)));
 export const respondToPlaceInvitation = (id: ID, eventPlanId: ID, answer: "accept" | "reject") =>
-    api.put<undefined>(`/places/${id}/invitations/${eventPlanId}/respond?state=${answer}`);
+    unwrap(
+        client.PUT("/api/places/{id}/invitations/{eventPlanId}/respond", {
+            params: { path: { id, eventPlanId }, query: { state: answer } },
+        }),
+    );

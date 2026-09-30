@@ -21,6 +21,7 @@ export const place2: Place = {
     description: "Open air venue.",
     image: "https://images.example/durer.jpg",
     tags: ["garden"],
+    links: [],
 };
 
 export const performer: Performer = {

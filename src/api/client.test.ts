@@ -1,114 +1,97 @@
-import type { Mock } from "vitest";
+import { mockApi } from "@/test/helpers";
 
-import { mockApi, requestBody } from "@/test/helpers";
-
-import { api, ApiError, setTokenProvider } from "./client";
-
-interface Sent {
-    url: string;
-    method: string | undefined;
-    headers: Record<string, string>;
-    body: unknown;
-}
-
-function sent(fetchMock: Mock, index = 0): Sent {
-    const call = fetchMock.mock.calls[index] as [unknown, RequestInit] | undefined;
-    if (!call) throw new Error(`fetch call ${index} is missing`);
-    const [url, init] = call;
-    return {
-        url: String(url),
-        method: init.method,
-        headers: (init.headers ?? {}) as Record<string, string>,
-        body: init.body,
-    };
-}
+import { ApiError, client, messageOf, setTokenProvider, unwrap } from "./client";
 
 afterEach(() => {
-    setTokenProvider(async () => null);
+    setTokenProvider(() => Promise.resolve(null));
 });
 
-describe("api client", () => {
-    it("builds the URL from the base URL and strips leading slashes", async () => {
+describe("client", () => {
+    it("calls the API under the configured base, with the schema's /api paths", async () => {
         const fetchMock = mockApi({ "GET /api/places": [] });
-        await api.get("/places");
-        await api.get("places");
-        await api.get("///places");
-        expect(fetchMock.mock.calls.map((call) => String(call[0]))).toEqual([
-            "http://api.test/api/places",
-            "http://api.test/api/places",
-            "http://api.test/api/places",
-        ]);
+        await unwrap(client.GET("/api/places"));
+        expect(fetchMock.requests[0]?.url).toBe("http://api.test/api/places");
     });
 
-    it("sends only an Accept header without a token", async () => {
+    it("sends no Authorization header without a token", async () => {
         const fetchMock = mockApi({ "GET /api/places": [] });
-        await api.get("/places");
-        const { method, headers, body } = sent(fetchMock);
-        expect(method).toBe("GET");
-        expect(headers).toEqual({ Accept: "application/json" });
-        expect(body).toBeUndefined();
+        await unwrap(client.GET("/api/places"));
+        expect(fetchMock.requests[0]?.headers.has("Authorization")).toBe(false);
     });
 
     it("adds a Bearer header from the token provider", async () => {
-        setTokenProvider(async () => "abc.def");
-        const fetchMock = mockApi({ "GET /api/me": {} });
-        await api.get("/me");
-        expect(sent(fetchMock).headers.Authorization).toBe("Bearer abc.def");
+        setTokenProvider(() => Promise.resolve("abc.def"));
+        const fetchMock = mockApi({ "GET /api/places": [] });
+        await unwrap(client.GET("/api/places"));
+        expect(fetchMock.requests[0]?.headers.get("Authorization")).toBe("Bearer abc.def");
     });
 
-    it("serialises JSON bodies for POST and PUT", async () => {
-        const fetchMock = mockApi({ "POST /api/places": { id: "p1" }, "PUT /api/places/p1": { id: "p1", v: 2 } });
-        await expect(api.post("/places", { name: "A38" })).resolves.toEqual({ id: "p1" });
-        await expect(api.put("/places/p1", { name: "A38" })).resolves.toEqual({ id: "p1", v: 2 });
-        const post = sent(fetchMock, 0);
-        expect(post.method).toBe("POST");
-        expect(post.headers["Content-Type"]).toBe("application/json");
-        expect(post.body).toBe('{"name":"A38"}');
-        expect(requestBody(fetchMock, 0)).toEqual({ name: "A38" });
-        const put = sent(fetchMock, 1);
-        expect(put.method).toBe("PUT");
-        expect(put.headers["Content-Type"]).toBe("application/json");
-        expect(requestBody(fetchMock, 1)).toEqual({ name: "A38" });
+    it("sends typed JSON bodies", async () => {
+        const fetchMock = mockApi({ "POST /api/event-plan/plan-1/add-lineup-invitation": "OK" });
+        const payload = { performerId: "p1", startTime: "2030-01-01T20:00", endTime: "2030-01-01T22:00" };
+        await unwrap(
+            client.POST("/api/event-plan/{id}/add-lineup-invitation", {
+                params: { path: { id: "plan-1" } },
+                body: payload,
+            }),
+        );
+        expect(fetchMock.requests[0]?.method).toBe("POST");
+        expect(fetchMock.requests[0]?.body).toEqual(payload);
     });
+});
 
-    it("omits the body and Content-Type when no body is given", async () => {
-        const fetchMock = mockApi({
-            "POST /api/event-plan/1/publish": null,
-            "PUT /api/me/likes/events/1": null,
-            "DELETE /api/me/likes/events/1": null,
+describe("unwrap", () => {
+    it("resolves with the parsed data", async () => {
+        mockApi({ "GET /api/places/p1": { id: "p1" } });
+        await expect(unwrap(client.GET("/api/places/{id}", { params: { path: { id: "p1" } } }))).resolves.toEqual({
+            id: "p1",
         });
-        await expect(api.post("/event-plan/1/publish")).resolves.toBeUndefined();
-        await expect(api.put("/me/likes/events/1")).resolves.toBeUndefined();
-        await expect(api.delete("/me/likes/events/1")).resolves.toBeUndefined();
-        for (const index of [0, 1, 2]) {
-            const call = sent(fetchMock, index);
-            expect(call.body).toBeUndefined();
-            expect(call.headers).not.toHaveProperty("Content-Type");
-        }
-        expect(sent(fetchMock, 0).method).toBe("POST");
-        expect(sent(fetchMock, 1).method).toBe("PUT");
-        expect(sent(fetchMock, 2).method).toBe("DELETE");
     });
 
-    it("resolves undefined for a 204 and for an empty 200 body", async () => {
-        mockApi({ "DELETE /api/things/1": null, "GET /api/empty": () => new Response("", { status: 200 }) });
-        await expect(api.delete("/things/1")).resolves.toBeUndefined();
-        await expect(api.get("/empty")).resolves.toBeUndefined();
+    it("resolves with nothing for an empty response", async () => {
+        mockApi({ "DELETE /api/event-plan/plan-1/lineup-invitation/p1": null });
+        const call = client.DELETE("/api/event-plan/{id}/lineup-invitation/{performerId}", {
+            params: { path: { id: "plan-1", performerId: "p1" } },
+        });
+        await expect(unwrap(call)).resolves.toBeUndefined();
     });
 
-    it("throws an ApiError carrying the status for non-2xx answers", async () => {
-        mockApi({ "GET /api/places/p1": () => new Response("gone", { status: 410 }) });
-        const error = await api.get("/places/p1").then(
-            () => null,
+    it("rejects with an ApiError carrying the status, path and body", async () => {
+        mockApi({
+            "GET /api/places/missing": () =>
+                new Response(JSON.stringify({ status: 404, error: "Not Found" }), {
+                    status: 404,
+                    headers: { "Content-Type": "application/json" },
+                }),
+        });
+        const error = await unwrap(client.GET("/api/places/{id}", { params: { path: { id: "missing" } } })).catch(
             (e: unknown) => e,
         );
         expect(error).toBeInstanceOf(ApiError);
-        expect(error).toBeInstanceOf(Error);
-        expect(error).toMatchObject({ name: "ApiError", status: 410, message: "GET /api/places/p1 failed with 410" });
+        expect(error).toMatchObject({ status: 404, body: { status: 404, error: "Not Found" } });
+        expect((error as ApiError).message).toBe("Request failed with 404");
     });
 
-    it("reports unknown routes as 404", async () => {
-        mockApi({});
-        await expect(api.get("/missing")).rejects.toMatchObject({ status: 404 });
+    it("names the path when the response knows its URL", async () => {
+        const response = new Response(null, { status: 500 });
+        Object.defineProperty(response, "url", { value: "http://api.test/api/places" });
+        const error = await unwrap(Promise.resolve({ response })).catch((e: unknown) => e);
+        expect((error as ApiError).message).toBe("Request to /api/places failed with 500");
+    });
+});
+
+describe("messageOf", () => {
+    it("prefers the problem detail, then its title", () => {
+        expect(
+            messageOf(new ApiError(400, "x", { detail: "Name is required", title: "Bad Request" }), "fallback"),
+        ).toBe("Name is required");
+        expect(messageOf(new ApiError(400, "x", { detail: 3, title: "Bad Request" }), "fallback")).toBe("Bad Request");
+    });
+
+    it("falls back for anything else", () => {
+        expect(messageOf(new ApiError(500, "x", { error: "Internal Server Error" }), "fallback")).toBe("fallback");
+        expect(messageOf(new ApiError(500, "x", "plain text"), "fallback")).toBe("fallback");
+        expect(messageOf(new ApiError(500, "x"), "fallback")).toBe("fallback");
+        expect(messageOf(new Error("boom"), "fallback")).toBe("fallback");
     });
 });

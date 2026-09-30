@@ -31,7 +31,7 @@ const EMPTY: FormState = { name: "", genre: "", bio: "", image: "", links: [] };
 
 function toFormState(values: PerformerFormValues | undefined): FormState {
     if (!values) return EMPTY;
-    return { name: values.name, genre: values.genre, bio: values.bio, image: values.image, links: values.links ?? [] };
+    return { name: values.name, genre: values.genre, bio: values.bio, image: values.image ?? "", links: values.links };
 }
 
 /** Create/edit form for a performer. */

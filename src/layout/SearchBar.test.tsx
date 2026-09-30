@@ -2,12 +2,11 @@ import { act, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { useLocation } from "react-router";
-import type { Mock } from "vitest";
 
 import type { SearchHit } from "@/api/types";
 import { SEARCH_DEBOUNCE_MS } from "@/lib/constants";
 import { event, performer, place, place2 } from "@/test/fixtures";
-import { mockApi, renderWithProviders } from "@/test/helpers";
+import { type ApiMock, mockApi, renderWithProviders } from "@/test/helpers";
 
 import { useHighlight } from "./HighlightProvider";
 import { hrefForHit, placeIdsOf, SearchBar } from "./SearchBar";
@@ -107,7 +106,7 @@ async function setup({ route = "/", initialQuery, routes = DEFAULT_ROUTES }: Set
 
 const highlight = () => screen.getByTestId("highlight").textContent;
 const location = () => screen.getByTestId("location").textContent;
-const requestedUrls = (fetchMock: Mock) => fetchMock.mock.calls.map((call) => String(call[0]));
+const requestedUrls = (fetchMock: ApiMock) => fetchMock.requests.map((request) => request.url);
 const listbox = () => screen.queryByRole("listbox", { name: "Search results" });
 
 async function typeAndWait(user: ReturnType<typeof userEvent.setup>, input: HTMLElement, text = "techno") {

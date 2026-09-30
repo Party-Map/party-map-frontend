@@ -46,7 +46,7 @@ describe("AddressSearchInput", () => {
             "Váci út, Budapest, Hungary",
         ]);
         expect(fetchMock).toHaveBeenCalledTimes(1);
-        const url = new URL(String(fetchMock.mock.calls[0]?.[0]));
+        const url = new URL(fetchMock.requests[0]?.url ?? "");
         expect(url.origin + url.pathname).toBe("https://nominatim.openstreetmap.org/search");
         expect(url.searchParams.get("q")).toBe("Váci");
         expect(screen.getByRole("combobox", { name: "Address" })).toHaveAttribute("aria-expanded", "true");

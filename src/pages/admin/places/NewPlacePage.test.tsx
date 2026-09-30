@@ -63,10 +63,8 @@ describe("NewPlacePage", () => {
         expect(await screen.findByText("other page")).toBeInTheDocument();
         expect(screen.getByText("Place created.")).toBeInTheDocument();
 
-        const postIndex = fetchMock.mock.calls.findIndex(
-            ([, init]) => (init as RequestInit | undefined)?.method === "POST",
-        );
-        expect(String(fetchMock.mock.calls[postIndex]?.[0])).toBe("http://api.test/api/places");
+        const postIndex = fetchMock.requests.findIndex((request) => request.method === "POST");
+        expect(fetchMock.requests[postIndex]?.url).toBe("http://api.test/api/places");
         expect(requestBody(fetchMock, postIndex)).toEqual({
             name: "New Bar",
             address: "Váci utca 5",

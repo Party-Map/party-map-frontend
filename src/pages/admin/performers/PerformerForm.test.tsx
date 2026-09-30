@@ -56,7 +56,7 @@ describe("PerformerForm", () => {
 
     it("treats a performer without links as having none", async () => {
         const onSubmit = vi.fn(async () => {});
-        const { links: _links, ...withoutLinks } = performer;
+        const withoutLinks = { ...performer, links: [] };
         renderWithProviders(
             <PerformerForm
                 title="Edit performer"

@@ -119,7 +119,7 @@ function LineupItems({ plan, performers, initialInvitations }: LineupItemsProps)
         setError(null);
         updateRow(row.key, { ...times, state: "PENDING" });
         try {
-            await addLineupInvitation(plan.id, { performerId: row.performerId, ...times, state: "PENDING" });
+            await addLineupInvitation(plan.id, { performerId: row.performerId, ...times });
         } catch {
             updateRow(row.key, { state: row.state });
             setError("Failed to send the invitation.");
