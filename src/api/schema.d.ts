@@ -44,7 +44,7 @@ export interface paths {
             cookie?: never;
         };
         get: operations["getPerformer"];
-        put: operations["updatePlace_1"];
+        put: operations["updatePerformer"];
         post?: never;
         delete?: never;
         options?: never;
@@ -60,7 +60,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["respondToInvitation"];
+        put: operations["respondToPerformerInvitation"];
         post?: never;
         delete?: never;
         options?: never;
@@ -124,7 +124,7 @@ export interface paths {
             cookie?: never;
         };
         get: operations["getEventPlan"];
-        put: operations["updatePlace_2"];
+        put: operations["updateEventPlan"];
         post?: never;
         delete?: never;
         options?: never;
@@ -140,7 +140,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["invitePlaceForEventPlan"];
+        put: operations["invitePlace"];
         post?: never;
         delete?: never;
         options?: never;
@@ -173,7 +173,7 @@ export interface paths {
         };
         get: operations["getPerformers"];
         put?: never;
-        post: operations["createPlace_1"];
+        post: operations["createPerformer"];
         delete?: never;
         options?: never;
         head?: never;
@@ -189,7 +189,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["createPlace_2"];
+        post: operations["createEventPlan"];
         delete?: never;
         options?: never;
         head?: never;
@@ -212,22 +212,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/event-plan/{id}/place-invitation/{placeId}/set-status": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["setPlaceInvitationStatus"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/event-plan/{id}/add-lineup-invitation": {
         parameters: {
             query?: never;
@@ -237,7 +221,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["addLineupInvitationToEventPlan"];
+        post: operations["addLineupInvitation"];
         delete?: never;
         options?: never;
         head?: never;
@@ -283,7 +267,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getMyPlacesForUser"];
+        get: operations["getOwnedPlaces"];
         put?: never;
         post?: never;
         delete?: never;
@@ -299,7 +283,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getLikedPlacesForUser"];
+        get: operations["getLikedPlaces"];
         put?: never;
         post?: never;
         delete?: never;
@@ -315,7 +299,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getInvitationsForPerformer"];
+        get: operations["getPerformerInvitations"];
         put?: never;
         post?: never;
         delete?: never;
@@ -331,7 +315,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getOwnedPerformersForUser"];
+        get: operations["getOwnedPerformers"];
         put?: never;
         post?: never;
         delete?: never;
@@ -347,7 +331,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getLikedPerformersForUser"];
+        get: operations["getLikedPerformers"];
         put?: never;
         post?: never;
         delete?: never;
@@ -395,7 +379,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getPlaceByEventId"];
+        get: operations["getEventPlace"];
         put?: never;
         post?: never;
         delete?: never;
@@ -411,7 +395,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getUpcomingEventsForAllPlaces"];
+        get: operations["getUpcomingEvents"];
         put?: never;
         post?: never;
         delete?: never;
@@ -427,7 +411,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getMyOwnedEventsForUser"];
+        get: operations["getOwnedEvents"];
         put?: never;
         post?: never;
         delete?: never;
@@ -443,7 +427,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getLikedEventsForUser"];
+        get: operations["getLikedEvents"];
         put?: never;
         post?: never;
         delete?: never;
@@ -459,7 +443,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getLineupInvitationsForEventPlan"];
+        get: operations["getLineupInvitations"];
         put?: never;
         post?: never;
         delete?: never;
@@ -475,7 +459,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getPlacesForEventPlanList"];
+        get: operations["getPlacesToInvite"];
         put?: never;
         post?: never;
         delete?: never;
@@ -491,7 +475,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["getMyOwnedEventsForUser_1"];
+        get: operations["getOwnedEventPlans"];
         put?: never;
         post?: never;
         delete?: never;
@@ -510,7 +494,7 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        delete: operations["deleteLineupInvitationToEventPlan"];
+        delete: operations["deleteLineupInvitation"];
         options?: never;
         head?: never;
         patch?: never;
@@ -796,6 +780,7 @@ export interface operations {
     respondToPlaceInvitation: {
         parameters: {
             query: {
+                /** @description accept or reject */
                 state: string;
             };
             header?: never;
@@ -807,14 +792,12 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
-            200: {
+            /** @description No Content */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": "100 CONTINUE" | "101 SWITCHING_PROTOCOLS" | "102 PROCESSING" | "103 EARLY_HINTS" | "103 CHECKPOINT" | "200 OK" | "201 CREATED" | "202 ACCEPTED" | "203 NON_AUTHORITATIVE_INFORMATION" | "204 NO_CONTENT" | "205 RESET_CONTENT" | "206 PARTIAL_CONTENT" | "207 MULTI_STATUS" | "208 ALREADY_REPORTED" | "226 IM_USED" | "300 MULTIPLE_CHOICES" | "301 MOVED_PERMANENTLY" | "302 FOUND" | "302 MOVED_TEMPORARILY" | "303 SEE_OTHER" | "304 NOT_MODIFIED" | "305 USE_PROXY" | "307 TEMPORARY_REDIRECT" | "308 PERMANENT_REDIRECT" | "400 BAD_REQUEST" | "401 UNAUTHORIZED" | "402 PAYMENT_REQUIRED" | "403 FORBIDDEN" | "404 NOT_FOUND" | "405 METHOD_NOT_ALLOWED" | "406 NOT_ACCEPTABLE" | "407 PROXY_AUTHENTICATION_REQUIRED" | "408 REQUEST_TIMEOUT" | "409 CONFLICT" | "410 GONE" | "411 LENGTH_REQUIRED" | "412 PRECONDITION_FAILED" | "413 PAYLOAD_TOO_LARGE" | "413 REQUEST_ENTITY_TOO_LARGE" | "414 URI_TOO_LONG" | "414 REQUEST_URI_TOO_LONG" | "415 UNSUPPORTED_MEDIA_TYPE" | "416 REQUESTED_RANGE_NOT_SATISFIABLE" | "417 EXPECTATION_FAILED" | "418 I_AM_A_TEAPOT" | "419 INSUFFICIENT_SPACE_ON_RESOURCE" | "420 METHOD_FAILURE" | "421 DESTINATION_LOCKED" | "422 UNPROCESSABLE_ENTITY" | "423 LOCKED" | "424 FAILED_DEPENDENCY" | "425 TOO_EARLY" | "426 UPGRADE_REQUIRED" | "428 PRECONDITION_REQUIRED" | "429 TOO_MANY_REQUESTS" | "431 REQUEST_HEADER_FIELDS_TOO_LARGE" | "451 UNAVAILABLE_FOR_LEGAL_REASONS" | "500 INTERNAL_SERVER_ERROR" | "501 NOT_IMPLEMENTED" | "502 BAD_GATEWAY" | "503 SERVICE_UNAVAILABLE" | "504 GATEWAY_TIMEOUT" | "505 HTTP_VERSION_NOT_SUPPORTED" | "506 VARIANT_ALSO_NEGOTIATES" | "507 INSUFFICIENT_STORAGE" | "508 LOOP_DETECTED" | "509 BANDWIDTH_LIMIT_EXCEEDED" | "510 NOT_EXTENDED" | "511 NETWORK_AUTHENTICATION_REQUIRED";
-                };
+                content?: never;
             };
         };
     };
@@ -840,7 +823,7 @@ export interface operations {
             };
         };
     };
-    updatePlace_1: {
+    updatePerformer: {
         parameters: {
             query?: never;
             header?: never;
@@ -866,9 +849,10 @@ export interface operations {
             };
         };
     };
-    respondToInvitation: {
+    respondToPerformerInvitation: {
         parameters: {
             query: {
+                /** @description accept or reject */
                 state: string;
             };
             header?: never;
@@ -880,14 +864,12 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
-            200: {
+            /** @description No Content */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": "100 CONTINUE" | "101 SWITCHING_PROTOCOLS" | "102 PROCESSING" | "103 EARLY_HINTS" | "103 CHECKPOINT" | "200 OK" | "201 CREATED" | "202 ACCEPTED" | "203 NON_AUTHORITATIVE_INFORMATION" | "204 NO_CONTENT" | "205 RESET_CONTENT" | "206 PARTIAL_CONTENT" | "207 MULTI_STATUS" | "208 ALREADY_REPORTED" | "226 IM_USED" | "300 MULTIPLE_CHOICES" | "301 MOVED_PERMANENTLY" | "302 FOUND" | "302 MOVED_TEMPORARILY" | "303 SEE_OTHER" | "304 NOT_MODIFIED" | "305 USE_PROXY" | "307 TEMPORARY_REDIRECT" | "308 PERMANENT_REDIRECT" | "400 BAD_REQUEST" | "401 UNAUTHORIZED" | "402 PAYMENT_REQUIRED" | "403 FORBIDDEN" | "404 NOT_FOUND" | "405 METHOD_NOT_ALLOWED" | "406 NOT_ACCEPTABLE" | "407 PROXY_AUTHENTICATION_REQUIRED" | "408 REQUEST_TIMEOUT" | "409 CONFLICT" | "410 GONE" | "411 LENGTH_REQUIRED" | "412 PRECONDITION_FAILED" | "413 PAYLOAD_TOO_LARGE" | "413 REQUEST_ENTITY_TOO_LARGE" | "414 URI_TOO_LONG" | "414 REQUEST_URI_TOO_LONG" | "415 UNSUPPORTED_MEDIA_TYPE" | "416 REQUESTED_RANGE_NOT_SATISFIABLE" | "417 EXPECTATION_FAILED" | "418 I_AM_A_TEAPOT" | "419 INSUFFICIENT_SPACE_ON_RESOURCE" | "420 METHOD_FAILURE" | "421 DESTINATION_LOCKED" | "422 UNPROCESSABLE_ENTITY" | "423 LOCKED" | "424 FAILED_DEPENDENCY" | "425 TOO_EARLY" | "426 UPGRADE_REQUIRED" | "428 PRECONDITION_REQUIRED" | "429 TOO_MANY_REQUESTS" | "431 REQUEST_HEADER_FIELDS_TOO_LARGE" | "451 UNAVAILABLE_FOR_LEGAL_REASONS" | "500 INTERNAL_SERVER_ERROR" | "501 NOT_IMPLEMENTED" | "502 BAD_GATEWAY" | "503 SERVICE_UNAVAILABLE" | "504 GATEWAY_TIMEOUT" | "505 HTTP_VERSION_NOT_SUPPORTED" | "506 VARIANT_ALSO_NEGOTIATES" | "507 INSUFFICIENT_STORAGE" | "508 LOOP_DETECTED" | "509 BANDWIDTH_LIMIT_EXCEEDED" | "510 NOT_EXTENDED" | "511 NETWORK_AUTHENTICATION_REQUIRED";
-                };
+                content?: never;
             };
         };
     };
@@ -1111,7 +1093,7 @@ export interface operations {
             };
         };
     };
-    updatePlace_2: {
+    updateEventPlan: {
         parameters: {
             query?: never;
             header?: never;
@@ -1137,7 +1119,7 @@ export interface operations {
             };
         };
     };
-    invitePlaceForEventPlan: {
+    invitePlace: {
         parameters: {
             query?: never;
             header?: never;
@@ -1149,20 +1131,24 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
-            200: {
+            /** @description No Content */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": "100 CONTINUE" | "101 SWITCHING_PROTOCOLS" | "102 PROCESSING" | "103 EARLY_HINTS" | "103 CHECKPOINT" | "200 OK" | "201 CREATED" | "202 ACCEPTED" | "203 NON_AUTHORITATIVE_INFORMATION" | "204 NO_CONTENT" | "205 RESET_CONTENT" | "206 PARTIAL_CONTENT" | "207 MULTI_STATUS" | "208 ALREADY_REPORTED" | "226 IM_USED" | "300 MULTIPLE_CHOICES" | "301 MOVED_PERMANENTLY" | "302 FOUND" | "302 MOVED_TEMPORARILY" | "303 SEE_OTHER" | "304 NOT_MODIFIED" | "305 USE_PROXY" | "307 TEMPORARY_REDIRECT" | "308 PERMANENT_REDIRECT" | "400 BAD_REQUEST" | "401 UNAUTHORIZED" | "402 PAYMENT_REQUIRED" | "403 FORBIDDEN" | "404 NOT_FOUND" | "405 METHOD_NOT_ALLOWED" | "406 NOT_ACCEPTABLE" | "407 PROXY_AUTHENTICATION_REQUIRED" | "408 REQUEST_TIMEOUT" | "409 CONFLICT" | "410 GONE" | "411 LENGTH_REQUIRED" | "412 PRECONDITION_FAILED" | "413 PAYLOAD_TOO_LARGE" | "413 REQUEST_ENTITY_TOO_LARGE" | "414 URI_TOO_LONG" | "414 REQUEST_URI_TOO_LONG" | "415 UNSUPPORTED_MEDIA_TYPE" | "416 REQUESTED_RANGE_NOT_SATISFIABLE" | "417 EXPECTATION_FAILED" | "418 I_AM_A_TEAPOT" | "419 INSUFFICIENT_SPACE_ON_RESOURCE" | "420 METHOD_FAILURE" | "421 DESTINATION_LOCKED" | "422 UNPROCESSABLE_ENTITY" | "423 LOCKED" | "424 FAILED_DEPENDENCY" | "425 TOO_EARLY" | "426 UPGRADE_REQUIRED" | "428 PRECONDITION_REQUIRED" | "429 TOO_MANY_REQUESTS" | "431 REQUEST_HEADER_FIELDS_TOO_LARGE" | "451 UNAVAILABLE_FOR_LEGAL_REASONS" | "500 INTERNAL_SERVER_ERROR" | "501 NOT_IMPLEMENTED" | "502 BAD_GATEWAY" | "503 SERVICE_UNAVAILABLE" | "504 GATEWAY_TIMEOUT" | "505 HTTP_VERSION_NOT_SUPPORTED" | "506 VARIANT_ALSO_NEGOTIATES" | "507 INSUFFICIENT_STORAGE" | "508 LOOP_DETECTED" | "509 BANDWIDTH_LIMIT_EXCEEDED" | "510 NOT_EXTENDED" | "511 NETWORK_AUTHENTICATION_REQUIRED";
-                };
+                content?: never;
             };
         };
     };
     getPlaces: {
         parameters: {
-            query?: never;
+            query?: {
+                /**
+                 * @description Only places inside minLon,minLat,maxLon,maxLat
+                 * @example 18.9,47.3,19.3,47.7
+                 */
+                bbox?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1224,7 +1210,7 @@ export interface operations {
             };
         };
     };
-    createPlace_1: {
+    createPerformer: {
         parameters: {
             query?: never;
             header?: never;
@@ -1248,7 +1234,7 @@ export interface operations {
             };
         };
     };
-    createPlace_2: {
+    createEventPlan: {
         parameters: {
             query?: never;
             header?: never;
@@ -1283,43 +1269,16 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
-            200: {
+            /** @description No Content */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": "100 CONTINUE" | "101 SWITCHING_PROTOCOLS" | "102 PROCESSING" | "103 EARLY_HINTS" | "103 CHECKPOINT" | "200 OK" | "201 CREATED" | "202 ACCEPTED" | "203 NON_AUTHORITATIVE_INFORMATION" | "204 NO_CONTENT" | "205 RESET_CONTENT" | "206 PARTIAL_CONTENT" | "207 MULTI_STATUS" | "208 ALREADY_REPORTED" | "226 IM_USED" | "300 MULTIPLE_CHOICES" | "301 MOVED_PERMANENTLY" | "302 FOUND" | "302 MOVED_TEMPORARILY" | "303 SEE_OTHER" | "304 NOT_MODIFIED" | "305 USE_PROXY" | "307 TEMPORARY_REDIRECT" | "308 PERMANENT_REDIRECT" | "400 BAD_REQUEST" | "401 UNAUTHORIZED" | "402 PAYMENT_REQUIRED" | "403 FORBIDDEN" | "404 NOT_FOUND" | "405 METHOD_NOT_ALLOWED" | "406 NOT_ACCEPTABLE" | "407 PROXY_AUTHENTICATION_REQUIRED" | "408 REQUEST_TIMEOUT" | "409 CONFLICT" | "410 GONE" | "411 LENGTH_REQUIRED" | "412 PRECONDITION_FAILED" | "413 PAYLOAD_TOO_LARGE" | "413 REQUEST_ENTITY_TOO_LARGE" | "414 URI_TOO_LONG" | "414 REQUEST_URI_TOO_LONG" | "415 UNSUPPORTED_MEDIA_TYPE" | "416 REQUESTED_RANGE_NOT_SATISFIABLE" | "417 EXPECTATION_FAILED" | "418 I_AM_A_TEAPOT" | "419 INSUFFICIENT_SPACE_ON_RESOURCE" | "420 METHOD_FAILURE" | "421 DESTINATION_LOCKED" | "422 UNPROCESSABLE_ENTITY" | "423 LOCKED" | "424 FAILED_DEPENDENCY" | "425 TOO_EARLY" | "426 UPGRADE_REQUIRED" | "428 PRECONDITION_REQUIRED" | "429 TOO_MANY_REQUESTS" | "431 REQUEST_HEADER_FIELDS_TOO_LARGE" | "451 UNAVAILABLE_FOR_LEGAL_REASONS" | "500 INTERNAL_SERVER_ERROR" | "501 NOT_IMPLEMENTED" | "502 BAD_GATEWAY" | "503 SERVICE_UNAVAILABLE" | "504 GATEWAY_TIMEOUT" | "505 HTTP_VERSION_NOT_SUPPORTED" | "506 VARIANT_ALSO_NEGOTIATES" | "507 INSUFFICIENT_STORAGE" | "508 LOOP_DETECTED" | "509 BANDWIDTH_LIMIT_EXCEEDED" | "510 NOT_EXTENDED" | "511 NETWORK_AUTHENTICATION_REQUIRED";
-                };
+                content?: never;
             };
         };
     };
-    setPlaceInvitationStatus: {
-        parameters: {
-            query: {
-                status: string;
-            };
-            header?: never;
-            path: {
-                id: string;
-                placeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": "100 CONTINUE" | "101 SWITCHING_PROTOCOLS" | "102 PROCESSING" | "103 EARLY_HINTS" | "103 CHECKPOINT" | "200 OK" | "201 CREATED" | "202 ACCEPTED" | "203 NON_AUTHORITATIVE_INFORMATION" | "204 NO_CONTENT" | "205 RESET_CONTENT" | "206 PARTIAL_CONTENT" | "207 MULTI_STATUS" | "208 ALREADY_REPORTED" | "226 IM_USED" | "300 MULTIPLE_CHOICES" | "301 MOVED_PERMANENTLY" | "302 FOUND" | "302 MOVED_TEMPORARILY" | "303 SEE_OTHER" | "304 NOT_MODIFIED" | "305 USE_PROXY" | "307 TEMPORARY_REDIRECT" | "308 PERMANENT_REDIRECT" | "400 BAD_REQUEST" | "401 UNAUTHORIZED" | "402 PAYMENT_REQUIRED" | "403 FORBIDDEN" | "404 NOT_FOUND" | "405 METHOD_NOT_ALLOWED" | "406 NOT_ACCEPTABLE" | "407 PROXY_AUTHENTICATION_REQUIRED" | "408 REQUEST_TIMEOUT" | "409 CONFLICT" | "410 GONE" | "411 LENGTH_REQUIRED" | "412 PRECONDITION_FAILED" | "413 PAYLOAD_TOO_LARGE" | "413 REQUEST_ENTITY_TOO_LARGE" | "414 URI_TOO_LONG" | "414 REQUEST_URI_TOO_LONG" | "415 UNSUPPORTED_MEDIA_TYPE" | "416 REQUESTED_RANGE_NOT_SATISFIABLE" | "417 EXPECTATION_FAILED" | "418 I_AM_A_TEAPOT" | "419 INSUFFICIENT_SPACE_ON_RESOURCE" | "420 METHOD_FAILURE" | "421 DESTINATION_LOCKED" | "422 UNPROCESSABLE_ENTITY" | "423 LOCKED" | "424 FAILED_DEPENDENCY" | "425 TOO_EARLY" | "426 UPGRADE_REQUIRED" | "428 PRECONDITION_REQUIRED" | "429 TOO_MANY_REQUESTS" | "431 REQUEST_HEADER_FIELDS_TOO_LARGE" | "451 UNAVAILABLE_FOR_LEGAL_REASONS" | "500 INTERNAL_SERVER_ERROR" | "501 NOT_IMPLEMENTED" | "502 BAD_GATEWAY" | "503 SERVICE_UNAVAILABLE" | "504 GATEWAY_TIMEOUT" | "505 HTTP_VERSION_NOT_SUPPORTED" | "506 VARIANT_ALSO_NEGOTIATES" | "507 INSUFFICIENT_STORAGE" | "508 LOOP_DETECTED" | "509 BANDWIDTH_LIMIT_EXCEEDED" | "510 NOT_EXTENDED" | "511 NETWORK_AUTHENTICATION_REQUIRED";
-                };
-            };
-        };
-    };
-    addLineupInvitationToEventPlan: {
+    addLineupInvitation: {
         parameters: {
             query?: never;
             header?: never;
@@ -1334,14 +1293,12 @@ export interface operations {
             };
         };
         responses: {
-            /** @description OK */
-            200: {
+            /** @description No Content */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": "100 CONTINUE" | "101 SWITCHING_PROTOCOLS" | "102 PROCESSING" | "103 EARLY_HINTS" | "103 CHECKPOINT" | "200 OK" | "201 CREATED" | "202 ACCEPTED" | "203 NON_AUTHORITATIVE_INFORMATION" | "204 NO_CONTENT" | "205 RESET_CONTENT" | "206 PARTIAL_CONTENT" | "207 MULTI_STATUS" | "208 ALREADY_REPORTED" | "226 IM_USED" | "300 MULTIPLE_CHOICES" | "301 MOVED_PERMANENTLY" | "302 FOUND" | "302 MOVED_TEMPORARILY" | "303 SEE_OTHER" | "304 NOT_MODIFIED" | "305 USE_PROXY" | "307 TEMPORARY_REDIRECT" | "308 PERMANENT_REDIRECT" | "400 BAD_REQUEST" | "401 UNAUTHORIZED" | "402 PAYMENT_REQUIRED" | "403 FORBIDDEN" | "404 NOT_FOUND" | "405 METHOD_NOT_ALLOWED" | "406 NOT_ACCEPTABLE" | "407 PROXY_AUTHENTICATION_REQUIRED" | "408 REQUEST_TIMEOUT" | "409 CONFLICT" | "410 GONE" | "411 LENGTH_REQUIRED" | "412 PRECONDITION_FAILED" | "413 PAYLOAD_TOO_LARGE" | "413 REQUEST_ENTITY_TOO_LARGE" | "414 URI_TOO_LONG" | "414 REQUEST_URI_TOO_LONG" | "415 UNSUPPORTED_MEDIA_TYPE" | "416 REQUESTED_RANGE_NOT_SATISFIABLE" | "417 EXPECTATION_FAILED" | "418 I_AM_A_TEAPOT" | "419 INSUFFICIENT_SPACE_ON_RESOURCE" | "420 METHOD_FAILURE" | "421 DESTINATION_LOCKED" | "422 UNPROCESSABLE_ENTITY" | "423 LOCKED" | "424 FAILED_DEPENDENCY" | "425 TOO_EARLY" | "426 UPGRADE_REQUIRED" | "428 PRECONDITION_REQUIRED" | "429 TOO_MANY_REQUESTS" | "431 REQUEST_HEADER_FIELDS_TOO_LARGE" | "451 UNAVAILABLE_FOR_LEGAL_REASONS" | "500 INTERNAL_SERVER_ERROR" | "501 NOT_IMPLEMENTED" | "502 BAD_GATEWAY" | "503 SERVICE_UNAVAILABLE" | "504 GATEWAY_TIMEOUT" | "505 HTTP_VERSION_NOT_SUPPORTED" | "506 VARIANT_ALSO_NEGOTIATES" | "507 INSUFFICIENT_STORAGE" | "508 LOOP_DETECTED" | "509 BANDWIDTH_LIMIT_EXCEEDED" | "510 NOT_EXTENDED" | "511 NETWORK_AUTHENTICATION_REQUIRED";
-                };
+                content?: never;
             };
         };
     };
@@ -1389,7 +1346,7 @@ export interface operations {
             };
         };
     };
-    getMyPlacesForUser: {
+    getOwnedPlaces: {
         parameters: {
             query?: never;
             header?: never;
@@ -1409,7 +1366,7 @@ export interface operations {
             };
         };
     };
-    getLikedPlacesForUser: {
+    getLikedPlaces: {
         parameters: {
             query?: never;
             header?: never;
@@ -1429,7 +1386,7 @@ export interface operations {
             };
         };
     };
-    getInvitationsForPerformer: {
+    getPerformerInvitations: {
         parameters: {
             query?: never;
             header?: never;
@@ -1451,7 +1408,7 @@ export interface operations {
             };
         };
     };
-    getOwnedPerformersForUser: {
+    getOwnedPerformers: {
         parameters: {
             query?: never;
             header?: never;
@@ -1471,7 +1428,7 @@ export interface operations {
             };
         };
     };
-    getLikedPerformersForUser: {
+    getLikedPerformers: {
         parameters: {
             query?: never;
             header?: never;
@@ -1536,7 +1493,7 @@ export interface operations {
             };
         };
     };
-    getPlaceByEventId: {
+    getEventPlace: {
         parameters: {
             query?: never;
             header?: never;
@@ -1558,7 +1515,7 @@ export interface operations {
             };
         };
     };
-    getUpcomingEventsForAllPlaces: {
+    getUpcomingEvents: {
         parameters: {
             query?: never;
             header?: never;
@@ -1578,7 +1535,7 @@ export interface operations {
             };
         };
     };
-    getMyOwnedEventsForUser: {
+    getOwnedEvents: {
         parameters: {
             query?: never;
             header?: never;
@@ -1598,7 +1555,7 @@ export interface operations {
             };
         };
     };
-    getLikedEventsForUser: {
+    getLikedEvents: {
         parameters: {
             query?: never;
             header?: never;
@@ -1618,7 +1575,7 @@ export interface operations {
             };
         };
     };
-    getLineupInvitationsForEventPlan: {
+    getLineupInvitations: {
         parameters: {
             query?: never;
             header?: never;
@@ -1640,7 +1597,7 @@ export interface operations {
             };
         };
     };
-    getPlacesForEventPlanList: {
+    getPlacesToInvite: {
         parameters: {
             query?: never;
             header?: never;
@@ -1660,7 +1617,7 @@ export interface operations {
             };
         };
     };
-    getMyOwnedEventsForUser_1: {
+    getOwnedEventPlans: {
         parameters: {
             query?: never;
             header?: never;
@@ -1680,7 +1637,7 @@ export interface operations {
             };
         };
     };
-    deleteLineupInvitationToEventPlan: {
+    deleteLineupInvitation: {
         parameters: {
             query?: never;
             header?: never;
@@ -1692,14 +1649,12 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
-            200: {
+            /** @description No Content */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": "100 CONTINUE" | "101 SWITCHING_PROTOCOLS" | "102 PROCESSING" | "103 EARLY_HINTS" | "103 CHECKPOINT" | "200 OK" | "201 CREATED" | "202 ACCEPTED" | "203 NON_AUTHORITATIVE_INFORMATION" | "204 NO_CONTENT" | "205 RESET_CONTENT" | "206 PARTIAL_CONTENT" | "207 MULTI_STATUS" | "208 ALREADY_REPORTED" | "226 IM_USED" | "300 MULTIPLE_CHOICES" | "301 MOVED_PERMANENTLY" | "302 FOUND" | "302 MOVED_TEMPORARILY" | "303 SEE_OTHER" | "304 NOT_MODIFIED" | "305 USE_PROXY" | "307 TEMPORARY_REDIRECT" | "308 PERMANENT_REDIRECT" | "400 BAD_REQUEST" | "401 UNAUTHORIZED" | "402 PAYMENT_REQUIRED" | "403 FORBIDDEN" | "404 NOT_FOUND" | "405 METHOD_NOT_ALLOWED" | "406 NOT_ACCEPTABLE" | "407 PROXY_AUTHENTICATION_REQUIRED" | "408 REQUEST_TIMEOUT" | "409 CONFLICT" | "410 GONE" | "411 LENGTH_REQUIRED" | "412 PRECONDITION_FAILED" | "413 PAYLOAD_TOO_LARGE" | "413 REQUEST_ENTITY_TOO_LARGE" | "414 URI_TOO_LONG" | "414 REQUEST_URI_TOO_LONG" | "415 UNSUPPORTED_MEDIA_TYPE" | "416 REQUESTED_RANGE_NOT_SATISFIABLE" | "417 EXPECTATION_FAILED" | "418 I_AM_A_TEAPOT" | "419 INSUFFICIENT_SPACE_ON_RESOURCE" | "420 METHOD_FAILURE" | "421 DESTINATION_LOCKED" | "422 UNPROCESSABLE_ENTITY" | "423 LOCKED" | "424 FAILED_DEPENDENCY" | "425 TOO_EARLY" | "426 UPGRADE_REQUIRED" | "428 PRECONDITION_REQUIRED" | "429 TOO_MANY_REQUESTS" | "431 REQUEST_HEADER_FIELDS_TOO_LARGE" | "451 UNAVAILABLE_FOR_LEGAL_REASONS" | "500 INTERNAL_SERVER_ERROR" | "501 NOT_IMPLEMENTED" | "502 BAD_GATEWAY" | "503 SERVICE_UNAVAILABLE" | "504 GATEWAY_TIMEOUT" | "505 HTTP_VERSION_NOT_SUPPORTED" | "506 VARIANT_ALSO_NEGOTIATES" | "507 INSUFFICIENT_STORAGE" | "508 LOOP_DETECTED" | "509 BANDWIDTH_LIMIT_EXCEEDED" | "510 NOT_EXTENDED" | "511 NETWORK_AUTHENTICATION_REQUIRED";
-                };
+                content?: never;
             };
         };
     };

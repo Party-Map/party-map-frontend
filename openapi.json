@@ -94,22 +94,15 @@
         }, {
           "name" : "state",
           "in" : "query",
+          "description" : "accept or reject",
           "required" : true,
           "schema" : {
             "type" : "string"
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "string",
-                  "enum" : [ "100 CONTINUE", "101 SWITCHING_PROTOCOLS", "102 PROCESSING", "103 EARLY_HINTS", "103 CHECKPOINT", "200 OK", "201 CREATED", "202 ACCEPTED", "203 NON_AUTHORITATIVE_INFORMATION", "204 NO_CONTENT", "205 RESET_CONTENT", "206 PARTIAL_CONTENT", "207 MULTI_STATUS", "208 ALREADY_REPORTED", "226 IM_USED", "300 MULTIPLE_CHOICES", "301 MOVED_PERMANENTLY", "302 FOUND", "302 MOVED_TEMPORARILY", "303 SEE_OTHER", "304 NOT_MODIFIED", "305 USE_PROXY", "307 TEMPORARY_REDIRECT", "308 PERMANENT_REDIRECT", "400 BAD_REQUEST", "401 UNAUTHORIZED", "402 PAYMENT_REQUIRED", "403 FORBIDDEN", "404 NOT_FOUND", "405 METHOD_NOT_ALLOWED", "406 NOT_ACCEPTABLE", "407 PROXY_AUTHENTICATION_REQUIRED", "408 REQUEST_TIMEOUT", "409 CONFLICT", "410 GONE", "411 LENGTH_REQUIRED", "412 PRECONDITION_FAILED", "413 PAYLOAD_TOO_LARGE", "413 REQUEST_ENTITY_TOO_LARGE", "414 URI_TOO_LONG", "414 REQUEST_URI_TOO_LONG", "415 UNSUPPORTED_MEDIA_TYPE", "416 REQUESTED_RANGE_NOT_SATISFIABLE", "417 EXPECTATION_FAILED", "418 I_AM_A_TEAPOT", "419 INSUFFICIENT_SPACE_ON_RESOURCE", "420 METHOD_FAILURE", "421 DESTINATION_LOCKED", "422 UNPROCESSABLE_ENTITY", "423 LOCKED", "424 FAILED_DEPENDENCY", "425 TOO_EARLY", "426 UPGRADE_REQUIRED", "428 PRECONDITION_REQUIRED", "429 TOO_MANY_REQUESTS", "431 REQUEST_HEADER_FIELDS_TOO_LARGE", "451 UNAVAILABLE_FOR_LEGAL_REASONS", "500 INTERNAL_SERVER_ERROR", "501 NOT_IMPLEMENTED", "502 BAD_GATEWAY", "503 SERVICE_UNAVAILABLE", "504 GATEWAY_TIMEOUT", "505 HTTP_VERSION_NOT_SUPPORTED", "506 VARIANT_ALSO_NEGOTIATES", "507 INSUFFICIENT_STORAGE", "508 LOOP_DETECTED", "509 BANDWIDTH_LIMIT_EXCEEDED", "510 NOT_EXTENDED", "511 NETWORK_AUTHENTICATION_REQUIRED" ]
-                }
-              }
-            }
+          "204" : {
+            "description" : "No Content"
           }
         }
       }
@@ -142,7 +135,7 @@
       },
       "put" : {
         "tags" : [ "performer-controller" ],
-        "operationId" : "updatePlace_1",
+        "operationId" : "updatePerformer",
         "parameters" : [ {
           "name" : "id",
           "in" : "path",
@@ -179,7 +172,7 @@
     "/api/performers/{id}/invitations/{eventPlanId}/respond" : {
       "put" : {
         "tags" : [ "performer-controller" ],
-        "operationId" : "respondToInvitation",
+        "operationId" : "respondToPerformerInvitation",
         "parameters" : [ {
           "name" : "id",
           "in" : "path",
@@ -199,22 +192,15 @@
         }, {
           "name" : "state",
           "in" : "query",
+          "description" : "accept or reject",
           "required" : true,
           "schema" : {
             "type" : "string"
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "string",
-                  "enum" : [ "100 CONTINUE", "101 SWITCHING_PROTOCOLS", "102 PROCESSING", "103 EARLY_HINTS", "103 CHECKPOINT", "200 OK", "201 CREATED", "202 ACCEPTED", "203 NON_AUTHORITATIVE_INFORMATION", "204 NO_CONTENT", "205 RESET_CONTENT", "206 PARTIAL_CONTENT", "207 MULTI_STATUS", "208 ALREADY_REPORTED", "226 IM_USED", "300 MULTIPLE_CHOICES", "301 MOVED_PERMANENTLY", "302 FOUND", "302 MOVED_TEMPORARILY", "303 SEE_OTHER", "304 NOT_MODIFIED", "305 USE_PROXY", "307 TEMPORARY_REDIRECT", "308 PERMANENT_REDIRECT", "400 BAD_REQUEST", "401 UNAUTHORIZED", "402 PAYMENT_REQUIRED", "403 FORBIDDEN", "404 NOT_FOUND", "405 METHOD_NOT_ALLOWED", "406 NOT_ACCEPTABLE", "407 PROXY_AUTHENTICATION_REQUIRED", "408 REQUEST_TIMEOUT", "409 CONFLICT", "410 GONE", "411 LENGTH_REQUIRED", "412 PRECONDITION_FAILED", "413 PAYLOAD_TOO_LARGE", "413 REQUEST_ENTITY_TOO_LARGE", "414 URI_TOO_LONG", "414 REQUEST_URI_TOO_LONG", "415 UNSUPPORTED_MEDIA_TYPE", "416 REQUESTED_RANGE_NOT_SATISFIABLE", "417 EXPECTATION_FAILED", "418 I_AM_A_TEAPOT", "419 INSUFFICIENT_SPACE_ON_RESOURCE", "420 METHOD_FAILURE", "421 DESTINATION_LOCKED", "422 UNPROCESSABLE_ENTITY", "423 LOCKED", "424 FAILED_DEPENDENCY", "425 TOO_EARLY", "426 UPGRADE_REQUIRED", "428 PRECONDITION_REQUIRED", "429 TOO_MANY_REQUESTS", "431 REQUEST_HEADER_FIELDS_TOO_LARGE", "451 UNAVAILABLE_FOR_LEGAL_REASONS", "500 INTERNAL_SERVER_ERROR", "501 NOT_IMPLEMENTED", "502 BAD_GATEWAY", "503 SERVICE_UNAVAILABLE", "504 GATEWAY_TIMEOUT", "505 HTTP_VERSION_NOT_SUPPORTED", "506 VARIANT_ALSO_NEGOTIATES", "507 INSUFFICIENT_STORAGE", "508 LOOP_DETECTED", "509 BANDWIDTH_LIMIT_EXCEEDED", "510 NOT_EXTENDED", "511 NETWORK_AUTHENTICATION_REQUIRED" ]
-                }
-              }
-            }
+          "204" : {
+            "description" : "No Content"
           }
         }
       }
@@ -478,7 +464,7 @@
       },
       "put" : {
         "tags" : [ "event-plan-controller" ],
-        "operationId" : "updatePlace_2",
+        "operationId" : "updateEventPlan",
         "parameters" : [ {
           "name" : "id",
           "in" : "path",
@@ -515,7 +501,7 @@
     "/api/event-plan/{id}/invite-place/{placeId}" : {
       "put" : {
         "tags" : [ "event-plan-controller" ],
-        "operationId" : "invitePlaceForEventPlan",
+        "operationId" : "invitePlace",
         "parameters" : [ {
           "name" : "id",
           "in" : "path",
@@ -534,16 +520,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "string",
-                  "enum" : [ "100 CONTINUE", "101 SWITCHING_PROTOCOLS", "102 PROCESSING", "103 EARLY_HINTS", "103 CHECKPOINT", "200 OK", "201 CREATED", "202 ACCEPTED", "203 NON_AUTHORITATIVE_INFORMATION", "204 NO_CONTENT", "205 RESET_CONTENT", "206 PARTIAL_CONTENT", "207 MULTI_STATUS", "208 ALREADY_REPORTED", "226 IM_USED", "300 MULTIPLE_CHOICES", "301 MOVED_PERMANENTLY", "302 FOUND", "302 MOVED_TEMPORARILY", "303 SEE_OTHER", "304 NOT_MODIFIED", "305 USE_PROXY", "307 TEMPORARY_REDIRECT", "308 PERMANENT_REDIRECT", "400 BAD_REQUEST", "401 UNAUTHORIZED", "402 PAYMENT_REQUIRED", "403 FORBIDDEN", "404 NOT_FOUND", "405 METHOD_NOT_ALLOWED", "406 NOT_ACCEPTABLE", "407 PROXY_AUTHENTICATION_REQUIRED", "408 REQUEST_TIMEOUT", "409 CONFLICT", "410 GONE", "411 LENGTH_REQUIRED", "412 PRECONDITION_FAILED", "413 PAYLOAD_TOO_LARGE", "413 REQUEST_ENTITY_TOO_LARGE", "414 URI_TOO_LONG", "414 REQUEST_URI_TOO_LONG", "415 UNSUPPORTED_MEDIA_TYPE", "416 REQUESTED_RANGE_NOT_SATISFIABLE", "417 EXPECTATION_FAILED", "418 I_AM_A_TEAPOT", "419 INSUFFICIENT_SPACE_ON_RESOURCE", "420 METHOD_FAILURE", "421 DESTINATION_LOCKED", "422 UNPROCESSABLE_ENTITY", "423 LOCKED", "424 FAILED_DEPENDENCY", "425 TOO_EARLY", "426 UPGRADE_REQUIRED", "428 PRECONDITION_REQUIRED", "429 TOO_MANY_REQUESTS", "431 REQUEST_HEADER_FIELDS_TOO_LARGE", "451 UNAVAILABLE_FOR_LEGAL_REASONS", "500 INTERNAL_SERVER_ERROR", "501 NOT_IMPLEMENTED", "502 BAD_GATEWAY", "503 SERVICE_UNAVAILABLE", "504 GATEWAY_TIMEOUT", "505 HTTP_VERSION_NOT_SUPPORTED", "506 VARIANT_ALSO_NEGOTIATES", "507 INSUFFICIENT_STORAGE", "508 LOOP_DETECTED", "509 BANDWIDTH_LIMIT_EXCEEDED", "510 NOT_EXTENDED", "511 NETWORK_AUTHENTICATION_REQUIRED" ]
-                }
-              }
-            }
+          "204" : {
+            "description" : "No Content"
           }
         }
       }
@@ -552,6 +530,16 @@
       "get" : {
         "tags" : [ "place-controller" ],
         "operationId" : "getPlaces",
+        "parameters" : [ {
+          "name" : "bbox",
+          "in" : "query",
+          "description" : "Only places inside minLon,minLat,maxLon,maxLat",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "18.9,47.3,19.3,47.7"
+        } ],
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -617,7 +605,7 @@
       },
       "post" : {
         "tags" : [ "performer-controller" ],
-        "operationId" : "createPlace_1",
+        "operationId" : "createPerformer",
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -645,7 +633,7 @@
     "/api/event-plan" : {
       "post" : {
         "tags" : [ "event-plan-controller" ],
-        "operationId" : "createPlace_2",
+        "operationId" : "createEventPlan",
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -684,59 +672,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "string",
-                  "enum" : [ "100 CONTINUE", "101 SWITCHING_PROTOCOLS", "102 PROCESSING", "103 EARLY_HINTS", "103 CHECKPOINT", "200 OK", "201 CREATED", "202 ACCEPTED", "203 NON_AUTHORITATIVE_INFORMATION", "204 NO_CONTENT", "205 RESET_CONTENT", "206 PARTIAL_CONTENT", "207 MULTI_STATUS", "208 ALREADY_REPORTED", "226 IM_USED", "300 MULTIPLE_CHOICES", "301 MOVED_PERMANENTLY", "302 FOUND", "302 MOVED_TEMPORARILY", "303 SEE_OTHER", "304 NOT_MODIFIED", "305 USE_PROXY", "307 TEMPORARY_REDIRECT", "308 PERMANENT_REDIRECT", "400 BAD_REQUEST", "401 UNAUTHORIZED", "402 PAYMENT_REQUIRED", "403 FORBIDDEN", "404 NOT_FOUND", "405 METHOD_NOT_ALLOWED", "406 NOT_ACCEPTABLE", "407 PROXY_AUTHENTICATION_REQUIRED", "408 REQUEST_TIMEOUT", "409 CONFLICT", "410 GONE", "411 LENGTH_REQUIRED", "412 PRECONDITION_FAILED", "413 PAYLOAD_TOO_LARGE", "413 REQUEST_ENTITY_TOO_LARGE", "414 URI_TOO_LONG", "414 REQUEST_URI_TOO_LONG", "415 UNSUPPORTED_MEDIA_TYPE", "416 REQUESTED_RANGE_NOT_SATISFIABLE", "417 EXPECTATION_FAILED", "418 I_AM_A_TEAPOT", "419 INSUFFICIENT_SPACE_ON_RESOURCE", "420 METHOD_FAILURE", "421 DESTINATION_LOCKED", "422 UNPROCESSABLE_ENTITY", "423 LOCKED", "424 FAILED_DEPENDENCY", "425 TOO_EARLY", "426 UPGRADE_REQUIRED", "428 PRECONDITION_REQUIRED", "429 TOO_MANY_REQUESTS", "431 REQUEST_HEADER_FIELDS_TOO_LARGE", "451 UNAVAILABLE_FOR_LEGAL_REASONS", "500 INTERNAL_SERVER_ERROR", "501 NOT_IMPLEMENTED", "502 BAD_GATEWAY", "503 SERVICE_UNAVAILABLE", "504 GATEWAY_TIMEOUT", "505 HTTP_VERSION_NOT_SUPPORTED", "506 VARIANT_ALSO_NEGOTIATES", "507 INSUFFICIENT_STORAGE", "508 LOOP_DETECTED", "509 BANDWIDTH_LIMIT_EXCEEDED", "510 NOT_EXTENDED", "511 NETWORK_AUTHENTICATION_REQUIRED" ]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/event-plan/{id}/place-invitation/{placeId}/set-status" : {
-      "post" : {
-        "tags" : [ "event-plan-controller" ],
-        "operationId" : "setPlaceInvitationStatus",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }, {
-          "name" : "placeId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }, {
-          "name" : "status",
-          "in" : "query",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "string",
-                  "enum" : [ "100 CONTINUE", "101 SWITCHING_PROTOCOLS", "102 PROCESSING", "103 EARLY_HINTS", "103 CHECKPOINT", "200 OK", "201 CREATED", "202 ACCEPTED", "203 NON_AUTHORITATIVE_INFORMATION", "204 NO_CONTENT", "205 RESET_CONTENT", "206 PARTIAL_CONTENT", "207 MULTI_STATUS", "208 ALREADY_REPORTED", "226 IM_USED", "300 MULTIPLE_CHOICES", "301 MOVED_PERMANENTLY", "302 FOUND", "302 MOVED_TEMPORARILY", "303 SEE_OTHER", "304 NOT_MODIFIED", "305 USE_PROXY", "307 TEMPORARY_REDIRECT", "308 PERMANENT_REDIRECT", "400 BAD_REQUEST", "401 UNAUTHORIZED", "402 PAYMENT_REQUIRED", "403 FORBIDDEN", "404 NOT_FOUND", "405 METHOD_NOT_ALLOWED", "406 NOT_ACCEPTABLE", "407 PROXY_AUTHENTICATION_REQUIRED", "408 REQUEST_TIMEOUT", "409 CONFLICT", "410 GONE", "411 LENGTH_REQUIRED", "412 PRECONDITION_FAILED", "413 PAYLOAD_TOO_LARGE", "413 REQUEST_ENTITY_TOO_LARGE", "414 URI_TOO_LONG", "414 REQUEST_URI_TOO_LONG", "415 UNSUPPORTED_MEDIA_TYPE", "416 REQUESTED_RANGE_NOT_SATISFIABLE", "417 EXPECTATION_FAILED", "418 I_AM_A_TEAPOT", "419 INSUFFICIENT_SPACE_ON_RESOURCE", "420 METHOD_FAILURE", "421 DESTINATION_LOCKED", "422 UNPROCESSABLE_ENTITY", "423 LOCKED", "424 FAILED_DEPENDENCY", "425 TOO_EARLY", "426 UPGRADE_REQUIRED", "428 PRECONDITION_REQUIRED", "429 TOO_MANY_REQUESTS", "431 REQUEST_HEADER_FIELDS_TOO_LARGE", "451 UNAVAILABLE_FOR_LEGAL_REASONS", "500 INTERNAL_SERVER_ERROR", "501 NOT_IMPLEMENTED", "502 BAD_GATEWAY", "503 SERVICE_UNAVAILABLE", "504 GATEWAY_TIMEOUT", "505 HTTP_VERSION_NOT_SUPPORTED", "506 VARIANT_ALSO_NEGOTIATES", "507 INSUFFICIENT_STORAGE", "508 LOOP_DETECTED", "509 BANDWIDTH_LIMIT_EXCEEDED", "510 NOT_EXTENDED", "511 NETWORK_AUTHENTICATION_REQUIRED" ]
-                }
-              }
-            }
+          "204" : {
+            "description" : "No Content"
           }
         }
       }
@@ -744,7 +681,7 @@
     "/api/event-plan/{id}/add-lineup-invitation" : {
       "post" : {
         "tags" : [ "event-plan-controller" ],
-        "operationId" : "addLineupInvitationToEventPlan",
+        "operationId" : "addLineupInvitation",
         "parameters" : [ {
           "name" : "id",
           "in" : "path",
@@ -765,16 +702,8 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "string",
-                  "enum" : [ "100 CONTINUE", "101 SWITCHING_PROTOCOLS", "102 PROCESSING", "103 EARLY_HINTS", "103 CHECKPOINT", "200 OK", "201 CREATED", "202 ACCEPTED", "203 NON_AUTHORITATIVE_INFORMATION", "204 NO_CONTENT", "205 RESET_CONTENT", "206 PARTIAL_CONTENT", "207 MULTI_STATUS", "208 ALREADY_REPORTED", "226 IM_USED", "300 MULTIPLE_CHOICES", "301 MOVED_PERMANENTLY", "302 FOUND", "302 MOVED_TEMPORARILY", "303 SEE_OTHER", "304 NOT_MODIFIED", "305 USE_PROXY", "307 TEMPORARY_REDIRECT", "308 PERMANENT_REDIRECT", "400 BAD_REQUEST", "401 UNAUTHORIZED", "402 PAYMENT_REQUIRED", "403 FORBIDDEN", "404 NOT_FOUND", "405 METHOD_NOT_ALLOWED", "406 NOT_ACCEPTABLE", "407 PROXY_AUTHENTICATION_REQUIRED", "408 REQUEST_TIMEOUT", "409 CONFLICT", "410 GONE", "411 LENGTH_REQUIRED", "412 PRECONDITION_FAILED", "413 PAYLOAD_TOO_LARGE", "413 REQUEST_ENTITY_TOO_LARGE", "414 URI_TOO_LONG", "414 REQUEST_URI_TOO_LONG", "415 UNSUPPORTED_MEDIA_TYPE", "416 REQUESTED_RANGE_NOT_SATISFIABLE", "417 EXPECTATION_FAILED", "418 I_AM_A_TEAPOT", "419 INSUFFICIENT_SPACE_ON_RESOURCE", "420 METHOD_FAILURE", "421 DESTINATION_LOCKED", "422 UNPROCESSABLE_ENTITY", "423 LOCKED", "424 FAILED_DEPENDENCY", "425 TOO_EARLY", "426 UPGRADE_REQUIRED", "428 PRECONDITION_REQUIRED", "429 TOO_MANY_REQUESTS", "431 REQUEST_HEADER_FIELDS_TOO_LARGE", "451 UNAVAILABLE_FOR_LEGAL_REASONS", "500 INTERNAL_SERVER_ERROR", "501 NOT_IMPLEMENTED", "502 BAD_GATEWAY", "503 SERVICE_UNAVAILABLE", "504 GATEWAY_TIMEOUT", "505 HTTP_VERSION_NOT_SUPPORTED", "506 VARIANT_ALSO_NEGOTIATES", "507 INSUFFICIENT_STORAGE", "508 LOOP_DETECTED", "509 BANDWIDTH_LIMIT_EXCEEDED", "510 NOT_EXTENDED", "511 NETWORK_AUTHENTICATION_REQUIRED" ]
-                }
-              }
-            }
+          "204" : {
+            "description" : "No Content"
           }
         }
       }
@@ -838,7 +767,7 @@
     "/api/places/owned-places" : {
       "get" : {
         "tags" : [ "place-controller" ],
-        "operationId" : "getMyPlacesForUser",
+        "operationId" : "getOwnedPlaces",
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -859,7 +788,7 @@
     "/api/places/liked-places" : {
       "get" : {
         "tags" : [ "place-controller" ],
-        "operationId" : "getLikedPlacesForUser",
+        "operationId" : "getLikedPlaces",
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -880,7 +809,7 @@
     "/api/performers/{id}/invitations" : {
       "get" : {
         "tags" : [ "performer-controller" ],
-        "operationId" : "getInvitationsForPerformer",
+        "operationId" : "getPerformerInvitations",
         "parameters" : [ {
           "name" : "id",
           "in" : "path",
@@ -910,7 +839,7 @@
     "/api/performers/owned-performers" : {
       "get" : {
         "tags" : [ "performer-controller" ],
-        "operationId" : "getOwnedPerformersForUser",
+        "operationId" : "getOwnedPerformers",
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -931,7 +860,7 @@
     "/api/performers/liked-performers" : {
       "get" : {
         "tags" : [ "performer-controller" ],
-        "operationId" : "getLikedPerformersForUser",
+        "operationId" : "getLikedPerformers",
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -1017,7 +946,7 @@
     "/api/events/{id}/place" : {
       "get" : {
         "tags" : [ "event-controller" ],
-        "operationId" : "getPlaceByEventId",
+        "operationId" : "getEventPlace",
         "parameters" : [ {
           "name" : "id",
           "in" : "path",
@@ -1044,7 +973,7 @@
     "/api/events/upcoming-events" : {
       "get" : {
         "tags" : [ "event-controller" ],
-        "operationId" : "getUpcomingEventsForAllPlaces",
+        "operationId" : "getUpcomingEvents",
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -1065,7 +994,7 @@
     "/api/events/owned-events" : {
       "get" : {
         "tags" : [ "event-controller" ],
-        "operationId" : "getMyOwnedEventsForUser",
+        "operationId" : "getOwnedEvents",
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -1086,7 +1015,7 @@
     "/api/events/liked-events" : {
       "get" : {
         "tags" : [ "event-controller" ],
-        "operationId" : "getLikedEventsForUser",
+        "operationId" : "getLikedEvents",
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -1104,7 +1033,7 @@
     "/api/event-plan/{id}/lineup-invitations" : {
       "get" : {
         "tags" : [ "event-plan-controller" ],
-        "operationId" : "getLineupInvitationsForEventPlan",
+        "operationId" : "getLineupInvitations",
         "parameters" : [ {
           "name" : "id",
           "in" : "path",
@@ -1134,7 +1063,7 @@
     "/api/event-plan/places" : {
       "get" : {
         "tags" : [ "event-plan-controller" ],
-        "operationId" : "getPlacesForEventPlanList",
+        "operationId" : "getPlacesToInvite",
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -1155,7 +1084,7 @@
     "/api/event-plan/owned-event-plans" : {
       "get" : {
         "tags" : [ "event-plan-controller" ],
-        "operationId" : "getMyOwnedEventsForUser_1",
+        "operationId" : "getOwnedEventPlans",
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -1176,7 +1105,7 @@
     "/api/event-plan/{id}/lineup-invitation/{performerId}" : {
       "delete" : {
         "tags" : [ "event-plan-controller" ],
-        "operationId" : "deleteLineupInvitationToEventPlan",
+        "operationId" : "deleteLineupInvitation",
         "parameters" : [ {
           "name" : "id",
           "in" : "path",
@@ -1195,16 +1124,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "string",
-                  "enum" : [ "100 CONTINUE", "101 SWITCHING_PROTOCOLS", "102 PROCESSING", "103 EARLY_HINTS", "103 CHECKPOINT", "200 OK", "201 CREATED", "202 ACCEPTED", "203 NON_AUTHORITATIVE_INFORMATION", "204 NO_CONTENT", "205 RESET_CONTENT", "206 PARTIAL_CONTENT", "207 MULTI_STATUS", "208 ALREADY_REPORTED", "226 IM_USED", "300 MULTIPLE_CHOICES", "301 MOVED_PERMANENTLY", "302 FOUND", "302 MOVED_TEMPORARILY", "303 SEE_OTHER", "304 NOT_MODIFIED", "305 USE_PROXY", "307 TEMPORARY_REDIRECT", "308 PERMANENT_REDIRECT", "400 BAD_REQUEST", "401 UNAUTHORIZED", "402 PAYMENT_REQUIRED", "403 FORBIDDEN", "404 NOT_FOUND", "405 METHOD_NOT_ALLOWED", "406 NOT_ACCEPTABLE", "407 PROXY_AUTHENTICATION_REQUIRED", "408 REQUEST_TIMEOUT", "409 CONFLICT", "410 GONE", "411 LENGTH_REQUIRED", "412 PRECONDITION_FAILED", "413 PAYLOAD_TOO_LARGE", "413 REQUEST_ENTITY_TOO_LARGE", "414 URI_TOO_LONG", "414 REQUEST_URI_TOO_LONG", "415 UNSUPPORTED_MEDIA_TYPE", "416 REQUESTED_RANGE_NOT_SATISFIABLE", "417 EXPECTATION_FAILED", "418 I_AM_A_TEAPOT", "419 INSUFFICIENT_SPACE_ON_RESOURCE", "420 METHOD_FAILURE", "421 DESTINATION_LOCKED", "422 UNPROCESSABLE_ENTITY", "423 LOCKED", "424 FAILED_DEPENDENCY", "425 TOO_EARLY", "426 UPGRADE_REQUIRED", "428 PRECONDITION_REQUIRED", "429 TOO_MANY_REQUESTS", "431 REQUEST_HEADER_FIELDS_TOO_LARGE", "451 UNAVAILABLE_FOR_LEGAL_REASONS", "500 INTERNAL_SERVER_ERROR", "501 NOT_IMPLEMENTED", "502 BAD_GATEWAY", "503 SERVICE_UNAVAILABLE", "504 GATEWAY_TIMEOUT", "505 HTTP_VERSION_NOT_SUPPORTED", "506 VARIANT_ALSO_NEGOTIATES", "507 INSUFFICIENT_STORAGE", "508 LOOP_DETECTED", "509 BANDWIDTH_LIMIT_EXCEEDED", "510 NOT_EXTENDED", "511 NETWORK_AUTHENTICATION_REQUIRED" ]
-                }
-              }
-            }
+          "204" : {
+            "description" : "No Content"
           }
         }
       }
@@ -1217,11 +1138,15 @@
         "properties" : {
           "latitude" : {
             "type" : "number",
-            "format" : "double"
+            "format" : "double",
+            "maximum" : 90.0,
+            "minimum" : -90.0
           },
           "longitude" : {
             "type" : "number",
-            "format" : "double"
+            "format" : "double",
+            "maximum" : 180.0,
+            "minimum" : -180.0
           }
         },
         "required" : [ "latitude", "longitude" ]
@@ -1234,7 +1159,9 @@
             "enum" : [ "INSTAGRAM", "FACEBOOK", "TWITTER", "REDDIT", "WEBSITE" ]
           },
           "url" : {
-            "type" : "string"
+            "type" : "string",
+            "maxLength" : 2048,
+            "minLength" : 0
           }
         },
         "required" : [ "type", "url" ]
@@ -1243,22 +1170,30 @@
         "type" : "object",
         "properties" : {
           "name" : {
-            "type" : "string"
+            "type" : "string",
+            "maxLength" : 255,
+            "minLength" : 0
           },
           "location" : {
             "$ref" : "#/components/schemas/GeoPointDto"
           },
           "address" : {
-            "type" : "string"
+            "type" : "string",
+            "maxLength" : 255,
+            "minLength" : 0
           },
           "city" : {
-            "type" : "string"
+            "type" : "string",
+            "maxLength" : 255,
+            "minLength" : 0
           },
           "description" : {
             "type" : [ "string", "null" ]
           },
           "image" : {
-            "type" : [ "string", "null" ]
+            "type" : [ "string", "null" ],
+            "maxLength" : 2048,
+            "minLength" : 0
           },
           "tags" : {
             "type" : [ "array", "null" ],
@@ -1319,16 +1254,22 @@
         "type" : "object",
         "properties" : {
           "name" : {
-            "type" : "string"
+            "type" : "string",
+            "maxLength" : 255,
+            "minLength" : 0
           },
           "genre" : {
-            "type" : "string"
+            "type" : "string",
+            "maxLength" : 255,
+            "minLength" : 0
           },
           "bio" : {
             "type" : "string"
           },
           "image" : {
-            "type" : [ "string", "null" ]
+            "type" : [ "string", "null" ],
+            "maxLength" : 2048,
+            "minLength" : 0
           },
           "links" : {
             "type" : [ "array", "null" ],
@@ -1380,7 +1321,9 @@
         "type" : "object",
         "properties" : {
           "title" : {
-            "type" : "string"
+            "type" : "string",
+            "maxLength" : 255,
+            "minLength" : 0
           },
           "description" : {
             "type" : "string"
@@ -1394,10 +1337,14 @@
             "format" : "date-time"
           },
           "image" : {
-            "type" : [ "string", "null" ]
+            "type" : [ "string", "null" ],
+            "maxLength" : 2048,
+            "minLength" : 0
           },
           "price" : {
-            "type" : [ "string", "null" ]
+            "type" : [ "string", "null" ],
+            "maxLength" : 255,
+            "minLength" : 0
           },
           "kind" : {
             "type" : "string",
