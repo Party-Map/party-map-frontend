@@ -1,6 +1,12 @@
 allowBuilds:
   "@parcel/watcher": false
   msw: false
+# eslint-plugin-react 7.37.5 and eslint-plugin-jsx-a11y 6.10.2 (their latest releases) still declare eslint <= 9;
+# their flat configs run on eslint 10, so the newer eslint is allowed instead of downgrading it.
+peerDependencyRules:
+  allowedVersions:
+    eslint-plugin-react>eslint: "10"
+    eslint-plugin-jsx-a11y>eslint: "10"
 # pnpm 12 holds back releases younger than its minimum release age. The project installs the latest
 # versions on purpose, so pnpm recorded these exclusions when they were added.
 minimumReleaseAgeExclude:
