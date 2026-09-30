@@ -35,4 +35,35 @@ describe("FitToHighlights", () => {
         expect(fakeMap.flyToBounds).toHaveBeenCalledWith(expect.objectContaining({ padded: true }), { duration: 0.8 });
         expect(fakeMap.flyTo).not.toHaveBeenCalled();
     });
+
+    it("fits once per highlight set, not again when the places list changes", () => {
+        const highlights = [place2.id];
+        const { rerender } = render(<FitToHighlights places={[place, place2]} highlightIds={highlights} />);
+        rerender(<FitToHighlights places={[place2]} highlightIds={highlights} />);
+        expect(fakeMap.flyTo).toHaveBeenCalledTimes(1);
+
+        rerender(<FitToHighlights places={[place2]} highlightIds={[place2.id]} />);
+        expect(fakeMap.flyTo).toHaveBeenCalledTimes(2);
+    });
+
+    it("waits for a highlighted place to load, then fits", () => {
+        const highlights = [place2.id];
+        const { rerender } = render(<FitToHighlights places={[place]} highlightIds={highlights} />);
+        expect(fakeMap.flyTo).not.toHaveBeenCalled();
+
+        rerender(<FitToHighlights places={[place, place2]} highlightIds={highlights} />);
+        expect(fakeMap.flyTo).toHaveBeenCalledTimes(1);
+    });
+
+    it("waits until it is told every highlighted place has loaded", () => {
+        const highlights = [place.id, place2.id];
+        const { rerender } = render(<FitToHighlights places={[place]} highlightIds={highlights} ready={false} />);
+        rerender(<FitToHighlights places={[place, place2]} highlightIds={highlights} ready={false} />);
+        expect(fakeMap.flyTo).not.toHaveBeenCalled();
+        expect(fakeMap.flyToBounds).not.toHaveBeenCalled();
+
+        rerender(<FitToHighlights places={[place, place2]} highlightIds={highlights} ready />);
+        expect(fakeMap.flyToBounds).toHaveBeenCalledTimes(1);
+        expect(fakeMap.flyTo).not.toHaveBeenCalled();
+    });
 });

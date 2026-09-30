@@ -137,4 +137,68 @@ describe("MapPage", () => {
             }),
         );
     });
+
+    it("loads the places around the viewport and reloads them after a move", async () => {
+        const fetchMock = mockApi(ROUTES);
+        renderWithProviders(<MapPage />);
+        await screen.findAllByTestId("marker");
+        const placeUrls = () =>
+            fetchMock.requests.map((r) => new URL(r.url)).filter((u) => u.pathname === "/api/places");
+        expect(placeUrls().map((u) => u.searchParams.get("bbox"))).toEqual(["18.95,47.4,19.15,47.6"]);
+
+        fakeMap.getBounds.mockReturnValue({
+            getWest: () => 20.1,
+            getSouth: () => 46.2,
+            getEast: () => 20.2,
+            getNorth: () => 46.3,
+        });
+        act(() => {
+            reactLeafletMock.fireMapEvent("moveend");
+        });
+        // The pins of the previous viewport stay while the next one loads.
+        expect(screen.getAllByTestId("marker")).toHaveLength(2);
+        await waitFor(() => expect(placeUrls()).toHaveLength(2));
+        expect(placeUrls()[1]?.searchParams.get("bbox")).toBe("20.05,46.15,20.25,46.35");
+    });
+
+    it("loads a highlighted place outside the viewport and flies to it", async () => {
+        const faraway = { ...place2, id: "place-far", location: { latitude: 46.25, longitude: 20.15 } };
+        mockApi({ ...ROUTES, "GET /api/places": [place], [`GET /api/places/${faraway.id}`]: faraway });
+        renderWithProviders(<MapPage />, { route: `/?focus=${faraway.id}` });
+
+        await waitFor(() => expect(screen.getAllByTestId("marker")).toHaveLength(2));
+        expect(fakeMap.flyTo).toHaveBeenCalledWith([46.25, 20.15], 15, { duration: 0.6 });
+    });
+
+    it("fits the view around several highlighted places once all of them have loaded", async () => {
+        const far1 = { ...place2, id: "place-far-1", location: { latitude: 46.25, longitude: 20.15 } };
+        const far2 = { ...place2, id: "place-far-2", location: { latitude: 46.9, longitude: 17.9 } };
+        let releaseSecond: (value: Response) => void = () => {};
+        mockApi({
+            ...ROUTES,
+            "GET /api/places": [place],
+            [`GET /api/places/${far1.id}`]: far1,
+            [`GET /api/places/${far2.id}`]: () =>
+                new Promise<Response>((resolve) => {
+                    releaseSecond = resolve;
+                }),
+        });
+        renderWithProviders(
+            <>
+                <MapPage />
+                <HighlightSetter ids={[far1.id, far2.id]} />
+            </>,
+        );
+        await screen.findAllByTestId("marker");
+
+        fireEvent.click(screen.getByRole("button", { name: "set highlights" }));
+        await waitFor(() => expect(screen.getAllByTestId("marker")).toHaveLength(2));
+        expect(fakeMap.flyTo).not.toHaveBeenCalled();
+        expect(fakeMap.flyToBounds).not.toHaveBeenCalled();
+
+        releaseSecond(Response.json(far2));
+        await waitFor(() => expect(fakeMap.flyToBounds).toHaveBeenCalledTimes(1));
+        expect(screen.getAllByTestId("marker")).toHaveLength(3);
+        expect(fakeMap.flyTo).not.toHaveBeenCalled();
+    });
 });

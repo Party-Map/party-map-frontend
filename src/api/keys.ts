@@ -4,7 +4,7 @@ import type { ID, LikeTarget } from "./types";
 
 export const placeKeys = {
     all: ["places"] as const,
-    list: () => [...placeKeys.all, "list"] as const,
+    list: (bbox?: string) => [...placeKeys.all, "list", bbox ?? "all"] as const,
     page: (id: ID) => [...placeKeys.all, "page", id] as const,
     detail: (id: ID) => [...placeKeys.all, "detail", id] as const,
     owned: () => [...placeKeys.all, "owned"] as const,

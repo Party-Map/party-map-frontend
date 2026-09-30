@@ -15,6 +15,7 @@ import { getPinIcon } from "./pins";
 import { PlaceLabels } from "./PlaceLabels";
 import { PlacePopupCard } from "./PlacePopupCard";
 import { UserLocation } from "./UserLocation";
+import { ViewportWatcher } from "./ViewportWatcher";
 import { ZoomControls } from "./ZoomControls";
 
 /** Lifts the popup so it floats above the pin head. */
@@ -34,10 +35,23 @@ interface MapViewProps {
     openPopupId: ID | null;
     onOpenPlace: (id: ID) => void;
     onClosePopup: () => void;
+    /** Called with the `bbox` to load places for, on mount and after every pan or zoom. */
+    onViewportChange?: (bbox: string) => void;
+    /** False while highlighted places are still loading; the view is fitted to them once they are all there. */
+    highlightsSettled?: boolean;
 }
 
 /** The Leaflet map: tiles, pins, labels, controls and the popup for the open place. */
-export function MapView({ places, upcomingMap, highlightIds, openPopupId, onOpenPlace, onClosePopup }: MapViewProps) {
+export function MapView({
+    places,
+    upcomingMap,
+    highlightIds,
+    openPopupId,
+    onOpenPlace,
+    onClosePopup,
+    onViewportChange,
+    highlightsSettled = true,
+}: MapViewProps) {
     // Memoised so the popup position stays referentially stable: react-leaflet re-opens the popup
     // whenever it receives a new position.
     const popup = useMemo(() => {
@@ -56,8 +70,9 @@ export function MapView({ places, upcomingMap, highlightIds, openPopupId, onOpen
             >
                 <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
 
+                {onViewportChange && <ViewportWatcher onChange={onViewportChange} />}
                 <UserLocation auto={highlightIds.length === 0} />
-                <FitToHighlights places={places} highlightIds={highlightIds} />
+                <FitToHighlights places={places} highlightIds={highlightIds} ready={highlightsSettled} />
                 <ZoomControls places={places} openPopupId={openPopupId} />
                 <PlaceLabels
                     places={places}

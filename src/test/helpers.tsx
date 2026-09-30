@@ -164,7 +164,8 @@ export function mockApi(routes: Record<string, RouteHandler>): ApiMock {
         const handler = keyWithQuery in routes ? routes[keyWithQuery] : routes[keyNoQuery];
 
         if (handler === undefined) return new Response("not found", { status: 404 });
-        const body = typeof handler === "function" ? (handler as RouteFn)(sent) : handler;
+        // A handler may answer later (return a promise) to hold a request in flight.
+        const body: unknown = typeof handler === "function" ? await (handler as RouteFn)(sent) : handler;
         if (body instanceof Response) return body;
         if (body === null) return new Response(null, { status: 204 });
         return new Response(JSON.stringify(body), { status: 200, headers: { "Content-Type": "application/json" } });

@@ -58,8 +58,13 @@ routes use `Component:` (the admin area is lazy-loaded). Each file opens with a 
 - Components read server state through `api/hooks.ts`: one query hook per read, one mutation hook per write. Query
   keys are the factories in `api/keys.ts`; a mutation invalidates the key families it changes. Pages render
   `isPending` -> `LoadingState`, `ApiError` 404 -> `NotFoundPage`, other errors -> `ErrorState` with `refetch`.
-- Reads retry once, never on a 4xx. `messageOf(error, fallback)` reads an RFC 9457 `detail`/`title` when the API
-  sends one (Spring's default error body has neither, so the fallback shows today).
+- Reads retry once, never on a 4xx. Every API error is an RFC 9457 problem (`status`, `detail`, and `errors[]` of
+  `{ field, message }` for invalid bodies); `messageOf(error, fallback)` shows its `detail`/`title`. Mutations without
+  a result answer 204 (the fetcher resolves to `undefined`).
+- The map loads only the places around the viewport: `map/ViewportWatcher` reports a padded, grid-snapped
+  `bbox` (`map/geo.ts` `toBbox`) on mount and after every move, `usePlaces(bbox)` keeps the previous pins while the
+  next area loads, and highlighted places outside it come from `usePlacesById`. `FitToHighlights` fits once per
+  highlight set, after all of them have loaded.
 - `lib/geocode.ts` (Nominatim) is the only other network access; nothing else calls `fetch`.
 
 ## Auth

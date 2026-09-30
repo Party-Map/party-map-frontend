@@ -4,7 +4,8 @@ import type { ID, PlacePayload } from "./types";
 
 const byId = (id: ID) => ({ params: { path: { id } } });
 
-export const fetchPlaces = () => unwrap(client.GET("/api/places"));
+/** Every place, or only those inside `bbox` ("minLon,minLat,maxLon,maxLat"). */
+export const fetchPlaces = (bbox?: string) => unwrap(client.GET("/api/places", { params: { query: { bbox } } }));
 export const fetchPlace = (id: ID) => unwrap(client.GET("/api/places/{id}", byId(id)));
 export const fetchPlaceByEventId = (eventId: ID) => unwrap(client.GET("/api/events/{id}/place", byId(eventId)));
 export const fetchOwnedPlaces = () => unwrap(client.GET("/api/places/owned-places"));

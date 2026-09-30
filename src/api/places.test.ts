@@ -30,6 +30,14 @@ const payload: PlacePayload = {
 };
 
 describe("places api", () => {
+    it("asks only for the places inside a bounding box when one is given", async () => {
+        const fetchMock = mockApi({ "GET /api/places": [place] });
+        await expect(fetchPlaces("18.9,47.3,19.3,47.7")).resolves.toEqual([place]);
+        await fetchPlaces();
+        expect(new URL(fetchMock.requests[0]!.url).searchParams.get("bbox")).toBe("18.9,47.3,19.3,47.7");
+        expect(new URL(fetchMock.requests[1]!.url).search).toBe("");
+    });
+
     it("reads places", async () => {
         const owned = { id: place.id, name: place.name, address: place.address, city: place.city };
         const fetchMock = mockApi({

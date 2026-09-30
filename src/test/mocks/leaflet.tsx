@@ -31,6 +31,13 @@ export function point(x: number, y: number): Point {
     };
 }
 
+interface FakeBounds {
+    getWest: () => number;
+    getSouth: () => number;
+    getEast: () => number;
+    getNorth: () => number;
+}
+
 const listeners = new Map<string, Set<(...args: unknown[]) => void>>();
 
 export const fakeMap = {
@@ -41,6 +48,13 @@ export const fakeMap = {
     setZoomAround: vi.fn(),
     panBy: vi.fn(),
     getZoom: vi.fn(() => 13),
+    /** Central Budapest. */
+    getBounds: vi.fn((): FakeBounds => ({
+        getWest: () => 19.0,
+        getSouth: () => 47.45,
+        getEast: () => 19.1,
+        getNorth: () => 47.55,
+    })),
     getSize: vi.fn(() => point(800, 600)),
     latLngToContainerPoint: vi.fn(() => point(400, 300)),
     project: vi.fn(() => point(400, 300)),

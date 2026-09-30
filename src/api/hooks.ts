@@ -1,7 +1,7 @@
 // The app's server state: one query hook per read and one mutation hook per write. Queries throw the fetchers'
 // ApiError, so a component reads `error` (404 → not found) and `refetch` (retry). Mutations invalidate the key
 // families they change, so every screen showing that data refreshes.
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { ApiError } from "./client";
 import {
@@ -61,8 +61,35 @@ type Answer = "accept" | "reject";
 
 /* ---------- Public pages ---------- */
 
-export function usePlaces() {
-    return useQuery({ queryKey: placeKeys.list(), queryFn: fetchPlaces });
+/**
+ * The places inside `bbox`, all places when it is undefined, and nothing yet while it is null (the map has not
+ * reported its viewport). The previous result stays visible while a new viewport loads.
+ */
+export function usePlaces(bbox?: string | null) {
+    const area = bbox ?? undefined;
+    return useQuery({
+        queryKey: placeKeys.list(area),
+        queryFn: () => fetchPlaces(area),
+        enabled: bbox !== null,
+        placeholderData: keepPreviousData,
+    });
+}
+
+/** Module-level so TanStack Query can reuse the combined result while the queries are unchanged. */
+const loadedPlaces = (results: { data?: Place; isPending: boolean }[]) => ({
+    places: results.flatMap((result) => (result.data ? [result.data] : [])),
+    pending: results.some((result) => result.isPending),
+});
+
+/**
+ * The places with these ids, one cached request each, and whether any is still loading. Ids that fail to load are
+ * left out.
+ */
+export function usePlacesById(ids: ID[]): { places: Place[]; pending: boolean } {
+    return useQueries({
+        queries: ids.map((id) => ({ queryKey: placeKeys.detail(id), queryFn: () => fetchPlace(id) })),
+        combine: loadedPlaces,
+    });
 }
 
 export function useUpcomingEvents() {
