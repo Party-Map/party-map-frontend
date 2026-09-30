@@ -22,13 +22,18 @@
     background: var(--surface-hover);
   }
 
-  .tab-active {
+  // Base UI marks the selected tab with data-active.
+  .tab[data-active] {
     background: var(--accent);
     color: var(--accent-fg);
+
+    &:hover {
+      background: var(--accent-hover);
+    }
   }
 
-  .tab-active:hover {
-    background: var(--accent-hover);
+  .panel {
+    margin-top: var(--space-3);
   }
 
   .sections {

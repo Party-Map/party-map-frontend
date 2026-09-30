@@ -1,8 +1,9 @@
+import { Command } from "cmdk";
 import { Eraser, Minimize2, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router";
 
-import { search as searchApi } from "@/api/search";
+import { useSearch } from "@/api/hooks";
 import type { ID, SearchHit } from "@/api/types";
 import { SEARCH_DEBOUNCE_MS } from "@/lib/constants";
 import { useDebouncedValue } from "@/lib/hooks/useDebouncedValue";
@@ -12,11 +13,7 @@ import { useHighlight } from "./HighlightProvider";
 import styles from "./SearchBar.module.scss";
 import { SearchResultItem } from "./SearchResultItem";
 
-interface Results {
-    query: string;
-    hits: SearchHit[];
-    failed?: boolean;
-}
+const NO_HITS: SearchHit[] = [];
 
 export function placeIdsOf(hits: SearchHit[]): ID[] {
     const ids = hits.map((h) => h.placeId ?? (h.type === "PLACE" ? h.id : null)).filter((id): id is ID => Boolean(id));
@@ -35,8 +32,9 @@ export function hrefForHit(hit: SearchHit): string {
 }
 
 /**
- * Search box with a debounced dropdown. Results highlight the matching places on the map; Enter
- * commits the query to the URL (`?q=`), and picking a result focuses its place (`?focus=`).
+ * Search box with a debounced dropdown (cmdk: arrow keys move through the hits, Enter picks one). Results highlight
+ * the matching places on the map; Enter without a chosen hit commits the query to the URL (`?q=`), and picking a
+ * hit focuses its place (`?focus=`).
  */
 export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
     const navigate = useNavigate();
@@ -46,42 +44,25 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
 
     const hasFocusParam = searchParams.has("focus");
     const [query, setQuery] = useState(initialQuery);
-    const [open, setOpen] = useState(false);
-    const [results, setResults] = useState<Results | null>(null);
+    // A query arriving with the page (?q=) shows its results unless a place is pinned (?focus=).
+    const [open, setOpen] = useState(() => initialQuery.trim() !== "" && !hasFocusParam);
+    // cmdk highlights the first hit by itself; it only counts as chosen once the user moves through the list.
+    const [choosing, setChoosing] = useState(false);
     const rootRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
     const debounced = useDebouncedValue(query, SEARCH_DEBOUNCE_MS).trim();
-    const items = results?.query === debounced ? results.hits : [];
-    const showDropdown = open && debounced.length > 0 && results?.query === debounced;
+    const results = useSearch(debounced);
+    const hits = debounced ? (results.data ?? NO_HITS) : NO_HITS;
+    const settled = debounced.length > 0 && (results.data !== undefined || results.isError);
+    const showDropdown = open && settled;
 
-    // Fetch when the debounced query changes; highlight matching places unless a focus is pinned.
+    // The hits highlight their places on the map, unless a focus is pinned.
     useEffect(() => {
-        if (!debounced) {
-            if (!hasFocusParam) setHighlightIds([]);
-            return;
-        }
-        let cancelled = false;
-        searchApi(debounced).then(
-            (hits) => {
-                if (cancelled) return;
-                setResults({ query: debounced, hits });
-                if (!hasFocusParam) {
-                    setHighlightIds(placeIdsOf(hits));
-                    setOpen(true);
-                }
-            },
-            (error: unknown) => {
-                if (cancelled) return;
-                console.error("Search failed", error);
-                setResults({ query: debounced, hits: [], failed: true });
-                setOpen(true);
-            },
-        );
-        return () => {
-            cancelled = true;
-        };
-    }, [debounced, hasFocusParam, setHighlightIds]);
+        if (hasFocusParam) return;
+        if (!debounced) setHighlightIds([]);
+        else if (results.data) setHighlightIds(placeIdsOf(results.data));
+    }, [debounced, results.data, hasFocusParam, setHighlightIds]);
 
     // Close on outside click and Escape.
     useEffect(() => {
@@ -104,13 +85,14 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
 
     const dismiss = () => {
         setOpen(false);
+        setChoosing(false);
         inputRef.current?.blur();
     };
 
     const clearAll = () => {
         setQuery("");
-        setResults(null);
         setOpen(false);
+        setChoosing(false);
         setHighlightIds([]);
         void navigate(pathname, { replace: true });
     };
@@ -148,7 +130,7 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
             return;
         }
         clearFocusParam();
-        const placeIds = placeIdsOf(items);
+        const placeIds = placeIdsOf(hits);
         if (placeIds.length) {
             setHighlightIds(placeIds);
             goToMapWith({ q });
@@ -159,7 +141,7 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
     const hasQuery = query.trim().length > 0;
 
     return (
-        <div ref={rootRef} className={styles.root}>
+        <Command ref={rootRef} shouldFilter={false} loop label="Search" className={styles.root}>
             <div className={styles.box}>
                 <button
                     type="button"
@@ -171,19 +153,31 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
                     <Search size={16} aria-hidden />
                 </button>
 
-                <input
+                <Command.Input
                     ref={inputRef}
                     value={query}
-                    onChange={(e) => {
-                        setQuery(e.target.value);
+                    onValueChange={(value) => {
+                        setQuery(value);
+                        setOpen(true);
+                        setChoosing(false);
                         clearFocusParam();
                     }}
                     onFocus={() => {
-                        if (items.length && !hasFocusParam) setOpen(true);
+                        if (hits.length && !hasFocusParam) setOpen(true);
                     }}
                     onKeyDown={(e) => {
-                        if (e.key === "Enter") {
+                        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+                            // The first ArrowDown reveals cmdk's highlighted first hit instead of moving past it.
+                            if (e.key === "ArrowDown" && !choosing) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                            }
+                            setOpen(true);
+                            setChoosing(true);
+                        } else if (e.key === "Enter" && !(choosing && showDropdown && hits.length)) {
+                            // Nothing chosen: Enter searches. Keep cmdk from picking its default first hit.
                             e.preventDefault();
+                            e.stopPropagation();
                             submit();
                         }
                     }}
@@ -210,30 +204,33 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
             </div>
 
             {showDropdown && (
-                <div className={styles.dropdown} role="listbox" aria-label="Search results">
-                    {results.failed ? (
+                <Command.List
+                    label="Search results"
+                    className={styles.dropdown}
+                    data-choosing={choosing || undefined}
+                    onPointerMove={() => setChoosing(true)}
+                >
+                    {results.isError ? (
                         <p className={styles.noResults} role="alert">
                             Search is unavailable right now. Please try again.
                         </p>
-                    ) : items.length === 0 ? (
+                    ) : hits.length === 0 ? (
                         <p className={styles.noResults}>No results for “{debounced}”</p>
                     ) : (
-                        <ul className={styles.list}>
-                            {items.map((hit) => (
-                                <SearchResultItem
-                                    key={`${hit.type}-${hit.id}`}
-                                    hit={hit}
-                                    onPick={() => pickHit(hit)}
-                                    onView={() => {
-                                        void navigate(hrefForHit(hit));
-                                        dismiss();
-                                    }}
-                                />
-                            ))}
-                        </ul>
+                        hits.map((hit) => (
+                            <SearchResultItem
+                                key={`${hit.type}-${hit.id}`}
+                                hit={hit}
+                                onPick={() => pickHit(hit)}
+                                onView={() => {
+                                    void navigate(hrefForHit(hit));
+                                    dismiss();
+                                }}
+                            />
+                        ))
                     )}
-                </div>
+                </Command.List>
             )}
-        </div>
+        </Command>
     );
 }

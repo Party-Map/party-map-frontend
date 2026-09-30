@@ -12,14 +12,14 @@ describe("TopBar", () => {
         expect(await screen.findByRole("button", { name: "Sign in" })).toHaveClass("item", "desktop");
         expect(screen.getByRole("banner")).toHaveClass("top-wrapper");
         expect(screen.getByRole("link", { name: "PartyMap home" })).toHaveAttribute("href", "/");
-        expect(screen.getByRole("textbox", { name: "Search" })).toHaveValue("");
+        expect(screen.getByRole("combobox", { name: "Search" })).toHaveValue("");
         expect(screen.getByRole("button", { name: "Toggle theme" })).toBeInTheDocument();
     });
 
     it("seeds the search box from the URL query and restores its results", async () => {
         mockApi({ "GET /api/search?q=techno": { query: "techno", hits: searchHits } });
         renderWithProviders(<TopBar />, { route: "/?q=techno" });
-        expect(screen.getByRole("textbox", { name: "Search" })).toHaveValue("techno");
+        expect(screen.getByRole("combobox", { name: "Search" })).toHaveValue("techno");
         expect(await screen.findByRole("listbox", { name: "Search results" })).toHaveTextContent("Techno Night");
     });
 });
@@ -30,7 +30,7 @@ describe("AdminTopBar", () => {
         expect(await screen.findByRole("button", { name: "Sign in" })).toBeInTheDocument();
         expect(screen.getByRole("banner")).toHaveClass("admin-wrapper");
         expect(screen.getByRole("link", { name: "Admin Panel" })).toHaveAttribute("href", "/admin");
-        expect(screen.queryByRole("textbox")).toBeNull();
+        expect(screen.queryByRole("combobox")).toBeNull();
         expect(screen.getByRole("button", { name: "Toggle theme" })).toBeInTheDocument();
     });
 });

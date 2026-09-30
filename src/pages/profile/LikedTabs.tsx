@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { Tabs } from "@base-ui/react/tabs";
 
 import type { Event, LikedEventsGrouped, LikeTarget, Performer, Place } from "@/api/types";
 import { Card } from "@/components/Card";
 import { EmptyState } from "@/components/States";
 import text from "@/components/typography.module.scss";
 import { formatDateTimeRange } from "@/lib/dates";
-import { cn } from "@/lib/utils";
 
 import { LikedListItem } from "./LikedListItem";
 import styles from "./LikedTabs.module.scss";
@@ -42,30 +41,20 @@ function eventRows(events: Event[], emptyMessage: string) {
     );
 }
 
-/** Events / Places / Performers tabs of the likes page. */
+/** Events / Places / Performers tabs of the likes page (Base UI Tabs: arrow keys move between tabs). */
 export function LikedTabs({ events, places, performers }: LikedTabsProps) {
-    const [active, setActive] = useState<LikeTarget>("events");
-
     return (
-        <>
-            <div className={styles.tabs} role="tablist" aria-label="Liked items">
+        <Tabs.Root defaultValue={"events" satisfies LikeTarget}>
+            <Tabs.List className={styles.tabs} aria-label="Liked items">
                 {TABS.map((tab) => (
-                    <button
-                        key={tab.key}
-                        type="button"
-                        role="tab"
-                        id={`liked-tab-${tab.key}`}
-                        aria-selected={active === tab.key}
-                        className={cn(styles.tab, active === tab.key && styles.tabActive)}
-                        onClick={() => setActive(tab.key)}
-                    >
+                    <Tabs.Tab key={tab.key} value={tab.key} className={styles.tab}>
                         {tab.label}
-                    </button>
+                    </Tabs.Tab>
                 ))}
-            </div>
+            </Tabs.List>
 
-            <Card padded role="tabpanel" aria-labelledby={`liked-tab-${active}`}>
-                {active === "events" && (
+            <Tabs.Panel value="events" className={styles.panel}>
+                <Card padded>
                     <div className={styles.sections}>
                         <section>
                             <h2 className={text.sectionTitle}>Upcoming events</h2>
@@ -76,9 +65,11 @@ export function LikedTabs({ events, places, performers }: LikedTabsProps) {
                             {eventRows(events.past, "No past events.")}
                         </section>
                     </div>
-                )}
+                </Card>
+            </Tabs.Panel>
 
-                {active === "places" && (
+            <Tabs.Panel value="places" className={styles.panel}>
+                <Card padded>
                     <section>
                         <h2 className={text.sectionTitle}>Places</h2>
                         {places.length === 0 ? (
@@ -100,9 +91,11 @@ export function LikedTabs({ events, places, performers }: LikedTabsProps) {
                             </ul>
                         )}
                     </section>
-                )}
+                </Card>
+            </Tabs.Panel>
 
-                {active === "performers" && (
+            <Tabs.Panel value="performers" className={styles.panel}>
+                <Card padded>
                     <section>
                         <h2 className={text.sectionTitle}>Performers</h2>
                         {performers.length === 0 ? (
@@ -124,8 +117,8 @@ export function LikedTabs({ events, places, performers }: LikedTabsProps) {
                             </ul>
                         )}
                     </section>
-                )}
-            </Card>
-        </>
+                </Card>
+            </Tabs.Panel>
+        </Tabs.Root>
     );
 }

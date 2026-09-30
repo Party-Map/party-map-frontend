@@ -103,7 +103,7 @@
     color: var(--fg-muted);
   }
 
-  .list > .item + .item {
+  .item + .item {
     border-top: 1px solid var(--border);
   }
 
@@ -112,10 +112,12 @@
     align-items: center;
     gap: var(--space-3);
     padding: 0.75rem 1rem;
+    cursor: pointer;
     transition: background-color var(--duration-fast) var(--ease);
   }
 
-  .item:hover {
+  // cmdk marks the hit under the pointer or the arrow keys; it only shows once the user is choosing.
+  .dropdown[data-choosing] .item[data-selected="true"] {
     background: var(--accent-soft);
   }
 
@@ -178,7 +180,7 @@
     font-weight: 500;
   }
 
-  .item-main:hover .item-title {
+  .dropdown[data-choosing] .item[data-selected="true"] .item-title {
     color: var(--link);
   }
 

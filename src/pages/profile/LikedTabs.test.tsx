@@ -65,4 +65,14 @@ describe("LikedTabs", () => {
         await userEvent.click(screen.getByRole("tab", { name: "Performers" }));
         expect(screen.getByText("You haven’t liked any performers yet.")).toBeInTheDocument();
     });
+
+    it("moves between tabs with the arrow keys", async () => {
+        renderWithProviders(<LikedTabs {...filled} />);
+        screen.getByRole("tab", { name: "Events" }).focus();
+        await userEvent.keyboard("{ArrowRight}");
+        expect(screen.getByRole("tab", { name: "Places" })).toHaveFocus();
+        await userEvent.keyboard("{Enter}");
+        expect(screen.getByRole("tab", { name: "Places" })).toHaveAttribute("aria-selected", "true");
+        expect(screen.getByRole("heading", { name: "Places" })).toBeInTheDocument();
+    });
 });

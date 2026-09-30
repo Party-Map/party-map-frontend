@@ -1,3 +1,6 @@
+// One search hit in the dropdown: a cmdk option (Enter or a click focuses its place on the map) with a View button
+// that opens the hit's own page.
+import { Command } from "cmdk";
 import { CalendarDays, MapPin, UserRound } from "lucide-react";
 
 import type { SearchHit, SearchHitType } from "@/api/types";
@@ -13,13 +16,19 @@ const TYPE_META: Record<SearchHitType, { label: string; Icon: typeof MapPin; cla
     PERFORMER: { label: "Performer", Icon: UserRound, className: styles.typePerformer },
 };
 
-export function SearchResultItem({ hit, onPick, onView }: { hit: SearchHit; onPick: () => void; onView: () => void }) {
+interface SearchResultItemProps {
+    hit: SearchHit;
+    onPick: () => void;
+    onView: () => void;
+}
+
+export function SearchResultItem({ hit, onPick, onView }: SearchResultItemProps) {
     const { label, Icon, className: typeClass } = TYPE_META[hit.type];
     const dateLabel = formatNextEventStart(hit.nextEventStart);
 
     return (
-        <li className={styles.item}>
-            <button type="button" onClick={onPick} className={styles.itemMain}>
+        <Command.Item value={`${hit.type}-${hit.id}`} onSelect={onPick} className={styles.item}>
+            <span className={styles.itemMain}>
                 <span className={styles.thumb}>
                     <CoverImage src={hit.image} alt="" height="sm" className={styles.thumbImage} />
                     <span className={styles.thumbLetter}>{hit.type.charAt(0)}</span>
@@ -35,7 +44,7 @@ export function SearchResultItem({ hit, onPick, onView }: { hit: SearchHit; onPi
                     <span className={styles.itemSubtitle}>{hit.subtitle}</span>
                 </span>
                 {dateLabel && <span className={styles.itemDate}>{dateLabel}</span>}
-            </button>
+            </span>
             <button
                 type="button"
                 onClick={(e) => {
@@ -46,6 +55,6 @@ export function SearchResultItem({ hit, onPick, onView }: { hit: SearchHit; onPi
             >
                 View
             </button>
-        </li>
+        </Command.Item>
     );
 }

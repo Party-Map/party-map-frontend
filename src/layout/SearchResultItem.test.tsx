@@ -1,4 +1,5 @@
 import { fireEvent, render, within } from "@testing-library/react";
+import { Command } from "cmdk";
 
 import type { SearchHit } from "@/api/types";
 import { PLACEHOLDER_IMAGE } from "@/lib/constants";
@@ -39,11 +40,13 @@ function renderItem(hit: SearchHit) {
     const onPick = vi.fn();
     const onView = vi.fn();
     const { container } = render(
-        <ul>
-            <SearchResultItem hit={hit} onPick={onPick} onView={onView} />
-        </ul>,
+        <Command shouldFilter={false}>
+            <Command.List>
+                <SearchResultItem hit={hit} onPick={onPick} onView={onView} />
+            </Command.List>
+        </Command>,
     );
-    return { onPick, onView, item: within(container).getByRole("listitem") };
+    return { onPick, onView, item: within(container).getByRole("option") };
 }
 
 beforeEach(() => {
@@ -78,9 +81,10 @@ describe("SearchResultItem", () => {
         expect(within(item).getByText("techno")).toHaveClass("item-subtitle");
     });
 
-    it("picks from the main button and views from the view button independently", () => {
+    it("picks the hit when the option is chosen and opens its page from View alone", () => {
         const { item, onPick, onView } = renderItem(eventHit);
-        fireEvent.click(within(item).getByRole("button", { name: /Techno Night/ }));
+        expect(item).toHaveAccessibleName(/Techno Night/);
+        fireEvent.click(item);
         expect(onPick).toHaveBeenCalledTimes(1);
         expect(onView).not.toHaveBeenCalled();
 

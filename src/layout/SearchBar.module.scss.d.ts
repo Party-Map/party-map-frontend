@@ -13,7 +13,6 @@ interface CssExports {
   itemText: string;
   itemTitle: string;
   itemTitleRow: string;
-  list: string;
   noResults: string;
   root: string;
   roundActive: string;

@@ -41,3 +41,5 @@ if (!("ResizeObserver" in window)) {
 }
 
 window.scrollTo = () => {};
+// cmdk scrolls the chosen option into view; jsdom has no layout to scroll.
+Element.prototype.scrollIntoView = () => {};

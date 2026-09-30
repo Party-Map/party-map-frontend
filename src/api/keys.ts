@@ -35,6 +35,11 @@ export const eventPlanKeys = {
     invitablePlaces: () => [...eventPlanKeys.all, "invitable-places"] as const,
 };
 
+export const searchKeys = {
+    all: ["search"] as const,
+    query: (q: string) => [...searchKeys.all, q] as const,
+};
+
 export const likeKeys = {
     all: ["likes"] as const,
     status: (target: LikeTarget, id: ID) => [...likeKeys.all, "status", target, id] as const,

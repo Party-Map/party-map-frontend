@@ -1,4 +1,4 @@
-import { act, screen, within } from "@testing-library/react";
+import { act, fireEvent, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { useLocation } from "react-router";
@@ -101,7 +101,7 @@ async function setup({ route = "/", initialQuery, routes = DEFAULT_ROUTES }: Set
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderWithProviders(<Harness initialQuery={initialQuery} />, { route });
     await settle(0);
-    return { fetchMock, user, input: screen.getByRole("textbox", { name: "Search" }) };
+    return { fetchMock, user, input: screen.getByRole("combobox", { name: "Search" }) };
 }
 
 const highlight = () => screen.getByTestId("highlight").textContent;
@@ -148,7 +148,7 @@ describe("SearchBar", () => {
         await settle();
         expect(requestedUrls(fetchMock)).toEqual(["http://api.test/api/search?q=techno"]);
         const list = await screen.findByRole("listbox", { name: "Search results" });
-        const items = within(list).getAllByRole("listitem");
+        const items = within(list).getAllByRole("option");
         expect(items).toHaveLength(3);
         expect(items[0]).toHaveTextContent("A38 Hajó");
         expect(items[0]).toHaveTextContent("Place");
@@ -170,13 +170,11 @@ describe("SearchBar", () => {
         expect(highlight()).toBe("");
     });
 
-    it("logs failures and keeps the dropdown closed", async () => {
-        const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    it("says so when the search fails and highlights nothing", async () => {
         const { user, input } = await setup({ routes: {} });
         await user.type(input, "techno");
         await settle();
         await settle(0);
-        expect(error).toHaveBeenCalledWith("Search failed", expect.any(Error));
         expect(listbox()).toHaveTextContent("Search is unavailable right now.");
         expect(highlight()).toBe("");
     });
@@ -227,7 +225,7 @@ describe("SearchBar", () => {
     it("sends a picked hit to the map with focus and query when not on the map", async () => {
         const { user, input } = await setup({ route: "/events/1" });
         const list = await typeAndWait(user, input);
-        await user.click(within(list).getByRole("button", { name: /Techno Night/ }));
+        await user.click(within(list).getByRole("option", { name: /Techno Night/ }));
         await settle(0);
         expect(location()).toBe("/?focus=place-2&q=techno");
         expect(listbox()).toBeNull();
@@ -236,16 +234,41 @@ describe("SearchBar", () => {
     it("only highlights the place when picking on the map", async () => {
         const { user, input } = await setup();
         const list = await typeAndWait(user, input);
-        await user.click(within(list).getByRole("button", { name: /Techno Night/ }));
+        await user.click(within(list).getByRole("option", { name: /Techno Night/ }));
         expect(highlight()).toBe("place-2");
         expect(location()).toBe("/");
         expect(listbox()).toBeNull();
     });
 
+    it("moves through the hits with the arrow keys and picks the chosen one on Enter", async () => {
+        const { user, input } = await setup();
+        const list = await typeAndWait(user, input);
+        expect(list).not.toHaveAttribute("data-choosing");
+
+        await user.keyboard("{ArrowDown}{ArrowDown}");
+        expect(list).toHaveAttribute("data-choosing");
+        expect(screen.getByRole("option", { name: /Techno Night/ })).toHaveAttribute("aria-selected", "true");
+
+        await user.keyboard("{Enter}");
+        expect(highlight()).toBe("place-2");
+        expect(location()).toBe("/");
+        expect(listbox()).toBeNull();
+    });
+
+    it("counts pointing at a hit as choosing, and typing again as not", async () => {
+        const { user, input } = await setup();
+        const list = await typeAndWait(user, input);
+        fireEvent.pointerMove(list);
+        expect(list).toHaveAttribute("data-choosing");
+
+        await user.type(input, "x");
+        expect(screen.queryByRole("listbox", { name: "Search results" })).not.toHaveAttribute("data-choosing");
+    });
+
     it("opens the page of a hit without a place", async () => {
         const { user, input } = await setup();
         const list = await typeAndWait(user, input);
-        await user.click(within(list).getByRole("button", { name: /DJ Test/ }));
+        await user.click(within(list).getByRole("option", { name: /DJ Test/ }));
         expect(location()).toBe("/performers/performer-1");
         expect(listbox()).toBeNull();
     });
@@ -255,7 +278,7 @@ describe("SearchBar", () => {
         const list = await typeAndWait(user, input);
         await user.clear(input);
         expect(list).toBeInTheDocument();
-        await user.click(within(list).getByRole("button", { name: /A38/ }));
+        await user.click(within(list).getByRole("option", { name: /A38/ }));
         await settle(0);
         expect(location()).toBe("/?focus=place-1");
     });
@@ -329,7 +352,7 @@ describe("SearchBar", () => {
         await typeAndWait(user, input);
         expect(highlight()).toBe("place-1,place-2");
         await user.click(screen.getByRole("button", { name: "unmount search" }));
-        expect(screen.queryByRole("textbox")).toBeNull();
+        expect(screen.queryByRole("combobox")).toBeNull();
         expect(highlight()).toBe("");
     });
 });

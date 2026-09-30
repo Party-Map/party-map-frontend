@@ -2,9 +2,9 @@
 // Please do not change this file!
 interface CssExports {
   list: string;
+  panel: string;
   sections: string;
   tab: string;
-  tabActive: string;
   tabs: string;
 }
 declare const cssExports: CssExports;

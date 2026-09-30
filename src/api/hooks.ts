@@ -23,7 +23,7 @@ import {
     fetchOwnedEvents,
     fetchUpcomingEventsByPlace,
 } from "./events";
-import { eventKeys, eventPlanKeys, likeKeys, performerKeys, placeKeys } from "./keys";
+import { eventKeys, eventPlanKeys, likeKeys, performerKeys, placeKeys, searchKeys } from "./keys";
 import { fetchLikedEvents, fetchLikedPerformers, fetchLikedPlaces, fetchLikeStatus, like, unlike } from "./likes";
 import {
     createPerformer,
@@ -44,6 +44,7 @@ import {
     respondToPlaceInvitation,
     updatePlace,
 } from "./places";
+import { search } from "./search";
 import type {
     EventPlanPayload,
     ID,
@@ -109,6 +110,11 @@ export function usePerformerPage(id: ID) {
             return { performer, events };
         },
     });
+}
+
+/** Hits for a search query; nothing is asked for an empty query. */
+export function useSearch(query: string) {
+    return useQuery({ queryKey: searchKeys.query(query), queryFn: () => search(query), enabled: query.length > 0 });
 }
 
 /* ---------- Likes ---------- */
