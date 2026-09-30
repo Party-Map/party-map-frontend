@@ -1,13 +1,16 @@
-import { type SubmitEvent, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { useNavigate } from "react-router";
+import { z } from "zod";
 
-import type { GeoPoint, Link, Place, PlacePayload } from "@/api/types";
+import type { GeoPoint, Place, PlacePayload } from "@/api/types";
 import { Button } from "@/components/Button";
 import { Field, FormError, Input, Textarea } from "@/components/Field";
 import formStyles from "@/components/forms.module.scss";
 import text from "@/components/typography.module.scss";
 import type { GeocodeResult } from "@/lib/geocode";
 import { reverseGeocode } from "@/lib/geocode";
+import { imageUrl, links, optionalText, requiredText } from "@/pages/admin/shared/formSchemas";
 import { ImageUrlField } from "@/pages/admin/shared/ImageUrlField";
 import { LinksInput } from "@/pages/admin/shared/LinksInput";
 
@@ -24,31 +27,24 @@ interface PlaceFormProps {
     onSubmit: (payload: PlacePayload) => Promise<void>;
 }
 
-interface FormState {
-    name: string;
-    address: string;
-    city: string;
-    location: GeoPoint | null;
-    description: string;
+const schema = z.object({
+    name: requiredText("Name"),
+    address: optionalText,
+    city: requiredText("City"),
+    location: z.custom<GeoPoint | null>().refine((value) => value !== null, "Please pick a location on the map."),
+    description: optionalText,
     /** Comma separated, as typed. */
-    tags: string;
-    image: string;
-    links: Link[];
-}
+    tags: z.string(),
+    image: imageUrl,
+    links,
+});
 
-const EMPTY: FormState = {
-    name: "",
-    address: "",
-    city: "",
-    location: null,
-    description: "",
-    tags: "",
-    image: "",
-    links: [],
-};
+type FormValues = z.input<typeof schema>;
 
-function toFormState(values: PlaceFormValues | undefined): FormState {
-    if (!values) return EMPTY;
+function toFormValues(values: PlaceFormValues | undefined): FormValues {
+    if (!values) {
+        return { name: "", address: "", city: "", location: null, description: "", tags: "", image: "", links: [] };
+    }
     return {
         name: values.name,
         address: values.address,
@@ -71,27 +67,33 @@ function parseTags(input: string): string[] {
 /** Create/edit form for a place; the address search and the map keep each other in sync. */
 export function PlaceForm({ title, submitLabel, initialValues, onSubmit }: PlaceFormProps) {
     const navigate = useNavigate();
-    const [form, setForm] = useState(() => toFormState(initialValues));
-    const [submitting, setSubmitting] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-
-    const update = (patch: Partial<FormState>) => setForm((current) => ({ ...current, ...patch }));
+    const {
+        register,
+        control,
+        handleSubmit,
+        setValue,
+        setError,
+        formState: { errors, isSubmitting },
+    } = useForm<FormValues, unknown, z.output<typeof schema>>({
+        resolver: zodResolver(schema),
+        defaultValues: toFormValues(initialValues),
+    });
+    const location = useWatch({ control, name: "location" });
 
     const selectAddress = (result: GeocodeResult) => {
-        update({
-            address: result.addressLine || result.displayName,
-            location: result.location,
-            ...(result.city ? { city: result.city } : {}),
-        });
+        setValue("address", result.addressLine || result.displayName);
+        setValue("location", result.location, { shouldValidate: true });
+        if (result.city) setValue("city", result.city);
     };
 
-    const pickLocation = (location: GeoPoint) => {
-        update({ location });
-        reverseGeocode(location).then(
+    const pickLocation = (next: GeoPoint) => {
+        setValue("location", next, { shouldValidate: true });
+        reverseGeocode(next).then(
             (result) => {
                 if (!result) return;
                 const line = result.addressLine || result.displayName;
-                update({ ...(line ? { address: line } : {}), ...(result.city ? { city: result.city } : {}) });
+                if (line) setValue("address", line);
+                if (result.city) setValue("city", result.city);
             },
             () => {
                 // Nominatim unreachable: the pin stays where it was dropped and the address remains editable.
@@ -99,62 +101,53 @@ export function PlaceForm({ title, submitLabel, initialValues, onSubmit }: Place
         );
     };
 
-    const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setError(null);
-
-        if (!form.location) {
-            setError("Please pick a location on the map.");
-            return;
-        }
-
+    const submit = handleSubmit(async (values) => {
         const payload: PlacePayload = {
-            name: form.name.trim(),
-            address: form.address.trim(),
-            city: form.city.trim(),
-            location: form.location,
-            description: form.description.trim(),
-            tags: parseTags(form.tags),
-            image: form.image.trim() || null,
-            ...(form.links.length > 0 ? { links: form.links } : {}),
+            name: values.name,
+            address: values.address,
+            city: values.city,
+            // The schema refused a missing location, so it is set here.
+            location: values.location,
+            description: values.description,
+            tags: parseTags(values.tags),
+            image: values.image || null,
+            ...(values.links.length > 0 ? { links: values.links } : {}),
         };
-
-        setSubmitting(true);
         try {
             await onSubmit(payload);
         } catch {
-            setError("Could not save place. Please try again.");
-        } finally {
-            setSubmitting(false);
+            setError("root", { message: "Could not save place. Please try again." });
         }
-    };
+    });
 
     return (
         <div>
             <h1 className={text.pageTitle}>{title}</h1>
 
-            <form onSubmit={handleSubmit} className={formStyles.form}>
-                <Field label="Name">
-                    {(id) => (
-                        <Input id={id} value={form.name} onChange={(e) => update({ name: e.target.value })} required />
-                    )}
+            <form onSubmit={(e) => void submit(e)} className={formStyles.form} noValidate>
+                <Field label="Name" error={errors.name?.message}>
+                    {(id) => <Input id={id} {...register("name")} aria-invalid={Boolean(errors.name)} />}
                 </Field>
 
-                <Field label="Address">
-                    {(id) => (
-                        <AddressSearchInput
-                            id={id}
-                            value={form.address}
-                            onChange={(address) => update({ address })}
-                            onSelect={selectAddress}
-                        />
+                <Controller
+                    control={control}
+                    name="address"
+                    render={({ field }) => (
+                        <Field label="Address">
+                            {(id) => (
+                                <AddressSearchInput
+                                    id={id}
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    onSelect={selectAddress}
+                                />
+                            )}
+                        </Field>
                     )}
-                </Field>
+                />
 
-                <Field label="City">
-                    {(id) => (
-                        <Input id={id} value={form.city} onChange={(e) => update({ city: e.target.value })} required />
-                    )}
+                <Field label="City" error={errors.city?.message}>
+                    {(id) => <Input id={id} {...register("city")} aria-invalid={Boolean(errors.city)} />}
                 </Field>
 
                 <div className={formStyles.field}>
@@ -162,46 +155,46 @@ export function PlaceForm({ title, submitLabel, initialValues, onSubmit }: Place
                         <span className={formStyles.label}>Location on map</span>
                         <span className={formStyles.hint}>Click on the map to place the marker</span>
                     </div>
-                    <LocationMapPicker value={form.location} onChange={pickLocation} />
-                    {form.location && (
+                    <LocationMapPicker value={location} onChange={pickLocation} />
+                    {location && (
                         <p className={formStyles.hint}>
-                            Lat: {form.location.latitude.toFixed(5)} · Lng: {form.location.longitude.toFixed(5)}
+                            Lat: {location.latitude.toFixed(5)} · Lng: {location.longitude.toFixed(5)}
                         </p>
                     )}
+                    <FormError message={errors.location?.message ?? null} />
                 </div>
 
-                <Field label="Description">
-                    {(id) => (
-                        <Textarea
-                            id={id}
-                            value={form.description}
-                            onChange={(e) => update({ description: e.target.value })}
-                        />
-                    )}
-                </Field>
+                <Field label="Description">{(id) => <Textarea id={id} {...register("description")} />}</Field>
 
                 <Field label="Tags" hint="Separate tags with commas.">
-                    {(id) => (
-                        <Input
-                            id={id}
-                            value={form.tags}
-                            onChange={(e) => update({ tags: e.target.value })}
-                            placeholder="bar, terrace, techno, cheap drinks…"
-                        />
-                    )}
+                    {(id) => <Input id={id} {...register("tags")} placeholder="bar, terrace, techno, cheap drinks…" />}
                 </Field>
 
-                <LinksInput value={form.links} onChange={(links) => update({ links })} />
+                <Controller
+                    control={control}
+                    name="links"
+                    render={({ field }) => <LinksInput value={field.value} onChange={field.onChange} />}
+                />
 
-                <ImageUrlField value={form.image} onChange={(image) => update({ image })} />
+                <Controller
+                    control={control}
+                    name="image"
+                    render={({ field, fieldState }) => (
+                        <ImageUrlField
+                            value={field.value}
+                            onChange={field.onChange}
+                            error={fieldState.error?.message}
+                        />
+                    )}
+                />
 
-                <FormError message={error} />
+                <FormError message={errors.root?.message ?? null} />
 
                 <div className={formStyles.actions}>
-                    <Button type="submit" disabled={submitting}>
-                        {submitting ? "Saving…" : submitLabel}
+                    <Button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? "Saving…" : submitLabel}
                     </Button>
-                    <Button variant="secondary" onClick={() => navigate(-1)} disabled={submitting}>
+                    <Button variant="secondary" onClick={() => void navigate(-1)} disabled={isSubmitting}>
                         Cancel
                     </Button>
                 </div>

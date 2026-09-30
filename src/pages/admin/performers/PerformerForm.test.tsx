@@ -123,4 +123,30 @@ describe("PerformerForm", () => {
         await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
         expect(await screen.findByRole("link", { name: "open form" })).toBeInTheDocument();
     });
+
+    it("names the missing fields and does not submit", async () => {
+        const onSubmit = vi.fn(async () => {});
+        renderWithProviders(<PerformerForm title="New" submitLabel="Create performer" onSubmit={onSubmit} />);
+
+        await userEvent.type(screen.getByLabelText("Name"), "   ");
+        await userEvent.click(screen.getByRole("button", { name: "Create performer" }));
+
+        expect(await screen.findByText("Name is required.")).toBeInTheDocument();
+        expect(screen.getByText("Genre is required.")).toBeInTheDocument();
+        expect(screen.getByLabelText("Name")).toHaveAttribute("aria-invalid", "true");
+        expect(onSubmit).not.toHaveBeenCalled();
+    });
+
+    it("refuses an image address that is not a web address", async () => {
+        const onSubmit = vi.fn(async () => {});
+        renderWithProviders(<PerformerForm title="New" submitLabel="Create performer" onSubmit={onSubmit} />);
+
+        await userEvent.type(screen.getByLabelText("Name"), "DJ New");
+        await userEvent.type(screen.getByLabelText("Genre"), "house");
+        await userEvent.type(screen.getByLabelText("Profile image URL"), "not a url");
+        await userEvent.click(screen.getByRole("button", { name: "Create performer" }));
+
+        expect(await screen.findByText("Enter a full http(s) address, or leave it empty.")).toBeInTheDocument();
+        expect(onSubmit).not.toHaveBeenCalled();
+    });
 });

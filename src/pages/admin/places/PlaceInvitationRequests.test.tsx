@@ -2,7 +2,7 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import type { PlaceInvitationRequest } from "@/api/types";
-import { formatDateTimeRange } from "@/lib/dates";
+import { formatDateTimeRange } from "@/lib/format";
 import { mockApi, renderWithProviders } from "@/test/helpers";
 
 import { PlaceInvitationRequests } from "./PlaceInvitationRequests";

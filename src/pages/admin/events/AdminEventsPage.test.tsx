@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 
 import type { EventPlanListItem, OwnedEventListItem } from "@/api/types";
 import { Role } from "@/auth/roles";
-import { formatDateTimeRange } from "@/lib/dates";
+import { formatDateTimeRange } from "@/lib/format";
 import { eventPlan } from "@/test/fixtures";
 import { ANONYMOUS, authenticatedSnapshot, mockApi, renderWithProviders } from "@/test/helpers";
 

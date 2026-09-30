@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { formatDateTimeRange } from "@/lib/dates";
+import { formatDateTimeRange } from "@/lib/format";
 import { event, place } from "@/test/fixtures";
 import { renderWithProviders } from "@/test/helpers";
 

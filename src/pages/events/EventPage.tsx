@@ -10,7 +10,7 @@ import { ErrorState, LoadingState } from "@/components/States";
 import text from "@/components/typography.module.scss";
 import { LikeButton } from "@/layout/LikeButton";
 import { PageShell } from "@/layout/PageShell";
-import { formatDateTimeRange } from "@/lib/dates";
+import { formatDateTimeRange } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 

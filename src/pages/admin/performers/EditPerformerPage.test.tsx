@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 
 import type { PerformerInvitationRequest } from "@/api/types";
 import { Role } from "@/auth/roles";
-import { formatDateTimeRange } from "@/lib/dates";
+import { formatDateTimeRange } from "@/lib/format";
 import { performer } from "@/test/fixtures";
 import { authenticatedSnapshot, mockApi, renderWithProviders, requestBody } from "@/test/helpers";
 

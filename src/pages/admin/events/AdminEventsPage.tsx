@@ -4,7 +4,7 @@ import { Role } from "@/auth/roles";
 import { ButtonLink } from "@/components/Button";
 import { EmptyState, ErrorState, LoadingState } from "@/components/States";
 import text from "@/components/typography.module.scss";
-import { formatDateTimeRange, parseDate } from "@/lib/dates";
+import { formatDateTimeRange, parseDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { RequireRole } from "@/pages/admin/RequireRole";
 import adminStyles from "@/pages/admin/shared/admin.module.scss";

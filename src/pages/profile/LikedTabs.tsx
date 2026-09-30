@@ -4,7 +4,7 @@ import type { Event, LikedEventsGrouped, LikeTarget, Performer, Place } from "@/
 import { Card } from "@/components/Card";
 import { EmptyState } from "@/components/States";
 import text from "@/components/typography.module.scss";
-import { formatDateTimeRange } from "@/lib/dates";
+import { formatDateTimeRange } from "@/lib/format";
 
 import { LikedListItem } from "./LikedListItem";
 import styles from "./LikedTabs.module.scss";

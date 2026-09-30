@@ -1,6 +1,7 @@
 import {
     calendarDayLabel,
     clampDateTimeRange,
+    endsAfterStart,
     formatDateTime,
     formatDateTimeRange,
     formatNextEventStart,
@@ -8,7 +9,7 @@ import {
     isSameDay,
     isValidDate,
     toDateTimeLocalInput,
-} from "./dates";
+} from "./format";
 
 const now = new Date(2030, 5, 15, 12, 0); // Saturday 15 June 2030, 12:00 local
 
@@ -107,5 +108,12 @@ describe("helpers", () => {
         expect(isSameDay(new Date(2030, 0, 1, 1), new Date(2030, 0, 1, 23))).toBe(true);
         expect(isSameDay(new Date(2030, 0, 1), new Date(2030, 0, 2))).toBe(false);
         expect(isValidDate(new Date("nope"))).toBe(false);
+    });
+
+    it("knows whether a range ends after it starts", () => {
+        expect(endsAfterStart("2030-07-01T18:00", "2030-07-01T22:00")).toBe(true);
+        expect(endsAfterStart("2030-07-01T22:00", "2030-07-01T22:00")).toBe(false);
+        expect(endsAfterStart("2030-07-01T22:00", "2030-07-01T18:00")).toBe(false);
+        expect(endsAfterStart("", "2030-07-01T18:00")).toBe(false);
     });
 });

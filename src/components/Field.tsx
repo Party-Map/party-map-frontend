@@ -1,10 +1,4 @@
-import {
-    type InputHTMLAttributes,
-    type ReactNode,
-    type SelectHTMLAttributes,
-    type TextareaHTMLAttributes,
-    useId,
-} from "react";
+import { type ComponentProps, type ReactNode, useId } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -41,15 +35,15 @@ export function Field({ label, hint, error, aside, children }: FieldProps) {
     );
 }
 
-export function Input({ className, ...rest }: InputHTMLAttributes<HTMLInputElement>) {
+export function Input({ className, ...rest }: ComponentProps<"input">) {
     return <input className={cn(styles.control, className)} {...rest} />;
 }
 
-export function Textarea({ className, ...rest }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
+export function Textarea({ className, ...rest }: ComponentProps<"textarea">) {
     return <textarea className={cn(styles.control, className)} {...rest} />;
 }
 
-export function Select({ className, children, ...rest }: SelectHTMLAttributes<HTMLSelectElement>) {
+export function Select({ className, children, ...rest }: ComponentProps<"select">) {
     return (
         <select className={cn(styles.control, className)} {...rest}>
             {children}

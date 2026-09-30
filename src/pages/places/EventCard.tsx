@@ -4,7 +4,7 @@ import type { Event, Place } from "@/api/types";
 import { Card, CardBody } from "@/components/Card";
 import { CoverImage } from "@/components/CoverImage";
 import text from "@/components/typography.module.scss";
-import { formatDateTimeRange } from "@/lib/dates";
+import { formatDateTimeRange } from "@/lib/format";
 
 import styles from "./EventCard.module.scss";
 

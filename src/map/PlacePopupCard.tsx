@@ -4,7 +4,7 @@ import { Link } from "react-router";
 import type { Place, UpcomingEventByPlace } from "@/api/types";
 import { CoverImage } from "@/components/CoverImage";
 import { KindBadge } from "@/components/KindBadge";
-import { formatNextEventStart } from "@/lib/dates";
+import { formatNextEventStart } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 import styles from "./PlacePopupCard.module.scss";

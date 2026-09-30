@@ -1,7 +1,7 @@
 import { act, fireEvent, screen } from "@testing-library/react";
 
 import type { Place, UpcomingEventByPlace } from "@/api/types";
-import { formatNextEventStart } from "@/lib/dates";
+import { formatNextEventStart } from "@/lib/format";
 import { place, upcoming } from "@/test/fixtures";
 import { renderWithProviders } from "@/test/helpers";
 

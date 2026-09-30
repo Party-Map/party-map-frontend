@@ -1,28 +1,38 @@
-import { type SubmitEvent, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
+import { z } from "zod";
 
-import { EVENT_TYPES, type EventPlanPayload, type EventType, type Link } from "@/api/types";
+import { EVENT_TYPES, type EventPlanPayload, type EventType } from "@/api/types";
 import { Button } from "@/components/Button";
 import { Field, FormError, Input, Select, Textarea } from "@/components/Field";
 import formStyles from "@/components/forms.module.scss";
 import text from "@/components/typography.module.scss";
 import { EVENT_TYPE_LABELS } from "@/lib/constants";
-import { toDateTimeLocalInput } from "@/lib/dates";
+import { endsAfterStart, toDateTimeLocalInput } from "@/lib/format";
 import adminStyles from "@/pages/admin/shared/admin.module.scss";
 import { DateTimeRangeFields } from "@/pages/admin/shared/DateTimeRangeFields";
+import { imageUrl, links, optionalText, requiredText } from "@/pages/admin/shared/formSchemas";
 import { ImageUrlField } from "@/pages/admin/shared/ImageUrlField";
 import { LinksInput } from "@/pages/admin/shared/LinksInput";
 
-interface FormValues {
-    title: string;
-    kind: EventType;
-    startDateTime: string;
-    endDateTime: string;
-    description: string;
-    price: string;
-    links: Link[];
-    image: string;
-}
+const schema = z
+    .object({
+        title: requiredText("Title"),
+        kind: z.custom<EventType>(),
+        startDateTime: requiredText("Start"),
+        endDateTime: requiredText("End"),
+        description: optionalText,
+        price: requiredText("Price"),
+        links,
+        image: imageUrl,
+    })
+    .refine((values) => endsAfterStart(values.startDateTime, values.endDateTime), {
+        path: ["endDateTime"],
+        message: "The end must be after the start.",
+    });
+
+type FormValues = z.input<typeof schema>;
 
 function toFormValues(initial: EventPlanPayload | undefined): FormValues {
     return {
@@ -37,16 +47,16 @@ function toFormValues(initial: EventPlanPayload | undefined): FormValues {
     };
 }
 
-function toPayload(values: FormValues): EventPlanPayload {
+function toPayload(values: z.output<typeof schema>): EventPlanPayload {
     return {
-        title: values.title.trim(),
+        title: values.title,
         kind: values.kind,
         startDateTime: values.startDateTime,
         endDateTime: values.endDateTime,
         description: values.description,
         price: values.price,
-        links: values.links.length ? values.links : undefined,
-        image: values.image.trim() || null,
+        ...(values.links.length ? { links: values.links } : {}),
+        image: values.image || null,
     };
 }
 
@@ -60,24 +70,24 @@ interface EventPlanFormProps {
 /** Create/edit form for an event plan; the parent decides what happens with the payload. */
 export function EventPlanForm({ title, submitLabel, initialValues, onSubmit }: EventPlanFormProps) {
     const navigate = useNavigate();
-    const [values, setValues] = useState(() => toFormValues(initialValues));
-    const [submitting, setSubmitting] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const {
+        register,
+        control,
+        handleSubmit,
+        setError,
+        formState: { errors, isSubmitting },
+    } = useForm<FormValues, unknown, z.output<typeof schema>>({
+        resolver: zodResolver(schema),
+        defaultValues: toFormValues(initialValues),
+    });
 
-    const update = (patch: Partial<FormValues>) => setValues((current) => ({ ...current, ...patch }));
-
-    const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setError(null);
-        setSubmitting(true);
+    const submit = handleSubmit(async (values) => {
         try {
             await onSubmit(toPayload(values));
         } catch {
-            setError("Could not save the event plan. Please try again.");
-        } finally {
-            setSubmitting(false);
+            setError("root", { message: "Could not save the event plan. Please try again." });
         }
-    };
+    });
 
     return (
         <>
@@ -85,25 +95,14 @@ export function EventPlanForm({ title, submitLabel, initialValues, onSubmit }: E
                 <h1 className={text.pageTitle}>{title}</h1>
             </div>
 
-            <form onSubmit={handleSubmit} className={formStyles.form}>
-                <Field label="Title">
-                    {(id) => (
-                        <Input
-                            id={id}
-                            value={values.title}
-                            onChange={(e) => update({ title: e.target.value })}
-                            required
-                        />
-                    )}
+            <form onSubmit={(e) => void submit(e)} className={formStyles.form} noValidate>
+                <Field label="Title" error={errors.title?.message}>
+                    {(id) => <Input id={id} {...register("title")} aria-invalid={Boolean(errors.title)} />}
                 </Field>
 
                 <Field label="Event kind">
                     {(id) => (
-                        <Select
-                            id={id}
-                            value={values.kind}
-                            onChange={(e) => update({ kind: e.target.value as EventType })}
-                        >
+                        <Select id={id} {...register("kind")}>
                             {EVENT_TYPES.map((type) => (
                                 <option key={type} value={type}>
                                     {EVENT_TYPE_LABELS[type]}
@@ -113,23 +112,31 @@ export function EventPlanForm({ title, submitLabel, initialValues, onSubmit }: E
                     )}
                 </Field>
 
-                <DateTimeRangeFields
-                    start={values.startDateTime}
-                    end={values.endDateTime}
-                    onChange={(startDateTime, endDateTime) => update({ startDateTime, endDateTime })}
-                />
-
-                <Field label="Description">
-                    {(id) => (
-                        <Textarea
-                            id={id}
-                            value={values.description}
-                            onChange={(e) => update({ description: e.target.value })}
+                <Controller
+                    control={control}
+                    name="startDateTime"
+                    render={({ field: start }) => (
+                        <Controller
+                            control={control}
+                            name="endDateTime"
+                            render={({ field: end }) => (
+                                <DateTimeRangeFields
+                                    start={start.value}
+                                    end={end.value}
+                                    error={errors.startDateTime?.message ?? errors.endDateTime?.message}
+                                    onChange={(nextStart, nextEnd) => {
+                                        start.onChange(nextStart);
+                                        end.onChange(nextEnd);
+                                    }}
+                                />
+                            )}
                         />
                     )}
-                </Field>
+                />
 
-                <Field label="Price">
+                <Field label="Description">{(id) => <Textarea id={id} {...register("description")} />}</Field>
+
+                <Field label="Price" error={errors.price?.message}>
                     {(id) => (
                         <div className={formStyles.prefixed}>
                             <span className={formStyles.prefix}>HUF</span>
@@ -138,25 +145,38 @@ export function EventPlanForm({ title, submitLabel, initialValues, onSubmit }: E
                                 type="number"
                                 min={0}
                                 placeholder="0"
-                                value={values.price}
-                                onChange={(e) => update({ price: e.target.value })}
-                                required
+                                {...register("price")}
+                                aria-invalid={Boolean(errors.price)}
                             />
                         </div>
                     )}
                 </Field>
 
-                <LinksInput value={values.links} onChange={(links) => update({ links })} />
+                <Controller
+                    control={control}
+                    name="links"
+                    render={({ field }) => <LinksInput value={field.value} onChange={field.onChange} />}
+                />
 
-                <ImageUrlField value={values.image} onChange={(image) => update({ image })} />
+                <Controller
+                    control={control}
+                    name="image"
+                    render={({ field, fieldState }) => (
+                        <ImageUrlField
+                            value={field.value}
+                            onChange={field.onChange}
+                            error={fieldState.error?.message}
+                        />
+                    )}
+                />
 
-                <FormError message={error} />
+                <FormError message={errors.root?.message ?? null} />
 
                 <div className={formStyles.actions}>
-                    <Button type="submit" disabled={submitting}>
-                        {submitting ? "Saving…" : submitLabel}
+                    <Button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? "Saving…" : submitLabel}
                     </Button>
-                    <Button variant="secondary" onClick={() => navigate(-1)} disabled={submitting}>
+                    <Button variant="secondary" onClick={() => void navigate(-1)} disabled={isSubmitting}>
                         Cancel
                     </Button>
                 </div>

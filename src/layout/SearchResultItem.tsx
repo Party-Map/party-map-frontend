@@ -5,7 +5,7 @@ import { CalendarDays, MapPin, UserRound } from "lucide-react";
 
 import type { SearchHit, SearchHitType } from "@/api/types";
 import { CoverImage } from "@/components/CoverImage";
-import { formatNextEventStart } from "@/lib/dates";
+import { formatNextEventStart } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 import styles from "./SearchBar.module.scss";

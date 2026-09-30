@@ -192,4 +192,18 @@ describe("PlaceForm", () => {
         await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
         expect(await screen.findByRole("link", { name: "open form" })).toBeInTheDocument();
     });
+
+    it("names the missing name and city", async () => {
+        mockApi({});
+        const onSubmit = vi.fn(async () => {});
+        renderWithProviders(<PlaceForm title="Create a new place" submitLabel="Create place" onSubmit={onSubmit} />);
+        clickMap(47.5, 19.05);
+
+        await userEvent.click(screen.getByRole("button", { name: "Create place" }));
+
+        expect(await screen.findByText("Name is required.")).toBeInTheDocument();
+        expect(screen.getByText("City is required.")).toBeInTheDocument();
+        expect(screen.queryByText("Please pick a location on the map.")).not.toBeInTheDocument();
+        expect(onSubmit).not.toHaveBeenCalled();
+    });
 });

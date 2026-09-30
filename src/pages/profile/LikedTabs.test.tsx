@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import type { Event } from "@/api/types";
-import { formatDateTimeRange } from "@/lib/dates";
+import { formatDateTimeRange } from "@/lib/format";
 import { event, performer, place } from "@/test/fixtures";
 import { renderWithProviders } from "@/test/helpers";
 

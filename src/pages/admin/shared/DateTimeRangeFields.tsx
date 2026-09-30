@@ -8,10 +8,12 @@ interface DateTimeRangeFieldsProps {
     min?: string;
     max?: string;
     disabled?: boolean;
+    /** A validation message for the range, shown under the end. */
+    error?: string | undefined;
 }
 
 /** Two datetime-local inputs side by side (stacked on phones). Values are "YYYY-MM-DDTHH:mm". */
-export function DateTimeRangeFields({ start, end, onChange, min, max, disabled }: DateTimeRangeFieldsProps) {
+export function DateTimeRangeFields({ start, end, onChange, min, max, disabled, error }: DateTimeRangeFieldsProps) {
     return (
         <div className={formStyles.grid2}>
             <Field label="Start">
@@ -28,7 +30,7 @@ export function DateTimeRangeFields({ start, end, onChange, min, max, disabled }
                     />
                 )}
             </Field>
-            <Field label="End">
+            <Field label="End" error={error}>
                 {(id) => (
                     <Input
                         id={id}

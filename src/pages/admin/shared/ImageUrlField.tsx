@@ -7,15 +7,17 @@ interface ImageUrlFieldProps {
     label?: string;
     value: string;
     onChange: (url: string) => void;
+    /** A validation message to show under the field. */
+    error?: string | undefined;
 }
 
 /**
  * Cover image as a URL with a live preview. The backend stores an image URL and has no upload
  * endpoint yet; when one exists this field is the place to add uploading.
  */
-export function ImageUrlField({ label = "Cover image URL", value, onChange }: ImageUrlFieldProps) {
+export function ImageUrlField({ label = "Cover image URL", value, onChange, error }: ImageUrlFieldProps) {
     return (
-        <Field label={label} hint="Paste a link to a JPG, PNG or WEBP image.">
+        <Field label={label} hint="Paste a link to a JPG, PNG or WEBP image." error={error}>
             {(id) => (
                 <>
                     <Input

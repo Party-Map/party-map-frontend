@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 
 import type { PlaceInvitationRequest } from "@/api/types";
 import { Role } from "@/auth/roles";
-import { formatDateTimeRange } from "@/lib/dates";
+import { formatDateTimeRange } from "@/lib/format";
 import { place } from "@/test/fixtures";
 import { authenticatedSnapshot, mockApi, renderWithProviders, requestBody } from "@/test/helpers";
 import { fakeMap } from "@/test/mocks/leaflet";

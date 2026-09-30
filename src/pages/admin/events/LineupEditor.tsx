@@ -6,7 +6,7 @@ import { Button } from "@/components/Button";
 import { Field, FormError, Select } from "@/components/Field";
 import formStyles from "@/components/forms.module.scss";
 import { ErrorState, LoadingState } from "@/components/States";
-import { clampDateTimeRange, formatDateTime, toDateTimeLocalInput } from "@/lib/dates";
+import { clampDateTimeRange, formatDateTime, toDateTimeLocalInput } from "@/lib/format";
 import adminStyles from "@/pages/admin/shared/admin.module.scss";
 import { DateTimeRangeFields } from "@/pages/admin/shared/DateTimeRangeFields";
 import { InvitationStateLabel } from "@/pages/admin/shared/InvitationStateLabel";

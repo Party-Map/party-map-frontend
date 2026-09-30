@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import type { LineupItem } from "@/api/types";
 import { EmptyState } from "@/components/States";
 import text from "@/components/typography.module.scss";
-import { formatTime, parseDate } from "@/lib/dates";
+import { formatTime, parseDate } from "@/lib/format";
 
 import styles from "./LineupList.module.scss";
 

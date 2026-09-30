@@ -1,50 +1,44 @@
-/**
- * Date helpers. The backend stores LocalDateTime without a zone and sends ISO strings such as
- * "2025-12-20T20:00:00"; `new Date(iso)` parses those as local time, which is what the UI wants.
- */
-
-const DAY_MS = 24 * 60 * 60 * 1000;
-const WEEKDAY = new Intl.DateTimeFormat("en-GB", { weekday: "long" });
-const TIME = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false });
-const SHORT_DATE = new Intl.DateTimeFormat("en-GB", { month: "short", day: "numeric" });
-const SHORT_DATE_YEAR = new Intl.DateTimeFormat("en-GB", { month: "short", day: "numeric", year: "numeric" });
+// Date formatting for the UI, on date-fns. The backend stores LocalDateTime without a zone and sends ISO strings
+// such as "2025-12-20T20:00:00"; those parse as local time, which is what the UI wants.
+import {
+    clamp,
+    differenceInCalendarDays,
+    format,
+    isAfter,
+    isSameDay as sameDay,
+    isSameYear,
+    isValid,
+    parseISO,
+} from "date-fns";
 
 export function parseDate(value: string | Date): Date {
-    return value instanceof Date ? value : new Date(value);
+    return value instanceof Date ? value : parseISO(value);
 }
 
 export function isValidDate(date: Date): boolean {
-    return !Number.isNaN(date.getTime());
-}
-
-function startOfDay(date: Date): Date {
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-}
-
-function pad(n: number): string {
-    return n.toString().padStart(2, "0");
+    return isValid(date);
 }
 
 export function isSameDay(a: Date, b: Date): boolean {
-    return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+    return sameDay(a, b);
 }
 
 /** "HH:mm" in 24-hour time. */
 export function formatTime(value: string | Date): string {
-    return TIME.format(parseDate(value));
+    return format(parseDate(value), "HH:mm");
 }
 
 /** Today / Tomorrow / Yesterday / weekday names within a week / DD/MM/YYYY otherwise. */
 export function calendarDayLabel(value: string | Date, now: Date = new Date()): string {
     const date = parseDate(value);
-    const dayDiff = Math.round((startOfDay(date).getTime() - startOfDay(now).getTime()) / DAY_MS);
+    const dayDiff = differenceInCalendarDays(date, now);
 
     if (dayDiff === 0) return "Today";
     if (dayDiff === 1) return "Tomorrow";
     if (dayDiff === -1) return "Yesterday";
-    if (dayDiff > 1 && dayDiff < 7) return WEEKDAY.format(date);
-    if (dayDiff < -1 && dayDiff > -7) return `Last ${WEEKDAY.format(date)}`;
-    return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
+    if (dayDiff > 1 && dayDiff < 7) return format(date, "EEEE");
+    if (dayDiff < -1 && dayDiff > -7) return `Last ${format(date, "EEEE")}`;
+    return format(date, "dd/MM/yyyy");
 }
 
 /**
@@ -68,13 +62,12 @@ export function formatNextEventStart(value: string | null | undefined, now: Date
     const date = parseDate(value);
     if (!isValidDate(date)) return null;
     if (isSameDay(date, now)) return formatTime(date);
-    return date.getFullYear() === now.getFullYear() ? SHORT_DATE.format(date) : SHORT_DATE_YEAR.format(date);
+    return format(date, isSameYear(date, now) ? "d MMM" : "d MMM yyyy");
 }
 
 /** "YYYY-MM-DD HH:mm" for admin labels. */
 export function formatDateTime(value: string | Date): string {
-    const d = parseDate(value);
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    return format(parseDate(value), "yyyy-MM-dd HH:mm");
 }
 
 /** Value for <input type="datetime-local">: "YYYY-MM-DDTHH:mm" in local time, or "" when invalid. */
@@ -82,7 +75,14 @@ export function toDateTimeLocalInput(value: string | Date | null | undefined): s
     if (!value) return "";
     const d = parseDate(value);
     if (!isValidDate(d)) return "";
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    return format(d, "yyyy-MM-dd'T'HH:mm");
+}
+
+/** Whether a datetime-local range ends after it starts (both set and valid). */
+export function endsAfterStart(start: string, end: string): boolean {
+    const s = parseDate(start);
+    const e = parseDate(end);
+    return isValidDate(s) && isValidDate(e) && isAfter(e, s);
 }
 
 /**
@@ -97,14 +97,11 @@ export function clampDateTimeRange(
 ): { startTime: string; endTime: string } {
     const lower = parseDate(min);
     const upper = parseDate(max);
-    let s = parseDate(start);
-    let e = parseDate(end);
+    const s = parseDate(start);
+    const e = parseDate(end);
 
-    if (!isValidDate(s)) s = lower;
-    if (!isValidDate(e)) e = upper;
-    if (s < lower) s = lower;
-    if (e > upper) e = upper;
-    if (e < s) e = s;
+    const startTime = clamp(isValidDate(s) ? s : lower, { start: lower, end: upper });
+    const endTime = clamp(isValidDate(e) ? e : upper, { start: startTime, end: upper });
 
-    return { startTime: toDateTimeLocalInput(s), endTime: toDateTimeLocalInput(e) };
+    return { startTime: toDateTimeLocalInput(startTime), endTime: toDateTimeLocalInput(endTime) };
 }

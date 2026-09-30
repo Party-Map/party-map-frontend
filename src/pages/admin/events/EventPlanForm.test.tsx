@@ -119,4 +119,27 @@ describe("EventPlanForm", () => {
 
         expect(navigate).toHaveBeenCalledWith(-1);
     });
+
+    it("names the missing fields and refuses an end before the start", async () => {
+        const onSubmit = vi.fn(async () => {});
+        renderForm(onSubmit, { ...eventPlan, startDateTime: "2030-07-02T02:00", endDateTime: "2030-07-01T18:00" });
+
+        await userEvent.clear(screen.getByLabelText("Title"));
+        await userEvent.click(screen.getByRole("button", { name: "Save changes" }));
+
+        expect(await screen.findByText("Title is required.")).toBeInTheDocument();
+        expect(screen.getByText("The end must be after the start.")).toBeInTheDocument();
+        expect(onSubmit).not.toHaveBeenCalled();
+    });
+
+    it("asks for the dates and the price of an empty plan", async () => {
+        const onSubmit = vi.fn(async () => {});
+        renderForm(onSubmit);
+        await userEvent.type(screen.getByLabelText("Title"), "Night");
+        await userEvent.click(screen.getByRole("button", { name: "Save changes" }));
+
+        expect(await screen.findByText("Start is required.")).toBeInTheDocument();
+        expect(screen.getByText("Price is required.")).toBeInTheDocument();
+        expect(onSubmit).not.toHaveBeenCalled();
+    });
 });

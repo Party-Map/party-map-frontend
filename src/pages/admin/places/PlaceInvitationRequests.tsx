@@ -5,7 +5,7 @@ import type { ID, PlaceInvitationRequest } from "@/api/types";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { EmptyState } from "@/components/States";
-import { formatDateTimeRange } from "@/lib/dates";
+import { formatDateTimeRange } from "@/lib/format";
 import { toast } from "@/lib/toast";
 import adminStyles from "@/pages/admin/shared/admin.module.scss";
 import { InvitationStateLabel } from "@/pages/admin/shared/InvitationStateLabel";
