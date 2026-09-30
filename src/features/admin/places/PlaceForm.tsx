@@ -1,25 +1,27 @@
-import { useState, type FormEvent } from "react";
+import { type SubmitEvent, useState } from "react";
 import { useNavigate } from "react-router";
+
 import { Button } from "@/components/Button";
 import { Field, FormError, formStyles, Input, Textarea } from "@/components/Field";
 import { ImageUrlField } from "@/features/admin/ImageUrlField";
 import { LinksInput } from "@/features/admin/LinksInput";
 import { reverseGeocode } from "@/lib/geocode";
 import type { GeocodeResult, GeoPoint, Link, Place, PlacePayload } from "@/lib/types";
+
 import { AddressSearchInput } from "./AddressSearchInput";
 import { LocationMapPicker } from "./LocationMapPicker";
 
 export type PlaceFormValues = Omit<Place, "id">;
 
-type PlaceFormProps = {
+interface PlaceFormProps {
     title: string;
     submitLabel: string;
     /** Prefills the form; omit for a blank one. Only read on mount. */
     initialValues?: PlaceFormValues;
     onSubmit: (payload: PlacePayload) => Promise<void>;
-};
+}
 
-type FormState = {
+interface FormState {
     name: string;
     address: string;
     city: string;
@@ -29,7 +31,7 @@ type FormState = {
     tags: string;
     image: string;
     links: Link[];
-};
+}
 
 const EMPTY: FormState = {
     name: "",
@@ -94,7 +96,7 @@ export function PlaceForm({ title, submitLabel, initialValues, onSubmit }: Place
         );
     };
 
-    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
         event.preventDefault();
         setError(null);
 

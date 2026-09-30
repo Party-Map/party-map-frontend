@@ -1,12 +1,13 @@
 import { CoverImage } from "@/components/CoverImage";
 import { Field, Input } from "@/components/Field";
+
 import styles from "./ImageUrlField.module.css";
 
-type ImageUrlFieldProps = {
+interface ImageUrlFieldProps {
     label?: string;
     value: string;
     onChange: (url: string) => void;
-};
+}
 
 /**
  * Cover image as a URL with a live preview. The backend stores an image URL and has no upload

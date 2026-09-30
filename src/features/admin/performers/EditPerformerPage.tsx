@@ -1,14 +1,16 @@
 import { useNavigate, useParams } from "react-router";
+
 import { useToast } from "@/app/ToastProvider";
 import { ErrorState, LoadingState } from "@/components/States";
+import styles from "@/features/admin/admin.module.css";
 import { RequireRole } from "@/features/admin/RequireRole";
 import { fetchPerformer, fetchPerformerInvitations, updatePerformer } from "@/lib/api/performers";
 import { Role } from "@/lib/auth/roles";
 import { useResource } from "@/lib/hooks/useResource";
 import type { PerformerPayload } from "@/lib/types";
+
 import { PerformerForm } from "./PerformerForm";
 import { PerformerInvitationRequests } from "./PerformerInvitationRequests";
-import styles from "@/features/admin/admin.module.css";
 
 /** /admin/performers/:id: edit a performer and answer the lineup invitations it received. */
 export function EditPerformerPage() {
@@ -39,7 +41,7 @@ function PerformerEditor() {
     const handleSubmit = async (payload: PerformerPayload) => {
         const updated = await updatePerformer(id, payload);
         toast.success("Performer saved.");
-        navigate(`/performers/${updated.id}`);
+        void navigate(`/performers/${updated.id}`);
     };
 
     return (

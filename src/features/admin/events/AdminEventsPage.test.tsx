@@ -1,10 +1,12 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+
 import { Role } from "@/lib/auth/roles";
 import { formatDateTimeRange } from "@/lib/dates";
 import type { EventPlanListItem, OwnedEventListItem } from "@/lib/types";
 import { eventPlan } from "@/test/fixtures";
 import { ANONYMOUS, authenticatedSnapshot, mockApi, renderWithProviders } from "@/test/helpers";
+
 import { AdminEventsPage } from "./AdminEventsPage";
 
 const plans: EventPlanListItem[] = [

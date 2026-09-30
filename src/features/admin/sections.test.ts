@@ -1,4 +1,5 @@
 import { Role } from "@/lib/auth/roles";
+
 import { ADMIN_SECTIONS, sectionsForRoles } from "./sections";
 
 describe("ADMIN_SECTIONS", () => {

@@ -1,13 +1,17 @@
-import { useCallback, useEffect, useState, type DependencyList } from "react";
+import { type DependencyList, useCallback, useEffect, useState } from "react";
 
-export type Resource<T> = {
+export interface Resource<T> {
     data: T | null;
     error: Error | null;
     loading: boolean;
     reload: () => void;
-};
+}
 
-type Result<T> = { key: string; data: T | null; error: Error | null };
+interface Result<T> {
+    key: string;
+    data: T | null;
+    error: Error | null;
+}
 
 /**
  * Load async data for a component. Re-runs when `deps` change (deps must be primitives), ignores

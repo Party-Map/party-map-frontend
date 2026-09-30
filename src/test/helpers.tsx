@@ -1,7 +1,8 @@
 import { render, type RenderOptions, type RenderResult } from "@testing-library/react";
 import type { ReactElement, ReactNode } from "react";
 import { MemoryRouter, Route, Routes } from "react-router";
-import { vi, type Mock } from "vitest";
+import { type Mock, vi } from "vitest";
+
 import { HighlightProvider } from "@/app/HighlightProvider";
 import { ThemeProvider } from "@/app/ThemeProvider";
 import { ToastProvider } from "@/app/ToastProvider";
@@ -46,7 +47,7 @@ export function createMockAuthClient(
     };
 }
 
-type ProviderOptions = {
+interface ProviderOptions {
     /** Initial URL for the memory router. */
     route?: string;
     /** Route pattern to mount the element on (for pages that read params). */
@@ -54,7 +55,7 @@ type ProviderOptions = {
     auth?: AuthSnapshot;
     authPending?: boolean;
     client?: MockAuthClient;
-};
+}
 
 export function AppProviders({
     children,
@@ -105,8 +106,9 @@ export function renderWithProviders(
     return { ...result, client };
 }
 
-type JsonBody = unknown;
-type RouteHandler = JsonBody | ((init: RequestInit | undefined, url: string) => JsonBody | Response);
+/** A JSON body to answer with, null for 204, or a function computing either (or a Response). */
+type RouteHandler = unknown;
+type RouteFn = (init: RequestInit | undefined, url: string) => unknown;
 
 /**
  * Stub `fetch` with a table of "METHOD /api/path" handlers. Paths are matched against the URL's
@@ -122,10 +124,7 @@ export function mockApi(routes: Record<string, RouteHandler>): Mock {
         const handler = keyWithQuery in routes ? routes[keyWithQuery] : routes[keyNoQuery];
 
         if (handler === undefined) return new Response("not found", { status: 404 });
-        const body =
-            typeof handler === "function"
-                ? (handler as (i: RequestInit | undefined, u: string) => JsonBody | Response)(init, url)
-                : handler;
+        const body = typeof handler === "function" ? (handler as RouteFn)(init, url) : handler;
         if (body instanceof Response) return body;
         if (body === null) return new Response(null, { status: 204 });
         return new Response(JSON.stringify(body), { status: 200, headers: { "Content-Type": "application/json" } });
@@ -137,5 +136,5 @@ export function mockApi(routes: Record<string, RouteHandler>): Mock {
 /** Body sent with a fetch call, parsed. */
 export function requestBody(fetchMock: Mock, callIndex = 0): unknown {
     const init = fetchMock.mock.calls[callIndex]?.[1] as RequestInit | undefined;
-    return init?.body ? JSON.parse(String(init.body)) : undefined;
+    return typeof init?.body === "string" ? JSON.parse(init.body) : undefined;
 }

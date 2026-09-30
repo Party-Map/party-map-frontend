@@ -1,6 +1,8 @@
-import { useState, type ImgHTMLAttributes } from "react";
+import { type ImgHTMLAttributes, useState } from "react";
+
 import { PLACEHOLDER_IMAGE } from "@/lib/constants";
 import { cx } from "@/lib/cx";
+
 import styles from "./CoverImage.module.css";
 
 type CoverImageProps = Omit<ImgHTMLAttributes<HTMLImageElement>, "src"> & {

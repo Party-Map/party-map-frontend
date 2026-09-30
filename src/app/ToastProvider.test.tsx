@@ -1,9 +1,12 @@
 import { act, render, renderHook, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
+
 import { ToastProvider, useToast } from "@/app/ToastProvider";
 
-type Globals = { jest?: unknown };
+interface Globals {
+    jest?: unknown;
+}
 
 function Probe() {
     const toast = useToast();

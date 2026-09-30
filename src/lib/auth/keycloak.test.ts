@@ -1,4 +1,5 @@
 import { vi } from "vitest";
+
 import { createKeycloakClient, profileFromClaims, snapshotFromClaims } from "@/lib/auth/keycloak";
 
 const fake = vi.hoisted(() => {

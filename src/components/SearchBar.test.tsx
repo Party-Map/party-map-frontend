@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { useLocation } from "react-router";
 import type { Mock } from "vitest";
+
 import { useHighlight } from "@/app/HighlightProvider";
 import { hrefForHit, placeIdsOf, SearchBar } from "@/components/SearchBar";
 import { SEARCH_DEBOUNCE_MS } from "@/lib/constants";
@@ -42,7 +43,9 @@ const hits = [placeHit, eventHit, performerHit];
 const response = (query: string, found: SearchHit[] = hits) => ({ query, hits: found });
 const DEFAULT_ROUTES = { "GET /api/search?q=techno": response("techno") };
 
-type Globals = { jest?: unknown };
+interface Globals {
+    jest?: unknown;
+}
 
 function Probe() {
     const { highlightIds } = useHighlight();
@@ -87,7 +90,11 @@ async function settle(ms = SEARCH_DEBOUNCE_MS) {
     });
 }
 
-type SetupOptions = { route?: string; initialQuery?: string; routes?: Record<string, unknown> };
+interface SetupOptions {
+    route?: string;
+    initialQuery?: string;
+    routes?: Record<string, unknown>;
+}
 
 async function setup({ route = "/", initialQuery, routes = DEFAULT_ROUTES }: SetupOptions = {}) {
     const fetchMock = mockApi(routes);

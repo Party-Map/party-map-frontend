@@ -9,4 +9,4 @@ export const createPlace = (payload: PlacePayload) => api.post<Place>("/places",
 export const updatePlace = (id: ID, payload: PlacePayload) => api.put<Place>(`/places/${id}`, payload);
 export const fetchPlaceInvitations = (id: ID) => api.get<PlaceInvitationRequest[]>(`/places/${id}/invitations`);
 export const respondToPlaceInvitation = (id: ID, eventPlanId: ID, answer: "accept" | "reject") =>
-    api.put<void>(`/places/${id}/invitations/${eventPlanId}/respond?state=${answer}`);
+    api.put<undefined>(`/places/${id}/invitations/${eventPlanId}/respond?state=${answer}`);

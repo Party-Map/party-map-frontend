@@ -1,6 +1,7 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
+
 import { EventPage } from "@/features/events";
 import { formatDateTimeRange } from "@/lib/dates";
 import { event, performer, place } from "@/test/fixtures";

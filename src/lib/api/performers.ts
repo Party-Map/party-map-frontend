@@ -9,4 +9,4 @@ export const updatePerformer = (id: ID, payload: PerformerPayload) => api.put<Pe
 export const fetchPerformerInvitations = (id: ID) =>
     api.get<PerformerInvitationRequest[]>(`/performers/${id}/invitations`);
 export const respondToPerformerInvitation = (id: ID, eventPlanId: ID, answer: "accept" | "reject") =>
-    api.put<void>(`/performers/${id}/invitations/${eventPlanId}/respond?state=${answer}`);
+    api.put<undefined>(`/performers/${id}/invitations/${eventPlanId}/respond?state=${answer}`);

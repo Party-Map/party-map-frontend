@@ -1,7 +1,9 @@
 import { act, screen } from "@testing-library/react";
+
 import { TILE_URL } from "@/lib/constants";
 import { renderWithProviders } from "@/test/helpers";
 import { fakeMap, leafletMock, reactLeafletMock } from "@/test/mocks/leaflet";
+
 import { LocationMapPicker } from "./LocationMapPicker";
 
 vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reactLeafletMock));

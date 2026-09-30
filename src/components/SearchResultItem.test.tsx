@@ -1,4 +1,5 @@
 import { fireEvent, render, within } from "@testing-library/react";
+
 import { SearchResultItem } from "@/components/SearchResultItem";
 import { PLACEHOLDER_IMAGE } from "@/lib/constants";
 import type { SearchHit } from "@/lib/types";

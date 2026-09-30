@@ -1,6 +1,8 @@
 import { screen, waitFor } from "@testing-library/react";
+
 import { Role } from "@/lib/auth/roles";
 import { authenticatedSnapshot, renderWithProviders } from "@/test/helpers";
+
 import { RequireRole } from "./RequireRole";
 
 const guarded = (

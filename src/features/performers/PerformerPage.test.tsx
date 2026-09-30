@@ -1,6 +1,7 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
+
 import { PerformerPage } from "@/features/performers";
 import { event, performer } from "@/test/fixtures";
 import { authenticatedSnapshot, mockApi, renderWithProviders } from "@/test/helpers";

@@ -1,8 +1,10 @@
 import { act, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Link, Route, Routes } from "react-router";
+
 import { performer } from "@/test/fixtures";
 import { renderWithProviders } from "@/test/helpers";
+
 import { PerformerForm } from "./PerformerForm";
 
 describe("PerformerForm", () => {

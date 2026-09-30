@@ -1,11 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
+
 import { setTokenProvider } from "@/lib/api/client";
 import type { AuthClient, AuthSnapshot, UserProfile } from "@/lib/auth/keycloak";
 import { isAdmin as hasAdminRole, parseRoles, type Role } from "@/lib/auth/roles";
 
 export type AuthStatus = "loading" | "anonymous" | "authenticated";
 
-export type AuthContextValue = {
+export interface AuthContextValue {
     status: AuthStatus;
     user: UserProfile | null;
     roles: Role[];
@@ -14,7 +15,7 @@ export type AuthContextValue = {
     login: (returnTo?: string) => void;
     logout: () => void;
     accountUrl: (returnTo?: string) => string;
-};
+}
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 

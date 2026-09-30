@@ -1,10 +1,11 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from "react";
+
 import type { ID } from "@/lib/types";
 
-type HighlightContextValue = {
+interface HighlightContextValue {
     highlightIds: ID[];
     setHighlightIds: (ids: ID[]) => void;
-};
+}
 
 const HighlightContext = createContext<HighlightContextValue | null>(null);
 

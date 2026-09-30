@@ -12,7 +12,7 @@ export class ApiError extends Error {
 
 export type TokenProvider = () => Promise<string | null>;
 
-let tokenProvider: TokenProvider = async () => null;
+let tokenProvider: TokenProvider = () => Promise.resolve(null);
 
 /** The auth layer registers how to obtain a fresh access token; the API layer stays framework-free. */
 export function setTokenProvider(provider: TokenProvider): void {

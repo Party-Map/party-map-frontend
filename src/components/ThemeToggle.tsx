@@ -1,6 +1,8 @@
 import { Moon, Sun } from "lucide-react";
+
 import { useTheme } from "@/app/ThemeProvider";
 import { cx } from "@/lib/cx";
+
 import styles from "./ThemeToggle.module.css";
 
 export function ThemeToggle({ compact = false }: { compact?: boolean }) {

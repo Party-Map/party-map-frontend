@@ -1,4 +1,5 @@
 import { screen } from "@testing-library/react";
+
 import { AdminTopBar, TopBar } from "@/components/TopBar";
 import { searchHits } from "@/test/fixtures";
 import { mockApi, renderWithProviders } from "@/test/helpers";

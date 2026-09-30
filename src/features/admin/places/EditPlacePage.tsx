@@ -1,14 +1,16 @@
 import { useNavigate, useParams } from "react-router";
+
 import { useToast } from "@/app/ToastProvider";
 import { ErrorState, LoadingState } from "@/components/States";
+import styles from "@/features/admin/admin.module.css";
 import { RequireRole } from "@/features/admin/RequireRole";
 import { fetchPlace, fetchPlaceInvitations, updatePlace } from "@/lib/api/places";
 import { Role } from "@/lib/auth/roles";
 import { useResource } from "@/lib/hooks/useResource";
 import type { PlacePayload } from "@/lib/types";
+
 import { PlaceForm } from "./PlaceForm";
 import { PlaceInvitationRequests } from "./PlaceInvitationRequests";
-import styles from "@/features/admin/admin.module.css";
 
 /** /admin/places/:id: edit a place and answer the event invitations it received. */
 export function EditPlacePage() {
@@ -39,7 +41,7 @@ function PlaceEditor() {
     const handleSubmit = async (payload: PlacePayload) => {
         const updated = await updatePlace(id, payload);
         toast.success("Place saved.");
-        navigate(`/places/${updated.id}`);
+        void navigate(`/places/${updated.id}`);
     };
 
     return (

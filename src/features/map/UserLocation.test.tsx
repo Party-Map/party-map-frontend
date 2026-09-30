@@ -2,7 +2,9 @@ vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reac
 vi.mock("leaflet", () => import("@/test/mocks/leaflet").then((m) => m.leafletMock));
 
 import { act, render, screen } from "@testing-library/react";
+
 import { fakeMap } from "@/test/mocks/leaflet";
+
 import { MAX_ACCURACY_RADIUS_M, UserLocation } from "./UserLocation";
 
 type SuccessCallback = (position: GeolocationPosition) => void;

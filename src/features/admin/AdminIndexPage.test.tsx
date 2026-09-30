@@ -1,8 +1,10 @@
 import { screen } from "@testing-library/react";
 import { Route, Routes } from "react-router";
+
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { Role } from "@/lib/auth/roles";
 import { authenticatedSnapshot, renderWithProviders } from "@/test/helpers";
+
 import { AdminIndexPage } from "./AdminIndexPage";
 
 function AuthStatus() {

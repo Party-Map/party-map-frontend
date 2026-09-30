@@ -1,30 +1,9 @@
 {
   "name": "party-map",
   "version": "2.0.0",
-  "private": true,
-  "type": "module",
-  "packageManager": "pnpm@12.8.1",
-  "engines": {
-    "node": ">=24"
-  },
   "browserslist": [
     "defaults"
   ],
-  "scripts": {
-    "api:types": "openapi-typescript openapi.json -o src/api/schema.d.ts",
-    "build": "rsbuild build",
-    "check": "pnpm lint:code && pnpm lint:tsc && pnpm test:react --run --coverage && pnpm build",
-    "clean": "rimraf dist .rsbuild coverage",
-    "clean:all": "rimraf node_modules dist .rsbuild coverage",
-    "dev": "rsbuild dev",
-    "e2e": "playwright test",
-    "e2e:update": "playwright test --grep @visual --update-snapshots",
-    "e2e:visual": "playwright test --grep @visual",
-    "lint:code": "eslint",
-    "lint:tsc": "tsc --pretty --noEmit",
-    "preview": "rsbuild preview",
-    "test:react": "vitest"
-  },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
     "@hookform/resolvers": "^5.9.1",
@@ -86,5 +65,29 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.71.0",
     "vitest": "^5.0.3"
-  }
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "pnpm@12.8.1",
+  "private": true,
+  "scripts": {
+    "api:types": "openapi-typescript openapi.json -o src/api/schema.d.ts",
+    "build": "rsbuild build",
+    "check": "pnpm lint:deps && pnpm lint:code && pnpm lint:tsc && pnpm test:react --run --coverage && pnpm build",
+    "clean": "rimraf dist .rsbuild coverage",
+    "clean:all": "rimraf node_modules dist .rsbuild coverage",
+    "commitlint": "commitlint",
+    "dev": "rsbuild dev",
+    "e2e": "playwright test",
+    "e2e:update": "playwright test --grep @visual --update-snapshots",
+    "e2e:visual": "playwright test --grep @visual",
+    "lint:code": "eslint",
+    "lint:deps": "syncpack lint",
+    "lint:tsc": "tsc --pretty --noEmit",
+    "prepare": "husky",
+    "preview": "rsbuild preview",
+    "test:react": "vitest"
+  },
+  "type": "module"
 }

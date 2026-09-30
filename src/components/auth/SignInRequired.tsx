@@ -3,10 +3,10 @@ import { Card } from "@/components/Card";
 import { PageShell } from "@/components/PageShell";
 import { useAuth } from "@/lib/auth/AuthProvider";
 
-type SignInRequiredProps = {
+interface SignInRequiredProps {
     message?: string;
     returnTo: string;
-};
+}
 
 export function SignInRequired({
     message = "You need to be signed in to view this page.",

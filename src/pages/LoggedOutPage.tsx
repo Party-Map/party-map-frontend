@@ -1,7 +1,9 @@
 import { ShieldCheck } from "lucide-react";
 import { Navigate } from "react-router";
+
 import { ButtonLink } from "@/components/Button";
 import { useAuth } from "@/lib/auth/AuthProvider";
+
 import styles from "./LoggedOutPage.module.css";
 
 export function LoggedOutPage() {

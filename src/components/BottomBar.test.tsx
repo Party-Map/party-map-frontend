@@ -1,4 +1,5 @@
 import { screen, within } from "@testing-library/react";
+
 import { BottomBar } from "@/components/BottomBar";
 import { authenticatedSnapshot, renderWithProviders } from "@/test/helpers";
 

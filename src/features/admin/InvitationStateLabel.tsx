@@ -1,4 +1,5 @@
 import type { InvitationState } from "@/lib/types";
+
 import styles from "./admin.module.css";
 
 const LABELS: Record<InvitationState, { text: string; className: string | undefined }> = {

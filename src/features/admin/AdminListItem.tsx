@@ -1,12 +1,13 @@
 import { Link } from "react-router";
+
 import styles from "./AdminListItem.module.css";
 
-type AdminListItemProps = {
+interface AdminListItemProps {
     title: string;
     lines?: string[];
     to: string;
     linkLabel?: string;
-};
+}
 
 /** Row in an admin list: a title, optional detail lines and a link to the detail page. */
 export function AdminListItem({ title, lines = [], to, linkLabel = "View" }: AdminListItemProps) {

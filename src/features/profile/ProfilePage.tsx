@@ -1,8 +1,9 @@
 import { RequireAuth } from "@/components/auth/RequireAuth";
-import { ButtonLink, buttonClass } from "@/components/Button";
+import { buttonClass, ButtonLink } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { PageShell } from "@/components/PageShell";
 import { useAuth } from "@/lib/auth/AuthProvider";
+
 import styles from "./ProfilePage.module.css";
 
 const EMPTY_VALUE = "—";

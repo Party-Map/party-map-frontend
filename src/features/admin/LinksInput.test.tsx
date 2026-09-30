@@ -1,8 +1,10 @@
 import { fireEvent, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
+
 import type { Link } from "@/lib/types";
 import { renderWithProviders } from "@/test/helpers";
+
 import { buildUrl, LinksInput, toSuffix } from "./LinksInput";
 
 function Harness({ initial = [] }: { initial?: Link[] }) {

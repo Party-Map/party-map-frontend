@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 // Dev seed ids from party-map-backend/src/main/resources/data.sql.
-const routes: Array<[name: string, path: string, fullPage: boolean]> = [
+const routes: [name: string, path: string, fullPage: boolean][] = [
     ["home", "/", false],
     ["search", "/?q=balaton", false],
     ["place", "/places/43ce6e13-e30b-5b9f-8cc6-0aa52be7cf85", true],

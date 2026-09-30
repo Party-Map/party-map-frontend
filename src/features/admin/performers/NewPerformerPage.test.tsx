@@ -1,8 +1,10 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+
 import { Role } from "@/lib/auth/roles";
 import { performer } from "@/test/fixtures";
 import { authenticatedSnapshot, mockApi, renderWithProviders, requestBody } from "@/test/helpers";
+
 import { NewPerformerPage } from "./NewPerformerPage";
 
 const manager = authenticatedSnapshot([Role.PERFORMER_MANAGER]);

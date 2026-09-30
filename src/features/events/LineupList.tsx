@@ -1,7 +1,9 @@
 import { Link } from "react-router";
+
 import { EmptyState } from "@/components/States";
 import { formatTime, parseDate } from "@/lib/dates";
 import type { LineupItem } from "@/lib/types";
+
 import styles from "./LineupList.module.css";
 
 function byStartTime(a: LineupItem, b: LineupItem): number {

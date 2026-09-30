@@ -1,16 +1,26 @@
-import { useEffect, useReducer, useState } from "react";
 import type { Map as LeafletMap } from "leaflet";
+import { useEffect, useReducer, useState } from "react";
 import { useMap } from "react-leaflet";
+
 import { KindBadge } from "@/components/KindBadge";
 import { BASE_LABEL_ZOOM, HIGHLIGHT_LABEL_ZOOM, LABEL_BASE_OFFSET, LABEL_HIGHLIGHT_OFFSET } from "@/lib/constants";
 import { cx } from "@/lib/cx";
 import type { ID, Place, UpcomingEventByPlace } from "@/lib/types";
+
 import { toLatLngTuple } from "./geo";
 import styles from "./PlaceLabels.module.css";
 
-export type PopupRect = { left: number; right: number; top: number; bottom: number };
+export interface PopupRect {
+    left: number;
+    right: number;
+    top: number;
+    bottom: number;
+}
 
-type XY = { x: number; y: number };
+interface XY {
+    x: number;
+    y: number;
+}
 
 /** Screen-space box the popup card covers around its pin; labels underneath it are hidden. */
 const POPUP_HALF_WIDTH = 140;
@@ -110,13 +120,13 @@ function useMapInteraction(map: LeafletMap): boolean {
     return isInteracting;
 }
 
-type PlaceLabelsProps = {
+interface PlaceLabelsProps {
     places: Place[];
     upcomingMap: Map<ID, UpcomingEventByPlace>;
     highlightIds: ID[];
     openPopupId: ID | null;
     onOpen: (id: ID) => void;
-};
+}
 
 /** HTML labels above the pins, positioned from the map projection on every frame the map moves. */
 export function PlaceLabels({ places, upcomingMap, highlightIds, openPopupId, onOpen }: PlaceLabelsProps) {

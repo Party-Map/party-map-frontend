@@ -2,12 +2,14 @@ vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reac
 vi.mock("leaflet", () => import("@/test/mocks/leaflet").then((m) => m.leafletMock));
 
 import { act, fireEvent, screen, waitFor } from "@testing-library/react";
+
 import { useHighlight } from "@/app/HighlightProvider";
 import { TILE_URL } from "@/lib/constants";
 import type { ID } from "@/lib/types";
 import { place, place2, upcoming } from "@/test/fixtures";
 import { mockApi, renderWithProviders } from "@/test/helpers";
 import { fakeMap, reactLeafletMock } from "@/test/mocks/leaflet";
+
 import { MapPage } from "./MapPage";
 
 const ROUTES = {

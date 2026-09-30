@@ -1,9 +1,11 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Route, Routes } from "react-router";
-import { Role } from "@/lib/auth/roles";
-import { authenticatedSnapshot, renderWithProviders, type MockAuthClient } from "@/test/helpers";
+
 import type { AuthSnapshot } from "@/lib/auth/keycloak";
+import { Role } from "@/lib/auth/roles";
+import { authenticatedSnapshot, type MockAuthClient, renderWithProviders } from "@/test/helpers";
+
 import { AdminLayout } from "./AdminLayout";
 
 function renderLayout(options: { auth?: AuthSnapshot; authPending?: boolean; route?: string } = {}): {

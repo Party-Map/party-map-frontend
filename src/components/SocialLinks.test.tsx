@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+
 import { BrandIcon, SocialLinks } from "@/components/SocialLinks";
 import type { Link } from "@/lib/types";
 

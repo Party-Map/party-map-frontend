@@ -2,10 +2,12 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type * as ReactRouter from "react-router";
 import { vi } from "vitest";
+
 import { Role } from "@/lib/auth/roles";
 import type { EventPlan, PlaceListItem } from "@/lib/types";
 import { eventPlan, performer, place } from "@/test/fixtures";
 import { authenticatedSnapshot, mockApi, renderWithProviders } from "@/test/helpers";
+
 import { EventPlanPage } from "./EventPlanPage";
 
 const { navigate } = vi.hoisted(() => ({ navigate: vi.fn() }));
@@ -71,7 +73,7 @@ describe("EventPlanPage", () => {
         mockApi({
             ...routes,
             "PUT /api/event-plan/plan-1": (init: RequestInit | undefined) => {
-                body = JSON.parse(String(init?.body));
+                body = JSON.parse(init?.body as string);
                 return eventPlan;
             },
         });

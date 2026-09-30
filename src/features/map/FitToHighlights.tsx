@@ -1,7 +1,9 @@
-import { useEffect } from "react";
 import L from "leaflet";
+import { useEffect } from "react";
 import { useMap } from "react-leaflet";
+
 import type { ID, Place } from "@/lib/types";
+
 import { toLatLngTuple } from "./geo";
 
 const SINGLE_TARGET_ZOOM = 15;

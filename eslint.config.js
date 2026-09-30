@@ -73,17 +73,27 @@ const eslintConfig = defineConfig([
                 "error",
                 { ignorePrimitives: { string: true, boolean: true } },
             ],
+            // Async event handlers are fine in JSX: each one catches its own errors.
+            "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: { attributes: false } }],
+            // React Router's idiom: loaders and tests throw a Response for route errors.
+            "@typescript-eslint/only-throw-error": [
+                "error",
+                { allow: [{ from: "lib", name: "Response" }], allowRethrowing: true },
+            ],
             "jsx-a11y/no-autofocus": "off",
             "no-console": ["error", { allow: ["warn", "error"] }],
             eqeqeq: ["error", "always"],
         },
     },
-    // Tests hand vi.fn() mocks around as methods and assert on values they just created.
+    // Tests hand vi.fn() mocks around as methods, stub with no-op and async functions, and match with expect.any().
     {
         files: ["src/**/*.test.{ts,tsx}", "src/test/**", "e2e/**"],
         rules: {
             "@typescript-eslint/unbound-method": "off",
             "@typescript-eslint/no-non-null-assertion": "off",
+            "@typescript-eslint/no-empty-function": "off",
+            "@typescript-eslint/require-await": "off",
+            "@typescript-eslint/no-unsafe-assignment": "off",
         },
     },
 ]);

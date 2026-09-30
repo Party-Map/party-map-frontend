@@ -1,8 +1,10 @@
 import { CalendarDays, MapPin, UserRound } from "lucide-react";
+
 import { CoverImage } from "@/components/CoverImage";
 import { cx } from "@/lib/cx";
 import { formatNextEventStart } from "@/lib/dates";
 import type { SearchHit, SearchHitType } from "@/lib/types";
+
 import styles from "./SearchBar.module.css";
 
 const TYPE_META: Record<SearchHitType, { label: string; Icon: typeof MapPin; className: string | undefined }> = {

@@ -1,6 +1,7 @@
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import { LikesPage } from "@/features/profile";
 import type { Event } from "@/lib/types";
 import { event, performer, place } from "@/test/fixtures";

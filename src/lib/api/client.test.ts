@@ -1,8 +1,14 @@
 import type { Mock } from "vitest";
+
 import { api, ApiError, setTokenProvider } from "@/lib/api/client";
 import { mockApi, requestBody } from "@/test/helpers";
 
-type Sent = { url: string; method: string | undefined; headers: Record<string, string>; body: unknown };
+interface Sent {
+    url: string;
+    method: string | undefined;
+    headers: Record<string, string>;
+    body: unknown;
+}
 
 function sent(fetchMock: Mock, index = 0): Sent {
     const call = fetchMock.mock.calls[index] as [unknown, RequestInit] | undefined;

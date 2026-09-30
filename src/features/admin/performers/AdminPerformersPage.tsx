@@ -1,11 +1,11 @@
 import { ButtonLink } from "@/components/Button";
 import { EmptyState, ErrorState, LoadingState } from "@/components/States";
+import styles from "@/features/admin/admin.module.css";
 import { AdminListItem } from "@/features/admin/AdminListItem";
 import { RequireRole } from "@/features/admin/RequireRole";
 import { fetchOwnedPerformers } from "@/lib/api/performers";
 import { Role } from "@/lib/auth/roles";
 import { useResource } from "@/lib/hooks/useResource";
-import styles from "@/features/admin/admin.module.css";
 
 /** /admin/performers: the performers the signed-in manager owns. */
 export function AdminPerformersPage() {

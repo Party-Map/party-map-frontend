@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { Button } from "@/components/Button";
 import { Field, FormError, formStyles, Select } from "@/components/Field";
 import { ErrorState, LoadingState } from "@/components/States";
@@ -6,12 +7,13 @@ import { addLineupInvitation, deleteLineupInvitation, fetchLineupInvitations } f
 import { clampDateTimeRange, formatDateTime, toDateTimeLocalInput } from "@/lib/dates";
 import { useResource } from "@/lib/hooks/useResource";
 import type { EventPlan, EventPlanLineupInvitation, InvitationState, Performer } from "@/lib/types";
+
+import adminStyles from "../admin.module.css";
 import { DateTimeRangeFields } from "../DateTimeRangeFields";
 import { InvitationStateLabel } from "../InvitationStateLabel";
-import adminStyles from "../admin.module.css";
 import styles from "./LineupEditor.module.css";
 
-type LineupRow = {
+interface LineupRow {
     /** Stable identity for React; rows have no id of their own until they are invited. */
     key: number;
     performerId: string;
@@ -19,7 +21,7 @@ type LineupRow = {
     endTime: string;
     /** null until an invitation was sent for this row. */
     state: InvitationState | null;
-};
+}
 
 let rowSequence = 0;
 
@@ -49,10 +51,10 @@ function emptyRow(plan: EventPlan): LineupRow {
     });
 }
 
-type LineupEditorProps = {
+interface LineupEditorProps {
     plan: EventPlan;
     performers: Performer[];
-};
+}
 
 /** Invite performers to time slots within the plan; loads the existing invitations first. */
 export function LineupEditor({ plan, performers }: LineupEditorProps) {

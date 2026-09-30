@@ -2,7 +2,7 @@ import type { GeocodeResult, GeoPoint, ReverseGeocodeResult } from "@/lib/types"
 
 const NOMINATIM = "https://nominatim.openstreetmap.org";
 
-type NominatimAddress = {
+interface NominatimAddress {
     road?: string;
     house_number?: string;
     city?: string;
@@ -11,19 +11,19 @@ type NominatimAddress = {
     municipality?: string;
     suburb?: string;
     postcode?: string;
-};
+}
 
-type NominatimSearchItem = {
+interface NominatimSearchItem {
     display_name: string;
     lat: string;
     lon: string;
     address?: NominatimAddress;
-};
+}
 
-type NominatimReverse = {
+interface NominatimReverse {
     display_name?: string;
     address?: NominatimAddress;
-};
+}
 
 function cityOf(addr: NominatimAddress, includeSuburb = false): string | undefined {
     return addr.city ?? addr.town ?? addr.village ?? addr.municipality ?? (includeSuburb ? addr.suburb : undefined);

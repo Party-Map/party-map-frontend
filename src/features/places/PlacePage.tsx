@@ -1,4 +1,5 @@
 import { useParams } from "react-router";
+
 import { Card, CardBody } from "@/components/Card";
 import { CoverImage } from "@/components/CoverImage";
 import { LikeButton } from "@/components/LikeButton";
@@ -14,10 +15,14 @@ import { cx } from "@/lib/cx";
 import { useResource } from "@/lib/hooks/useResource";
 import type { Event, ID, Place } from "@/lib/types";
 import { NotFoundPage } from "@/pages/NotFoundPage";
+
 import { EventCard } from "./EventCard";
 import styles from "./PlacePage.module.css";
 
-type PlacePageData = { place: Place; events: Event[] };
+interface PlacePageData {
+    place: Place;
+    events: Event[];
+}
 
 async function loadPlacePage(id: ID): Promise<PlacePageData> {
     const [place, events] = await Promise.all([fetchPlace(id), fetchEventsByPlace(id)]);

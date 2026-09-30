@@ -1,4 +1,5 @@
 import { createBrowserRouter, type RouteObject } from "react-router";
+
 import { RootLayout } from "@/app/RootLayout";
 import { adminRoutes } from "@/features/admin/routes";
 import { EventPage } from "@/features/events";

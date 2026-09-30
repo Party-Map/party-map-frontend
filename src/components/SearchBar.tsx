@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
 import { Eraser, Minimize2, Search } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router";
+
 import { useHighlight } from "@/app/HighlightProvider";
 import { SearchResultItem } from "@/components/SearchResultItem";
 import { search as searchApi } from "@/lib/api/search";
@@ -8,9 +9,14 @@ import { SEARCH_DEBOUNCE_MS } from "@/lib/constants";
 import { cx } from "@/lib/cx";
 import { useDebouncedValue } from "@/lib/hooks/useDebouncedValue";
 import type { ID, SearchHit } from "@/lib/types";
+
 import styles from "./SearchBar.module.css";
 
-type Results = { query: string; hits: SearchHit[]; failed?: boolean };
+interface Results {
+    query: string;
+    hits: SearchHit[];
+    failed?: boolean;
+}
 
 export function placeIdsOf(hits: SearchHit[]): ID[] {
     const ids = hits.map((h) => h.placeId ?? (h.type === "PLACE" ? h.id : null)).filter((id): id is ID => Boolean(id));
@@ -46,7 +52,7 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const debounced = useDebouncedValue(query, SEARCH_DEBOUNCE_MS).trim();
-    const items = results && results.query === debounced ? results.hits : [];
+    const items = results?.query === debounced ? results.hits : [];
     const showDropdown = open && debounced.length > 0 && results?.query === debounced;
 
     // Fetch when the debounced query changes; highlight matching places unless a focus is pinned.
@@ -106,7 +112,7 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
         setResults(null);
         setOpen(false);
         setHighlightIds([]);
-        navigate(pathname, { replace: true });
+        void navigate(pathname, { replace: true });
     };
 
     const clearFocusParam = () => {
@@ -114,19 +120,19 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
         const next = new URLSearchParams(searchParams);
         next.delete("focus");
         const qs = next.toString();
-        navigate(qs ? `${pathname}?${qs}` : pathname, { replace: true });
+        void navigate(qs ? `${pathname}?${qs}` : pathname, { replace: true });
         setHighlightIds([]);
     };
 
     const goToMapWith = (params: Record<string, string>) => {
         const next = new URLSearchParams(params);
-        navigate(`/?${next.toString()}`);
+        void navigate(`/?${next.toString()}`);
     };
 
     const pickHit = (hit: SearchHit) => {
         const placeId = hit.placeId ?? (hit.type === "PLACE" ? hit.id : null);
         if (!placeId) {
-            navigate(hrefForHit(hit));
+            void navigate(hrefForHit(hit));
         } else if (pathname !== "/") {
             goToMapWith(query.trim() ? { focus: placeId, q: query.trim() } : { focus: placeId });
         } else {
@@ -205,7 +211,7 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
 
             {showDropdown && (
                 <div className={styles.dropdown} role="listbox" aria-label="Search results">
-                    {results?.failed ? (
+                    {results.failed ? (
                         <p className={styles.noResults} role="alert">
                             Search is unavailable right now. Please try again.
                         </p>
@@ -219,7 +225,7 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
                                     hit={hit}
                                     onPick={() => pickHit(hit)}
                                     onView={() => {
-                                        navigate(hrefForHit(hit));
+                                        void navigate(hrefForHit(hit));
                                         dismiss();
                                     }}
                                 />

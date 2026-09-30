@@ -1,5 +1,6 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+
 import { ProfilePage } from "@/features/profile";
 import { Role } from "@/lib/auth/roles";
 import { authenticatedSnapshot, renderWithProviders } from "@/test/helpers";

@@ -2,8 +2,10 @@ vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reac
 vi.mock("leaflet", () => import("@/test/mocks/leaflet").then((m) => m.leafletMock));
 
 import { act, fireEvent, render, screen } from "@testing-library/react";
+
 import { place } from "@/test/fixtures";
 import { fakeMap, leafletMock } from "@/test/mocks/leaflet";
+
 import { ZoomControls } from "./ZoomControls";
 
 const latLng = [place.location.latitude, place.location.longitude];

@@ -1,9 +1,11 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+
 import type { AuthSnapshot } from "@/lib/auth/keycloak";
 import { Role } from "@/lib/auth/roles";
 import type { PerformerListItem } from "@/lib/types";
 import { authenticatedSnapshot, mockApi, renderWithProviders } from "@/test/helpers";
+
 import { AdminPerformersPage } from "./AdminPerformersPage";
 
 const manager = authenticatedSnapshot([Role.PERFORMER_MANAGER]);

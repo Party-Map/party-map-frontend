@@ -1,10 +1,12 @@
 vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reactLeafletMock));
 vi.mock("leaflet", () => import("@/test/mocks/leaflet").then((m) => m.leafletMock));
 
-import type { ComponentProps } from "react";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import type { ComponentProps } from "react";
+
 import { place, place2, upcoming } from "@/test/fixtures";
 import { fakeMap, point } from "@/test/mocks/leaflet";
+
 import { computeLabelOpacity, getPopupRect, isInsideRect, PlaceLabels } from "./PlaceLabels";
 
 const CENTRE = point(400, 300);

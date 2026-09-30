@@ -1,21 +1,23 @@
 import { useId, useState } from "react";
+
 import { useToast } from "@/app/ToastProvider";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { EmptyState } from "@/components/States";
+import adminStyles from "@/features/admin/admin.module.css";
 import { InvitationStateLabel } from "@/features/admin/InvitationStateLabel";
 import { respondToPerformerInvitation } from "@/lib/api/performers";
 import { formatDateTimeRange } from "@/lib/dates";
 import type { ID, PerformerInvitationRequest } from "@/lib/types";
-import adminStyles from "@/features/admin/admin.module.css";
+
 import styles from "./PerformerInvitationRequests.module.css";
 
-type PerformerInvitationRequestsProps = {
+interface PerformerInvitationRequestsProps {
     performerId: ID;
     requests: PerformerInvitationRequest[];
     /** Called after an answer was saved so the owner can reload the list. */
     onChanged: () => void;
-};
+}
 
 type Answer = "accept" | "reject";
 

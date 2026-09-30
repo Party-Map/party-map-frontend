@@ -1,4 +1,5 @@
 import type { LatLngTuple } from "leaflet";
+
 import type { GeoPoint } from "@/lib/types";
 
 /** Leaflet works with [lat, lng] tuples; the API sends GeoPoint objects. */

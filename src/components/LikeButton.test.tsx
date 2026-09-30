@@ -1,6 +1,7 @@
 import { act, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ComponentProps } from "react";
+
 import { LikeButton } from "@/components/LikeButton";
 import type { AuthSnapshot } from "@/lib/auth/keycloak";
 import { ANONYMOUS, authenticatedSnapshot, mockApi, renderWithProviders } from "@/test/helpers";

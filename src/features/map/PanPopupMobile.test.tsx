@@ -2,8 +2,10 @@ vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reac
 vi.mock("leaflet", () => import("@/test/mocks/leaflet").then((m) => m.leafletMock));
 
 import { render } from "@testing-library/react";
+
 import { place, place2 } from "@/test/fixtures";
 import { fakeMap, point } from "@/test/mocks/leaflet";
+
 import { PanPopupMobile, PHONE_MAX_WIDTH } from "./PanPopupMobile";
 
 function setViewportWidth(width: number) {

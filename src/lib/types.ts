@@ -1,9 +1,9 @@
 export type ID = string;
 
-export type GeoPoint = {
+export interface GeoPoint {
     latitude: number;
     longitude: number;
-};
+}
 
 export const LINK_TYPES = ["INSTAGRAM", "FACEBOOK", "TWITTER", "REDDIT", "WEBSITE"] as const;
 export type LinkType = (typeof LINK_TYPES)[number];
@@ -17,12 +17,12 @@ export type LikeTarget = "events" | "places" | "performers";
 
 export type InvitationState = "PENDING" | "ACCEPTED" | "REJECTED";
 
-export type Link = {
+export interface Link {
     type: LinkType;
     url: string;
-};
+}
 
-export type Place = {
+export interface Place {
     id: ID;
     name: string;
     location: GeoPoint;
@@ -32,24 +32,24 @@ export type Place = {
     image: string;
     tags: string[];
     links?: Link[];
-};
+}
 
-export type Performer = {
+export interface Performer {
     id: ID;
     name: string;
     genre: string;
     bio: string;
     image: string;
     links?: Link[];
-};
+}
 
-export type LineupItem = {
+export interface LineupItem {
     startTime: string;
     endTime: string;
     performer: Performer;
-};
+}
 
-export type Event = {
+export interface Event {
     id: ID;
     title: string;
     placeId: ID;
@@ -61,27 +61,27 @@ export type Event = {
     price?: string;
     kind: EventType;
     links?: Link[];
-};
+}
 
-export type LikedEventsGrouped = {
+export interface LikedEventsGrouped {
     upcoming: Event[];
     past: Event[];
-};
+}
 
-export type UpcomingEventByPlace = {
+export interface UpcomingEventByPlace {
     placeId: ID;
     eventId: ID;
     title: string;
     image: string | null;
     start: string;
     kind: EventType;
-};
+}
 
-export type LikeStatus = {
+export interface LikeStatus {
     liked: boolean;
-};
+}
 
-export type SearchHit = {
+export interface SearchHit {
     id: ID;
     type: SearchHitType;
     title: string;
@@ -89,27 +89,27 @@ export type SearchHit = {
     image: string | null;
     nextEventStart: string | null;
     placeId: ID | null;
-};
+}
 
-export type SearchResponse = {
+export interface SearchResponse {
     query: string;
     hits: SearchHit[];
-};
+}
 
-export type GeocodeResult = {
+export interface GeocodeResult {
     displayName: string;
     addressLine: string;
     location: GeoPoint;
     city?: string;
-};
+}
 
-export type ReverseGeocodeResult = {
+export interface ReverseGeocodeResult {
     displayName: string;
     addressLine: string;
     city?: string;
-};
+}
 
-export type PlacePayload = {
+export interface PlacePayload {
     name: string;
     address: string;
     city: string;
@@ -118,17 +118,17 @@ export type PlacePayload = {
     tags: string[];
     image: string | null;
     links?: Link[];
-};
+}
 
-export type PerformerPayload = {
+export interface PerformerPayload {
     name: string;
     genre: string;
     bio: string;
     image: string | null;
     links?: Link[];
-};
+}
 
-export type EventPlanPayload = {
+export interface EventPlanPayload {
     title: string;
     price?: string;
     kind: EventType;
@@ -137,48 +137,48 @@ export type EventPlanPayload = {
     description: string;
     image?: string | null;
     links?: Link[];
-};
+}
 
-export type PlaceListItem = {
+export interface PlaceListItem {
     id: ID;
     name: string;
     address: string;
     city: string;
-};
+}
 
-export type PerformerListItem = {
+export interface PerformerListItem {
     id: ID;
     name: string;
-};
+}
 
-export type OwnedEventListItem = {
+export interface OwnedEventListItem {
     id: ID;
     title: string;
     start: string;
     end: string;
     placeName: string;
-};
+}
 
-export type EventPlanListItem = {
+export interface EventPlanListItem {
     id: ID;
     title: string;
     startDateTime: string;
     endDateTime: string;
-};
+}
 
-export type EventPlanPlaceInvitation = {
+export interface EventPlanPlaceInvitation {
     state: InvitationState;
     place: Place;
-};
+}
 
-export type EventPlanLineupInvitation = {
+export interface EventPlanLineupInvitation {
     state: InvitationState;
     startTime: string;
     endTime: string;
     performer: Performer;
-};
+}
 
-export type EventPlan = {
+export interface EventPlan {
     id: ID;
     title: string;
     description: string;
@@ -190,27 +190,27 @@ export type EventPlan = {
     image?: string | null;
     placeInvitation: EventPlanPlaceInvitation | null;
     lineupInvitations: EventPlanLineupInvitation[];
-};
+}
 
-export type PlaceInvitationRequest = {
+export interface PlaceInvitationRequest {
     eventPlanId: ID;
     state: InvitationState;
     title: string;
     startDateTime: string;
     endDateTime: string;
-};
+}
 
-export type PerformerInvitationRequest = {
+export interface PerformerInvitationRequest {
     eventPlanId: ID;
     eventPlanTitle: string;
     state: InvitationState;
     startTime: string;
     endTime: string;
-};
+}
 
-export type LineupInvitationPayload = {
+export interface LineupInvitationPayload {
     performerId: ID;
     startTime: string;
     endTime: string;
     state: InvitationState;
-};
+}

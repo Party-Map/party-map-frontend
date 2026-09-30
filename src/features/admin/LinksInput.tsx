@@ -1,7 +1,8 @@
 import { Button } from "@/components/Button";
 import { formStyles, Select } from "@/components/Field";
 import { LINK_TYPE_LABELS, LINK_TYPE_PREFIXES } from "@/lib/constants";
-import { LINK_TYPES, type Link, type LinkType } from "@/lib/types";
+import { type Link, LINK_TYPES, type LinkType } from "@/lib/types";
+
 import styles from "./LinksInput.module.css";
 
 export function toSuffix(type: LinkType, url: string): string {
@@ -14,11 +15,11 @@ export function buildUrl(type: LinkType, suffix: string): string {
     return trimmed ? LINK_TYPE_PREFIXES[type] + trimmed : "";
 }
 
-type LinksInputProps = {
+interface LinksInputProps {
     value: Link[];
     onChange: (links: Link[]) => void;
     label?: string;
-};
+}
 
 /** Edit up to one link per network; the network prefix is fixed, the user types the rest. */
 export function LinksInput({ value, onChange, label = "Links" }: LinksInputProps) {

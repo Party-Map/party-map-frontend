@@ -5,9 +5,14 @@ import { fetchLikedEvents, fetchLikedPerformers, fetchLikedPlaces } from "@/lib/
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useResource } from "@/lib/hooks/useResource";
 import type { LikedEventsGrouped, Performer, Place } from "@/lib/types";
+
 import { LikedTabs } from "./LikedTabs";
 
-type Likes = { events: LikedEventsGrouped; places: Place[]; performers: Performer[] };
+interface Likes {
+    events: LikedEventsGrouped;
+    places: Place[];
+    performers: Performer[];
+}
 
 const NO_EVENTS: LikedEventsGrouped = { upcoming: [], past: [] };
 

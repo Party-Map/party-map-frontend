@@ -1,10 +1,10 @@
 import { Role } from "@/lib/auth/roles";
 
-export type AdminSection = {
+export interface AdminSection {
     role: Role;
     path: string;
     label: string;
-};
+}
 
 /** Admin areas in tab order; a user sees the ones matching their roles. */
 export const ADMIN_SECTIONS: readonly AdminSection[] = [

@@ -1,8 +1,10 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
+
 import type { GeocodeResult } from "@/lib/types";
 import { mockApi, renderWithProviders } from "@/test/helpers";
+
 import { AddressSearchInput } from "./AddressSearchInput";
 
 const searchAnswer = [
@@ -19,10 +21,8 @@ function Harness({ onSelect }: { onSelect: (result: GeocodeResult) => void }) {
     const [value, setValue] = useState("");
     return (
         <>
-            <label>
-                Address
-                <AddressSearchInput value={value} onChange={setValue} onSelect={onSelect} />
-            </label>
+            <label htmlFor="address">Address</label>
+            <AddressSearchInput id="address" value={value} onChange={setValue} onSelect={onSelect} />
             <button type="button" onClick={() => setValue("Set from outside")}>
                 set externally
             </button>

@@ -1,4 +1,5 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
+
 import { useResource } from "@/lib/hooks/useResource";
 
 function deferred<T>() {

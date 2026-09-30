@@ -1,4 +1,5 @@
 import type { RouteObject } from "react-router";
+
 import { AdminIndexPage } from "./AdminIndexPage";
 import { AdminLayout } from "./AdminLayout";
 

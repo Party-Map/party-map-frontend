@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { useToast } from "@/app/ToastProvider";
 import { Button } from "@/components/Button";
 import { Field, FormError, formStyles, Select } from "@/components/Field";
@@ -6,11 +7,11 @@ import { fetchInvitablePlaces, invitePlace } from "@/lib/api/eventPlans";
 import { useResource } from "@/lib/hooks/useResource";
 import type { ID } from "@/lib/types";
 
-type InvitePlaceProps = {
+interface InvitePlaceProps {
     planId: ID;
     /** Called after an invitation was sent so the page can reload the plan. */
     onChanged: () => void;
-};
+}
 
 /** Pick one of the places that can host this plan and send it an invitation. */
 export function InvitePlace({ planId, onChanged }: InvitePlaceProps) {

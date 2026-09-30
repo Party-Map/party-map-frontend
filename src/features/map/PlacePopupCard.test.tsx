@@ -1,8 +1,10 @@
 import { act, fireEvent, screen } from "@testing-library/react";
+
 import { formatNextEventStart } from "@/lib/dates";
 import type { Place, UpcomingEventByPlace } from "@/lib/types";
 import { place, upcoming } from "@/test/fixtures";
 import { renderWithProviders } from "@/test/helpers";
+
 import { LONG_TITLE_LENGTH, PlacePopupCard, searchHref } from "./PlacePopupCard";
 
 async function renderCard(overrides: { place?: Place; upcomingEvent?: UpcomingEventByPlace | null } = {}) {

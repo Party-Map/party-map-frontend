@@ -1,19 +1,21 @@
-import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import { MapPin, Minus, Plus } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useMap } from "react-leaflet";
+
 import { cx } from "@/lib/cx";
 import type { ID, Place } from "@/lib/types";
+
 import { toLatLngTuple } from "./geo";
 import styles from "./ZoomControls.module.css";
 
 /** After recentering the selected pin sits this many pixels above the viewport centre, leaving room for its popup. */
 const RECENTER_OFFSET_Y = -100;
 
-type ZoomControlsProps = {
+interface ZoomControlsProps {
     places: Place[];
     openPopupId: ID | null;
-};
+}
 
 /**
  * Desktop zoom buttons plus a "center selected" button while a popup is open. After recentering,

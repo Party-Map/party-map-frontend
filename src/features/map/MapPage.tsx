@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
+
 import { useHighlight } from "@/app/HighlightProvider";
 import { BottomBar } from "@/components/BottomBar";
 import { ErrorState, LoadingState } from "@/components/States";
@@ -8,8 +9,9 @@ import { fetchUpcomingEventsByPlace } from "@/lib/api/events";
 import { fetchPlaces } from "@/lib/api/places";
 import { useResource } from "@/lib/hooks/useResource";
 import type { ID, Place, UpcomingEventByPlace } from "@/lib/types";
-import { MapView } from "./MapView";
+
 import styles from "./MapPage.module.css";
+import { MapView } from "./MapView";
 
 const NO_PLACES: Place[] = [];
 
@@ -17,7 +19,10 @@ const NO_PLACES: Place[] = [];
  * Which popup is open, remembered together with the highlight set it was opened under: a
  * change of highlights (search, focus) closes it without an effect.
  */
-type PopupState = { id: ID; forHighlights: ID[] };
+interface PopupState {
+    id: ID;
+    forHighlights: ID[];
+}
 
 /** Home route: the full-screen map with every place and its next event. */
 export function MapPage() {

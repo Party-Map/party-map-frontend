@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Button, ButtonLink, buttonClass } from "@/components/Button";
+
+import { Button, buttonClass, ButtonLink } from "@/components/Button";
 import { renderWithProviders } from "@/test/helpers";
 
 describe("buttonClass", () => {

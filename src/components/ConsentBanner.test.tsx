@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+
 import { ConsentBanner } from "@/components/ConsentBanner";
 import { CONSENT_STORAGE_KEY } from "@/lib/constants";
 

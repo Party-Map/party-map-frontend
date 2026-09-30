@@ -1,5 +1,6 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+
 import { NavActions } from "@/components/NavActions";
 import { authenticatedSnapshot, renderWithProviders } from "@/test/helpers";
 

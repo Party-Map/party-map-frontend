@@ -1,7 +1,9 @@
 import { Globe } from "lucide-react";
+
 import { LINK_TYPE_LABELS } from "@/lib/constants";
 import { cx } from "@/lib/cx";
 import type { Link, LinkType } from "@/lib/types";
+
 import styles from "./SocialLinks.module.css";
 
 const GLYPHS: Record<Exclude<LinkType, "WEBSITE">, string> = {

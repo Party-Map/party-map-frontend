@@ -1,8 +1,10 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+
 import type { EventPlanLineupInvitation, Performer } from "@/lib/types";
 import { eventPlan, performer } from "@/test/fixtures";
 import { mockApi, renderWithProviders } from "@/test/helpers";
+
 import { LineupEditor } from "./LineupEditor";
 
 const performer2: Performer = { ...performer, id: "performer-2", name: "MC Second" };
@@ -115,7 +117,7 @@ describe("LineupEditor", () => {
         let body: unknown;
         const { user } = await renderEditor({
             [ADD]: (init: RequestInit | undefined) => {
-                body = JSON.parse(String(init?.body));
+                body = JSON.parse(init?.body as string);
                 return null;
             },
         });

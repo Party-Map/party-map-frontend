@@ -1,9 +1,11 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
+
 import type { PlaceListItem } from "@/lib/types";
 import { place, place2 } from "@/test/fixtures";
 import { mockApi, renderWithProviders } from "@/test/helpers";
+
 import { InvitePlace } from "./InvitePlace";
 
 const PLACES = "GET /api/event-plan/places";

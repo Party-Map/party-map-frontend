@@ -1,7 +1,9 @@
 import { Heart, LogIn, LogOut, User } from "lucide-react";
 import { NavLink } from "react-router";
+
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { cx } from "@/lib/cx";
+
 import styles from "./NavActions.module.css";
 
 const ICON_SIZE = { desktop: 16, mobile: 20 };

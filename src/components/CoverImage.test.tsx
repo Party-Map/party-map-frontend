@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+
 import { CoverImage } from "@/components/CoverImage";
 import { PLACEHOLDER_IMAGE } from "@/lib/constants";
 

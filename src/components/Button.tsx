@@ -1,17 +1,19 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { Link, type LinkProps } from "react-router";
+
 import { cx } from "@/lib/cx";
+
 import styles from "./Button.module.css";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "success" | "bar";
 export type ButtonSize = "sm" | "md";
 
-type StyleProps = {
+interface StyleProps {
     variant?: ButtonVariant;
     size?: ButtonSize;
     block?: boolean;
     className?: string;
-};
+}
 
 export function buttonClass({ variant = "primary", size = "md", block = false, className }: StyleProps): string {
     return cx(styles.button, styles[variant], styles[size], block && styles.block, className);

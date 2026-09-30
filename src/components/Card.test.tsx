@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+
 import { Card, CardBody } from "@/components/Card";
 
 describe("Card", () => {

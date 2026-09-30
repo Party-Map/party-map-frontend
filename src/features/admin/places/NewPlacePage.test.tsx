@@ -1,9 +1,11 @@
 import { act, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+
 import { Role } from "@/lib/auth/roles";
 import { place } from "@/test/fixtures";
 import { authenticatedSnapshot, mockApi, renderWithProviders, requestBody } from "@/test/helpers";
 import { fakeMap, reactLeafletMock } from "@/test/mocks/leaflet";
+
 import { NewPlacePage } from "./NewPlacePage";
 
 vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reactLeafletMock));

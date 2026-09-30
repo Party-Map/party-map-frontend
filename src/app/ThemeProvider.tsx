@@ -1,12 +1,13 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
+
 import { THEME_STORAGE_KEY } from "@/lib/constants";
 
 export type Theme = "light" | "dark";
 
-type ThemeContextValue = {
+interface ThemeContextValue {
     theme: Theme;
     toggle: () => void;
-};
+}
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 

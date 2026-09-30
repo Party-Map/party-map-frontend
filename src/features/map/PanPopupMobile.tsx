@@ -1,7 +1,9 @@
-import { useEffect } from "react";
 import L from "leaflet";
+import { useEffect } from "react";
 import { useMap } from "react-leaflet";
+
 import type { ID, Place } from "@/lib/types";
+
 import { toLatLngTuple } from "./geo";
 
 /** Below this viewport width the popup would collide with the bottom bar, so the pin is panned above it. */

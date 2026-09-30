@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router";
+
 import { Card, CardBody } from "@/components/Card";
 import { CoverImage } from "@/components/CoverImage";
 import { LikeButton } from "@/components/LikeButton";
@@ -14,9 +15,13 @@ import { cx } from "@/lib/cx";
 import { useResource } from "@/lib/hooks/useResource";
 import type { Event, ID, Performer } from "@/lib/types";
 import { NotFoundPage } from "@/pages/NotFoundPage";
+
 import styles from "./PerformerPage.module.css";
 
-type PerformerPageData = { performer: Performer; events: Event[] };
+interface PerformerPageData {
+    performer: Performer;
+    events: Event[];
+}
 
 async function loadPerformerPage(id: ID): Promise<PerformerPageData> {
     const [performer, events] = await Promise.all([fetchPerformer(id), fetchEventsByPerformer(id)]);

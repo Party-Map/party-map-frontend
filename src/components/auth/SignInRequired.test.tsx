@@ -1,5 +1,6 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+
 import { SignInRequired } from "@/components/auth/SignInRequired";
 import { renderWithProviders } from "@/test/helpers";
 

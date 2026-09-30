@@ -1,10 +1,11 @@
 import L, { type DivIcon } from "leaflet";
+
 import { cx } from "@/lib/cx";
 
-export type PinState = {
+export interface PinState {
     isActive: boolean;
     isHighlighted: boolean;
-};
+}
 
 /**
  * Gradient map pin with sparks and a pulse ring while highlighted or active. Colours are the

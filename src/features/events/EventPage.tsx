@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router";
+
 import { Card, CardBody } from "@/components/Card";
 import { CoverImage } from "@/components/CoverImage";
 import { LikeButton } from "@/components/LikeButton";
@@ -15,10 +16,14 @@ import { formatDateTimeRange } from "@/lib/dates";
 import { useResource } from "@/lib/hooks/useResource";
 import type { Event, ID, Place } from "@/lib/types";
 import { NotFoundPage } from "@/pages/NotFoundPage";
-import { LineupList } from "./LineupList";
-import styles from "./EventPage.module.css";
 
-type EventPageData = { event: Event; place: Place | null };
+import styles from "./EventPage.module.css";
+import { LineupList } from "./LineupList";
+
+interface EventPageData {
+    event: Event;
+    place: Place | null;
+}
 
 /** An event without a venue is unusual but not fatal; only the event itself decides "not found". */
 async function loadPlaceIfAny(eventId: ID): Promise<Place | null> {

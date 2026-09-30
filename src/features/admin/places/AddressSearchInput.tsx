@@ -1,18 +1,20 @@
 import { useId, useState } from "react";
+
 import { Input } from "@/components/Field";
 import { GEOCODE_DEBOUNCE_MS } from "@/lib/constants";
 import { geocodeAddress } from "@/lib/geocode";
 import { useDebouncedValue } from "@/lib/hooks/useDebouncedValue";
 import { useResource } from "@/lib/hooks/useResource";
 import type { GeocodeResult } from "@/lib/types";
+
 import styles from "./AddressSearchInput.module.css";
 
-type AddressSearchInputProps = {
+interface AddressSearchInputProps {
     id?: string;
     value: string;
     onChange: (value: string) => void;
     onSelect: (result: GeocodeResult) => void;
-};
+}
 
 /** Address text input that offers Nominatim matches while the user types. */
 export function AddressSearchInput({ id, value, onChange, onSelect }: AddressSearchInputProps) {

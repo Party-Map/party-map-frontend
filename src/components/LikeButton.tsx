@@ -1,20 +1,22 @@
-import { useState } from "react";
 import { Heart, HeartCrack } from "lucide-react";
+import { useState } from "react";
+
 import { useToast } from "@/app/ToastProvider";
 import { like, unlike } from "@/lib/api/likes";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { cx } from "@/lib/cx";
 import type { ID, LikeTarget } from "@/lib/types";
+
 import styles from "./LikeButton.module.css";
 
-type LikeButtonProps = {
+interface LikeButtonProps {
     target: LikeTarget;
     targetId: ID;
     targetName: string;
     initialLiked: boolean;
     onChange?: (liked: boolean) => void;
     className?: string;
-};
+}
 
 /** Heart toggle; renders nothing for anonymous visitors. */
 export function LikeButton({ target, targetId, targetName, initialLiked, onChange, className }: LikeButtonProps) {

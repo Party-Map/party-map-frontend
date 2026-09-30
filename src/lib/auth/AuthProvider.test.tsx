@@ -1,5 +1,6 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+
 import { api } from "@/lib/api/client";
 import { AuthProvider, useAuth } from "@/lib/auth/AuthProvider";
 import type { AuthClient, AuthSnapshot } from "@/lib/auth/keycloak";

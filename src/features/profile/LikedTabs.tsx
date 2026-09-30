@@ -1,17 +1,19 @@
 import { useState } from "react";
+
 import { Card } from "@/components/Card";
 import { EmptyState } from "@/components/States";
 import { cx } from "@/lib/cx";
 import { formatDateTimeRange } from "@/lib/dates";
 import type { Event, LikedEventsGrouped, LikeTarget, Performer, Place } from "@/lib/types";
+
 import { LikedListItem } from "./LikedListItem";
 import styles from "./LikedTabs.module.css";
 
-type LikedTabsProps = {
+interface LikedTabsProps {
     events: LikedEventsGrouped;
     places: Place[];
     performers: Performer[];
-};
+}
 
 const TABS: { key: LikeTarget; label: string }[] = [
     { key: "events", label: "Events" },

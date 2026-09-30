@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Link } from "react-router";
+
 import { CoverImage } from "@/components/CoverImage";
 import { KindBadge } from "@/components/KindBadge";
 import { LikeButton } from "@/components/LikeButton";
 import type { EventType, ID, LikeTarget } from "@/lib/types";
+
 import styles from "./LikedListItem.module.css";
 
-type LikedListItemProps = {
+interface LikedListItemProps {
     target: LikeTarget;
     id: ID;
     to: string;
@@ -15,7 +17,7 @@ type LikedListItemProps = {
     secondary?: string;
     meta?: string;
     kind?: EventType;
-};
+}
 
 /** Row of a liked item with its own heart toggle; unliking removes the row. */
 export function LikedListItem({ target, id, to, title, image, secondary, meta, kind }: LikedListItemProps) {

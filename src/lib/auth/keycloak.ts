@@ -1,18 +1,19 @@
 import Keycloak from "keycloak-js";
+
 import { getEnv } from "@/lib/env";
 
-export type UserProfile = {
+export interface UserProfile {
     name: string;
     email: string | null;
     givenName: string | null;
     familyName: string | null;
-};
+}
 
-export type AuthSnapshot = {
+export interface AuthSnapshot {
     authenticated: boolean;
     roles: string[];
     user: UserProfile | null;
-};
+}
 
 /**
  * The only surface React code talks to. keycloak-js is wrapped so components and tests never
@@ -27,14 +28,14 @@ export interface AuthClient {
     subscribe(listener: (snapshot: AuthSnapshot) => void): () => void;
 }
 
-type TokenClaims = {
+interface TokenClaims {
     roles?: unknown;
     name?: string;
     preferred_username?: string;
     email?: string;
     given_name?: string;
     family_name?: string;
-};
+}
 
 export function profileFromClaims(claims: TokenClaims | undefined): UserProfile | null {
     if (!claims) return null;
@@ -63,8 +64,7 @@ export function createKeycloakClient(): AuthClient {
     const listeners = new Set<(snapshot: AuthSnapshot) => void>();
     let initPromise: Promise<AuthSnapshot> | null = null;
 
-    const snapshot = () =>
-        snapshotFromClaims(Boolean(keycloak.authenticated), keycloak.tokenParsed as TokenClaims | undefined);
+    const snapshot = () => snapshotFromClaims(keycloak.authenticated, keycloak.tokenParsed as TokenClaims | undefined);
     const notify = () => listeners.forEach((l) => l(snapshot()));
 
     keycloak.onAuthRefreshSuccess = notify;

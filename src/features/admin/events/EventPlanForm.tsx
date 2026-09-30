@@ -1,16 +1,18 @@
-import { useState, type FormEvent } from "react";
+import { type SubmitEvent, useState } from "react";
 import { useNavigate } from "react-router";
+
 import { Button } from "@/components/Button";
 import { Field, FormError, formStyles, Input, Select, Textarea } from "@/components/Field";
 import { EVENT_TYPE_LABELS } from "@/lib/constants";
 import { toDateTimeLocalInput } from "@/lib/dates";
 import { EVENT_TYPES, type EventPlanPayload, type EventType, type Link } from "@/lib/types";
+
+import adminStyles from "../admin.module.css";
 import { DateTimeRangeFields } from "../DateTimeRangeFields";
 import { ImageUrlField } from "../ImageUrlField";
 import { LinksInput } from "../LinksInput";
-import adminStyles from "../admin.module.css";
 
-type FormValues = {
+interface FormValues {
     title: string;
     kind: EventType;
     startDateTime: string;
@@ -19,7 +21,7 @@ type FormValues = {
     price: string;
     links: Link[];
     image: string;
-};
+}
 
 function toFormValues(initial: EventPlanPayload | undefined): FormValues {
     return {
@@ -47,12 +49,12 @@ function toPayload(values: FormValues): EventPlanPayload {
     };
 }
 
-type EventPlanFormProps = {
+interface EventPlanFormProps {
     title: string;
     submitLabel: string;
     initialValues?: EventPlanPayload;
     onSubmit: (payload: EventPlanPayload) => Promise<void>;
-};
+}
 
 /** Create/edit form for an event plan; the parent decides what happens with the payload. */
 export function EventPlanForm({ title, submitLabel, initialValues, onSubmit }: EventPlanFormProps) {
@@ -63,7 +65,7 @@ export function EventPlanForm({ title, submitLabel, initialValues, onSubmit }: E
 
     const update = (patch: Partial<FormValues>) => setValues((current) => ({ ...current, ...patch }));
 
-    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
         event.preventDefault();
         setError(null);
         setSubmitting(true);

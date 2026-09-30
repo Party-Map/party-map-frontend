@@ -1,10 +1,12 @@
 vi.mock("leaflet", () => import("@/test/mocks/leaflet").then((m) => m.leafletMock));
 
 import type { DivIcon } from "leaflet";
+
 import { leafletMock } from "@/test/mocks/leaflet";
+
 import { createPinIcon, createYouAreHereIcon, getPinIcon } from "./pins";
 
-const htmlOf = (icon: DivIcon) => String(icon.options.html);
+const htmlOf = (icon: DivIcon) => icon.options.html as string;
 
 describe("createPinIcon", () => {
     it("builds a plain pin by default", () => {

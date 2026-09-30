@@ -1,5 +1,7 @@
 import type { HTMLAttributes, ReactNode } from "react";
+
 import { cx } from "@/lib/cx";
+
 import styles from "./Card.module.css";
 
 type CardProps = HTMLAttributes<HTMLDivElement> & { children: ReactNode; padded?: boolean };

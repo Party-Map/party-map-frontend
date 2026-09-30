@@ -5,16 +5,17 @@ vi.mock("./pins", async (importOriginal) => {
     return { ...actual, getPinIcon: vi.fn(actual.getPinIcon) };
 });
 
-import type { ComponentProps } from "react";
-import type * as pinsModule from "./pins";
 import { act, fireEvent, screen, within } from "@testing-library/react";
+import type { ComponentProps } from "react";
+
+import { TILE_URL } from "@/lib/constants";
 import { place, place2, upcoming } from "@/test/fixtures";
 import { renderWithProviders } from "@/test/helpers";
 import { fakeMap, reactLeafletMock } from "@/test/mocks/leaflet";
-import { MapView } from "./MapView";
-import { getPinIcon } from "./pins";
 
-import { TILE_URL } from "@/lib/constants";
+import { MapView } from "./MapView";
+import type * as pinsModule from "./pins";
+import { getPinIcon } from "./pins";
 
 async function renderView(overrides: Partial<ComponentProps<typeof MapView>> = {}) {
     const onOpenPlace = vi.fn();

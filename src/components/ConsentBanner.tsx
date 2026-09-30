@@ -1,6 +1,8 @@
 import { useState } from "react";
+
 import { Button } from "@/components/Button";
 import { CONSENT_STORAGE_KEY } from "@/lib/constants";
+
 import styles from "./ConsentBanner.module.css";
 
 function hasStoredConsent(): boolean {

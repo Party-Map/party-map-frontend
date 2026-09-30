@@ -1,4 +1,5 @@
 import type { Mock } from "vitest";
+
 import {
     fetchLikedEvents,
     fetchLikedPerformers,

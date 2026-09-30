@@ -1,21 +1,23 @@
 import {
-    useId,
     type InputHTMLAttributes,
     type ReactNode,
     type SelectHTMLAttributes,
     type TextareaHTMLAttributes,
+    useId,
 } from "react";
+
 import { cx } from "@/lib/cx";
+
 import styles from "./forms.module.css";
 
-type FieldProps = {
+interface FieldProps {
     label: string;
     hint?: string;
     error?: string | null;
     /** Optional element rendered on the right of the label (a small action, for instance). */
     aside?: ReactNode;
     children: (id: string) => ReactNode;
-};
+}
 
 /** Label + control + hint/error. The render function receives the id to link label and control. */
 export function Field({ label, hint, error, aside, children }: FieldProps) {

@@ -1,28 +1,39 @@
-import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
+import { createContext, type ReactNode, useCallback, useContext, useMemo, useRef, useState } from "react";
+
 import { cx } from "@/lib/cx";
+
 import styles from "./Toast.module.css";
 
 type ToastKind = "success" | "error" | "info";
 
-type MessageToast = { id: number; type: "message"; kind: ToastKind; text: string };
-type ConfirmToast = {
+interface MessageToast {
+    id: number;
+    type: "message";
+    kind: ToastKind;
+    text: string;
+}
+interface ConfirmToast {
     id: number;
     type: "confirm";
     title: string;
     text: string;
     confirmLabel: string;
     resolve: (answer: boolean) => void;
-};
+}
 type Toast = MessageToast | ConfirmToast;
 
-export type ConfirmOptions = { title: string; text: string; confirmLabel?: string };
+export interface ConfirmOptions {
+    title: string;
+    text: string;
+    confirmLabel?: string;
+}
 
-export type ToastApi = {
+export interface ToastApi {
     success: (text: string) => void;
     error: (text: string) => void;
     info: (text: string) => void;
     confirm: (options: ConfirmOptions) => Promise<boolean>;
-};
+}
 
 const ToastContext = createContext<ToastApi | null>(null);
 

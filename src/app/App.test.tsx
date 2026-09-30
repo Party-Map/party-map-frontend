@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+
 import { App } from "@/app/App";
 import { authenticatedSnapshot, createMockAuthClient } from "@/test/helpers";
 

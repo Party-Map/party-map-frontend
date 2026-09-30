@@ -1,10 +1,12 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
+
 import { formatDateTimeRange } from "@/lib/dates";
 import type { Event } from "@/lib/types";
 import { event, performer, place } from "@/test/fixtures";
 import { renderWithProviders } from "@/test/helpers";
+
 import { LikedTabs } from "./LikedTabs";
 
 const pastEvent: Event = {

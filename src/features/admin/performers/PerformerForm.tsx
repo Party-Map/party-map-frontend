@@ -1,5 +1,6 @@
-import { useState, type FormEvent } from "react";
+import { type SubmitEvent, useState } from "react";
 import { useNavigate } from "react-router";
+
 import { Button } from "@/components/Button";
 import { Field, FormError, formStyles, Input, Textarea } from "@/components/Field";
 import { ImageUrlField } from "@/features/admin/ImageUrlField";
@@ -8,21 +9,21 @@ import type { Link, Performer, PerformerPayload } from "@/lib/types";
 
 export type PerformerFormValues = Omit<Performer, "id">;
 
-type PerformerFormProps = {
+interface PerformerFormProps {
     title: string;
     submitLabel: string;
     /** Prefills the form; omit for a blank one. Only read on mount. */
     initialValues?: PerformerFormValues;
     onSubmit: (payload: PerformerPayload) => Promise<void>;
-};
+}
 
-type FormState = {
+interface FormState {
     name: string;
     genre: string;
     bio: string;
     image: string;
     links: Link[];
-};
+}
 
 const EMPTY: FormState = { name: "", genre: "", bio: "", image: "", links: [] };
 
@@ -40,7 +41,7 @@ export function PerformerForm({ title, submitLabel, initialValues, onSubmit }: P
 
     const update = (patch: Partial<FormState>) => setForm((current) => ({ ...current, ...patch }));
 
-    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
         event.preventDefault();
         setError(null);
 

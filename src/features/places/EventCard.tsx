@@ -1,15 +1,17 @@
 import { Link } from "react-router";
+
 import { Card, CardBody } from "@/components/Card";
 import { CoverImage } from "@/components/CoverImage";
 import { formatDateTimeRange } from "@/lib/dates";
 import type { Event, Place } from "@/lib/types";
+
 import styles from "./EventCard.module.css";
 
-type EventCardProps = {
+interface EventCardProps {
     event: Event;
     /** When given, an "at <place>" line links to the venue. */
     place?: Place;
-};
+}
 
 /** Event summary card: cover image, time range, venue link, details link and price. */
 export function EventCard({ event, place }: EventCardProps) {

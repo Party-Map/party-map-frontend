@@ -1,8 +1,10 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
+
 import { event } from "@/test/fixtures";
 import { authenticatedSnapshot, mockApi, renderWithProviders } from "@/test/helpers";
+
 import { LikedListItem } from "./LikedListItem";
 
 type Overrides = Partial<Parameters<typeof LikedListItem>[0]>;

@@ -1,10 +1,12 @@
 import { ArrowRight, CalendarDays, X } from "lucide-react";
 import { Link } from "react-router";
+
 import { CoverImage } from "@/components/CoverImage";
 import { KindBadge } from "@/components/KindBadge";
 import { cx } from "@/lib/cx";
 import { formatNextEventStart } from "@/lib/dates";
 import type { Place, UpcomingEventByPlace } from "@/lib/types";
+
 import styles from "./PlacePopupCard.module.css";
 
 /** Titles longer than this wrap onto two lines and widen the card. */
@@ -16,11 +18,11 @@ export function searchHref(term: string): string {
     return `/?q=${encodeURIComponent(term.toLowerCase())}`;
 }
 
-type PlacePopupCardProps = {
+interface PlacePopupCardProps {
     place: Place;
     upcomingEvent: UpcomingEventByPlace | null;
     onClose: () => void;
-};
+}
 
 /** Card shown in the marker popup: the next event at the place, or the place itself. */
 export function PlacePopupCard({ place, upcomingEvent, onClose }: PlacePopupCardProps) {

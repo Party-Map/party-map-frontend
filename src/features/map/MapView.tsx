@@ -1,18 +1,21 @@
-import { useMemo } from "react";
+import "./pins.css";
+
 import type { PointTuple } from "leaflet";
+import { useMemo } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMapEvent } from "react-leaflet";
+
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, TILE_ATTRIBUTION, TILE_URL } from "@/lib/constants";
 import type { ID, Place, UpcomingEventByPlace } from "@/lib/types";
+
 import { FitToHighlights } from "./FitToHighlights";
 import { toLatLngTuple } from "./geo";
+import styles from "./MapView.module.css";
 import { PanPopupMobile } from "./PanPopupMobile";
+import { getPinIcon } from "./pins";
 import { PlaceLabels } from "./PlaceLabels";
 import { PlacePopupCard } from "./PlacePopupCard";
-import { getPinIcon } from "./pins";
 import { UserLocation } from "./UserLocation";
 import { ZoomControls } from "./ZoomControls";
-import "./pins.css";
-import styles from "./MapView.module.css";
 
 /** Lifts the popup so it floats above the pin head. */
 const POPUP_OFFSET: PointTuple = [0, -48];
@@ -24,14 +27,14 @@ function BackgroundCloser({ onClose }: { onClose: () => void }) {
     return null;
 }
 
-type MapViewProps = {
+interface MapViewProps {
     places: Place[];
     upcomingMap: Map<ID, UpcomingEventByPlace>;
     highlightIds: ID[];
     openPopupId: ID | null;
     onOpenPlace: (id: ID) => void;
     onClosePopup: () => void;
-};
+}
 
 /** The Leaflet map: tiles, pins, labels, controls and the popup for the open place. */
 export function MapView({ places, upcomingMap, highlightIds, openPopupId, onOpenPlace, onClosePopup }: MapViewProps) {

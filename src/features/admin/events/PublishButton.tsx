@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+
 import { useToast } from "@/app/ToastProvider";
 import { Button } from "@/components/Button";
 import { publishEventPlan } from "@/lib/api/eventPlans";
@@ -24,7 +25,7 @@ export function PublishButton({ plan }: { plan: EventPlan }) {
             await publishEventPlan(plan.id);
             toast.success("Event plan published successfully!");
             const placeId = plan.placeInvitation?.place.id;
-            navigate(placeId ? `/?focus=${encodeURIComponent(placeId)}` : "/");
+            void navigate(placeId ? `/?focus=${encodeURIComponent(placeId)}` : "/");
         } catch {
             toast.error(
                 "Failed to publish event plan. Check if the place accepted the invitation and there are no pending performer invitations!",

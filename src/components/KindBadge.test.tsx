@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+
 import { KindBadge } from "@/components/KindBadge";
 import { EVENT_TYPE_LABELS } from "@/lib/constants";
 import { EVENT_TYPES } from "@/lib/types";

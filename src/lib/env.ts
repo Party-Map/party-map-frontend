@@ -1,10 +1,10 @@
-export type AppEnv = {
+export interface AppEnv {
     /** Base URL of the API including its /api prefix, without a trailing slash. */
     apiBase: string;
     keycloakUrl: string;
     keycloakRealm: string;
     keycloakClientId: string;
-};
+}
 
 const DEFAULT_API_BASE = "/api";
 

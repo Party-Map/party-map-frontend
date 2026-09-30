@@ -3,20 +3,22 @@
  * rendered as plain elements and the map object is a bag of spies that tests can inspect.
  *
  * Usage (must run before the component under test is imported):
- *   vi.mock('react-leaflet', () => import('@/test/mocks/leaflet').then((m) => m.reactLeafletMock))
- *   vi.mock('leaflet', () => import('@/test/mocks/leaflet').then((m) => m.leafletMock))
+ * ```ts
+ * vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reactLeafletMock))
+ * vi.mock("leaflet", () => import("@/test/mocks/leaflet").then((m) => m.leafletMock))
+ * ```
  */
 import type { ReactNode } from "react";
 import { vi } from "vitest";
 
-type Point = {
+interface Point {
     x: number;
     y: number;
     distanceTo: (p: Point) => number;
     divideBy: (n: number) => Point;
     add: (p: [number, number]) => Point;
     subtract: (p: Point) => Point;
-};
+}
 
 export function point(x: number, y: number): Point {
     return {
@@ -77,7 +79,14 @@ export const reactLeafletMock = {
         position: unknown;
         eventHandlers?: Record<string, () => void>;
     }) => (
-        <div data-testid="marker" data-position={JSON.stringify(position)} onClick={eventHandlers?.click}>
+        <div
+            data-testid="marker"
+            data-position={JSON.stringify(position)}
+            role="button"
+            tabIndex={0}
+            onClick={eventHandlers?.click}
+            onKeyDown={eventHandlers?.click}
+        >
             {children}
         </div>
     ),

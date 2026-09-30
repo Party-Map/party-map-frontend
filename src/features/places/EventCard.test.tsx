@@ -1,8 +1,10 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+
 import { formatDateTimeRange } from "@/lib/dates";
 import { event, place } from "@/test/fixtures";
 import { renderWithProviders } from "@/test/helpers";
+
 import { EventCard } from "./EventCard";
 
 describe("EventCard", () => {

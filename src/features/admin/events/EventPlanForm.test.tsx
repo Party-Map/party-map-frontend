@@ -2,9 +2,11 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type * as ReactRouter from "react-router";
 import { vi } from "vitest";
+
 import type { EventPlanPayload } from "@/lib/types";
 import { eventPlan } from "@/test/fixtures";
 import { renderWithProviders } from "@/test/helpers";
+
 import { EventPlanForm } from "./EventPlanForm";
 
 const { navigate } = vi.hoisted(() => ({ navigate: vi.fn() }));

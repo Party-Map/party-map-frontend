@@ -1,5 +1,6 @@
-import { useEffect, type ReactNode } from "react";
+import { type ReactNode, useEffect } from "react";
 import { useLocation } from "react-router";
+
 import { LoadingState } from "@/components/States";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import type { Role } from "@/lib/auth/roles";

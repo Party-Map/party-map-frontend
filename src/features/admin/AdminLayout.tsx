@@ -1,5 +1,6 @@
 import { ChevronLeft } from "lucide-react";
 import { Link, NavLink, Outlet } from "react-router";
+
 import { SignInRequired } from "@/components/auth/SignInRequired";
 import { BottomBar } from "@/components/BottomBar";
 import { ButtonLink } from "@/components/Button";
@@ -9,8 +10,9 @@ import { LoadingState } from "@/components/States";
 import { AdminTopBar } from "@/components/TopBar";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { cx } from "@/lib/cx";
-import { sectionsForRoles } from "./sections";
+
 import styles from "./AdminLayout.module.css";
+import { sectionsForRoles } from "./sections";
 
 /** Frame for every /admin route: admin header, role tabs, and the section content. */
 export function AdminLayout() {

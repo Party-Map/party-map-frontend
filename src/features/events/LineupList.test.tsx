@@ -1,8 +1,10 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+
 import type { LineupItem } from "@/lib/types";
 import { performer } from "@/test/fixtures";
 import { renderWithProviders } from "@/test/helpers";
+
 import { LineupList } from "./LineupList";
 
 const early: LineupItem = { startTime: "2030-06-01T22:00:00", endTime: "2030-06-02T00:00:00", performer };

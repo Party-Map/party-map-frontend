@@ -1,17 +1,19 @@
-import { useEffect, useMemo } from "react";
 import L from "leaflet";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import { useEffect, useMemo } from "react";
 import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from "react-leaflet";
+
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, TILE_ATTRIBUTION, TILE_URL } from "@/lib/constants";
 import type { GeoPoint } from "@/lib/types";
+
 import styles from "./LocationMapPicker.module.css";
 
-type LocationMapPickerProps = {
+interface LocationMapPickerProps {
     value: GeoPoint | null;
     onChange: (location: GeoPoint) => void;
-};
+}
 
 function ClickHandler({ onPick }: { onPick: (location: GeoPoint) => void }) {
     useMapEvents({

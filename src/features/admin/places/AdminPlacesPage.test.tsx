@@ -1,9 +1,11 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+
 import type { AuthSnapshot } from "@/lib/auth/keycloak";
 import { Role } from "@/lib/auth/roles";
 import type { PlaceListItem } from "@/lib/types";
 import { authenticatedSnapshot, mockApi, renderWithProviders } from "@/test/helpers";
+
 import { AdminPlacesPage } from "./AdminPlacesPage";
 
 const manager = authenticatedSnapshot([Role.PLACE_MANAGER]);

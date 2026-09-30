@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from "react-router";
+
 import { useToast } from "@/app/ToastProvider";
 import { ErrorState, LoadingState } from "@/components/States";
 import { ApiError } from "@/lib/api/client";
@@ -8,9 +9,10 @@ import { Role } from "@/lib/auth/roles";
 import { useResource } from "@/lib/hooks/useResource";
 import type { EventPlanPayload } from "@/lib/types";
 import { NotFoundPage } from "@/pages/NotFoundPage";
+
+import adminStyles from "../admin.module.css";
 import { InvitationStateLabel } from "../InvitationStateLabel";
 import { RequireRole } from "../RequireRole";
-import adminStyles from "../admin.module.css";
 import { EventPlanForm } from "./EventPlanForm";
 import { InvitePlace } from "./InvitePlace";
 import { LineupEditor } from "./LineupEditor";
@@ -40,7 +42,7 @@ function EventPlanDetail() {
     const handleSubmit = async (payload: EventPlanPayload) => {
         await updateEventPlan(id, payload);
         toast.success("Event plan saved.");
-        navigate("/admin/events");
+        void navigate("/admin/events");
     };
 
     if (plan.error instanceof ApiError && plan.error.status === 404) return <NotFoundPage />;

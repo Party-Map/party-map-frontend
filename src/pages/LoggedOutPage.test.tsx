@@ -1,4 +1,5 @@
 import { screen } from "@testing-library/react";
+
 import { LoggedOutPage } from "@/pages/LoggedOutPage";
 import { authenticatedSnapshot, renderWithProviders } from "@/test/helpers";
 
