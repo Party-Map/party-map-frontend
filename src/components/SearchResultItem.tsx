@@ -5,14 +5,14 @@ import { formatNextEventStart } from '@/lib/dates'
 import type { SearchHit, SearchHitType } from '@/lib/types'
 import styles from './SearchBar.module.css'
 
-const TYPE_META: Record<SearchHitType, { label: string; Icon: typeof MapPin }> = {
-  PLACE: { label: 'Place', Icon: MapPin },
-  EVENT: { label: 'Event', Icon: CalendarDays },
-  PERFORMER: { label: 'Performer', Icon: UserRound },
+const TYPE_META: Record<SearchHitType, { label: string; Icon: typeof MapPin; className: string | undefined }> = {
+  PLACE: { label: 'Place', Icon: MapPin, className: styles.typePlace },
+  EVENT: { label: 'Event', Icon: CalendarDays, className: styles.typeEvent },
+  PERFORMER: { label: 'Performer', Icon: UserRound, className: styles.typePerformer },
 }
 
 export function SearchResultItem({ hit, onPick, onView }: { hit: SearchHit; onPick: () => void; onView: () => void }) {
-  const { label, Icon } = TYPE_META[hit.type]
+  const { label, Icon, className: typeClass } = TYPE_META[hit.type]
   const dateLabel = formatNextEventStart(hit.nextEventStart)
 
   return (
@@ -25,7 +25,7 @@ export function SearchResultItem({ hit, onPick, onView }: { hit: SearchHit; onPi
         <span className={styles.itemText}>
           <span className={styles.itemTitleRow}>
             <span className={styles.itemTitle}>{hit.title}</span>
-            <span className={cx(styles.typePill, styles[`type${hit.type}`])}>
+            <span className={cx(styles.typePill, typeClass)}>
               <Icon size={12} aria-hidden />
               {label}
             </span>

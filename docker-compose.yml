@@ -1,18 +1,18 @@
 # Development server in Docker. Run `docker compose up` in this folder and open http://localhost:3000.
 # The backend and Keycloak come from `docker compose up` in ../party-map-backend (ports 8080 and 8081);
-# the browser talks to them directly, so no Docker network link is needed.
+# The dev server proxies /api to the backend on the host; the browser talks to Keycloak directly.
 services:
   frontend:
     image: node:24-alpine
     working_dir: /app
     command: sh -c "corepack enable && pnpm install --frozen-lockfile && pnpm dev --host 0.0.0.0"
     environment:
-      VITE_API_BASE_URL: http://localhost:8080
-      VITE_KEYCLOAK_URL: http://localhost:8081
-      VITE_KEYCLOAK_REALM: party-map
-      VITE_KEYCLOAK_CLIENT_ID: partymap-web
+      API_URL: http://host.docker.internal:8080
+      PUBLIC_KEYCLOAK_URL: http://localhost:8081
+      PUBLIC_KEYCLOAK_REALM: party-map
+      PUBLIC_KEYCLOAK_CLIENT_ID: partymap-web
       # Bind mounts on Docker Desktop do not always deliver file events; poll instead.
-      VITE_WATCH_POLL: "true"
+      WATCH_POLL: "true"
       # Keep pnpm's store inside the node_modules volume; otherwise it lands in the bind-mounted repo.
       npm_config_store_dir: /app/node_modules/.pnpm-store
     ports:

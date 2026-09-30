@@ -1,24 +1,29 @@
 export type AppEnv = {
-  apiBaseUrl: string
+  /** Base URL of the API including its /api prefix, without a trailing slash. */
+  apiBase: string
   keycloakUrl: string
   keycloakRealm: string
   keycloakClientId: string
 }
 
-function required(name: keyof ImportMetaEnv): string {
-  const value = import.meta.env[name]
+const DEFAULT_API_BASE = '/api'
+
+const trimSlashes = (value: string) => value.replace(/\/+$/, '')
+
+// Each variable is read by its full name: Rsbuild replaces import.meta.env.PUBLIC_X statically.
+function required(name: string, value: string | undefined): string {
   if (!value) {
     throw new Error(`Missing environment variable ${name}. Copy .env.example to .env.local and fill it in.`)
   }
-  return value.replace(/\/+$/, '')
+  return trimSlashes(value)
 }
 
-/** Read the public runtime configuration. Values are baked in at build time by Vite. */
+/** Read the public runtime configuration. Values are inlined at build time by Rsbuild. */
 export function getEnv(): AppEnv {
   return {
-    apiBaseUrl: required('VITE_API_BASE_URL'),
-    keycloakUrl: required('VITE_KEYCLOAK_URL'),
-    keycloakRealm: required('VITE_KEYCLOAK_REALM'),
-    keycloakClientId: required('VITE_KEYCLOAK_CLIENT_ID'),
+    apiBase: trimSlashes(import.meta.env.PUBLIC_API_BASE || DEFAULT_API_BASE),
+    keycloakUrl: required('PUBLIC_KEYCLOAK_URL', import.meta.env.PUBLIC_KEYCLOAK_URL),
+    keycloakRealm: required('PUBLIC_KEYCLOAK_REALM', import.meta.env.PUBLIC_KEYCLOAK_REALM),
+    keycloakClientId: required('PUBLIC_KEYCLOAK_CLIENT_ID', import.meta.env.PUBLIC_KEYCLOAK_CLIENT_ID),
   }
 }

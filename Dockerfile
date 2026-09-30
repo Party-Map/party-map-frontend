@@ -1,18 +1,18 @@
-# Build the static bundle. Public config is baked in at build time (Vite inlines VITE_* values).
+# Build the static bundle. Public config is baked in at build time (Rsbuild inlines PUBLIC_* values).
 FROM node:24-alpine AS build
 WORKDIR /app
 
-ARG VITE_API_BASE_URL
-ARG VITE_KEYCLOAK_URL
-ARG VITE_KEYCLOAK_REALM=party-map
-ARG VITE_KEYCLOAK_CLIENT_ID=partymap-web
-ENV VITE_API_BASE_URL=$VITE_API_BASE_URL \
-    VITE_KEYCLOAK_URL=$VITE_KEYCLOAK_URL \
-    VITE_KEYCLOAK_REALM=$VITE_KEYCLOAK_REALM \
-    VITE_KEYCLOAK_CLIENT_ID=$VITE_KEYCLOAK_CLIENT_ID
+ARG PUBLIC_API_BASE=/api
+ARG PUBLIC_KEYCLOAK_URL
+ARG PUBLIC_KEYCLOAK_REALM=party-map
+ARG PUBLIC_KEYCLOAK_CLIENT_ID=partymap-web
+ENV PUBLIC_API_BASE=$PUBLIC_API_BASE \
+    PUBLIC_KEYCLOAK_URL=$PUBLIC_KEYCLOAK_URL \
+    PUBLIC_KEYCLOAK_REALM=$PUBLIC_KEYCLOAK_REALM \
+    PUBLIC_KEYCLOAK_CLIENT_ID=$PUBLIC_KEYCLOAK_CLIENT_ID
 
 RUN corepack enable
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm build

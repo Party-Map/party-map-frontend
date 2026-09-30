@@ -45,7 +45,7 @@ jobs:
           push: true
           tags: ghcr.io/party-map/party-map-frontend:latest
           build-args: |
-            VITE_API_BASE_URL=https://api.terkep.party
-            VITE_KEYCLOAK_URL=https://auth.terkep.party
-            VITE_KEYCLOAK_REALM=party-map
-            VITE_KEYCLOAK_CLIENT_ID=partymap-web
+            PUBLIC_API_BASE=https://api.terkep.party/api
+            PUBLIC_KEYCLOAK_URL=https://auth.terkep.party
+            PUBLIC_KEYCLOAK_REALM=party-map
+            PUBLIC_KEYCLOAK_CLIENT_ID=partymap-web

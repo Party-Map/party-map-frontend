@@ -3,36 +3,53 @@
   "version": "2.0.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.14.0",
+  "packageManager": "pnpm@12.8.1",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=24"
   },
+  "browserslist": [
+    "defaults"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc --noEmit -p tsconfig.json && vite build",
-    "preview": "vite preview",
-    "lint": "eslint .",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "vitest",
-    "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage",
+    "api:types": "openapi-typescript openapi.json -o src/api/schema.d.ts",
+    "build": "rsbuild build",
+    "check": "pnpm lint:code && pnpm lint:tsc && pnpm test:react --run --coverage && pnpm build",
+    "clean": "rimraf dist .rsbuild coverage",
+    "clean:all": "rimraf node_modules dist .rsbuild coverage",
+    "dev": "rsbuild dev",
     "e2e": "playwright test",
-    "e2e:visual": "playwright test --grep @visual",
     "e2e:update": "playwright test --grep @visual --update-snapshots",
-    "check": "pnpm lint && pnpm typecheck && pnpm test:coverage"
+    "e2e:visual": "playwright test --grep @visual",
+    "lint:code": "eslint",
+    "lint:tsc": "tsc --pretty --noEmit",
+    "preview": "rsbuild preview",
+    "test:react": "vitest"
   },
   "dependencies": {
+    "@base-ui/react": "^1.8.0",
+    "@hookform/resolvers": "^5.9.1",
+    "@tanstack/react-query": "^5.104.0",
+    "cmdk": "^1.1.1",
+    "date-fns": "^4.4.0",
     "keycloak-js": "^26.2.4",
     "leaflet": "^1.9.4",
-    "lucide-react": "^1.48.0",
+    "lucide-react": "^1.49.0",
+    "openapi-fetch": "^0.17.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "react-hook-form": "^7.89.0",
     "react-leaflet": "^5.0.0",
-    "react-router": "^7.6.0"
+    "react-router": "^8.4.0",
+    "sonner": "^2.0.8",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
-    "@eslint/js": "^9.0.0",
+    "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.63.0",
+    "@rsbuild/core": "^2.2.11",
+    "@rsbuild/plugin-react": "^2.1.1",
+    "@rsbuild/plugin-sass": "^2.0.1",
+    "@rsbuild/plugin-typed-css-modules": "^1.2.4",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
@@ -41,16 +58,16 @@
     "@types/node": "^26.6.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@vitejs/plugin-react": "^6.1.1",
-    "@vitest/coverage-v8": "^5.0.2",
+    "@vitest/coverage-v8": "^5.0.3",
     "eslint": "^10.11.0",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-react-refresh": "^0.5.7",
     "globals": "^17.12.0",
     "jsdom": "^30.1.1",
+    "openapi-typescript": "^7.13.0",
+    "rimraf": "^6.1.3",
+    "sass-embedded": "^1.105.1",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.70.1",
-    "vite": "^8.3.1",
-    "vitest": "^5.0.2"
+    "typescript-eslint": "^8.71.0",
+    "vitest": "^5.0.3"
   }
 }

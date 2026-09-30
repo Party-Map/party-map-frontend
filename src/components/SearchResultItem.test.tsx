@@ -51,15 +51,15 @@ describe('SearchResultItem', () => {
     const { item } = renderItem(placeHit)
     expect(within(item).getByText('A38 Hajó')).toHaveClass('itemTitle')
     expect(within(item).getByText('Budapest')).toHaveClass('itemSubtitle')
-    expect(within(item).getByText('Place')).toHaveClass('typePill', 'typePLACE')
+    expect(within(item).getByText('Place')).toHaveClass('typePill', 'typePlace')
     expect(within(item).getByText('P')).toHaveClass('thumbLetter')
     expect(within(item).getByText('1 Jun')).toHaveClass('itemDate')
     expect(item.querySelector('img')).toHaveAttribute('src', place.image)
   })
 
   it('labels events and performers by type', () => {
-    expect(within(renderItem(eventHit).item).getByText('Event')).toHaveClass('typeEVENT')
-    expect(within(renderItem(performerHit).item).getByText('Performer')).toHaveClass('typePERFORMER')
+    expect(within(renderItem(eventHit).item).getByText('Event')).toHaveClass('typeEvent')
+    expect(within(renderItem(performerHit).item).getByText('Performer')).toHaveClass('typePerformer')
   })
 
   it('omits the date without an upcoming event and uses the placeholder image', () => {

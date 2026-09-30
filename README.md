@@ -43,7 +43,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the project layout and conventions.
 
 ```bash
 pnpm build && pnpm preview
-docker build --build-arg VITE_API_BASE_URL=https://api.terkep.party --build-arg VITE_KEYCLOAK_URL=https://auth.terkep.party -t party-map-frontend .
+docker build --build-arg PUBLIC_API_BASE=https://api.terkep.party/api --build-arg PUBLIC_KEYCLOAK_URL=https://auth.terkep.party -t party-map-frontend .
 docker run -p 3000:80 party-map-frontend
 ```
 

@@ -29,7 +29,7 @@ async function request<T>(method: Method, path: string, body?: unknown): Promise
   const token = await tokenProvider()
   if (token) headers.Authorization = `Bearer ${token}`
 
-  const res = await fetch(`${getEnv().apiBaseUrl}/api/${cleanPath}`, {
+  const res = await fetch(`${getEnv().apiBase}/${cleanPath}`, {
     method,
     headers,
     body: body === undefined ? undefined : JSON.stringify(body),
