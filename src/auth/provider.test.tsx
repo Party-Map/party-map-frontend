@@ -7,6 +7,7 @@ import { ANONYMOUS, authenticatedSnapshot, createMockAuthClient, mockApi } from 
 import type { AuthClient, AuthSnapshot } from "./keycloak";
 import { AuthProvider, useAuth } from "./provider";
 import { Role } from "./roles";
+import { isSignedIn, signIn } from "./session";
 
 function deferred<T>() {
     let resolve!: (value: T) => void;
@@ -172,5 +173,40 @@ describe("useAuth", () => {
     it("throws outside the provider", () => {
         vi.spyOn(console, "error").mockImplementation(() => {});
         expect(() => render(<Probe />)).toThrow("useAuth must be used inside AuthProvider");
+    });
+
+    describe("session", () => {
+        it("marks the session signed in once Keycloak confirms a user, and out on logout", async () => {
+            renderAuth(createMockAuthClient(authenticatedSnapshot()));
+            await waitFor(() => expect(status()).toHaveTextContent("authenticated"));
+            expect(isSignedIn()).toBe(true);
+
+            await userEvent.click(screen.getByRole("button", { name: "logout" }));
+            expect(isSignedIn()).toBe(false);
+        });
+
+        it("stays signed out for anonymous visitors", async () => {
+            renderAuth(createMockAuthClient());
+            await waitFor(() => expect(status()).toHaveTextContent("anonymous"));
+            expect(isSignedIn()).toBe(false);
+        });
+
+        it("keeps the session signed in when a later snapshot loses the user, so the dialog can ask", async () => {
+            const client = createMockAuthClient(authenticatedSnapshot());
+            renderAuth(client);
+            await waitFor(() => expect(status()).toHaveTextContent("authenticated"));
+            act(() => client.emit(ANONYMOUS));
+            expect(status()).toHaveTextContent("anonymous");
+            expect(isSignedIn()).toBe(true);
+        });
+
+        it("signs in through Keycloak, back to the current page", async () => {
+            window.history.replaceState(null, "", "/places/1?tab=events");
+            const client = createMockAuthClient();
+            renderAuth(client);
+            await waitFor(() => expect(status()).toHaveTextContent("anonymous"));
+            signIn();
+            expect(client.login).toHaveBeenCalledWith("/places/1?tab=events");
+        });
     });
 });

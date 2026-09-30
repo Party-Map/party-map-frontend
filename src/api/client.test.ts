@@ -1,3 +1,6 @@
+import { renderHook } from "@testing-library/react";
+
+import { markSignedIn, useSessionEnded } from "@/auth/session";
 import { mockApi } from "@/test/helpers";
 
 import { ApiError, client, messageOf, setTokenProvider, unwrap } from "./client";
@@ -93,5 +96,42 @@ describe("messageOf", () => {
         expect(messageOf(new ApiError(500, "x", "plain text"), "fallback")).toBe("fallback");
         expect(messageOf(new ApiError(500, "x"), "fallback")).toBe("fallback");
         expect(messageOf(new Error("boom"), "fallback")).toBe("fallback");
+    });
+});
+
+const sessionEndedNow = () => renderHook(() => useSessionEnded()).result.current;
+
+describe("an ended session", () => {
+    const settledWithin = async (promise: Promise<unknown>) => {
+        const settled = vi.fn();
+        void promise.then(settled, settled);
+        await new Promise((resolve) => setTimeout(resolve, 20));
+        return settled.mock.calls.length > 0;
+    };
+
+    it("opens the dialog and holds the call when a signed-in session has no token any more", async () => {
+        markSignedIn();
+        const fetchMock = mockApi({ "GET /api/places": [] });
+        const call = unwrap(client.GET("/api/places"));
+
+        expect(await settledWithin(call)).toBe(false);
+        expect(fetchMock).not.toHaveBeenCalled();
+        expect(sessionEndedNow()).toBe(true);
+    });
+
+    it("opens the dialog and holds the call on a 401 while signed in", async () => {
+        markSignedIn();
+        setTokenProvider(() => Promise.resolve("expired"));
+        mockApi({ "GET /api/places/liked-places": () => new Response(null, { status: 401 }) });
+        const call = unwrap(client.GET("/api/places/liked-places"));
+
+        expect(await settledWithin(call)).toBe(false);
+        expect(sessionEndedNow()).toBe(true);
+    });
+
+    it("treats a 401 while anonymous as an ordinary error", async () => {
+        mockApi({ "GET /api/places/liked-places": () => new Response(null, { status: 401 }) });
+        await expect(unwrap(client.GET("/api/places/liked-places"))).rejects.toMatchObject({ status: 401 });
+        expect(sessionEndedNow()).toBe(false);
     });
 });

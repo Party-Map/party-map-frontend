@@ -3,6 +3,7 @@
 // as a Bearer header on every call.
 import createClient, { type Middleware } from "openapi-fetch";
 
+import { isSignedIn, pending, sessionEnded } from "@/auth/session";
 import { getEnv } from "@/lib/env";
 
 import type { paths } from "./schema";
@@ -29,11 +30,28 @@ export function setTokenProvider(provider: TokenProvider): void {
     tokenProvider = provider;
 }
 
+/**
+ * Sends the access token. A signed-in session that can no longer produce a token, or a 401 answer while signed in,
+ * means the session ended: the dialog opens and the call waits forever instead of failing behind it.
+ */
 const bearer: Middleware = {
     async onRequest({ request }) {
+        const wasSignedIn = isSignedIn();
         const token = await tokenProvider();
-        if (token) request.headers.set("Authorization", `Bearer ${token}`);
+        if (token) {
+            request.headers.set("Authorization", `Bearer ${token}`);
+        } else if (wasSignedIn) {
+            sessionEnded();
+            return pending<Request>();
+        }
         return request;
+    },
+    onResponse({ response }) {
+        if (response.status === 401 && isSignedIn()) {
+            sessionEnded();
+            return pending<Response>();
+        }
+        return response;
     },
 };
 

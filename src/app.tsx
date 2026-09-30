@@ -7,6 +7,7 @@ import { RouterProvider } from "react-router/dom";
 import { createQueryClient } from "@/api/queryClient";
 import type { AuthClient } from "@/auth/keycloak";
 import { AuthProvider } from "@/auth/provider";
+import { SessionEndedDialog } from "@/auth/SessionEndedDialog";
 import { HighlightProvider } from "@/layout/HighlightProvider";
 import { ToastProvider } from "@/layout/ToastProvider";
 import { applyTheme, watchTheme } from "@/lib/theme";
@@ -28,6 +29,7 @@ export function App({ authClient }: { authClient: AuthClient }) {
                     <HighlightProvider>
                         <RouterProvider router={router} />
                     </HighlightProvider>
+                    <SessionEndedDialog />
                 </QueryClientProvider>
             </AuthProvider>
         </ToastProvider>

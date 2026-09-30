@@ -49,7 +49,8 @@ const config = [
                             allow: { to: { element: { type: "api" } }, dependency: { kind: "type" } },
                         },
                         allow("api", ["api", "auth", "lib"]),
-                        allow("auth", ["auth", "api", "lib"]),
+                        // The session-ended dialog and the sign-in gates render shared components.
+                        allow("auth", ["auth", "api", "components", "lib"]),
                         allow("components", ["components", "lib"]),
                         allow("layout", ["layout", "api", "auth", "components", "lib"]),
                         allow("map", ["map", "layout", "api", "auth", "components", "lib"]),
