@@ -1,0 +1,49 @@
+@use "@/styles/mixins" as *;
+
+@layer parts {
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .title {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .meta-line {
+    font-size: var(--text-14);
+    color: var(--fg-muted);
+  }
+
+  .bio {
+    margin-top: var(--space-2);
+    font-size: var(--text-14);
+  }
+
+  .links {
+    margin-top: var(--space-3);
+  }
+
+  .events {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+  }
+
+  .event-link {
+    font-weight: 500;
+    color: var(--link);
+  }
+
+  .event-link:hover {
+    text-decoration: underline;
+  }
+
+  @include from-sm {
+    .events {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}

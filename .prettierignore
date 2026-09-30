@@ -1,0 +1,14 @@
+/node_modules
+/dist
+/.rsbuild
+/coverage
+/playwright-report
+/e2e/.results
+/e2e/.shots
+/e2e/.auth
+/e2e/visual.spec.ts-snapshots
+pnpm-lock.yaml
+openapi.json
+src/api/schema.d.ts
+src/**/*.module.scss.d.ts
+/public

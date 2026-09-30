@@ -1,0 +1,10 @@
+@layer parts {
+  .text {
+    font-size: var(--text-14);
+    color: var(--fg-muted);
+  }
+
+  .text + .text {
+    margin-top: var(--space-2);
+  }
+}

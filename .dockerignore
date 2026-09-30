@@ -1,21 +1,16 @@
-# Dependencies
 node_modules
-# (Keep lockfile to leverage Docker layer caching and ensure reproducible installs)
-
-# Build output
-.next
-out
-
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# Misc
-Dockerfile
-docker-compose.yml
+dist
+coverage
+.rsbuild
+.husky/_
+.DS_Store
 .git
-.gitignore
-.vscode
-.idea
+.env
+.env.*
+!.env.example
+e2e/.auth
+e2e/.results
+e2e/.shots
+playwright-report
+Dockerfile
+.dockerignore

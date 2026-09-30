@@ -1,64 +1,28 @@
-# Multi-stage Dockerfile for a Next.js application using pnpm
-FROM node:lts-alpine AS base
-
-# Install corepack to manage pnpm
-RUN apk --no-cache add curl
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
+# Build the static bundle. Public configuration is baked in at build time (Rsbuild inlines PUBLIC_* values).
+FROM node:24-bookworm-slim AS build
 RUN corepack enable
-COPY . /app
-WORKDIR /app
+WORKDIR /frontend
+# No git hooks in the image (package.json's prepare script installs husky's).
+ENV HUSKY=0
 
-# Install production dependencies only
-FROM base AS prod-deps
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+ARG PUBLIC_API_BASE=/api
+ARG PUBLIC_KEYCLOAK_URL
+ARG PUBLIC_KEYCLOAK_REALM=party-map
+ARG PUBLIC_KEYCLOAK_CLIENT_ID=partymap-web
+ENV PUBLIC_API_BASE=$PUBLIC_API_BASE \
+    PUBLIC_KEYCLOAK_URL=$PUBLIC_KEYCLOAK_URL \
+    PUBLIC_KEYCLOAK_REALM=$PUBLIC_KEYCLOAK_REALM \
+    PUBLIC_KEYCLOAK_CLIENT_ID=$PUBLIC_KEYCLOAK_CLIENT_ID
 
-# Build the application
-FROM base AS build
-ARG AUTH_KEYCLOAK_ISSUER
-ARG AUTH_KEYCLOAK_ID
-ARG NEXT_PUBLIC_URL_BASE
-ARG NEXT_PUBLIC_RESOURCE_API_BASE_URL
-ARG NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER
-ARG NEXT_PUBLIC_AUTH_KEYCLOAK_ID
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+    pnpm install --frozen-lockfile
+COPY . ./
+RUN pnpm build
 
-# --- MAP THEM TO ENV VARIABLES ---
-ENV AUTH_KEYCLOAK_ISSUER=$AUTH_KEYCLOAK_ISSUER
-ENV AUTH_KEYCLOAK_ID=$AUTH_KEYCLOAK_ID
-ENV NEXT_PUBLIC_URL_BASE=$NEXT_PUBLIC_URL_BASE
-ENV NEXT_PUBLIC_RESOURCE_API_BASE_URL=$NEXT_PUBLIC_RESOURCE_API_BASE_URL
-ENV NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER=$NEXT_PUBLIC_AUTH_KEYCLOAK_ISSUER
-ENV NEXT_PUBLIC_AUTH_KEYCLOAK_ID=$NEXT_PUBLIC_AUTH_KEYCLOAK_ID
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN pnpm run build
-
-# Final stage: production image
-FROM base
-
-WORKDIR /app
-
-# Create a non-root user to run the application
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
-
-USER nextjs
-
-# Copy production dependencies from the prod-deps stage
-COPY --from=prod-deps /app/node_modules /app/node_modules
-
-# Copy only the necessary files for running the Next.js application
-COPY --from=build --chown=nextjs:nodejs /app/.next/standalone /app/
-COPY --from=build --chown=nextjs:nodejs /app/.next/static /app/.next/static
-
-# Add public static files
-ADD --chown=nextjs:nodejs public /app/public
-
-ENV NODE_ENV=production
-
-EXPOSE 3000
-
-ENV PORT=3000
-
-HEALTHCHECK --interval=5s --timeout=3s --retries=3  CMD curl -f http://localhost:3000/health || exit 1
-
-CMD HOSTNAME="0.0.0.0" node server.js
+# The official nginx image running as a non-root user, listening on 8080.
+FROM nginxinc/nginx-unprivileged:stable-alpine
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /frontend/dist /usr/share/nginx/html
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://127.0.0.1:8080/healthz || exit 1

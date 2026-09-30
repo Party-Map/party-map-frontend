@@ -1,0 +1,26 @@
+@use "@/styles/mixins" as *;
+
+@layer parts {
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    border-radius: var(--radius-full);
+    color: var(--like);
+    transition: background-color var(--duration-fast) var(--ease);
+  }
+
+  .button:hover:not(:disabled) {
+    background: fade(red-500, 12%);
+  }
+
+  .icon {
+    transition: transform var(--duration-fast) var(--ease);
+  }
+
+  .button:active .icon {
+    transform: scale(0.85);
+  }
+}

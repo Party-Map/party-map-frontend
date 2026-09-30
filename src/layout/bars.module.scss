@@ -1,0 +1,130 @@
+@use "@/styles/mixins" as *;
+
+@layer components {
+  .top-wrapper {
+    position: fixed;
+    inset-inline: 0;
+    top: 0;
+    z-index: var(--z-topbar);
+    padding: var(--space-2) var(--space-4) 0;
+  }
+
+  .admin-wrapper {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    height: var(--topbar-h);
+    padding: 0 var(--space-3);
+    border-radius: var(--radius-lg);
+    background: var(--brand-gradient);
+    color: var(--bar-fg);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid fade(white, 10%);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-brand);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--bar-fg);
+    user-select: none;
+    transition: color var(--duration-fast) var(--ease);
+  }
+
+  .brand:hover {
+    color: var(--indigo-100);
+  }
+
+  .brand-full {
+    display: none;
+    font-size: var(--text-24);
+    line-height: 1;
+    padding: 0.25rem 0.75rem 0.25rem 0.25rem;
+  }
+
+  .brand-short {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-md);
+    background: fade(white, 15%);
+    border: 1px solid fade(white, 30%);
+    font-size: var(--text-15);
+    box-shadow: inset 0 1px 2px fade(black, 30%);
+  }
+
+  .search {
+    flex: 1;
+    position: relative;
+    z-index: var(--z-dropdown);
+    max-width: 48rem;
+  }
+
+  .top-actions {
+    display: none;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  @include desktop {
+    .brand-full {
+      display: inline;
+    }
+
+    .brand-short {
+      display: none;
+    }
+
+    .top-actions {
+      display: flex;
+    }
+
+    .search {
+      margin: 0 var(--space-4);
+    }
+  }
+
+  .bottom-wrapper {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: var(--z-bottombar);
+    padding: 0 var(--space-4) max(var(--space-3), env(safe-area-inset-bottom));
+    pointer-events: none;
+  }
+
+  .bottom-bar {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--bottombar-h);
+    max-width: 40rem;
+    margin: 0 auto;
+    padding-right: var(--space-3);
+    border-radius: var(--radius-lg);
+    background: var(--bottombar-bg);
+    color: var(--zinc-100);
+    backdrop-filter: blur(10px);
+    border: 1px solid fade(white, 10%);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .bottom-theme {
+    color: var(--zinc-100);
+  }
+
+  @include desktop {
+    .bottom-wrapper {
+      display: none;
+    }
+  }
+}

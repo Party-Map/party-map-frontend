@@ -1,0 +1,203 @@
+@use "@/styles/mixins" as *;
+
+@layer parts {
+  /* Dark glass card floating over the map, in both themes. */
+  .card {
+    width: 20rem;
+    max-width: calc(100vw - 1.25rem);
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: var(--bottombar-bg);
+    color: var(--bar-fg);
+    line-height: 1.3;
+    backdrop-filter: blur(12px);
+    box-shadow:
+      var(--shadow-lg),
+      0 0 0 1px fade(white, 10%);
+  }
+
+  .wide {
+    width: 22rem;
+  }
+
+  @include from-md {
+    .card {
+      width: 18rem;
+    }
+
+    .wide {
+      width: 20rem;
+    }
+  }
+
+  .media {
+    position: relative;
+  }
+
+  .image-link {
+    display: block;
+    height: 7rem;
+    overflow: hidden;
+  }
+
+  .image-link .image {
+    height: 100%;
+    transition: transform var(--duration-base) var(--ease);
+  }
+
+  .image-link:hover .image {
+    transform: scale(1.05);
+  }
+
+  .image-tint {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background: linear-gradient(to top right, fade(black, 25%), transparent, fade(black, 10%));
+    transition: opacity var(--duration-base) var(--ease);
+  }
+
+  .image-link:hover .image-tint {
+    opacity: 1;
+  }
+
+  .view-chip {
+    pointer-events: none;
+    position: absolute;
+    left: var(--space-2);
+    top: var(--space-2);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-full);
+    background: fade(black, 60%);
+    font-size: var(--text-10);
+  }
+
+  .body {
+    padding: var(--space-3);
+  }
+
+  .title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .title {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--text-16);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.375;
+    text-shadow: 0 1px 1px fade(black, 30%);
+  }
+
+  .title-nowrap {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .title-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .date-chip {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 0.125rem var(--space-2);
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--accent) 35%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent);
+    font-size: var(--text-10);
+    white-space: nowrap;
+  }
+
+  .place-row {
+    margin-top: var(--space-1);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-12);
+  }
+
+  .place-chip,
+  .tag-chip {
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--accent) 30%, transparent);
+    color: var(--bar-fg);
+    transition: background-color var(--duration-fast) var(--ease);
+  }
+
+  .place-chip:hover,
+  .tag-chip:hover {
+    background: color-mix(in srgb, var(--accent) 50%, transparent);
+  }
+
+  .place-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem var(--space-3);
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .footer {
+    margin-top: var(--space-2);
+    display: flex;
+    align-items: center;
+  }
+
+  .tags {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1);
+    padding-right: var(--space-2);
+  }
+
+  .kind-link {
+    display: inline-flex;
+    border-radius: var(--radius-full);
+  }
+
+  .tag-chip {
+    padding: 0.125rem var(--space-2);
+    font-size: var(--text-10);
+    font-weight: 500;
+  }
+
+  .close {
+    position: relative;
+    margin-left: var(--space-2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: var(--radius-full);
+    color: var(--like);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--like) 60%, transparent);
+    transition:
+      background-color var(--duration-base) var(--ease),
+      color var(--duration-base) var(--ease);
+  }
+
+  .close:hover,
+  .close:active {
+    background: color-mix(in srgb, var(--like) 40%, transparent);
+    color: var(--bar-fg);
+  }
+}

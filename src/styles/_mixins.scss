@@ -1,0 +1,43 @@
+// Shared Sass helpers, used by the modules as `@use "@/styles/mixins" as *;`.
+
+// A theme token at a fraction of its opacity over transparent.
+@function fade($token, $amount) {
+  @return color-mix(in srgb, var(--#{$token}) $amount, transparent);
+}
+
+// Phone-first breakpoints: the app treats >= 1024px as desktop.
+@mixin phone {
+  @media (width <= 767px) {
+    @content;
+  }
+}
+
+@mixin narrow {
+  @media (width <= 40rem) {
+    @content;
+  }
+}
+
+@mixin from-sm {
+  @media (width >= 640px) {
+    @content;
+  }
+}
+
+@mixin from-md {
+  @media (width >= 768px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (width >= 1024px) {
+    @content;
+  }
+}
+
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}

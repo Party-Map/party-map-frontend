@@ -1,0 +1,94 @@
+@layer parts {
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    border-radius: var(--radius-full);
+    font-weight: 500;
+    line-height: 1.25;
+    white-space: nowrap;
+    transition:
+      background-color var(--duration-fast) var(--ease),
+      color var(--duration-fast) var(--ease),
+      border-color var(--duration-fast) var(--ease),
+      opacity var(--duration-fast) var(--ease);
+  }
+
+  .button:disabled {
+    opacity: 0.6;
+  }
+
+  .md {
+    min-height: 2.5rem;
+    padding: 0.5rem 1rem;
+    font-size: var(--text-14);
+  }
+
+  .sm {
+    min-height: 2rem;
+    padding: 0.25rem 0.75rem;
+    font-size: var(--text-13);
+  }
+
+  .block {
+    width: 100%;
+  }
+
+  .primary {
+    background: var(--accent);
+    color: var(--accent-fg);
+  }
+
+  .primary:hover:not(:disabled) {
+    background: var(--accent-hover);
+  }
+
+  .secondary {
+    background: var(--surface-solid);
+    color: var(--fg);
+    border: 1px solid var(--border-strong);
+  }
+
+  .secondary:hover:not(:disabled) {
+    background: var(--surface-hover);
+  }
+
+  .ghost {
+    background: transparent;
+    color: var(--link);
+  }
+
+  .ghost:hover:not(:disabled) {
+    background: var(--accent-soft);
+  }
+
+  .danger {
+    background: var(--danger);
+    color: var(--white);
+  }
+
+  .danger:hover:not(:disabled) {
+    filter: brightness(1.1);
+  }
+
+  .success {
+    background: var(--success);
+    color: var(--white);
+  }
+
+  .success:hover:not(:disabled) {
+    filter: brightness(1.1);
+  }
+
+  /* Buttons that live on the gradient bars. */
+  .bar {
+    background: transparent;
+    color: var(--bar-fg-muted);
+  }
+
+  .bar:hover:not(:disabled) {
+    background: var(--bar-hover);
+    color: var(--bar-fg);
+  }
+}

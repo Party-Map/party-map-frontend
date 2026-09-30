@@ -1,0 +1,24 @@
+@layer parts {
+  .main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-6);
+    min-height: 100dvh;
+    padding: var(--space-6);
+    text-align: center;
+  }
+
+  .icon {
+    width: 7rem;
+    height: 7rem;
+    color: var(--success);
+  }
+
+  .title {
+    font-size: var(--text-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+}

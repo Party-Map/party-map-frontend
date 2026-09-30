@@ -1,0 +1,42 @@
+allowBuilds:
+  "@parcel/watcher": false
+  msw: false
+  # Its postinstall only fetches fallback bindings; the prebuilt platform packages cover it.
+  unrs-resolver: false
+# eslint-plugin-react 7.37.5 and eslint-plugin-jsx-a11y 6.10.2 (their latest releases) still declare eslint <= 9;
+# their flat configs run on eslint 10, so the newer eslint is allowed instead of downgrading it.
+peerDependencyRules:
+  allowedVersions:
+    eslint-plugin-react>eslint: "10"
+    eslint-plugin-jsx-a11y>eslint: "10"
+# pnpm 12 holds back releases younger than its minimum release age. The project installs the latest
+# versions on purpose, so pnpm recorded these exclusions when they were added.
+minimumReleaseAgeExclude:
+  - "@vitest/coverage-v8@5.0.3"
+  - "@vitest/mocker@5.0.3"
+  - "@vitest/spy@5.0.3"
+  - lucide-react@1.49.0
+  - sass-embedded-all-unknown@1.105.1
+  - sass-embedded-android-arm64@1.105.1
+  - sass-embedded-android-arm@1.105.1
+  - sass-embedded-android-riscv64@1.105.1
+  - sass-embedded-android-x64@1.105.1
+  - sass-embedded-darwin-arm64@1.105.1
+  - sass-embedded-darwin-x64@1.105.1
+  - sass-embedded-linux-arm64@1.105.1
+  - sass-embedded-linux-arm@1.105.1
+  - sass-embedded-linux-musl-arm64@1.105.1
+  - sass-embedded-linux-musl-arm@1.105.1
+  - sass-embedded-linux-musl-riscv64@1.105.1
+  - sass-embedded-linux-musl-x64@1.105.1
+  - sass-embedded-linux-riscv64@1.105.1
+  - sass-embedded-linux-x64@1.105.1
+  - sass-embedded-unknown-all@1.105.1
+  - sass-embedded-win32-arm64@1.105.1
+  - sass-embedded-win32-x64@1.105.1
+  - sass-embedded@1.105.1
+  - sass@1.105.1
+  - vitest@5.0.3
+  - "@microsoft/tsdoc-config@0.18.3"
+  - "@microsoft/tsdoc@0.17.1"
+  - eslint-plugin-tsdoc@0.5.4

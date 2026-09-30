@@ -1,0 +1,12 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://localhost:3000",
+      "localStorage": [
+        { "name": "pm:consent:v1", "value": "{\"t\":1,\"v\":1}" },
+        { "name": "theme", "value": "light" }
+      ]
+    }
+  ]
+}

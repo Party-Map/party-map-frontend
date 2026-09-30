@@ -1,0 +1,267 @@
+// The only global stylesheet, imported once by main.tsx: the cascade layers, the theme tokens, the reset
+// and the few global rules. Components style themselves in their own CSS Module (@layer parts); shared
+// modules sit in @layer components, so a part's rule wins by layer, not by specificity.
+@layer base, components, parts;
+
+@layer base {
+  /* Design tokens. Light is the default; the dark values apply under the .dark class on <html>. */
+  :root {
+    color-scheme: light;
+
+    --font-sans: system-ui, -apple-system, "Segoe UI", roboto, "Helvetica Neue", arial, sans-serif;
+    --font-brand: "Baloo 2", var(--font-sans);
+    --bg: #fffbeb;
+    --fg: #18181b;
+    --fg-muted: #52525b;
+    --fg-subtle: #71717a;
+    --surface: rgb(255 255 255 / 90%);
+    --surface-solid: #fff;
+    --surface-2: rgb(244 244 245 / 75%);
+    --surface-hover: rgb(244 244 245 / 90%);
+    --border: rgb(209 213 219 / 80%);
+    --border-strong: #d4d4d8;
+    --input-bg: #fff;
+    --accent: #7c3aed;
+    --accent-hover: #6d28d9;
+    --accent-fg: #fff;
+    --accent-soft: rgb(124 58 237 / 12%);
+    --link: #6d28d9;
+    --brand-gradient: linear-gradient(90deg, #6d28d9 0%, #a21caf 50%, #4338ca 100%);
+    --bar-fg: #fff;
+    --bar-fg-muted: rgb(255 255 255 / 85%);
+    --bar-hover: rgb(255 255 255 / 12%);
+    --bottombar-bg: rgb(24 24 27 / 92%);
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #d97706;
+    --info: #2563eb;
+    --like: #ef4444;
+    --pin-default: #334155;
+    --pin-highlight: #8b5cf6;
+    --pin-active: #ec4899;
+    --map-bg: #e5e7eb;
+    --kind-disco: #ec4899;
+    --kind-techno: #6366f1;
+    --kind-festival: #10b981;
+    --kind-jazz: #f59e0b;
+    --kind-alter: #d946ef;
+    --kind-home: #06b6d4;
+    --kind-pub: #78350f;
+    --kind-fg: #fff;
+    --kind-pub-fg: #fffbeb;
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 6%);
+    --shadow-md: 0 4px 14px -4px rgb(0 0 0 / 20%);
+    --shadow-lg: 0 12px 28px -8px rgb(0 0 0 / 30%);
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-full: 999px;
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --topbar-h: 4rem;
+    --bottombar-h: 4rem;
+    --page-max-w: 64rem;
+    --z-map: 0;
+    --z-labels: 600;
+    --z-controls: 1000;
+    --z-bottombar: 1200;
+    --z-dropdown: 1300;
+    --z-topbar: 1500;
+    --z-dialog: 4000;
+    --z-toast: 5000;
+    --ease: cubic-bezier(0.4, 0.2, 0.2, 1);
+
+    /* Named palette: the few raw colours the parts mix from (with fade()) or use as accents. */
+    --white: #fff;
+    --black: #000;
+    --zinc-100: #f4f4f5;
+    --zinc-800: #27272a;
+    --zinc-900: #18181b;
+    --indigo-100: #e0e7ff;
+    --indigo-500: #6366f1;
+    --indigo-900: #312e81;
+    --violet-400: #a78bfa;
+    --violet-500: #8b5cf6;
+    --violet-900: #4c1d95;
+    --fuchsia-100: #f5d0fe;
+    --fuchsia-900: #701a75;
+    --pink-400: #f472b6;
+    --pink-500: #ec4899;
+    --rose-400: #fb7185;
+    --rose-900: #881337;
+    --red-500: #ef4444;
+    --amber-200: #fde68a;
+    --emerald-200: #a7f3d0;
+    --emerald-900: #064e3b;
+    --sky-400: #60a5fa;
+    --blue-300: #93c5fd;
+    --blue-500: #3b82f6;
+
+    /* Type scale, named by pixel size at the default 16px root. */
+    --text-9: 0.5625rem;
+    --text-10: 0.625rem;
+    --text-11: 0.6875rem;
+    --text-12: 0.75rem;
+    --text-13: 0.8125rem;
+    --text-14: 0.875rem;
+    --text-15: 0.9375rem;
+    --text-16: 1rem;
+    --text-17: 1.0625rem;
+    --text-18: 1.125rem;
+    --text-20: 1.25rem;
+    --text-24: 1.5rem;
+    --text-28: 1.75rem;
+    --text-display: clamp(1.75rem, 5vw, 2.75rem);
+    --text-hero: clamp(4.5rem, 15vw, 7rem);
+
+    /* Motion. */
+    --duration-fast: 150ms;
+    --duration-base: 300ms;
+    --duration-slow: 400ms;
+
+    /* Radius aliases and the focus ring. */
+    --radius-xs: 0.25rem;
+    --radius: var(--radius-md);
+    --ring: var(--accent);
+  }
+
+  :root.dark {
+    color-scheme: dark;
+
+    --bg: #09090b;
+    --fg: #f4f4f5;
+    --fg-muted: #d4d4d8;
+    --fg-subtle: #a1a1aa;
+    --surface: rgb(9 9 11 / 82%);
+    --surface-solid: #18181b;
+    --surface-2: rgb(39 39 42 / 65%);
+    --surface-hover: rgb(39 39 42 / 90%);
+    --border: rgb(255 255 255 / 10%);
+    --border-strong: #3f3f46;
+    --input-bg: #18181b;
+    --accent: #8b5cf6;
+    --accent-hover: #a78bfa;
+    --accent-soft: rgb(139 92 246 / 18%);
+    --link: #c4b5fd;
+    --brand-gradient: linear-gradient(90deg, #4c1d95 0%, #701a75 50%, #312e81 100%);
+    --pin-default: #475569;
+    --map-bg: #0d0d0d;
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
+    --shadow-md: 0 4px 16px -4px rgb(0 0 0 / 60%);
+    --shadow-lg: 0 14px 32px -8px rgb(0 0 0 / 70%);
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+  }
+
+  html {
+    text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100dvh;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  button {
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  p,
+  h1,
+  h2,
+  h3,
+  h4 {
+    overflow-wrap: break-word;
+  }
+
+  ul,
+  ol {
+    list-style: none;
+    padding: 0;
+  }
+
+  #root {
+    isolation: isolate;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: var(--text-15);
+    background: var(--bg);
+    color: var(--fg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--accent-soft);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

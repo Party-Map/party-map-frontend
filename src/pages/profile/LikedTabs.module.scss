@@ -1,0 +1,50 @@
+@layer parts {
+  .tabs {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .tab {
+    flex: 1;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+    color: var(--fg-muted);
+    font-size: var(--text-14);
+    font-weight: 500;
+    text-align: center;
+    transition:
+      background-color var(--duration-fast) var(--ease),
+      color var(--duration-fast) var(--ease);
+  }
+
+  .tab:hover {
+    background: var(--surface-hover);
+  }
+
+  // Base UI marks the selected tab with data-active.
+  .tab[data-active] {
+    background: var(--accent);
+    color: var(--accent-fg);
+
+    &:hover {
+      background: var(--accent-hover);
+    }
+  }
+
+  .panel {
+    margin-top: var(--space-3);
+  }
+
+  .sections {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+}
