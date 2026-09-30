@@ -4,8 +4,9 @@ import "@/styles/global.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import { App } from "@/app/App";
-import { createKeycloakClient } from "@/lib/auth/keycloak";
+import { createKeycloakClient } from "@/auth/keycloak";
+
+import { App } from "./app";
 
 const container = document.getElementById("root");
 if (!container) throw new Error("Root element #root not found");

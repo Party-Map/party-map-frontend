@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { EmptyState, ErrorState, LoadingState } from "@/components/States";
+import { EmptyState, ErrorState, LoadingState } from "./States";
 
 describe("LoadingState", () => {
     it("announces a default label with a spinner", () => {

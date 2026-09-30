@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { Link, type LinkProps } from "react-router";
 
-import { cx } from "@/lib/cx";
+import { cn } from "@/lib/utils";
 
 import styles from "./Button.module.css";
 
@@ -16,7 +16,7 @@ interface StyleProps {
 }
 
 export function buttonClass({ variant = "primary", size = "md", block = false, className }: StyleProps): string {
-    return cx(styles.button, styles[variant], styles[size], block && styles.block, className);
+    return cn(styles.button, styles[variant], styles[size], block && styles.block, className);
 }
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & StyleProps & { children: ReactNode };

@@ -30,6 +30,7 @@ const config = [
             "boundaries/files": [
                 { category: "styles", pattern: "**/*.scss" },
                 { category: "root", pattern: "*.{ts,tsx}" },
+                { category: "test", pattern: "**/*.test.{ts,tsx}" },
             ],
         },
         rules: {
@@ -37,12 +38,16 @@ const config = [
             "boundaries/dependencies": [
                 "error",
                 {
-                    // Switched to "disallow" once src/ has the layered layout.
-                    default: "allow",
+                    default: "disallow",
                     policies: [
                         // Every part may import stylesheets.
                         { allow: { to: { file: { categories: "styles" } } } },
                         allow("lib", ["lib"]),
+                        // The API's shapes are types: lib, components and map may import them, type-only.
+                        {
+                            from: { element: { types: { anyOf: ["lib", "components", "map"] } } },
+                            allow: { to: { element: { type: "api" } }, dependency: { kind: "type" } },
+                        },
                         allow("api", ["api", "auth", "lib"]),
                         allow("auth", ["auth", "api", "lib"]),
                         allow("components", ["components", "lib"]),
@@ -52,7 +57,9 @@ const config = [
                         allow("pages", ["pages", "pages-common", "map", "layout", "api", "auth", "components", "lib"]),
                         // The root files and the test helpers wire everything together.
                         { from: { file: { categories: "root" } }, allow: { to: { element: { type: "*" } } } },
+                        { from: { file: { categories: "root" } }, allow: { to: { file: { categories: "root" } } } },
                         allow("test", ["*"]),
+                        { from: { file: { categories: "test" } }, allow: { to: { element: { type: "*" } } } },
                     ],
                 },
             ],

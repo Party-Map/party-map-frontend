@@ -1,9 +1,9 @@
 import { isRouteErrorResponse, useRouteError } from "react-router";
 
 import { Button, ButtonLink } from "@/components/Button";
-import { NotFoundPage } from "@/pages/NotFoundPage";
 
 import styles from "./ErrorPage.module.css";
+import { NotFoundPage } from "./NotFoundPage";
 
 export function describeRouteError(error: unknown): string {
     if (isRouteErrorResponse(error)) return `${error.status} ${error.statusText}`.trim();

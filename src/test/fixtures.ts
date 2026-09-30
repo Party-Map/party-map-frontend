@@ -1,4 +1,4 @@
-import type { Event, EventPlan, Performer, Place, SearchHit, UpcomingEventByPlace } from "@/lib/types";
+import type { Event, EventPlan, Performer, Place, SearchHit, UpcomingEventByPlace } from "@/api/types";
 
 export const place: Place = {
     id: "place-1",

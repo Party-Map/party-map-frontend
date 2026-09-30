@@ -1,7 +1,8 @@
 import { screen } from "@testing-library/react";
 
-import { NotFoundPage } from "@/pages/NotFoundPage";
 import { renderWithProviders } from "@/test/helpers";
+
+import { NotFoundPage } from "./NotFoundPage";
 
 describe("NotFoundPage", () => {
     it("shows the 404 message with a link back to the map", async () => {

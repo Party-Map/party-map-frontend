@@ -3,12 +3,12 @@ import type { ReactElement, ReactNode } from "react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { type Mock, vi } from "vitest";
 
-import { HighlightProvider } from "@/app/HighlightProvider";
-import { ThemeProvider } from "@/app/ThemeProvider";
-import { ToastProvider } from "@/app/ToastProvider";
-import { AuthProvider } from "@/lib/auth/AuthProvider";
-import type { AuthClient, AuthSnapshot } from "@/lib/auth/keycloak";
-import type { Role } from "@/lib/auth/roles";
+import type { AuthClient, AuthSnapshot } from "@/auth/keycloak";
+import { AuthProvider } from "@/auth/provider";
+import type { Role } from "@/auth/roles";
+import { HighlightProvider } from "@/layout/HighlightProvider";
+import { ToastProvider } from "@/layout/ToastProvider";
+import { ThemeProvider } from "@/lib/theme";
 
 export type MockAuthClient = AuthClient & {
     emit: (snapshot: AuthSnapshot) => void;

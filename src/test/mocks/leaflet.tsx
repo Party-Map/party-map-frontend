@@ -4,8 +4,8 @@
  *
  * Usage (must run before the component under test is imported):
  * ```ts
- * vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reactLeafletMock))
- * vi.mock("leaflet", () => import("@/test/mocks/leaflet").then((m) => m.leafletMock))
+ * vi.mock("react-leaflet", () => import("./leaflet").then((m) => m.reactLeafletMock))
+ * vi.mock("leaflet", () => import("./leaflet").then((m) => m.leafletMock))
  * ```
  */
 import type { ReactNode } from "react";

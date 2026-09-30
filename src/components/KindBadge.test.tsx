@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
 
-import { KindBadge } from "@/components/KindBadge";
+import { EVENT_TYPES } from "@/api/types";
 import { EVENT_TYPE_LABELS } from "@/lib/constants";
-import { EVENT_TYPES } from "@/lib/types";
+
+import { KindBadge } from "./KindBadge";
 
 describe("KindBadge", () => {
     it.each(EVENT_TYPES)("labels %s and exposes the kind for styling", (kind) => {

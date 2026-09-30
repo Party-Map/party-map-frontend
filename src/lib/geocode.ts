@@ -1,4 +1,19 @@
-import type { GeocodeResult, GeoPoint, ReverseGeocodeResult } from "@/lib/types";
+import type { GeoPoint } from "@/api/types";
+
+/** An address found by Nominatim (OpenStreetMap), not by our API. */
+export interface GeocodeResult {
+    displayName: string;
+    addressLine: string;
+    location: GeoPoint;
+    city?: string;
+}
+
+/** The address at a point, from Nominatim. */
+export interface ReverseGeocodeResult {
+    displayName: string;
+    addressLine: string;
+    city?: string;
+}
 
 const NOMINATIM = "https://nominatim.openstreetmap.org";
 

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import { Field, FormError, formStyles, Input, Select, Textarea } from "@/components/Field";
+import { Field, FormError, formStyles, Input, Select, Textarea } from "./Field";
 
 describe("Field", () => {
     it("links the label to the control and shows the hint", () => {

@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { ConsentBanner } from "@/components/ConsentBanner";
 import { CONSENT_STORAGE_KEY } from "@/lib/constants";
+
+import { ConsentBanner } from "./ConsentBanner";
 
 function stored(): unknown {
     const raw = window.localStorage.getItem(CONSENT_STORAGE_KEY);

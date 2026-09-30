@@ -1,4 +1,4 @@
-import type { EventType, GeoPoint, LinkType } from "@/lib/types";
+import type { EventType, GeoPoint, LinkType } from "@/api/types";
 
 export const EVENT_TYPE_LABELS: Record<EventType, string> = {
     DISCO: "Disco",

@@ -1,4 +1,4 @@
-import { geocodeAddress, reverseGeocode } from "@/lib/geocode";
+import { geocodeAddress, reverseGeocode } from "./geocode";
 
 function stubFetch(body: unknown, status = 200) {
     const fetchMock = vi.fn(

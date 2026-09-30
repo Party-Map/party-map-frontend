@@ -1,7 +1,7 @@
 import { type ImgHTMLAttributes, useState } from "react";
 
 import { PLACEHOLDER_IMAGE } from "@/lib/constants";
-import { cx } from "@/lib/cx";
+import { cn } from "@/lib/utils";
 
 import styles from "./CoverImage.module.css";
 
@@ -21,7 +21,7 @@ export function CoverImage({ src, alt, height = "lg", className, ...rest }: Cove
             src={source}
             alt={alt}
             loading="lazy"
-            className={cx(styles.image, styles[height], className)}
+            className={cn(styles.image, styles[height], className)}
             onError={() => setFailed(true)}
             {...rest}
         />

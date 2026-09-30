@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { Button, buttonClass, ButtonLink } from "@/components/Button";
 import { renderWithProviders } from "@/test/helpers";
+
+import { Button, buttonClass, ButtonLink } from "./Button";
 
 describe("buttonClass", () => {
     it("uses the primary variant and medium size by default", () => {

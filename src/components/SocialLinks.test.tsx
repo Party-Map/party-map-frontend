@@ -1,7 +1,8 @@
 import { render, screen } from "@testing-library/react";
 
-import { BrandIcon, SocialLinks } from "@/components/SocialLinks";
-import type { Link } from "@/lib/types";
+import type { Link } from "@/api/types";
+
+import { BrandIcon, SocialLinks } from "./SocialLinks";
 
 describe("SocialLinks", () => {
     it("renders nothing without links", () => {

@@ -8,7 +8,7 @@ import {
     isSameDay,
     isValidDate,
     toDateTimeLocalInput,
-} from "@/lib/dates";
+} from "./dates";
 
 const now = new Date(2030, 5, 15, 12, 0); // Saturday 15 June 2030, 12:00 local
 

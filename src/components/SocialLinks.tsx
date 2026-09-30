@@ -1,8 +1,8 @@
 import { Globe } from "lucide-react";
 
+import type { Link, LinkType } from "@/api/types";
 import { LINK_TYPE_LABELS } from "@/lib/constants";
-import { cx } from "@/lib/cx";
-import type { Link, LinkType } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 import styles from "./SocialLinks.module.css";
 
@@ -27,7 +27,7 @@ export function SocialLinks({ links, className }: { links?: Link[]; className?: 
     if (!links || links.length === 0) return null;
 
     return (
-        <div className={cx(styles.list, className)}>
+        <div className={cn(styles.list, className)}>
             {links.map((link) => (
                 <a key={link.type} href={link.url} target="_blank" rel="noopener noreferrer" className={styles.link}>
                     <BrandIcon type={link.type} />

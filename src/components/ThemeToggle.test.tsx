@@ -1,9 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { ThemeProvider } from "@/app/ThemeProvider";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { THEME_STORAGE_KEY } from "@/lib/constants";
+import { ThemeProvider } from "@/lib/theme";
+
+import { ThemeToggle } from "./ThemeToggle";
 
 function renderToggle(compact = false) {
     return render(

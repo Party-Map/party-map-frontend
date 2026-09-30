@@ -6,7 +6,7 @@ import {
     useId,
 } from "react";
 
-import { cx } from "@/lib/cx";
+import { cn } from "@/lib/utils";
 
 import styles from "./forms.module.css";
 
@@ -42,16 +42,16 @@ export function Field({ label, hint, error, aside, children }: FieldProps) {
 }
 
 export function Input({ className, ...rest }: InputHTMLAttributes<HTMLInputElement>) {
-    return <input className={cx(styles.control, className)} {...rest} />;
+    return <input className={cn(styles.control, className)} {...rest} />;
 }
 
 export function Textarea({ className, ...rest }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
-    return <textarea className={cx(styles.control, className)} {...rest} />;
+    return <textarea className={cn(styles.control, className)} {...rest} />;
 }
 
 export function Select({ className, children, ...rest }: SelectHTMLAttributes<HTMLSelectElement>) {
     return (
-        <select className={cx(styles.control, className)} {...rest}>
+        <select className={cn(styles.control, className)} {...rest}>
             {children}
         </select>
     );

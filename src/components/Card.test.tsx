@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import { Card, CardBody } from "@/components/Card";
+import { Card, CardBody } from "./Card";
 
 describe("Card", () => {
     it("renders the surface without padding by default", () => {

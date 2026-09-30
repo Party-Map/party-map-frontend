@@ -1,6 +1,6 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 
-import { useResource } from "@/lib/hooks/useResource";
+import { useResource } from "./useResource";
 
 function deferred<T>() {
     let resolve!: (value: T) => void;

@@ -1,7 +1,7 @@
 import { Moon, Sun } from "lucide-react";
 
-import { useTheme } from "@/app/ThemeProvider";
-import { cx } from "@/lib/cx";
+import { useTheme } from "@/lib/theme";
+import { cn } from "@/lib/utils";
 
 import styles from "./ThemeToggle.module.css";
 
@@ -16,7 +16,7 @@ export function ThemeToggle({ compact = false }: { compact?: boolean }) {
             aria-pressed={dark}
             aria-label="Toggle theme"
             title="Toggle theme"
-            className={cx(styles.toggle, compact && styles.compact)}
+            className={cn(styles.toggle, compact && styles.compact)}
         >
             {dark ? <Sun size={compact ? 22 : 18} aria-hidden /> : <Moon size={compact ? 22 : 18} aria-hidden />}
             {!compact && <span>{dark ? "Light" : "Dark"}</span>}

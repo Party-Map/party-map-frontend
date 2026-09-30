@@ -1,7 +1,8 @@
 import { screen } from "@testing-library/react";
 
-import { LoggedOutPage } from "@/pages/LoggedOutPage";
 import { authenticatedSnapshot, renderWithProviders } from "@/test/helpers";
+
+import { LoggedOutPage } from "./LoggedOutPage";
 
 describe("LoggedOutPage", () => {
     it("confirms the logout with a link home", async () => {
