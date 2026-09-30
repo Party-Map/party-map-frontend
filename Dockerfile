@@ -1,6 +1,9 @@
-# Build the static bundle. Public config is baked in at build time (Rsbuild inlines PUBLIC_* values).
-FROM node:24-alpine AS build
-WORKDIR /app
+# Build the static bundle. Public configuration is baked in at build time (Rsbuild inlines PUBLIC_* values).
+FROM node:24-bookworm-slim AS build
+RUN corepack enable
+WORKDIR /frontend
+# No git hooks in the image (package.json's prepare script installs husky's).
+ENV HUSKY=0
 
 ARG PUBLIC_API_BASE=/api
 ARG PUBLIC_KEYCLOAK_URL
@@ -11,15 +14,15 @@ ENV PUBLIC_API_BASE=$PUBLIC_API_BASE \
     PUBLIC_KEYCLOAK_REALM=$PUBLIC_KEYCLOAK_REALM \
     PUBLIC_KEYCLOAK_CLIENT_ID=$PUBLIC_KEYCLOAK_CLIENT_ID
 
-RUN corepack enable
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --frozen-lockfile
-COPY . .
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+    pnpm install --frozen-lockfile
+COPY . ./
 RUN pnpm build
 
-# Serve it with nginx: static files, SPA fallback, /health for the orchestrator.
-FROM nginx:1.27-alpine AS runtime
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist /usr/share/nginx/html
-EXPOSE 80
-HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://localhost/health || exit 1
+# The official nginx image running as a non-root user, listening on 8080.
+FROM nginxinc/nginx-unprivileged:stable-alpine
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /frontend/dist /usr/share/nginx/html
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://127.0.0.1:8080/healthz || exit 1

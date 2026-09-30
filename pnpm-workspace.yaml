@@ -1,6 +1,8 @@
 allowBuilds:
   "@parcel/watcher": false
   msw: false
+  # Its postinstall only fetches fallback bindings; the prebuilt platform packages cover it.
+  unrs-resolver: false
 # eslint-plugin-react 7.37.5 and eslint-plugin-jsx-a11y 6.10.2 (their latest releases) still declare eslint <= 9;
 # their flat configs run on eslint 10, so the newer eslint is allowed instead of downgrading it.
 peerDependencyRules:
