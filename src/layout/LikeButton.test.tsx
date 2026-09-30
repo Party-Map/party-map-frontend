@@ -49,7 +49,7 @@ describe("LikeButton", () => {
         await userEvent.click(button);
         expect(fetchMock).toHaveBeenCalledTimes(1);
         expect(sentRequest()).toBe("PUT http://api.test/api/me/likes/events/event-1");
-        expect(await screen.findByRole("status")).toHaveTextContent("You liked Techno Night");
+        expect(await screen.findByText("You liked Techno Night")).toBeInTheDocument();
         expect(screen.getByRole("button", { name: "Remove from favorites" })).toHaveAttribute("aria-pressed", "true");
         expect(onChange).toHaveBeenCalledWith(true);
     });
@@ -63,7 +63,7 @@ describe("LikeButton", () => {
 
         await userEvent.click(button);
         expect(sentRequest()).toBe("DELETE http://api.test/api/me/likes/places/place-1");
-        expect(await screen.findByRole("status")).toHaveTextContent("You broke up with A38 Hajó");
+        expect(await screen.findByText("You broke up with A38 Hajó")).toBeInTheDocument();
         expect(screen.getByRole("button", { name: "Add to favorites" })).toHaveAttribute("aria-pressed", "false");
         expect(onChange).toHaveBeenCalledWith(false);
     });
@@ -74,7 +74,7 @@ describe("LikeButton", () => {
         renderLike({ onChange });
         const button = await screen.findByRole("button", { name: "Add to favorites" });
         await userEvent.click(button);
-        expect(await screen.findByRole("status")).toHaveTextContent("Could not update your likes. Please try again.");
+        expect(await screen.findByText("Could not update your likes. Please try again.")).toBeInTheDocument();
         expect(button).toHaveAttribute("aria-pressed", "false");
         expect(button).toBeEnabled();
         expect(onChange).not.toHaveBeenCalled();

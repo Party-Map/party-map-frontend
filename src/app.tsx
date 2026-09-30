@@ -8,8 +8,8 @@ import { createQueryClient } from "@/api/queryClient";
 import type { AuthClient } from "@/auth/keycloak";
 import { AuthProvider } from "@/auth/provider";
 import { SessionEndedDialog } from "@/auth/SessionEndedDialog";
+import { AppToaster } from "@/layout/AppToaster";
 import { HighlightProvider } from "@/layout/HighlightProvider";
-import { ToastProvider } from "@/layout/ToastProvider";
 import { applyTheme, watchTheme } from "@/lib/theme";
 
 import { router } from "./routes";
@@ -23,7 +23,7 @@ export function App({ authClient }: { authClient: AuthClient }) {
     }, []);
 
     return (
-        <ToastProvider>
+        <>
             <AuthProvider client={authClient}>
                 <QueryClientProvider client={queryClient}>
                     <HighlightProvider>
@@ -32,6 +32,7 @@ export function App({ authClient }: { authClient: AuthClient }) {
                     <SessionEndedDialog />
                 </QueryClientProvider>
             </AuthProvider>
-        </ToastProvider>
+            <AppToaster />
+        </>
     );
 }

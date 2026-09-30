@@ -7,7 +7,7 @@ import { Role } from "@/auth/roles";
 import layout from "@/components/layout.module.scss";
 import { ErrorState, LoadingState } from "@/components/States";
 import text from "@/components/typography.module.scss";
-import { useToast } from "@/layout/ToastProvider";
+import { toast } from "@/lib/toast";
 import { RequireRole } from "@/pages/admin/RequireRole";
 import adminStyles from "@/pages/admin/shared/admin.module.scss";
 import { InvitationStateLabel } from "@/pages/admin/shared/InvitationStateLabel";
@@ -30,7 +30,6 @@ export function EventPlanPage() {
 function EventPlanDetail() {
     const { id = "" } = useParams();
     const navigate = useNavigate();
-    const toast = useToast();
     const plan = useEventPlan(id);
     const performers = usePerformers();
     const save = useUpdateEventPlan(id);

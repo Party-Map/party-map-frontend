@@ -52,7 +52,7 @@ describe("LikedListItem", () => {
 
         await userEvent.click(await screen.findByRole("button", { name: "Remove from favorites" }));
 
-        await waitFor(() => expect(screen.queryByRole("listitem")).not.toBeInTheDocument());
+        await waitFor(() => expect(screen.queryByRole("link", { name: event.title })).not.toBeInTheDocument());
     });
 
     it("stays when unliking fails", async () => {
@@ -62,7 +62,7 @@ describe("LikedListItem", () => {
         await userEvent.click(await screen.findByRole("button", { name: "Remove from favorites" }));
 
         expect(await screen.findByText("Could not update your likes. Please try again.")).toBeInTheDocument();
-        expect(screen.getByRole("listitem")).toBeInTheDocument();
+        expect(screen.getByRole("link", { name: event.title })).toBeInTheDocument();
         expect(screen.getByRole("button", { name: "Remove from favorites" })).toBeInTheDocument();
     });
 });

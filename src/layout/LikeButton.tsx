@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useToggleLike } from "@/api/hooks";
 import type { ID, LikeTarget } from "@/api/types";
 import { useAuth } from "@/auth/provider";
+import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 
 import styles from "./LikeButton.module.scss";
-import { useToast } from "./ToastProvider";
 
 interface LikeButtonProps {
     target: LikeTarget;
@@ -21,7 +21,6 @@ interface LikeButtonProps {
 /** Heart toggle; renders nothing for anonymous visitors. */
 export function LikeButton({ target, targetId, targetName, initialLiked, onChange, className }: LikeButtonProps) {
     const { status } = useAuth();
-    const toast = useToast();
     const [liked, setLiked] = useState(initialLiked);
     const toggleLike = useToggleLike(target, targetId);
     const busy = toggleLike.isPending;

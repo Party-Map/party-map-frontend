@@ -5,8 +5,8 @@ import type { ID, PlaceInvitationRequest } from "@/api/types";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { EmptyState } from "@/components/States";
-import { useToast } from "@/layout/ToastProvider";
 import { formatDateTimeRange } from "@/lib/dates";
+import { toast } from "@/lib/toast";
 import adminStyles from "@/pages/admin/shared/admin.module.scss";
 import { InvitationStateLabel } from "@/pages/admin/shared/InvitationStateLabel";
 
@@ -21,7 +21,6 @@ type Answer = "accept" | "reject";
 
 /** Side panel listing the event plans that asked to be hosted at this place. */
 export function PlaceInvitationRequests({ placeId, requests }: PlaceInvitationRequestsProps) {
-    const toast = useToast();
     const answerInvitation = useRespondToPlaceInvitation(placeId);
     const titleId = useId();
     const [busyId, setBusyId] = useState<ID | null>(null);

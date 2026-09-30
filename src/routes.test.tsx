@@ -1,10 +1,11 @@
+import { QueryClientProvider } from "@tanstack/react-query";
 import { act, render, screen } from "@testing-library/react";
 import { createMemoryRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 
 import { AuthProvider } from "@/auth/provider";
 import { HighlightProvider } from "@/layout/HighlightProvider";
-import { ToastProvider } from "@/layout/ToastProvider";
+import { createTestQueryClient } from "@/test/helpers";
 import { createMockAuthClient, mockApi } from "@/test/helpers";
 
 import { router, routes } from "./routes";
@@ -36,13 +37,13 @@ describe("routes", () => {
         mockApi({});
         const memoryRouter = createMemoryRouter(routes, { initialEntries: ["/logged-out"] });
         render(
-            <ToastProvider>
-                <AuthProvider client={createMockAuthClient()}>
+            <AuthProvider client={createMockAuthClient()}>
+                <QueryClientProvider client={createTestQueryClient()}>
                     <HighlightProvider>
                         <RouterProvider router={memoryRouter} />
                     </HighlightProvider>
-                </AuthProvider>
-            </ToastProvider>,
+                </QueryClientProvider>
+            </AuthProvider>,
         );
         expect(await screen.findByRole("heading", { name: "You are now logged out" })).toBeInTheDocument();
         expect(screen.getByRole("dialog", { name: "Privacy & Cookies" })).toBeInTheDocument();

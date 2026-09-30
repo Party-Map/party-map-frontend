@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 
 import { cleanup } from "@testing-library/react";
+import { toast } from "sonner";
 import { afterEach, vi } from "vitest";
 
 import { resetSession } from "@/auth/session";
@@ -8,6 +9,8 @@ import { resetSession } from "@/auth/session";
 afterEach(() => {
     cleanup();
     resetSession();
+    // sonner keeps its toasts in a module-level store; start every test with none.
+    toast.dismiss();
     vi.restoreAllMocks();
     window.localStorage.clear();
 });

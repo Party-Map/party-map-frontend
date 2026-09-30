@@ -4,24 +4,18 @@ import { useNavigate } from "react-router";
 import { usePublishEventPlan } from "@/api/hooks";
 import type { EventPlan } from "@/api/types";
 import { Button } from "@/components/Button";
-import { useToast } from "@/layout/ToastProvider";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { toast } from "@/lib/toast";
 
 /** Publishes the plan after a confirmation; on success the map opens focused on the accepted place. */
 export function PublishButton({ plan }: { plan: EventPlan }) {
     const navigate = useNavigate();
-    const toast = useToast();
     const publishPlan = usePublishEventPlan(plan.id);
-    const [pending, setPending] = useState(false);
+    const [confirming, setConfirming] = useState(false);
+    const pending = publishPlan.isPending;
 
     const publish = async () => {
-        const confirmed = await toast.confirm({
-            title: "Publish event?",
-            text: "Once published, this cannot be undone. Continue?",
-            confirmLabel: "Yes, publish",
-        });
-        if (!confirmed) return;
-
-        setPending(true);
+        setConfirming(false);
         try {
             await publishPlan.mutateAsync();
             toast.success("Event plan published successfully!");
@@ -31,14 +25,22 @@ export function PublishButton({ plan }: { plan: EventPlan }) {
             toast.error(
                 "Failed to publish event plan. Check if the place accepted the invitation and there are no pending performer invitations!",
             );
-        } finally {
-            setPending(false);
         }
     };
 
     return (
-        <Button onClick={publish} disabled={pending}>
-            {pending ? "Publishing…" : "Publish event"}
-        </Button>
+        <>
+            <Button onClick={() => setConfirming(true)} disabled={pending}>
+                {pending ? "Publishing…" : "Publish event"}
+            </Button>
+            <ConfirmDialog
+                open={confirming}
+                title="Publish event?"
+                text="Once published, this cannot be undone. Continue?"
+                confirmLabel="Yes, publish"
+                onConfirm={() => void publish()}
+                onCancel={() => setConfirming(false)}
+            />
+        </>
     );
 }

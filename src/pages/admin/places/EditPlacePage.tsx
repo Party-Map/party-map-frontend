@@ -4,7 +4,7 @@ import { usePlace, usePlaceInvitations, useUpdatePlace } from "@/api/hooks";
 import type { PlacePayload } from "@/api/types";
 import { Role } from "@/auth/roles";
 import { ErrorState, LoadingState } from "@/components/States";
-import { useToast } from "@/layout/ToastProvider";
+import { toast } from "@/lib/toast";
 import { RequireRole } from "@/pages/admin/RequireRole";
 import styles from "@/pages/admin/shared/admin.module.scss";
 
@@ -24,7 +24,6 @@ export function EditPlacePage() {
 function PlaceEditor() {
     const id = useParams<"id">().id ?? "";
     const navigate = useNavigate();
-    const toast = useToast();
     const place = usePlace(id);
     const invitations = usePlaceInvitations(id);
     const save = useUpdatePlace(id);

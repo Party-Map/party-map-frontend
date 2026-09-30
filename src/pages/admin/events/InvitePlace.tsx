@@ -7,7 +7,7 @@ import { Field, FormError, Select } from "@/components/Field";
 import formStyles from "@/components/forms.module.scss";
 import layout from "@/components/layout.module.scss";
 import text from "@/components/typography.module.scss";
-import { useToast } from "@/layout/ToastProvider";
+import { toast } from "@/lib/toast";
 
 interface InvitePlaceProps {
     planId: ID;
@@ -15,7 +15,6 @@ interface InvitePlaceProps {
 
 /** Pick one of the places that can host this plan and send it an invitation. */
 export function InvitePlace({ planId }: InvitePlaceProps) {
-    const toast = useToast();
     const places = useInvitablePlaces();
     const invite = useInvitePlace(planId);
     const [placeId, setPlaceId] = useState("");

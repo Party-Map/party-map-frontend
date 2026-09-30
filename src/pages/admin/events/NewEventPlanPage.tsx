@@ -3,14 +3,13 @@ import { useNavigate } from "react-router";
 import { useCreateEventPlan } from "@/api/hooks";
 import type { EventPlanPayload } from "@/api/types";
 import { Role } from "@/auth/roles";
-import { useToast } from "@/layout/ToastProvider";
+import { toast } from "@/lib/toast";
 import { RequireRole } from "@/pages/admin/RequireRole";
 
 import { EventPlanForm } from "./EventPlanForm";
 
 export function NewEventPlanPage() {
     const navigate = useNavigate();
-    const toast = useToast();
     const create = useCreateEventPlan();
 
     const handleSubmit = async (payload: EventPlanPayload) => {

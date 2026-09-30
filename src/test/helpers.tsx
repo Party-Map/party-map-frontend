@@ -7,8 +7,8 @@ import { type Mock, vi } from "vitest";
 import type { AuthClient, AuthSnapshot } from "@/auth/keycloak";
 import { AuthProvider } from "@/auth/provider";
 import type { Role } from "@/auth/roles";
+import { AppToaster } from "@/layout/AppToaster";
 import { HighlightProvider } from "@/layout/HighlightProvider";
-import { ToastProvider } from "@/layout/ToastProvider";
 
 export type MockAuthClient = AuthClient & {
     emit: (snapshot: AuthSnapshot) => void;
@@ -75,7 +75,7 @@ export function AppProviders({
     const authClient = client ?? createMockAuthClient(auth, { pending: authPending });
     const [cache] = useState(() => queryClient ?? createTestQueryClient());
     return (
-        <ToastProvider>
+        <>
             <AuthProvider client={authClient}>
                 <QueryClientProvider client={cache}>
                     <HighlightProvider>
@@ -88,7 +88,8 @@ export function AppProviders({
                     </HighlightProvider>
                 </QueryClientProvider>
             </AuthProvider>
-        </ToastProvider>
+            <AppToaster />
+        </>
     );
 }
 

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { useCreatePerformer } from "@/api/hooks";
 import type { PerformerPayload } from "@/api/types";
 import { Role } from "@/auth/roles";
-import { useToast } from "@/layout/ToastProvider";
+import { toast } from "@/lib/toast";
 import { RequireRole } from "@/pages/admin/RequireRole";
 
 import { PerformerForm } from "./PerformerForm";
@@ -11,7 +11,6 @@ import { PerformerForm } from "./PerformerForm";
 /** /admin/performers/new: create a performer, then open its public page. */
 export function NewPerformerPage() {
     const navigate = useNavigate();
-    const toast = useToast();
     const create = useCreatePerformer();
 
     const handleSubmit = async (payload: PerformerPayload) => {

@@ -12,14 +12,12 @@ vi.mock("./routes", async () => {
     const { createMemoryRouter } = await import("react-router");
     const { useHighlight } = await import("@/layout/HighlightProvider");
     const { useTheme } = await import("@/lib/theme");
-    const { useToast } = await import("@/layout/ToastProvider");
     const { useAuth } = await import("@/auth/provider");
 
     function Probe() {
         const { status } = useAuth();
         const { theme } = useTheme();
         const { highlightIds } = useHighlight();
-        useToast();
         return createElement("p", null, `auth=${status} theme=${theme} highlights=${highlightIds.length}`);
     }
 
@@ -27,7 +25,7 @@ vi.mock("./routes", async () => {
 });
 
 describe("App", () => {
-    it("mounts the router inside the theme, toast, auth and highlight providers", async () => {
+    it("mounts the router inside the auth, query and highlight providers", async () => {
         render(<App authClient={createMockAuthClient(authenticatedSnapshot())} />);
         expect(await screen.findByText("auth=authenticated theme=light highlights=0")).toBeInTheDocument();
     });

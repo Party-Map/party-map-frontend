@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { useCreatePlace } from "@/api/hooks";
 import type { PlacePayload } from "@/api/types";
 import { Role } from "@/auth/roles";
-import { useToast } from "@/layout/ToastProvider";
+import { toast } from "@/lib/toast";
 import { RequireRole } from "@/pages/admin/RequireRole";
 
 import { PlaceForm } from "./PlaceForm";
@@ -11,7 +11,6 @@ import { PlaceForm } from "./PlaceForm";
 /** /admin/places/new: create a place, then open its public page. */
 export function NewPlacePage() {
     const navigate = useNavigate();
-    const toast = useToast();
     const create = useCreatePlace();
 
     const handleSubmit = async (payload: PlacePayload) => {
