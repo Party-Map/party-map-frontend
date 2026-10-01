@@ -1,0 +1,22 @@
+@use "@/styles/mixins" as *;
+
+@layer components {
+  .pager {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .range {
+    color: var(--fg-muted);
+    font-size: var(--text-14);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .buttons {
+    display: flex;
+    gap: var(--space-2);
+  }
+}

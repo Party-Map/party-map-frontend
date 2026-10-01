@@ -1,0 +1,45 @@
+@use "@/styles/mixins" as *;
+
+@layer parts {
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .search {
+    position: relative;
+    display: block;
+    max-width: 28rem;
+  }
+
+  .search-icon {
+    position: absolute;
+    top: 50%;
+    left: var(--space-3);
+    color: var(--fg-subtle);
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .search-input {
+    padding-left: calc(var(--space-3) * 2 + 1rem);
+  }
+
+  .user {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .username {
+    color: var(--fg-subtle);
+    font-size: var(--text-13);
+    font-weight: 400;
+  }
+
+  .roles {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+}

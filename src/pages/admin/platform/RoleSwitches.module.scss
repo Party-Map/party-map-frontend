@@ -1,0 +1,86 @@
+@use "@/styles/mixins" as *;
+
+@layer parts {
+  .list {
+    padding: 0;
+    list-style: none;
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-4) 0;
+  }
+
+  .row + .row {
+    border-top: 1px solid var(--border);
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .label {
+    font-weight: 600;
+  }
+
+  .description {
+    color: var(--fg-muted);
+    font-size: var(--text-14);
+  }
+
+  .switch {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    width: 2.75rem;
+    height: 1.5rem;
+    padding: 2px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-full);
+    background: var(--border-strong);
+    transition: background-color var(--duration-fast) var(--ease);
+    cursor: pointer;
+
+    // A 40px tap target around the small switch.
+    &::before {
+      content: "";
+      position: absolute;
+      inset: -0.5rem;
+    }
+
+    &[data-checked] {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    &[data-disabled] {
+      opacity: 0.6;
+      cursor: progress;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+    }
+  }
+
+  .thumb {
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: var(--radius-full);
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+    transition: translate var(--duration-fast) var(--ease);
+
+    &[data-checked] {
+      translate: 1.25rem 0;
+    }
+  }
+}

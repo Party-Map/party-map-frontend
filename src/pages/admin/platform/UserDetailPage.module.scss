@@ -1,0 +1,39 @@
+@use "@/styles/mixins" as *;
+
+@layer parts {
+  .card {
+    padding: var(--space-4) var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface-solid);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .title {
+    font-size: var(--text-18);
+    font-weight: 600;
+  }
+
+  .hint {
+    margin-top: var(--space-1);
+    color: var(--fg-muted);
+    font-size: var(--text-14);
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: var(--space-2) var(--space-6);
+    margin-top: var(--space-3);
+    font-size: var(--text-14);
+
+    dt {
+      color: var(--fg-subtle);
+    }
+
+    dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+  }
+}

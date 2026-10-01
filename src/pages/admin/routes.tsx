@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import type { RouteObject } from "react-router";
+import { Navigate, type RouteObject } from "react-router";
 
 import { AdminIndexPage } from "./AdminIndexPage";
 import { AdminShell } from "./shell/AdminShell";
@@ -42,6 +42,10 @@ export const adminRoutes: RouteObject = {
         { path: "events/plans/new", lazy: page(() => import("./events/NewEventPlanPage"), "NewEventPlanPage") },
         { path: "events/plans/:id", lazy: page(() => import("./events/EventPlanPage"), "EventPlanPage") },
         { path: "events/live", lazy: page(() => import("./events/LiveEventsPage"), "LiveEventsPage") },
+
+        { path: "platform", element: <Navigate to="/admin/platform/users" replace /> },
+        { path: "platform/users", lazy: page(() => import("./platform/UsersPage"), "UsersPage") },
+        { path: "platform/users/:id", lazy: page(() => import("./platform/UserDetailPage"), "UserDetailPage") },
 
         { path: "*", lazy: page(() => import("@/pages/NotFoundPage"), "NotFoundPage") },
     ],
