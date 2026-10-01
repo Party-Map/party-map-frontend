@@ -18,7 +18,7 @@ interface Point {
     y: number;
     distanceTo: (p: Point) => number;
     divideBy: (n: number) => Point;
-    add: (p: [number, number]) => Point;
+    add: (p: Point | [number, number]) => Point;
     subtract: (p: Point) => Point;
 }
 
@@ -28,7 +28,7 @@ export function point(x: number, y: number): Point {
         y,
         distanceTo: (p) => Math.hypot(p.x - x, p.y - y),
         divideBy: (n) => point(x / n, y / n),
-        add: ([dx, dy]) => point(x + dx, y + dy),
+        add: (p) => (Array.isArray(p) ? point(x + p[0], y + p[1]) : point(x + p.x, y + p.y)),
         subtract: (p) => point(x - p.x, y - p.y),
     };
 }
@@ -56,6 +56,7 @@ export const fakeMap = {
     getZoom: vi.fn(() => 13),
     getBoundsZoom: vi.fn(() => 7),
     setMinZoom: vi.fn(),
+    setMaxBounds: vi.fn(),
     getCenter: vi.fn(() => ({ lat: 47.5, lng: 19.05 })),
     /** Central Budapest. */
     getBounds: vi.fn((): FakeBounds => ({
@@ -66,8 +67,8 @@ export const fakeMap = {
     })),
     getSize: vi.fn(() => point(800, 600)),
     latLngToContainerPoint: vi.fn(() => point(400, 300)),
-    project: vi.fn(() => point(400, 300)),
-    unproject: vi.fn(() => ({ lat: 47.5, lng: 19.05 })),
+    project: vi.fn((_latLng: unknown, _zoom?: number) => point(400, 300)),
+    unproject: vi.fn((_point: unknown, _zoom?: number) => ({ lat: 47.5, lng: 19.05 })),
     dragging: { enable: vi.fn(), disable: vi.fn() },
     on: vi.fn((event: string, handler: (...args: unknown[]) => void) => {
         if (!listeners.has(event)) listeners.set(event, new Set());
@@ -128,20 +129,17 @@ export const reactLeafletMock = {
         children,
         center,
         zoom,
-        maxBounds,
         maxBoundsViscosity,
     }: {
         children?: ReactNode;
         center?: unknown;
         zoom?: number;
-        maxBounds?: unknown;
         maxBoundsViscosity?: number;
     }) => (
         <div
             data-testid="map"
             data-center={JSON.stringify(center)}
             data-zoom={zoom}
-            data-max-bounds={maxBounds === undefined ? undefined : JSON.stringify(maxBounds)}
             data-max-bounds-viscosity={maxBoundsViscosity}
         >
             {children}

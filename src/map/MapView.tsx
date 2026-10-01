@@ -10,6 +10,7 @@ import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, MAP_MAX_ZOOM } from "@/lib/consta
 import { FitToHighlights } from "./FitToHighlights";
 import { toLatLngTuple } from "./geo";
 import { LazyBasemap } from "./LazyBasemap";
+import { MapLimits } from "./MapLimits";
 import type { MapViewState } from "./mapMemory";
 import styles from "./MapView.module.scss";
 import { PanPopupMobile } from "./PanPopupMobile";
@@ -20,7 +21,6 @@ import { Sky } from "./Sky";
 import { UserLocation } from "./UserLocation";
 import { ViewportWatcher } from "./ViewportWatcher";
 import { ZoomControls } from "./ZoomControls";
-import { HUNGARY_BOUNDS, ZoomFloor } from "./ZoomFloor";
 
 /** Lifts the popup so it floats above the pin head. */
 const POPUP_OFFSET: PointTuple = [0, -48];
@@ -75,9 +75,8 @@ export function MapView({
                 center={initialView?.center ?? toLatLngTuple(DEFAULT_MAP_CENTER)}
                 zoom={initialView?.zoom ?? DEFAULT_MAP_ZOOM}
                 maxZoom={MAP_MAX_ZOOM}
-                // A solid wall at the country's extent: the view never leaves Hungary (ZoomFloor keeps it from
-                // zooming out beyond it), so the country cannot be pushed off the screen.
-                maxBounds={HUNGARY_BOUNDS}
+                // A solid wall (MapLimits sets the bounds: the country's extent plus the bars' cover, and the zoom
+                // floor), so the country cannot be pushed off the screen.
                 maxBoundsViscosity={1}
                 scrollWheelZoom
                 zoomControl={false}
@@ -86,7 +85,7 @@ export function MapView({
             >
                 <Sky />
                 <LazyBasemap />
-                <ZoomFloor />
+                <MapLimits />
 
                 {(onViewportChange ?? onViewChange) && (
                     <ViewportWatcher onChange={onViewportChange} onViewChange={onViewChange} />
