@@ -16,7 +16,10 @@ for (const scheme of ["light", "dark"] as const) {
             await page.goto(path);
             await page.waitForLoadState("networkidle");
             // The basemap is a WebGL canvas whose rasterisation differs between machines (see visual.spec.ts).
-            await page.addStyleTag({ content: ".leaflet-tile-pane { visibility: hidden; }" });
+            await page.addStyleTag({
+                content:
+                    ".leaflet-tile-pane { visibility: hidden; } .leaflet-container { background-image: none !important; }",
+            });
             await expect(page).toHaveScreenshot(`${name}-${scheme}.png`, {
                 fullPage: true,
                 mask: [page.getByRole("button", { name: /Account menu/ })],

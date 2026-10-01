@@ -2,26 +2,18 @@ import type { Theme } from "@/lib/theme";
 
 import { PALETTES } from "./palette";
 
-/** An RGBA bitmap in the shape MapLibre's `addImage` accepts. */
-export interface StarSky {
-    width: number;
-    height: number;
-    data: Uint8ClampedArray;
-}
-
-const PREFIX = "stars-";
-/** The repeated tile is drawn pixel for pixel; the stars are a few pixels wide, like the painting's. */
-export const STAR_SKY_PIXEL_RATIO = 1;
+/** The star field repeats every this many CSS pixels. */
+export const STAR_SKY_SIZE = 512;
 const STAR_COUNT = 140;
+/** A star's glow fades out over this many radii. */
+const GLOW = 1.8;
 
-/** The style's background pattern id for a theme. */
-export const starImageId = (theme: Theme) => `${PREFIX}${theme}`;
-
-/** The theme a star image id belongs to; null for any other image. */
-export function themeOfStarImage(id: string): Theme | null {
-    if (id === starImageId("light")) return "light";
-    if (id === starImageId("dark")) return "dark";
-    return null;
+interface Star {
+    cx: number;
+    cy: number;
+    radius: number;
+    opacity: number;
+    tint: number;
 }
 
 /** mulberry32: a tiny seeded generator, so the sky is the same on every visit and in every test. */
@@ -35,52 +27,61 @@ function random(seed: number): () => number {
     };
 }
 
-/** Moves one channel towards the star colour by the star's alpha at that pixel. */
-function blend(data: Uint8ClampedArray, index: number, target: number, alpha: number): void {
-    const current = data[index] ?? 0;
-    data[index] = current + (target - current) * alpha;
+/** The stars of a theme's sky: a few are big and bright, most are specks; their tint varies. */
+export function stars(theme: Theme, size = STAR_SKY_SIZE): Star[] {
+    const next = random(theme === "dark" ? 0x5eed : 0x1ee7);
+    const result: Star[] = [];
+    for (let n = 0; n < STAR_COUNT; n += 1) {
+        result.push({
+            cx: next() * size,
+            cy: next() * size,
+            radius: 0.7 + next() * next() * 2.8,
+            opacity: 0.5 + next() * 0.5,
+            tint: Math.floor(next() * 3),
+        });
+    }
+    return result;
 }
 
-function hex(color: string): [number, number, number] {
-    const n = parseInt(color.slice(1), 16);
-    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-}
+const round = (value: number, digits: number) => value.toFixed(digits).replace(/\.?0+$/, "");
 
 /**
- * A night sky: the theme's sky colour sprinkled with soft white stars of varying size and brightness, drawn with
- * plain arithmetic (no canvas, so it also runs in tests). The pattern repeats seamlessly: stars near an edge wrap
- * around to the other side.
+ * The star field as SVG markup: each star is a circle filled with a radial glow in one of the palette's tints on a
+ * transparent ground (the sky colour comes from `--map-bg`). A star near an edge is drawn again on the opposite
+ * side, so the tile repeats seamlessly.
  */
-export function starSky(theme: Theme, size = 512): StarSky {
-    const [skyR, skyG, skyB] = hex(PALETTES[theme].sky);
-    const [starR, starG, starB] = hex(PALETTES[theme].star);
-    const data = new Uint8ClampedArray(size * size * 4);
-    for (let i = 0; i < data.length; i += 4) {
-        data[i] = skyR;
-        data[i + 1] = skyG;
-        data[i + 2] = skyB;
-        data[i + 3] = 255;
-    }
-    const next = random(theme === "dark" ? 0x5eed : 0x1ee7);
-    for (let n = 0; n < STAR_COUNT; n += 1) {
-        const cx = next() * size;
-        const cy = next() * size;
-        const radius = 0.7 + next() * next() * 2.8;
-        const brightness = 0.5 + next() * 0.5;
-        const reach = Math.ceil(radius) + 1;
-        for (let dy = -reach; dy <= reach; dy += 1) {
-            for (let dx = -reach; dx <= reach; dx += 1) {
-                const distance = Math.hypot(dx, dy);
-                if (distance > radius + 0.5) continue;
-                const alpha = brightness * Math.min(1, (radius + 0.5 - distance) / radius) ** 1.4;
-                const x = (((Math.round(cx) + dx) % size) + size) % size;
-                const y = (((Math.round(cy) + dy) % size) + size) % size;
-                const i = (y * size + x) * 4;
-                blend(data, i, starR, alpha);
-                blend(data, i + 1, starG, alpha);
-                blend(data, i + 2, starB, alpha);
+export function starSkySvg(theme: Theme, size = STAR_SKY_SIZE): string {
+    const gradients = PALETTES[theme].stars
+        .map(
+            (tint, i) =>
+                `<radialGradient id='s${i}'><stop offset='0' stop-color='${tint}'/>` +
+                `<stop offset='0.3' stop-color='${tint}' stop-opacity='0.85'/>` +
+                `<stop offset='1' stop-color='${tint}' stop-opacity='0'/></radialGradient>`,
+        )
+        .join("");
+    const circles: string[] = [];
+    for (const star of stars(theme, size)) {
+        const r = star.radius * GLOW;
+        const xs = [star.cx, star.cx - r < 0 ? star.cx + size : null, star.cx + r > size ? star.cx - size : null];
+        const ys = [star.cy, star.cy - r < 0 ? star.cy + size : null, star.cy + r > size ? star.cy - size : null];
+        for (const cx of xs) {
+            for (const cy of ys) {
+                if (cx === null || cy === null) continue;
+                circles.push(
+                    `<circle cx='${round(cx, 1)}' cy='${round(cy, 1)}' r='${round(r, 2)}' ` +
+                        `opacity='${round(star.opacity, 2)}' fill='url(#s${star.tint})'/>`,
+                );
             }
         }
     }
-    return { width: size, height: size, data };
+    return (
+        `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}' viewBox='0 0 ${size} ${size}'>` +
+        `<defs>${gradients}</defs>${circles.join("")}</svg>`
+    );
+}
+
+/** The star field as a CSS `background-image` value (a data URL; only the characters CSS and URLs mind are escaped). */
+export function starSkyImage(theme: Theme): string {
+    const encoded = starSkySvg(theme).replace(/[#<>"% ]/g, (c) => `%${c.charCodeAt(0).toString(16)}`);
+    return `url("data:image/svg+xml,${encoded}")`;
 }

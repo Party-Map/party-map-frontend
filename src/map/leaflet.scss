@@ -24,9 +24,13 @@
   margin: 0;
 }
 
-/* The basemap's own background colour, shown until MapLibre has painted (map/basemap/palette.ts). */
+/* The night sky: the base colour (map/basemap/palette.ts) under the star field map/Sky.tsx hands over as --map-sky
+   (an SVG that repeats every --map-sky-size). The container does not move with the map, so the sky stays put while
+   the country pans and zooms over it. */
 .leaflet-container {
-  background: var(--map-bg);
+  background-color: var(--map-bg);
+  background-image: var(--map-sky);
+  background-size: var(--map-sky-size) var(--map-sky-size);
 }
 
 .pm-pin-wrapper,

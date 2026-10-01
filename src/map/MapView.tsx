@@ -16,6 +16,7 @@ import { PanPopupMobile } from "./PanPopupMobile";
 import { getPinIcon } from "./pins";
 import { PlaceLabels } from "./PlaceLabels";
 import { PlacePopupCard } from "./PlacePopupCard";
+import { Sky } from "./Sky";
 import { UserLocation } from "./UserLocation";
 import { ViewportWatcher } from "./ViewportWatcher";
 import { ZoomControls } from "./ZoomControls";
@@ -79,6 +80,7 @@ export function MapView({
                 attributionControl={false}
                 className={styles.map}
             >
+                <Sky />
                 <LazyBasemap />
                 <ZoomFloor />
 

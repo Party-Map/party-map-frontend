@@ -184,6 +184,9 @@ importers:
       date-fns:
         specifier: ^4.4.0
         version: 4.4.0
+      earcut:
+        specifier: ^3.2.4
+        version: 3.2.4
       keycloak-js:
         specifier: ^26.2.4
         version: 26.2.4

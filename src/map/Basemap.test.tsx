@@ -9,7 +9,7 @@ import { setThemeChoice } from "@/lib/theme";
 import { fakeGlLayer, fakeGlMap, fakeMap, maplibreLeafletMock } from "@/test/mocks/leaflet";
 
 import { Basemap } from "./Basemap";
-import { STAR_SKY_PIXEL_RATIO } from "./basemap/stars";
+import { CUTOUT_LAYER_ID } from "./basemap/cutout";
 import type { basemapStyle } from "./basemap/style";
 import { MAPLIBRE_WORKER_URL } from "./basemap/worker";
 
@@ -28,9 +28,15 @@ beforeEach(() => {
 afterEach(() => setThemeChoice("system"));
 
 describe("Basemap", () => {
-    it("adds a non-interactive MapLibre layer with the themed style to the map", () => {
+    it("adds a non-interactive, antialiased, single-world MapLibre layer with the themed style to the map", () => {
         render(<Basemap />);
-        expect(maplibreLeafletMock.maplibreGL).toHaveBeenCalledWith(expect.objectContaining({ interactive: false }));
+        expect(maplibreLeafletMock.maplibreGL).toHaveBeenCalledWith(
+            expect.objectContaining({
+                interactive: false,
+                renderWorldCopies: false,
+                canvasContextAttributes: { antialias: true },
+            }),
+        );
         expect(fakeGlLayer.addTo).toHaveBeenCalledWith(fakeMap);
         expect(getWorkerUrl()).toBe(MAPLIBRE_WORKER_URL);
         const style = createdStyle();
@@ -49,23 +55,21 @@ describe("Basemap", () => {
         expect(maplibreLeafletMock.maplibreGL).toHaveBeenCalledTimes(1);
     });
 
-    it("hands MapLibre both star skies as soon as the style is parsed, and a missing one when it asks", () => {
+    it("slips the cutout layer in under the border once the style is parsed, never twice", () => {
         render(<Basemap />);
+        expect(fakeGlMap.on).toHaveBeenCalledTimes(1);
         expect(fakeGlMap.on).toHaveBeenCalledWith("style.load", expect.any(Function));
-        expect(fakeGlMap.on).toHaveBeenCalledWith("styleimagemissing", expect.any(Function));
+        expect(fakeGlMap.addLayer).not.toHaveBeenCalled();
         fakeGlMap.fire("style.load");
-        expect(fakeGlMap.addImage).toHaveBeenCalledTimes(2);
-        expect(fakeGlMap.addImage).toHaveBeenCalledWith(
-            "stars-dark",
-            expect.objectContaining({ width: 512, height: 512 }),
-            { pixelRatio: STAR_SKY_PIXEL_RATIO },
+        expect(fakeGlMap.addLayer).toHaveBeenCalledTimes(1);
+        expect(fakeGlMap.addLayer).toHaveBeenCalledWith(
+            expect.objectContaining({ id: CUTOUT_LAYER_ID, type: "custom", render: expect.any(Function) }),
+            "boundary-country",
         );
-        fakeGlMap.fire("styleimagemissing", { id: "pin" });
-        fakeGlMap.hasImage.mockReturnValueOnce(true);
-        fakeGlMap.fire("styleimagemissing", { id: "stars-light" });
-        expect(fakeGlMap.addImage).toHaveBeenCalledTimes(2);
-        fakeGlMap.fire("styleimagemissing", { id: "stars-light" });
-        expect(fakeGlMap.addImage).toHaveBeenCalledTimes(3);
+        fakeGlMap.getLayer.mockReturnValueOnce({ id: CUTOUT_LAYER_ID });
+        fakeGlMap.fire("style.load");
+        expect(fakeGlMap.getLayer).toHaveBeenCalledWith(CUTOUT_LAYER_ID);
+        expect(fakeGlMap.addLayer).toHaveBeenCalledTimes(1);
     });
 
     it("removes the layer on unmount", () => {

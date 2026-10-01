@@ -5,8 +5,8 @@ import { useMap } from "react-leaflet";
 import { getEnv } from "@/lib/env";
 import { resolveTheme, type Theme, useTheme } from "@/lib/theme";
 
-import { STAR_SKY_PIXEL_RATIO, starImageId, starSky, themeOfStarImage } from "./basemap/stars";
-import { basemapStyle, resolveTilesBase } from "./basemap/style";
+import { CUTOUT_LAYER_ID, cutoutLayer } from "./basemap/cutout";
+import { basemapStyle, BOUNDARY_LAYER_ID, resolveTilesBase } from "./basemap/style";
 import { configureMaplibreWorker } from "./basemap/worker";
 
 type BasemapLayer = ReturnType<typeof maplibreGL>;
@@ -15,7 +15,9 @@ type BasemapOptions = Parameters<typeof maplibreGL>[0];
 /**
  * The basemap: MapLibre GL draws the self-hosted Hungary vector tiles on a canvas in Leaflet's tile pane
  * (the maplibre-gl-leaflet plugin), while pins, labels and popups stay Leaflet's. Light and dark are two styles over
- * the same tiles (map/basemap/style.ts), swapped in place when the theme changes.
+ * the same tiles (map/basemap/style.ts), swapped in place when the theme changes. The canvas is transparent beyond
+ * the border (the cutout layer erases the tiles there), so the sky on the container behind it (map/Sky.tsx) shows
+ * around the country.
  */
 export function Basemap() {
     const map = useMap();
@@ -29,22 +31,19 @@ export function Basemap() {
         const options: BasemapOptions = {
             style: basemapStyle(initialTheme, resolveTilesBase(getEnv().tilesBase)),
             interactive: false,
+            // One world: the cutout covers one copy, and the zoom floor never shows the next one anyway.
+            renderWorldCopies: false,
+            // Multisampling smooths the cut edge along the border (the cutout erases whole samples).
+            canvasContextAttributes: { antialias: true },
         };
         const gl = maplibreGL(options);
         gl.addTo(map);
-        // The sky patterns are bitmaps computed here: both themes' images go in as soon as the style is parsed,
-        // before the first tile is built (a tile built without its pattern stays blank), and a missing one (after a
-        // full style reload) is handed over when the style asks for it.
+        // Custom layers are not part of the style document: the cutout goes in once the style is parsed (and again
+        // after a full reload; the themed restyle is a diff, which leaves it where it is).
         const glMap = gl.getMaplibreMap();
-        const addStars = (id: string) => {
-            const theme = themeOfStarImage(id);
-            if (theme && !glMap.hasImage(id)) glMap.addImage(id, starSky(theme), { pixelRatio: STAR_SKY_PIXEL_RATIO });
-        };
         glMap.on("style.load", () => {
-            addStars(starImageId("light"));
-            addStars(starImageId("dark"));
+            if (!glMap.getLayer(CUTOUT_LAYER_ID)) glMap.addLayer(cutoutLayer(), BOUNDARY_LAYER_ID);
         });
-        glMap.on("styleimagemissing", ({ id }) => addStars(id));
         layer.current = gl;
         appliedTheme.current = initialTheme;
         return () => {

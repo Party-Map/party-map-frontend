@@ -13,15 +13,16 @@ const routes: [name: string, path: string, fullPage: boolean][] = [
     ["not-found", "/this-does-not-exist", true],
 ];
 
-const HIDE_BASEMAP = ".leaflet-tile-pane { visibility: hidden; }";
+const HIDE_BASEMAP =
+    ".leaflet-tile-pane { visibility: hidden; } .leaflet-container { background-image: none !important; }";
 
 for (const [name, path, fullPage] of routes) {
     test(`@visual ${name}`, async ({ page }) => {
         await page.goto(path);
         await page.waitForLoadState("networkidle");
-        // The basemap is a WebGL canvas whose rasterisation differs between machines; hiding its pane leaves the
-        // map's background with the pins and UI visible. The seed's event times are relative to now, so the weekday
-        // labels in <time> elements drift from day to day.
+        // The basemap is a WebGL canvas whose rasterisation differs between machines; hiding its pane and the
+        // star field leaves the map's plain background with the pins and UI visible. The seed's event times are
+        // relative to now, so the weekday labels in <time> elements drift from day to day.
         await page.addStyleTag({ content: HIDE_BASEMAP });
         await expect(page).toHaveScreenshot(`${name}.png`, { fullPage, mask: [page.locator("time")] });
     });

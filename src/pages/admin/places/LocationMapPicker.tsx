@@ -8,6 +8,7 @@ import { MapContainer, Marker, useMap, useMapEvents } from "react-leaflet";
 import type { GeoPoint } from "@/api/types";
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, MAP_MAX_ZOOM } from "@/lib/constants";
 import { LazyBasemap } from "@/map/LazyBasemap";
+import { Sky } from "@/map/Sky";
 
 import styles from "./LocationMapPicker.module.scss";
 
@@ -65,6 +66,7 @@ export function LocationMapPicker({ value, onChange }: LocationMapPickerProps) {
                 attributionControl={false}
                 className={styles.map}
             >
+                <Sky />
                 <LazyBasemap />
                 <ClickHandler onPick={onChange} />
                 <RecenterOnValue value={value} />

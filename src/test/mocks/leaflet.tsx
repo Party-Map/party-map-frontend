@@ -42,7 +42,11 @@ interface FakeBounds {
 
 const listeners = new Map<string, Set<(...args: unknown[]) => void>>();
 
+/** The map's container element (`.leaflet-container`); map/Sky.tsx paints the stars on its background. */
+export const fakeContainer = document.createElement("div");
+
 export const fakeMap = {
+    getContainer: vi.fn(() => fakeContainer),
     flyTo: vi.fn(),
     flyToBounds: vi.fn(),
     setView: vi.fn(),
@@ -81,9 +85,10 @@ export const fakeMap = {
         });
         fakeMap.dragging.enable.mockClear();
         fakeMap.dragging.disable.mockClear();
+        fakeContainer.removeAttribute("style");
         fakeGlMap.setStyle.mockClear();
-        fakeGlMap.addImage.mockClear();
-        fakeGlMap.hasImage.mockClear();
+        fakeGlMap.addLayer.mockClear();
+        fakeGlMap.getLayer.mockClear();
         fakeGlMap.on.mockClear();
         glListeners.clear();
         fakeGlLayer.addTo.mockClear();
@@ -98,8 +103,8 @@ const glListeners = new Map<string, (event?: { id: string }) => void>();
 /** The MapLibre map behind the basemap layer. */
 export const fakeGlMap = {
     setStyle: vi.fn(),
-    addImage: vi.fn(),
-    hasImage: vi.fn(() => false),
+    addLayer: vi.fn(),
+    getLayer: vi.fn((_id: string): object | undefined => undefined),
     on: vi.fn((event: string, handler: (event?: { id: string }) => void) => glListeners.set(event, handler)),
     /** Test helper: trigger a MapLibre event registered through `on`. */
     fire: (event: string, payload?: { id: string }) => glListeners.get(event)?.(payload),
