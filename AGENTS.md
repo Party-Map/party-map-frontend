@@ -19,7 +19,8 @@ Every change, however small:
 ## Commands
 
 ```bash
-pnpm dev                 # :3000, proxies /api to API_URL (default http://localhost:8080)
+pnpm dev                 # :3000, proxies /api to API_URL (default http://localhost:8080) and /tiles to TILES_URL (:3001)
+docker compose up -d tiles                            # the tile server (after a one-time `--profile build run --rm tiles-build`)
 pnpm check               # all gates + build
 pnpm test:react          # watch mode; --run --coverage for the gate
 pnpm e2e                 # needs the backend stack (docker compose up in ../party-map-backend)
@@ -40,7 +41,7 @@ peer-range and build-script decisions live in `pnpm-workspace.yaml` with a comme
 | `auth/`                                      | auth, api, components, lib                            | keycloak wrapper, provider, roles, session, session-ended dialog                     |
 | `components/`                                | components, lib (+ API types)                         | shared UI and shared modules (`forms`, `typography`, `layout`, `primitives`)         |
 | `layout/`                                    | layout, api, auth, components, lib                    | app chrome, search, sign-in gates, toaster                                           |
-| `map/`                                       | map, layout, api, auth, components, lib (+ API types) | Leaflet map, pins, labels                                                            |
+| `map/`                                       | map, layout, api, auth, components, lib (+ API types) | Leaflet map, pins, labels; `Basemap` (MapLibre GL in Leaflet) and `basemap/` (style) |
 | `pages/`                                     | everything above                                      | one folder per area; `pages/admin/shared` for admin-only parts                       |
 | `main.tsx`, `app.tsx`, `routes.tsx`, `test/` | anything                                              | wiring                                                                               |
 
@@ -65,6 +66,11 @@ routes use `Component:` (the admin area is lazy-loaded). Each file opens with a 
   `bbox` (`map/geo.ts` `toBbox`) on mount and after every move, `usePlaces(bbox)` keeps the previous pins while the
   next area loads, and highlighted places outside it come from `usePlacesById`. `FitToHighlights` fits once per
   highlight set, after all of them have loaded.
+- The basemap is MapLibre GL drawing the self-hosted Hungary vector tiles inside Leaflet (`map/Basemap`, lazy through
+  `map/LazyBasemap`): `map/basemap/style.ts` builds the style from `palette.ts` (light and dark differ only in paint,
+  swapped in place with the theme), the tiles and glyphs come from `/tiles` (`PUBLIC_TILES_BASE`; Martin, see
+  `tiles/README.md`), and MapLibre's worker is emitted by `rsbuild.config.ts` under `/static/maplibre-<version>/`
+  (`map/basemap/worker.ts`). The attribution credits OpenMapTiles and OpenStreetMap.
 - `lib/geocode.ts` (Nominatim) is the only other network access; nothing else calls `fetch`.
 
 ## Auth
@@ -148,8 +154,10 @@ Token names are the app's own; the prompt's shadcn names map onto them: `--backg
 - Vitest + Testing Library + jsdom; helpers in `src/test`: `renderWithProviders` (auth, a fresh QueryClient without
   retries, toaster, memory router; `dataRouter: true` mounts a `createMemoryRouter` instead, which `useBlocker` and
   so every step form needs), `mockApi` (a table of `"METHOD /api/path"` answers; every request is recorded in
-  `fetchMock.requests` with method, URL, headers and parsed body), fixtures, and the Leaflet mock
-  (`vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reactLeafletMock))`).
+  `fetchMock.requests` with method, URL, headers and parsed body), fixtures, and the Leaflet mocks
+  (`vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reactLeafletMock))`, the same for
+  `leaflet` with `leafletMock` and for `@maplibre/maplibre-gl-leaflet` with `maplibreLeafletMock`, whose
+  `fakeGlLayer`/`fakeGlMap` spies stand in for the basemap).
 - Playwright in `e2e/`: `auth.setup.ts` signs in through Keycloak (and answers the cookie notice),
   `public.spec.ts`, `account.auth.spec.ts`, `admin.auth.spec.ts` (domains, deep-link sign-in, the whole
   plan-invite-accept-publish loop, granting a role on `roles-target@partymap.local`), `admin-phone.auth.spec.ts` and
