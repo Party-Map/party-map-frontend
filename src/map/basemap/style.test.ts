@@ -47,13 +47,10 @@ describe("basemapStyle", () => {
         }
     });
 
-    it("stacks land, water, roads, the border and labels in that order", () => {
+    it("stacks water, roads, the border and labels in that order", () => {
         expect(light.layers.map((layer) => layer.id)).toMatchInlineSnapshot(`
           [
             "background",
-            "landcover-wood",
-            "landcover-grass",
-            "park",
             "water",
             "waterway",
             "road-minor-casing",

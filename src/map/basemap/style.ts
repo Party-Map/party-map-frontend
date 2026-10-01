@@ -13,10 +13,8 @@ export const SOURCE_MAXZOOM = 14;
 export const FONT_REGULAR = ["Inter Regular"];
 export const FONT_MEDIUM = ["Inter Medium"];
 export const FONT_SEMIBOLD = ["Inter SemiBold"];
-/** The OpenMapTiles layers the style draws: land, water, roads, the border and names; no buildings, POIs or rail. */
+/** The OpenMapTiles layers the style draws: water, roads, the border and names; no landcover, buildings, POIs or rail. */
 export const SOURCE_LAYERS = [
-    "landcover",
-    "park",
     "water",
     "waterway",
     "boundary",
@@ -177,29 +175,6 @@ function placeLayer(
 function layers(p: Palette): LayerSpecification[] {
     return [
         { id: "background", type: "background", paint: { "background-color": p.background } },
-        {
-            id: "landcover-wood",
-            type: "fill",
-            source: SOURCE,
-            "source-layer": "landcover",
-            filter: classIn(["wood"]),
-            paint: { "fill-color": p.wood },
-        },
-        {
-            id: "landcover-grass",
-            type: "fill",
-            source: SOURCE,
-            "source-layer": "landcover",
-            filter: classIn(["grass", "wetland"]),
-            paint: { "fill-color": p.grass },
-        },
-        {
-            id: "park",
-            type: "fill",
-            source: SOURCE,
-            "source-layer": "park",
-            paint: { "fill-color": p.park, "fill-opacity": 0.5 },
-        },
         {
             id: "water",
             type: "fill",

@@ -72,7 +72,8 @@ routes use `Component:` (the admin area is lazy-loaded). Each file opens with a 
   `tiles/README.md`), and MapLibre's worker is emitted by `rsbuild.config.ts` under `/static/maplibre-<version>/`
   (`map/basemap/worker.ts`). The maps have no attribution control; the OpenMapTiles + OpenStreetMap credit is the
   "Map data" line of the privacy notice (`components/ConsentBanner`). The style is deliberately cartoonish and sparse:
-  landcover, parks, water, six road classes with thick outlines, the border and names; no buildings, rail or POIs.
+  plain land, water, six road classes in one colour with thick outlines, the border and names; no landcover, buildings,
+  rail or POIs.
 - `lib/geocode.ts` (Nominatim) is the only other network access; nothing else calls `fetch`.
 
 ## Auth

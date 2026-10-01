@@ -12,10 +12,6 @@ export type RoadClass = "motorway" | "trunk" | "primary" | "secondary" | "tertia
 export interface Palette {
     /** Land where nothing else is drawn; also `--map-bg` in styles/base.scss. */
     background: string;
-    wood: string;
-    grass: string;
-    /** National parks and nature reserves, drawn translucent over the landcover. */
-    park: string;
     water: string;
     waterLine: string;
     roads: Record<RoadClass, RoadColors>;
@@ -27,20 +23,17 @@ export interface Palette {
 }
 
 /**
- * A cartoon take on Apple Maps: cream land, bright blue water, fresh greens, chunky white roads with soft brown
- * outlines and golden motorways; the dark palette keeps the same hierarchy on a deep slate land.
+ * A cartoon take on Apple Maps: plain cream land, bright blue water, chunky white roads with soft brown outlines;
+ * the dark palette keeps the same hierarchy on a deep slate land.
  */
 export const PALETTES: Record<Theme, Palette> = {
     light: {
         background: "#f6efe0",
-        wood: "#b9dc9c",
-        grass: "#cfe8b0",
-        park: "#b2d98f",
         water: "#9fd3f3",
         waterLine: "#86c5ee",
         roads: {
-            motorway: { fill: "#ffd36a", casing: "#e0a93b" },
-            trunk: { fill: "#ffe08f", casing: "#dfb45a" },
+            motorway: { fill: "#ffffff", casing: "#c9bfae" },
+            trunk: { fill: "#ffffff", casing: "#c9bfae" },
             primary: { fill: "#ffffff", casing: "#c9bfae" },
             secondary: { fill: "#ffffff", casing: "#cfc6b6" },
             tertiary: { fill: "#ffffff", casing: "#d5cdbf" },
@@ -54,14 +47,11 @@ export const PALETTES: Record<Theme, Palette> = {
     },
     dark: {
         background: "#23262f",
-        wood: "#263a2e",
-        grass: "#2a3f31",
-        park: "#2f5038",
         water: "#244b78",
         waterLine: "#2f5d8f",
         roads: {
-            motorway: { fill: "#a8893c", casing: "#6d5a2a" },
-            trunk: { fill: "#8f7a3e", casing: "#5f512b" },
+            motorway: { fill: "#5a6075", casing: "#1b1e26" },
+            trunk: { fill: "#5a6075", casing: "#1b1e26" },
             primary: { fill: "#5a6075", casing: "#1b1e26" },
             secondary: { fill: "#4f5568", casing: "#1b1e26" },
             tertiary: { fill: "#464b5c", casing: "#1b1e26" },
