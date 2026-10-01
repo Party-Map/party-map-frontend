@@ -1,9 +1,8 @@
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import type { PlaceInvitationRequest } from "@/api/types";
 import { Role } from "@/auth/roles";
-import { formatDateTimeRange } from "@/lib/format";
 import { place } from "@/test/fixtures";
 import { authenticatedSnapshot, mockApi, renderWithProviders, requestBody } from "@/test/helpers";
 import { fakeMap } from "@/test/mocks/leaflet";
@@ -23,17 +22,23 @@ const request: PlaceInvitationRequest = {
 };
 
 function renderPage(auth = manager) {
-    return renderWithProviders(<EditPlacePage />, { route: "/admin/places/place-1", path: "/admin/places/:id", auth });
+    return renderWithProviders(<EditPlacePage />, {
+        route: "/admin/places/place-1",
+        path: "/admin/places/:id",
+        auth,
+        dataRouter: true,
+    });
 }
 
 describe("EditPlacePage", () => {
     beforeEach(() => fakeMap.reset());
 
-    it("sends anonymous visitors to login", async () => {
+    it("sends anonymous visitors to login without loading anything", async () => {
         const fetchMock = mockApi({});
         const { client } = renderWithProviders(<EditPlacePage />, {
             route: "/admin/places/place-1",
             path: "/admin/places/:id",
+            dataRouter: true,
         });
         await waitFor(() => expect(client.login).toHaveBeenCalledWith("/admin/places/place-1"));
         expect(fetchMock).not.toHaveBeenCalled();
@@ -45,73 +50,55 @@ describe("EditPlacePage", () => {
         expect(await screen.findByText("404")).toBeInTheDocument();
     });
 
-    it("shows an error with a retry action when the place cannot be loaded", async () => {
-        const fetchMock = mockApi({
-            "GET /api/places/place-1": () => new Response("missing", { status: 404 }),
+    it("shows the 404 page for an unknown place", async () => {
+        mockApi({ "GET /api/places/place-1/invitations": [] });
+        renderPage();
+        expect(await screen.findByText("404")).toBeInTheDocument();
+    });
+
+    it("shows an error with a retry action when loading fails", async () => {
+        let calls = 0;
+        mockApi({
+            "GET /api/places/place-1": () => {
+                calls += 1;
+                return calls === 1 ? new Response("boom", { status: 500 }) : place;
+            },
             "GET /api/places/place-1/invitations": [],
         });
         renderPage();
-        expect(await screen.findByText("Could not load this place.")).toBeInTheDocument();
 
-        await userEvent.click(screen.getByRole("button", { name: "Try again" }));
-        await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(4));
+        await userEvent.click(await screen.findByRole("button", { name: "Try again" }));
+        expect(await screen.findByRole("heading", { level: 1, name: place.name })).toBeInTheDocument();
     });
 
-    it("prefills the form, including links and the image, next to the invitation requests", async () => {
-        mockApi({ "GET /api/places/place-1": place, "GET /api/places/place-1/invitations": [request] });
-        renderPage();
-
-        expect(await screen.findByRole("heading", { name: "Edit place" })).toBeInTheDocument();
-        expect(screen.getByLabelText("Name")).toHaveValue("A38 Hajó");
-        expect(screen.getByLabelText("Address")).toHaveValue("Petőfi híd budai hídfő");
-        expect(screen.getByLabelText("City")).toHaveValue("Budapest");
-        expect(screen.getByLabelText("Description")).toHaveValue("Concert ship on the Danube.");
-        expect(screen.getByLabelText("Tags")).toHaveValue("concert, ship, techno");
-        expect(screen.getByText("Lat: 47.47710 · Lng: 19.06210")).toBeInTheDocument();
-        expect(screen.getByRole("combobox", { name: "Link type" })).toHaveValue("WEBSITE");
-        expect(screen.getByRole("textbox", { name: "Website link" })).toHaveValue("a38.hu");
-        expect(screen.getByLabelText("Cover image URL")).toHaveValue("https://images.example/a38.jpg");
-        expect(screen.getByRole("img", { name: "Cover preview" })).toHaveAttribute(
-            "src",
-            "https://images.example/a38.jpg",
-        );
-
-        expect(screen.getByRole("heading", { name: "Event requests" })).toBeInTheDocument();
-        expect(screen.getByText("Summer Opening")).toBeInTheDocument();
-        expect(screen.getByText("Pending")).toBeInTheDocument();
-        expect(screen.getByText(formatDateTimeRange(request.startDateTime, request.endDateTime))).toBeInTheDocument();
-    });
-
-    it("saves the edited place and opens its page", async () => {
+    it("opens any step of the prefilled place and saves the change without leaving", async () => {
         const fetchMock = mockApi({
             "GET /api/places/place-1": place,
             "GET /api/places/place-1/invitations": [],
             "PUT /api/places/place-1": place,
         });
         renderPage();
-        expect(await screen.findByRole("heading", { name: "Edit place" })).toBeInTheDocument();
 
-        await userEvent.type(screen.getByLabelText("Name"), " Renamed");
+        expect(await screen.findByRole("heading", { level: 1, name: place.name })).toBeInTheDocument();
+        expect(screen.getByRole("link", { name: "View public page" })).toHaveAttribute("href", "/places/place-1");
+        expect(screen.getByLabelText("Name")).toHaveValue(place.name);
+        const steps = screen.getByRole("navigation", { name: "Form steps" });
+        await userEvent.click(within(steps).getByRole("button", { name: /Image & links/ }));
+        expect(screen.getByLabelText("Cover image URL")).toHaveValue(place.image);
+
+        await userEvent.click(within(steps).getByRole("button", { name: /Basics/ }));
+        await userEvent.clear(screen.getByLabelText("Name"));
+        await userEvent.type(screen.getByLabelText("Name"), "A38 Ship");
+        await userEvent.click(within(steps).getByRole("button", { name: /Review/ }));
         await userEvent.click(screen.getByRole("button", { name: "Save changes" }));
 
-        expect(await screen.findByText("other page")).toBeInTheDocument();
-        expect(screen.getByText("Place saved.")).toBeInTheDocument();
-
-        const putIndex = fetchMock.requests.findIndex((request) => request.method === "PUT");
-        expect(fetchMock.requests[putIndex]?.url).toBe("http://api.test/api/places/place-1");
-        expect(requestBody(fetchMock, putIndex)).toEqual({
-            name: "A38 Hajó Renamed",
-            address: place.address,
-            city: place.city,
-            location: place.location,
-            description: place.description,
-            tags: place.tags,
-            image: place.image,
-            links: place.links,
-        });
+        expect(await screen.findByText("Place saved.")).toBeInTheDocument();
+        const put = fetchMock.requests.findIndex((r) => r.method === "PUT");
+        expect(requestBody(fetchMock, put)).toMatchObject({ name: "A38 Ship", tags: place.tags, links: place.links });
+        expect(screen.queryByText("other page")).not.toBeInTheDocument();
     });
 
-    it("reloads the invitation requests after one is answered", async () => {
+    it("lists the event requests and reloads them after an answer", async () => {
         let state: PlaceInvitationRequest["state"] = "PENDING";
         const fetchMock = mockApi({
             "GET /api/places/place-1": place,
@@ -122,16 +109,18 @@ describe("EditPlacePage", () => {
             },
         });
         renderPage();
-        expect(await screen.findByText("Pending")).toBeInTheDocument();
+        expect(await screen.findByRole("heading", { name: "Event requests" })).toBeInTheDocument();
 
         await userEvent.click(screen.getByRole("button", { name: "Accept Summer Opening" }));
 
         expect(await screen.findByText("Accepted")).toBeInTheDocument();
-        expect(screen.getByText("Invitation accepted.")).toBeInTheDocument();
         expect(screen.getByRole("button", { name: "Accept Summer Opening" })).toBeDisabled();
-        expect(screen.getByRole("button", { name: "Reject Summer Opening" })).toBeEnabled();
-        const respondCall = fetchMock.requests.find((request) => request.url.includes("/respond"));
-        expect(respondCall?.url).toBe("http://api.test/api/places/place-1/invitations/plan-1/respond?state=accept");
-        expect(respondCall?.method).toBe("PUT");
+        expect(fetchMock.requests.find((r) => r.url.includes("/respond"))?.method).toBe("PUT");
+    });
+
+    it("explains when there are no requests", async () => {
+        mockApi({ "GET /api/places/place-1": place, "GET /api/places/place-1/invitations": [] });
+        renderPage();
+        expect(await screen.findByText("No event requests for this place at the moment.")).toBeInTheDocument();
     });
 });

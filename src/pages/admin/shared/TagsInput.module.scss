@@ -1,0 +1,65 @@
+@use "@/styles/mixins" as *;
+
+@layer components {
+  .box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1);
+    min-height: 2.5rem;
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--input-bg);
+
+    &:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    &[data-invalid] {
+      border-color: var(--danger);
+    }
+  }
+
+  .chips {
+    display: contents;
+    list-style: none;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 2px var(--space-1) 2px var(--space-2);
+    border-radius: var(--radius-full);
+    background: var(--accent-soft);
+    color: var(--fg);
+    font-size: var(--text-13);
+  }
+
+  .remove {
+    display: inline-grid;
+    place-items: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: var(--radius-full);
+    color: var(--fg-muted);
+
+    &:hover {
+      background: var(--surface-hover);
+      color: var(--fg);
+    }
+  }
+
+  .input {
+    flex: 1;
+    min-width: 8rem;
+    min-height: 1.75rem;
+    border: 0;
+    background: transparent;
+    color: var(--fg);
+    font-size: var(--text-15);
+    outline: 0;
+  }
+}

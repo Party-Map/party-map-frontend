@@ -42,6 +42,15 @@
     box-shadow: 0 0 0 2px var(--accent);
   }
 
+  // A field with a validation message keeps a red edge, also while focused.
+  .control[aria-invalid="true"] {
+    border-color: var(--danger);
+  }
+
+  .control[aria-invalid="true"]:focus {
+    box-shadow: 0 0 0 2px var(--danger);
+  }
+
   .control:disabled {
     opacity: 0.6;
   }

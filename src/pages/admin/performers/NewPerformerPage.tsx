@@ -5,23 +5,33 @@ import type { PerformerPayload } from "@/api/types";
 import { Role } from "@/auth/roles";
 import { toast } from "@/lib/toast";
 import { RequireRole } from "@/pages/admin/RequireRole";
+import { AdminPage } from "@/pages/admin/shell/AdminPage";
 
-import { PerformerForm } from "./PerformerForm";
+import { PerformerStepForm } from "./PerformerStepForm";
 
-/** /admin/performers/new: create a performer, then open its public page. */
+/** /admin/performers/new: a new performer, step by step; afterwards its admin page opens. */
 export function NewPerformerPage() {
     const navigate = useNavigate();
     const create = useCreatePerformer();
 
-    const handleSubmit = async (payload: PerformerPayload) => {
+    const submit = async (payload: PerformerPayload) => {
         const created = await create.mutateAsync(payload);
         toast.success("Performer created.");
-        void navigate(`/performers/${created.id}`);
+        void navigate(`/admin/performers/${created.id}`);
     };
 
     return (
         <RequireRole role={Role.PERFORMER_MANAGER}>
-            <PerformerForm title="Create a new performer" submitLabel="Create performer" onSubmit={handleSubmit} />
+            <AdminPage
+                title="New performer"
+                breadcrumbs={[
+                    { label: "Performers", to: "/admin/performers" },
+                    { label: "My performers", to: "/admin/performers/list" },
+                    { label: "New performer" },
+                ]}
+            >
+                <PerformerStepForm mode="create" onSubmit={submit} cancelTo="/admin/performers/list" />
+            </AdminPage>
         </RequireRole>
     );
 }

@@ -18,7 +18,28 @@ const reverseAnswer = {
 };
 
 function renderPage(auth = manager) {
-    return renderWithProviders(<NewPlacePage />, { route: "/admin/places/new", path: "/admin/places/new", auth });
+    return renderWithProviders(<NewPlacePage />, {
+        route: "/admin/places/new",
+        path: "/admin/places/new",
+        auth,
+        dataRouter: true,
+    });
+}
+
+const next = () => userEvent.click(screen.getByRole("button", { name: "Next" }));
+
+async function fillBasicsAndPin() {
+    await userEvent.type(await screen.findByLabelText("Name"), "  New Bar ");
+    await userEvent.type(screen.getByLabelText("Description"), "Cheap drinks.");
+    await userEvent.type(screen.getByLabelText("Tags"), "bar{Enter}terrace,");
+    await next();
+    await screen.findByRole("heading", { name: "Location" });
+    act(() => {
+        reactLeafletMock.fireMapEvent("click", { latlng: { lat: 47.5, lng: 19.05 } });
+    });
+    expect(await screen.findByDisplayValue("Váci utca 5")).toBeInTheDocument();
+    expect(screen.getByLabelText("City")).toHaveValue("Budapest");
+    expect(screen.getByText("Lat 47.50000 · Lng 19.05000")).toBeInTheDocument();
 }
 
 describe("NewPlacePage", () => {
@@ -28,6 +49,7 @@ describe("NewPlacePage", () => {
         const { client } = renderWithProviders(<NewPlacePage />, {
             route: "/admin/places/new",
             path: "/admin/places/new",
+            dataRouter: true,
         });
         await waitFor(() => expect(client.login).toHaveBeenCalledWith("/admin/places/new"));
     });
@@ -37,34 +59,44 @@ describe("NewPlacePage", () => {
         expect(await screen.findByText("404")).toBeInTheDocument();
     });
 
-    it("creates the place from the form and opens its page", async () => {
+    it("needs a name before the location, and a pin before the image", async () => {
+        mockApi({});
+        renderPage();
+        expect(await screen.findByRole("heading", { level: 1, name: "New place" })).toBeInTheDocument();
+
+        await next();
+        expect(await screen.findByText("Name is required.")).toBeInTheDocument();
+
+        await userEvent.type(screen.getByLabelText("Name"), "Bar");
+        await next();
+        await userEvent.type(await screen.findByLabelText("City"), "Budapest");
+        await next();
+        expect(await screen.findByText("Pick the place on the map.")).toBeInTheDocument();
+        expect(screen.getByRole("heading", { name: "Location" })).toBeInTheDocument();
+    });
+
+    it("creates the place through every step and opens its admin page", async () => {
         const fetchMock = mockApi({
             "GET /reverse": reverseAnswer,
             "POST /api/places": { ...place, id: "place-9" },
         });
         renderPage();
-        expect(await screen.findByRole("heading", { name: "Create a new place" })).toBeInTheDocument();
 
-        await userEvent.type(screen.getByLabelText("Name"), "  New Bar ");
-        act(() => {
-            reactLeafletMock.fireMapEvent("click", { latlng: { lat: 47.5, lng: 19.05 } });
-        });
-        expect(await screen.findByDisplayValue("Váci utca 5")).toBeInTheDocument();
-        expect(screen.getByLabelText("City")).toHaveValue("Budapest");
-        expect(screen.getByText("Lat: 47.50000 · Lng: 19.05000")).toBeInTheDocument();
-
-        await userEvent.type(screen.getByLabelText("Description"), "Cheap drinks.");
-        await userEvent.type(screen.getByLabelText("Tags"), " bar , terrace,, ");
+        await fillBasicsAndPin();
+        await next();
+        await userEvent.type(await screen.findByLabelText("Cover image URL"), "https://images.example/bar.jpg");
         await userEvent.click(screen.getByRole("button", { name: "+ Add link" }));
         await userEvent.type(screen.getByRole("textbox", { name: "Instagram link" }), "newbar");
-        await userEvent.type(screen.getByLabelText("Cover image URL"), "https://images.example/bar.jpg");
+        await userEvent.click(screen.getByRole("button", { name: "Continue to review" }));
+
+        expect(await screen.findByText("bar, terrace")).toBeInTheDocument();
+        expect(screen.getByText("47.50000, 19.05000")).toBeInTheDocument();
+        expect(screen.getByText("Instagram")).toBeInTheDocument();
         await userEvent.click(screen.getByRole("button", { name: "Create place" }));
 
         expect(await screen.findByText("other page")).toBeInTheDocument();
         expect(screen.getByText("Place created.")).toBeInTheDocument();
-
         const postIndex = fetchMock.requests.findIndex((request) => request.method === "POST");
-        expect(fetchMock.requests[postIndex]?.url).toBe("http://api.test/api/places");
         expect(requestBody(fetchMock, postIndex)).toEqual({
             name: "New Bar",
             address: "Váci utca 5",
@@ -77,23 +109,35 @@ describe("NewPlacePage", () => {
         });
     });
 
-    it("keeps the form with an error when the backend rejects the place", async () => {
-        mockApi({
-            "GET /reverse": reverseAnswer,
-            "POST /api/places": () => new Response("bad request", { status: 400 }),
-        });
+    it("keeps the pin and lets the address be typed when reverse geocoding fails", async () => {
+        mockApi({ "GET /reverse": () => new Response("down", { status: 503 }) });
         renderPage();
-        expect(await screen.findByRole("heading", { name: "Create a new place" })).toBeInTheDocument();
+        await userEvent.type(await screen.findByLabelText("Name"), "Bar");
+        await next();
+        await screen.findByRole("heading", { name: "Location" });
 
-        await userEvent.type(screen.getByLabelText("Name"), "New Bar");
         act(() => {
             reactLeafletMock.fireMapEvent("click", { latlng: { lat: 47.5, lng: 19.05 } });
         });
-        expect(await screen.findByDisplayValue("Budapest")).toBeInTheDocument();
-        await userEvent.click(screen.getByRole("button", { name: "Create place" }));
 
-        expect(await screen.findByRole("alert")).toHaveTextContent("Could not save place. Please try again.");
-        expect(screen.getByRole("heading", { name: "Create a new place" })).toBeInTheDocument();
+        expect(await screen.findByText("Lat 47.50000 · Lng 19.05000")).toBeInTheDocument();
+        expect(screen.getByLabelText("City")).toHaveValue("");
+    });
+
+    it("stays on the review with the backend's reason when the place is rejected", async () => {
+        mockApi({
+            "GET /reverse": reverseAnswer,
+            "POST /api/places": () =>
+                Response.json({ status: 400, detail: "Some fields are invalid." }, { status: 400 }),
+        });
+        renderPage();
+        await fillBasicsAndPin();
+        await next();
+        await userEvent.click(await screen.findByRole("button", { name: "Continue to review" }));
+
+        await userEvent.click(await screen.findByRole("button", { name: "Create place" }));
+
+        expect(await screen.findByText("Some fields are invalid.")).toBeInTheDocument();
         expect(screen.queryByText("Place created.")).not.toBeInTheDocument();
     });
 });

@@ -1,18 +1,23 @@
-import { useNavigate, useParams } from "react-router";
+import { ExternalLink } from "lucide-react";
+import { useParams } from "react-router";
 
+import { ApiError } from "@/api/client";
 import { usePlace, usePlaceInvitations, useRespondToPlaceInvitation, useUpdatePlace } from "@/api/hooks";
 import type { PlacePayload } from "@/api/types";
 import { Role } from "@/auth/roles";
+import { ButtonLink } from "@/components/Button";
 import { ErrorState, LoadingState } from "@/components/States";
 import { toast } from "@/lib/toast";
 import { RequireRole } from "@/pages/admin/RequireRole";
-import styles from "@/pages/admin/shared/admin.module.scss";
+import overview from "@/pages/admin/shared/overview.module.scss";
 import { RequestList } from "@/pages/admin/shared/RequestList";
 import { fromPlaceRequest, sortRequests } from "@/pages/admin/shared/requests";
+import { AdminPage } from "@/pages/admin/shell/AdminPage";
+import { NotFoundPage } from "@/pages/NotFoundPage";
 
-import { PlaceForm } from "./PlaceForm";
+import { PlaceStepForm } from "./PlaceStepForm";
 
-/** /admin/places/:id: edit a place and answer the event invitations it received. */
+/** /admin/places/:id: edit a place (any step) and answer the event requests it received. */
 export function EditPlacePage() {
     return (
         <RequireRole role={Role.PLACE_MANAGER}>
@@ -21,15 +26,14 @@ export function EditPlacePage() {
     );
 }
 
-/** Loads only once the role guard has let the user through. */
 function PlaceEditor() {
     const id = useParams<"id">().id ?? "";
-    const navigate = useNavigate();
     const place = usePlace(id);
     const invitations = usePlaceInvitations(id);
     const save = useUpdatePlace(id);
     const respond = useRespondToPlaceInvitation();
 
+    if (place.error instanceof ApiError && place.error.status === 404) return <NotFoundPage />;
     if (place.isPending || invitations.isPending) return <LoadingState />;
     if (!place.data || !invitations.data) {
         const reload = () => {
@@ -39,22 +43,30 @@ function PlaceEditor() {
         return <ErrorState message="Could not load this place." onRetry={reload} />;
     }
 
-    const handleSubmit = async (payload: PlacePayload) => {
-        const updated = await save.mutateAsync(payload);
+    const submit = async (payload: PlacePayload) => {
+        await save.mutateAsync(payload);
         toast.success("Place saved.");
-        void navigate(`/places/${updated.id}`);
     };
 
     return (
-        <div className={styles.detail}>
-            <PlaceForm
-                title="Edit place"
-                submitLabel="Save changes"
-                initialValues={place.data}
-                onSubmit={handleSubmit}
-            />
-            <section className={styles.panel} aria-labelledby="place-requests">
-                <h2 id="place-requests" className={styles.panelTitle}>
+        <AdminPage
+            title={place.data.name}
+            description={[place.data.address, place.data.city].filter(Boolean).join(", ")}
+            breadcrumbs={[
+                { label: "Places", to: "/admin/places" },
+                { label: "My places", to: "/admin/places/list" },
+                { label: place.data.name },
+            ]}
+            actions={
+                <ButtonLink to={`/places/${id}`} variant="secondary">
+                    <ExternalLink size={16} aria-hidden />
+                    View public page
+                </ButtonLink>
+            }
+        >
+            <PlaceStepForm mode="edit" initial={place.data} onSubmit={submit} cancelTo="/admin/places/list" />
+            <section className={overview.section} aria-labelledby="place-requests">
+                <h2 id="place-requests" className={overview.sectionTitle}>
                     Event requests
                 </h2>
                 <RequestList
@@ -65,6 +77,6 @@ function PlaceEditor() {
                     empty="No event requests for this place at the moment."
                 />
             </section>
-        </div>
+        </AdminPage>
     );
 }

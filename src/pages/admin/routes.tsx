@@ -41,6 +41,7 @@ export const adminRoutes: RouteObject = {
         { path: "events/plans", lazy: page(() => import("./events/EventPlansPage"), "EventPlansPage") },
         { path: "events/plans/new", lazy: page(() => import("./events/NewEventPlanPage"), "NewEventPlanPage") },
         { path: "events/plans/:id", lazy: page(() => import("./events/EventPlanPage"), "EventPlanPage") },
+        { path: "events/plans/:id/edit", lazy: page(() => import("./events/EditEventPlanPage"), "EditEventPlanPage") },
         { path: "events/live", lazy: page(() => import("./events/LiveEventsPage"), "LiveEventsPage") },
 
         { path: "platform", element: <Navigate to="/admin/platform/users" replace /> },

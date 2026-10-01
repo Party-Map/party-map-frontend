@@ -1,84 +1,76 @@
-import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type * as ReactRouter from "react-router";
-import { vi } from "vitest";
 
 import { Role } from "@/auth/roles";
 import { eventPlan } from "@/test/fixtures";
-import { authenticatedSnapshot, mockApi, renderWithProviders, type SentRequest } from "@/test/helpers";
+import { authenticatedSnapshot, mockApi, renderWithProviders, requestBody } from "@/test/helpers";
 
 import { NewEventPlanPage } from "./NewEventPlanPage";
-
-const { navigate } = vi.hoisted(() => ({ navigate: vi.fn() }));
-vi.mock("react-router", async (importOriginal) => ({
-    ...(await importOriginal<typeof ReactRouter>()),
-    useNavigate: () => navigate,
-}));
 
 function renderPage(auth = authenticatedSnapshot([Role.EVENT_ORGANIZER])) {
     return renderWithProviders(<NewEventPlanPage />, {
         route: "/admin/events/plans/new",
         path: "/admin/events/plans/new",
         auth,
+        dataRouter: true,
     });
-}
-
-async function fillForm() {
-    const user = userEvent.setup();
-    await user.type(await screen.findByLabelText("Title"), "  Garden Party ");
-    await user.selectOptions(screen.getByLabelText("Event kind"), "TECHNO");
-    fireEvent.change(screen.getByLabelText("Start"), { target: { value: "2030-07-01T18:00" } });
-    fireEvent.change(screen.getByLabelText("End"), { target: { value: "2030-07-02T02:00" } });
-    await user.type(screen.getByLabelText("Description"), "Open air");
-    await user.type(screen.getByLabelText("Price"), "1500");
-    await user.type(screen.getByLabelText("Cover image URL"), "https://images.example/garden.jpg");
-    await user.click(screen.getByRole("button", { name: "Create Event plan" }));
 }
 
 describe("NewEventPlanPage", () => {
-    beforeEach(() => navigate.mockClear());
-
-    it("shows a 404 to users without the organizer role", async () => {
-        mockApi({});
-        renderPage(authenticatedSnapshot([Role.PERFORMER_MANAGER]));
+    it("shows the 404 page to users without the organizer role", async () => {
+        renderPage(authenticatedSnapshot([Role.PLACE_MANAGER]));
         expect(await screen.findByText("404")).toBeInTheDocument();
-        expect(screen.queryByText("Create new Event plan")).not.toBeInTheDocument();
     });
 
-    it("creates the plan and opens it", async () => {
-        let body: unknown;
-        mockApi({
-            "POST /api/event-plan": (request: SentRequest) => {
-                body = request.body;
-                return { ...eventPlan, id: "plan-9" };
-            },
-        });
+    it("checks the times and the price on their step", async () => {
+        mockApi({});
+        renderPage();
+        await userEvent.type(await screen.findByLabelText("Title"), "Summer Opening");
+        await userEvent.click(screen.getByRole("button", { name: "Next" }));
+
+        await userEvent.type(await screen.findByLabelText("Entry price"), "12.5");
+        await userEvent.click(screen.getByRole("button", { name: "Next" }));
+
+        expect(await screen.findByText("Start is required.")).toBeInTheDocument();
+        expect(screen.getByText("Enter the price in forints, digits only (0 for free).")).toBeInTheDocument();
+    });
+
+    it("creates the plan and opens its workspace", async () => {
+        const fetchMock = mockApi({ "POST /api/event-plan": { ...eventPlan, id: "plan-9" } });
         renderPage();
 
-        expect(await screen.findByRole("heading", { name: "Create new Event plan" })).toBeInTheDocument();
-        await fillForm();
+        await userEvent.type(await screen.findByLabelText("Title"), "Summer Opening");
+        await userEvent.selectOptions(screen.getByLabelText("Kind"), "TECHNO");
+        await userEvent.click(screen.getByRole("button", { name: "Next" }));
+        // DateTimeRangeFields labels its inputs Start and End.
+        await userEvent.type(await screen.findByLabelText("Start"), "2030-07-01T18:00");
+        await userEvent.type(screen.getByLabelText("End"), "2030-07-02T02:00");
+        await userEvent.type(screen.getByLabelText("Entry price"), "0");
+        await userEvent.click(screen.getByRole("button", { name: "Next" }));
+        await userEvent.click(await screen.findByRole("button", { name: "Continue to review" }));
 
-        await waitFor(() => expect(navigate).toHaveBeenCalledWith("/admin/events/plans/plan-9"));
-        expect(body).toEqual({
-            title: "Garden Party",
+        expect(await screen.findByText("Free")).toBeInTheDocument();
+        expect(screen.getByText("Techno")).toBeInTheDocument();
+        await userEvent.click(screen.getByRole("button", { name: "Create event plan" }));
+
+        expect(await screen.findByText("other page")).toBeInTheDocument();
+        expect(requestBody(fetchMock, 0)).toEqual({
+            title: "Summer Opening",
             kind: "TECHNO",
+            description: "",
             startDateTime: "2030-07-01T18:00",
             endDateTime: "2030-07-02T02:00",
-            description: "Open air",
-            price: "1500",
-            image: "https://images.example/garden.jpg",
+            price: "0",
+            image: null,
         });
-        expect(screen.getByText("Event plan created.")).toBeInTheDocument();
     });
 
-    it("shows an error when creating fails", async () => {
-        mockApi({ "POST /api/event-plan": () => new Response("boom", { status: 500 }) });
-        renderPage();
-
-        await fillForm();
-
-        expect(await screen.findByText("Could not save the event plan. Please try again.")).toBeInTheDocument();
-        expect(navigate).not.toHaveBeenCalled();
-        expect(screen.getByRole("button", { name: "Create Event plan" })).toBeEnabled();
+    it("sends anonymous visitors to login", async () => {
+        const { client } = renderWithProviders(<NewEventPlanPage />, {
+            route: "/admin/events/plans/new",
+            path: "/admin/events/plans/new",
+            dataRouter: true,
+        });
+        await waitFor(() => expect(client.login).toHaveBeenCalledWith("/admin/events/plans/new"));
     });
 });

@@ -1,0 +1,276 @@
+@use "@/styles/mixins" as *;
+
+@layer components {
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: start;
+  }
+
+  @include desktop {
+    .layout {
+      grid-template-columns: 14rem minmax(0, 1fr);
+      gap: var(--space-6);
+    }
+  }
+
+  // Step indicator: a progress line with "Step 2 of 4" on phones, a numbered list on desktop.
+  .indicator {
+    min-width: 0;
+  }
+
+  .position {
+    margin-bottom: var(--space-2);
+    color: var(--fg-muted);
+    font-size: var(--text-14);
+    font-weight: 500;
+  }
+
+  .progress {
+    height: 4px;
+    overflow: hidden;
+    border-radius: var(--radius-full);
+    background: var(--border);
+
+    span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--accent);
+      transition: width var(--duration-base) var(--ease);
+    }
+  }
+
+  .steps {
+    display: none;
+    padding: 0;
+    list-style: none;
+  }
+
+  @include desktop {
+    .position,
+    .progress {
+      display: none;
+    }
+
+    .steps {
+      position: sticky;
+      top: calc(var(--admin-header-h) + var(--space-8));
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    min-height: 2.5rem;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    color: var(--fg-muted);
+    font-size: var(--text-14);
+    font-weight: 500;
+    text-align: start;
+    transition: background-color var(--duration-fast) var(--ease);
+
+    &:hover:not(:disabled) {
+      background: var(--surface-hover);
+    }
+
+    &:disabled {
+      color: var(--fg-subtle);
+      cursor: not-allowed;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: -2px;
+    }
+
+    &[data-state="current"] {
+      background: var(--surface-solid);
+      color: var(--fg);
+      box-shadow: var(--shadow-sm);
+    }
+  }
+
+  .marker {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-full);
+    background: var(--surface-solid);
+    font-size: var(--text-12);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+
+    [data-state="current"] > & {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: var(--accent-fg);
+    }
+
+    [data-state="done"] > & {
+      border-color: var(--success);
+      background: fade(success, 12%);
+      color: var(--success);
+    }
+
+    [data-state="invalid"] > & {
+      border-color: var(--danger);
+      background: fade(danger, 12%);
+      color: var(--danger);
+    }
+  }
+
+  .step-title {
+    min-width: 0;
+  }
+
+  // The current step's card.
+  .panel {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface-solid);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .panel-head {
+    padding: var(--space-4) var(--space-4) 0;
+  }
+
+  @include from-md {
+    .panel-head {
+      padding: var(--space-6) var(--space-6) 0;
+    }
+  }
+
+  .panel-position {
+    color: var(--fg-subtle);
+    font-size: var(--text-12);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .panel-title {
+    font-size: var(--text-20);
+    font-weight: 700;
+  }
+
+  .panel-description {
+    margin-top: var(--space-1);
+    color: var(--fg-muted);
+    font-size: var(--text-14);
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-5) var(--space-4);
+  }
+
+  @include from-md {
+    .body {
+      padding: var(--space-6);
+    }
+  }
+
+  .fields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border-top: 1px solid var(--border);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    background: var(--surface-2);
+  }
+
+  @include from-md {
+    .actions {
+      padding: var(--space-4) var(--space-6);
+    }
+  }
+
+  .cancel {
+    margin-right: auto;
+  }
+
+  // Review step.
+  .review {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .review-group + .review-group {
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border);
+  }
+
+  .review-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  .review-title {
+    font-size: var(--text-15);
+    font-weight: 600;
+  }
+
+  .review-invalid {
+    color: var(--danger);
+    font-weight: 500;
+  }
+
+  .review-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+  }
+
+  .review-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+    font-size: var(--text-14);
+
+    dt {
+      color: var(--fg-subtle);
+    }
+
+    dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+      white-space: pre-line;
+    }
+  }
+
+  @include from-sm {
+    .review-row {
+      grid-template-columns: 10rem minmax(0, 1fr);
+      gap: var(--space-4);
+    }
+  }
+}

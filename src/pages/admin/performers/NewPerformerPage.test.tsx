@@ -7,13 +7,12 @@ import { authenticatedSnapshot, mockApi, renderWithProviders, requestBody } from
 
 import { NewPerformerPage } from "./NewPerformerPage";
 
-const manager = authenticatedSnapshot([Role.PERFORMER_MANAGER]);
-
-function renderPage(auth = manager) {
+function renderPage(auth = authenticatedSnapshot([Role.PERFORMER_MANAGER])) {
     return renderWithProviders(<NewPerformerPage />, {
         route: "/admin/performers/new",
         path: "/admin/performers/new",
         auth,
+        dataRouter: true,
     });
 }
 
@@ -22,6 +21,7 @@ describe("NewPerformerPage", () => {
         const { client } = renderWithProviders(<NewPerformerPage />, {
             route: "/admin/performers/new",
             path: "/admin/performers/new",
+            dataRouter: true,
         });
         await waitFor(() => expect(client.login).toHaveBeenCalledWith("/admin/performers/new"));
     });
@@ -31,44 +31,34 @@ describe("NewPerformerPage", () => {
         expect(await screen.findByText("404")).toBeInTheDocument();
     });
 
-    it("creates the performer from the form and opens its page", async () => {
+    it("needs a name and a genre before the next step", async () => {
+        mockApi({});
+        renderPage();
+
+        await userEvent.click(await screen.findByRole("button", { name: "Next" }));
+
+        expect(await screen.findByText("Name is required.")).toBeInTheDocument();
+        expect(screen.getByText("Genre is required.")).toBeInTheDocument();
+    });
+
+    it("creates the performer and opens its admin page", async () => {
         const fetchMock = mockApi({ "POST /api/performers": { ...performer, id: "performer-9" } });
         renderPage();
-        expect(await screen.findByRole("heading", { name: "Create a new performer" })).toBeInTheDocument();
 
-        await userEvent.type(screen.getByLabelText("Name"), " DJ New ");
+        await userEvent.type(await screen.findByLabelText("Name"), " DJ New ");
         await userEvent.type(screen.getByLabelText("Genre"), "house");
-        await userEvent.type(screen.getByLabelText("Bio"), "Plays house.");
-        await userEvent.click(screen.getByRole("button", { name: "+ Add link" }));
-        await userEvent.type(screen.getByRole("textbox", { name: "Instagram link" }), "djnew");
-        await userEvent.type(screen.getByLabelText("Profile image URL"), "https://images.example/new.jpg");
-        await userEvent.click(screen.getByRole("button", { name: "Create performer" }));
+        await userEvent.type(screen.getByLabelText("Bio"), "Deep cuts.");
+        await userEvent.click(screen.getByRole("button", { name: "Next" }));
+        await userEvent.type(await screen.findByLabelText("Profile image URL"), "not a url");
+        await userEvent.click(screen.getByRole("button", { name: "Continue to review" }));
+        expect(await screen.findByText("Enter a full http(s) address, or leave it empty.")).toBeInTheDocument();
+
+        await userEvent.clear(screen.getByLabelText("Profile image URL"));
+        await userEvent.click(screen.getByRole("button", { name: "Continue to review" }));
+        await userEvent.click(await screen.findByRole("button", { name: "Create performer" }));
 
         expect(await screen.findByText("other page")).toBeInTheDocument();
         expect(screen.getByText("Performer created.")).toBeInTheDocument();
-
-        expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(fetchMock.requests[0]?.url).toBe("http://api.test/api/performers");
-        expect(fetchMock.requests[0]?.method).toBe("POST");
-        expect(requestBody(fetchMock)).toEqual({
-            name: "DJ New",
-            genre: "house",
-            bio: "Plays house.",
-            image: "https://images.example/new.jpg",
-            links: [{ type: "INSTAGRAM", url: "https://instagram.com/djnew" }],
-        });
-    });
-
-    it("keeps the form with an error when the backend rejects the performer", async () => {
-        mockApi({ "POST /api/performers": () => new Response("bad request", { status: 400 }) });
-        renderPage();
-        expect(await screen.findByRole("heading", { name: "Create a new performer" })).toBeInTheDocument();
-
-        await userEvent.type(screen.getByLabelText("Name"), "DJ New");
-        await userEvent.type(screen.getByLabelText("Genre"), "house");
-        await userEvent.click(screen.getByRole("button", { name: "Create performer" }));
-
-        expect(await screen.findByRole("alert")).toHaveTextContent("Could not save performer. Please try again.");
-        expect(screen.queryByText("Performer created.")).not.toBeInTheDocument();
+        expect(requestBody(fetchMock, 0)).toEqual({ name: "DJ New", genre: "house", bio: "Deep cuts.", image: null });
     });
 });

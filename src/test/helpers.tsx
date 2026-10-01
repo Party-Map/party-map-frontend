@@ -1,7 +1,8 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, type RenderOptions, type RenderResult } from "@testing-library/react";
 import { type ReactElement, type ReactNode, useState } from "react";
-import { MemoryRouter, Route, Routes } from "react-router";
+import { createMemoryRouter, MemoryRouter, Route, Routes } from "react-router";
+import { RouterProvider } from "react-router/dom";
 import { type Mock, vi } from "vitest";
 
 import type { AuthClient, AuthSnapshot } from "@/auth/keycloak";
@@ -56,6 +57,11 @@ interface ProviderOptions {
     authPending?: boolean;
     client?: MockAuthClient;
     queryClient?: QueryClient;
+    /**
+     * Mount on a data router (createMemoryRouter) instead of MemoryRouter: needed by `useBlocker`. Other paths render
+     * "other page", like the default router.
+     */
+    dataRouter?: boolean;
 }
 
 /** A fresh cache per test; failures surface at once instead of being retried. */
@@ -71,20 +77,36 @@ export function AppProviders({
     authPending = false,
     client,
     queryClient,
+    dataRouter = false,
 }: ProviderOptions & { children: ReactNode }) {
     const authClient = client ?? createMockAuthClient(auth, { pending: authPending });
     const [cache] = useState(() => queryClient ?? createTestQueryClient());
+    const [router] = useState(() =>
+        dataRouter
+            ? createMemoryRouter(
+                  [
+                      { path, element: children },
+                      { path: "*", element: <p>other page</p> },
+                  ],
+                  { initialEntries: [route] },
+              )
+            : null,
+    );
     return (
         <>
             <AuthProvider client={authClient}>
                 <QueryClientProvider client={cache}>
                     <HighlightProvider>
-                        <MemoryRouter initialEntries={[route]}>
-                            <Routes>
-                                <Route path={path} element={children} />
-                                <Route path="*" element={<p>other page</p>} />
-                            </Routes>
-                        </MemoryRouter>
+                        {router ? (
+                            <RouterProvider router={router} />
+                        ) : (
+                            <MemoryRouter initialEntries={[route]}>
+                                <Routes>
+                                    <Route path={path} element={children} />
+                                    <Route path="*" element={<p>other page</p>} />
+                                </Routes>
+                            </MemoryRouter>
+                        )}
                     </HighlightProvider>
                 </QueryClientProvider>
             </AuthProvider>
@@ -98,7 +120,16 @@ export function renderWithProviders(
     ui: ReactElement,
     options: ProviderOptions & Omit<RenderOptions, "wrapper"> = {},
 ): RenderResult & { client: MockAuthClient; queryClient: QueryClient } {
-    const { route, path, auth, authPending, client: givenClient, queryClient: givenCache, ...renderOptions } = options;
+    const {
+        route,
+        path,
+        auth,
+        authPending,
+        client: givenClient,
+        queryClient: givenCache,
+        dataRouter,
+        ...renderOptions
+    } = options;
     const client = givenClient ?? createMockAuthClient(auth ?? ANONYMOUS, { pending: authPending ?? false });
     const queryClient = givenCache ?? createTestQueryClient();
     const result = render(ui, {
@@ -109,6 +140,7 @@ export function renderWithProviders(
                 queryClient={queryClient}
                 {...(route !== undefined ? { route } : {})}
                 {...(path !== undefined ? { path } : {})}
+                {...(dataRouter !== undefined ? { dataRouter } : {})}
             >
                 {children}
             </AppProviders>
