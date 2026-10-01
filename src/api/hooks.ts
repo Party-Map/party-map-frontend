@@ -381,17 +381,21 @@ export function useInvitePlace(planId: ID) {
     });
 }
 
-// The lineup editor keeps its rows (sent or not) as local state while it is open, so these two do not refetch the
-// lineup: a refetch would remount the editor and drop the rows not sent yet. It reloads the next time it opens.
+/** Invites a performer; the plan's lineup and the plan itself reload, so the workspace's checklist follows. */
 export function useAddLineupInvitation(planId: ID) {
+    const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (payload: LineupInvitationPayload) => addLineupInvitation(planId, payload),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: eventPlanKeys.lineup(planId) }),
     });
 }
 
+/** Withdraws a performer's invitation; the lineup reloads. */
 export function useDeleteLineupInvitation(planId: ID) {
+    const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (performerId: ID) => deleteLineupInvitation(planId, performerId),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: eventPlanKeys.lineup(planId) }),
     });
 }
 

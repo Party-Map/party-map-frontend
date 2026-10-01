@@ -1,0 +1,80 @@
+@use "@/styles/mixins" as *;
+
+@layer parts {
+  // Phones: what is missing first, then the work (venue, lineup), then the details. Desktop: the work on the
+  // left, the checklist and the details on the right.
+  .grid {
+    display: grid;
+    grid-template-areas:
+      "checklist"
+      "main"
+      "details";
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: start;
+  }
+
+  @include desktop {
+    .grid {
+      grid-template-areas:
+        "main checklist"
+        "main details";
+      grid-template-columns: minmax(0, 1fr) 22rem;
+
+      // The checklist row hugs its card; the details row takes the rest of the work column's height.
+      grid-auto-rows: min-content 1fr;
+      gap: var(--space-6);
+    }
+  }
+
+  .checklist {
+    grid-area: checklist;
+  }
+
+  .details {
+    grid-area: details;
+  }
+
+  .main {
+    display: flex;
+    flex-direction: column;
+    grid-area: main;
+    gap: var(--space-4);
+    min-width: 0;
+  }
+
+  .kind {
+    align-self: flex-start;
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: var(--space-2) var(--space-3);
+    align-items: center;
+    font-size: var(--text-14);
+
+    dt {
+      color: var(--fg-subtle);
+    }
+
+    dd {
+      margin: 0;
+    }
+  }
+
+  .description {
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--fg-muted);
+    font-size: var(--text-14);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    white-space: pre-line;
+  }
+
+  .links {
+    color: var(--fg-subtle);
+    font-size: var(--text-13);
+  }
+}

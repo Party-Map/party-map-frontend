@@ -1,0 +1,71 @@
+@use "@/styles/mixins" as *;
+
+@layer parts {
+  .current {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+  }
+
+  .icon {
+    flex: none;
+    margin-top: 2px;
+    color: var(--accent);
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: 600;
+  }
+
+  .address,
+  .state {
+    color: var(--fg-muted);
+    font-size: var(--text-14);
+  }
+
+  .collapsible {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .trigger {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: var(--space-1);
+    color: var(--link);
+    font-size: var(--text-14);
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &[data-panel-open] .chevron {
+      rotate: 90deg;
+    }
+  }
+
+  .chevron {
+    transition: rotate var(--duration-fast) var(--ease);
+  }
+
+  .panel[hidden] {
+    display: none;
+  }
+}
