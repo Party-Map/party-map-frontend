@@ -3,7 +3,8 @@ import userEvent from "@testing-library/user-event";
 import { Route, Routes } from "react-router";
 
 import { Role } from "@/auth/roles";
-import { ANONYMOUS, authenticatedSnapshot, renderWithProviders } from "@/test/helpers";
+import { place, place2 } from "@/test/fixtures";
+import { ANONYMOUS, authenticatedSnapshot, mockApi, renderWithProviders } from "@/test/helpers";
 
 import { AdminShell } from "./AdminShell";
 
@@ -15,6 +16,8 @@ function renderShell(route: string, roles: Role[] | null, options: { authPending
                 <Route path="places/list" element={<p>places list</p>} />
                 <Route path="events" element={<p>events overview</p>} />
                 <Route path="events/plans/:id" element={<p>plan workspace</p>} />
+                <Route path="places/:id" element={<p>place home</p>} />
+                <Route path="places/:id/requests" element={<p>place requests</p>} />
             </Route>
             <Route path="/" element={<p>the map</p>} />
         </Routes>,
@@ -120,5 +123,84 @@ describe("AdminShell", () => {
         expect(screen.getByText("Places")).toBeInTheDocument();
         const nav = screen.getByRole("navigation", { name: "Admin sections" });
         expect(within(nav).queryByRole("link", { name: "Overview" })).not.toBeInTheDocument();
+    });
+
+    describe("a place's own area", () => {
+        const owned = [place, place2].map(({ id, name, address, city }) => ({ id, name, address, city }));
+        const pending = {
+            eventPlanId: "plan-1",
+            title: "Summer Opening",
+            state: "PENDING",
+            startDateTime: "2030-07-01T18:00:00",
+            endDateTime: "2030-07-02T02:00:00",
+        };
+
+        it("offers every place in a second switcher, with all places and a new one", async () => {
+            mockApi({ "GET /api/places/owned-places": owned });
+            renderShell("/admin/places", [Role.PLACE_MANAGER]);
+
+            await userEvent.click(await screen.findByRole("button", { name: "Place: All places. Switch place" }));
+            const items = await screen.findAllByRole("menuitem");
+            expect(items.map((item) => item.textContent)).toEqual([
+                "All places",
+                "A38 Hajó",
+                "Dürer Kert",
+                "New place",
+            ]);
+            expect(items[0]).toHaveAttribute("aria-current", "page");
+            expect(items[3]).toHaveAttribute("href", "/admin/places/new");
+
+            await userEvent.click(items[1]!);
+            expect(await screen.findByText("place home")).toBeInTheDocument();
+        });
+
+        it("gives the place its own sections, the way back, its public page and the waiting count", async () => {
+            mockApi({ "GET /api/places/owned-places": owned, "GET /api/places/place-1/invitations": [pending] });
+            renderShell("/admin/places/place-1/requests", [Role.PLACE_MANAGER]);
+
+            expect(await screen.findByRole("button", { name: "Place: A38 Hajó. Switch place" })).toBeInTheDocument();
+            const nav = screen.getAllByRole("navigation", { name: "Admin sections" })[0]!;
+            expect(within(nav).getByRole("link", { name: "All places" })).toHaveAttribute("href", "/admin/places");
+            expect(within(nav).getByText("A38 Hajó")).toBeInTheDocument();
+            const requests = within(nav).getByRole("link", { name: /Event requests/ });
+            expect(requests).toHaveAttribute("aria-current", "page");
+            expect(await within(nav).findByLabelText("1 waiting")).toBeInTheDocument();
+            expect(within(nav).getByRole("link", { name: "Details" })).toHaveAttribute(
+                "href",
+                "/admin/places/place-1/edit",
+            );
+            const publicPage = within(nav).getByRole("link", { name: /View public page/ });
+            expect(publicPage).toHaveAttribute("href", "/places/place-1");
+            expect(publicPage).toHaveAttribute("target", "_blank");
+            expect(screen.getByText("place requests")).toBeInTheDocument();
+        });
+
+        it("names an unknown place by its kind and asks nothing without the manager role", async () => {
+            const fetchMock = mockApi({ "GET /api/places/owned-places": [] });
+            renderShell("/admin/places/nope", [Role.PLACE_MANAGER]);
+            expect(await screen.findByRole("button", { name: "Place: Place. Switch place" })).toBeInTheDocument();
+            await userEvent.click(screen.getByRole("button", { name: "Place: Place. Switch place" }));
+            expect(await screen.findByText("None yet")).toBeInTheDocument();
+            expect(fetchMock.requests.map((r) => r.url)).not.toContain(
+                "http://api.test/api/performers/owned-performers",
+            );
+        });
+
+        it("shows no place switcher and loads no places for a user who does not manage any", async () => {
+            const fetchMock = mockApi({});
+            renderShell("/admin/places", [Role.EVENT_ORGANIZER]);
+
+            expect(await screen.findByText("places overview")).toBeInTheDocument();
+            expect(screen.queryByRole("button", { name: /Switch place/ })).not.toBeInTheDocument();
+            expect(fetchMock).not.toHaveBeenCalled();
+        });
+
+        it("says the list is loading until the places arrive", async () => {
+            mockApi({ "GET /api/places/owned-places": () => new Promise(() => {}) });
+            renderShell("/admin/places", [Role.PLACE_MANAGER]);
+
+            await userEvent.click(await screen.findByRole("button", { name: "Place: All places. Switch place" }));
+            expect(await screen.findByText("Loading…")).toBeInTheDocument();
+        });
     });
 });

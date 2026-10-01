@@ -63,6 +63,21 @@ test("an organizer plans an event with a venue and a performer and publishes it"
     await next(page, "Create place");
     await expect(page.getByRole("heading", { level: 1, name: venue })).toBeVisible();
 
+    // The new place has its own area: chosen in the header, its own sections, its public page in a new tab.
+    await expect(page.getByRole("button", { name: `Place: ${venue}. Switch place` })).toBeVisible();
+    const sections = page.getByRole("navigation", { name: "Admin sections" });
+    await expect(sections.getByRole("link", { name: "All places" })).toBeVisible();
+    const [publicPage] = await Promise.all([
+        page.context().waitForEvent("page"),
+        page
+            .getByRole("link", { name: /View public page/ })
+            .first()
+            .click(),
+    ]);
+    await expect(publicPage).toHaveURL(/\/places\/[0-9a-f-]+$/);
+    await publicPage.close();
+    await expect(page.getByRole("heading", { level: 1, name: venue })).toBeVisible();
+
     // A performer.
     await page.goto("/admin/performers/new");
     await page.getByLabel("Name", { exact: true }).fill(artist);

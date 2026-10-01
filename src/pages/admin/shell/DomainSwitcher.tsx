@@ -10,13 +10,15 @@ import menu from "./menu.module.scss";
 interface DomainSwitcherProps {
     domains: AdminDomain[];
     current: AdminDomain | undefined;
+    /** On phones show only the icon, leaving room for the entity switcher. */
+    compact?: boolean;
 }
 
 /**
  * The admin domain in view; with more than one domain (several roles) it opens a menu to switch between them, like
  * the account switcher of a cloud dashboard.
  */
-export function DomainSwitcher({ domains, current }: DomainSwitcherProps) {
+export function DomainSwitcher({ domains, current, compact = false }: DomainSwitcherProps) {
     const shown = current ?? domains[0];
     if (!shown) return null;
     const Icon = shown.icon;
@@ -25,7 +27,9 @@ export function DomainSwitcher({ domains, current }: DomainSwitcherProps) {
             <span className={styles.icon} aria-hidden>
                 <Icon size={16} />
             </span>
-            <span className={styles.name}>{shown.label}</span>
+            <span className={styles.name} data-compact={compact || undefined}>
+                {shown.label}
+            </span>
         </>
     );
 
@@ -35,7 +39,7 @@ export function DomainSwitcher({ domains, current }: DomainSwitcherProps) {
         <Menu.Root>
             <Menu.Trigger className={styles.trigger} aria-label={`Admin domain: ${shown.label}. Switch domain`}>
                 {label}
-                <ChevronsUpDown size={14} className={styles.chevron} aria-hidden />
+                <ChevronsUpDown size={14} className={styles.chevron} data-compact={compact || undefined} aria-hidden />
             </Menu.Trigger>
             <Menu.Portal>
                 <Menu.Positioner className={menu.positioner} sideOffset={6} align="start">

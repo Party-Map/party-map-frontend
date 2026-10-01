@@ -1,0 +1,42 @@
+@use "@/styles/mixins" as *;
+
+@layer components {
+  .body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+
+  @include from-md {
+    .body {
+      grid-template-columns: 14rem minmax(0, 1fr);
+    }
+  }
+
+  .image {
+    border-radius: var(--radius-sm);
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+
+  .description {
+    color: var(--fg-muted);
+    white-space: pre-line;
+  }
+
+  .empty {
+    color: var(--fg-subtle);
+    font-style: italic;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+}

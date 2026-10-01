@@ -3,6 +3,7 @@
 import {
     CalendarDays,
     ClipboardList,
+    FilePen,
     Inbox,
     LayoutDashboard,
     List,
@@ -29,6 +30,30 @@ export interface AdminSection {
     matches: string[];
 }
 
+/** One section of a single place's or performer's own admin area, at `<basePath>/<id>/<path>`. */
+export interface EntitySection {
+    id: string;
+    label: string;
+    icon: LucideIcon;
+    /** "" for the entity's overview. */
+    path: string;
+}
+
+/**
+ * A domain whose items (a manager's places or performers) each get their own admin area, chosen with a second
+ * switcher in the header, like a zone inside an account.
+ */
+export interface EntityScope {
+    kind: "place" | "performer";
+    /** "Place": names the item in the sidebar. */
+    noun: string;
+    allLabel: string;
+    newLabel: string;
+    /** The item's page on the public site (opened in a new tab). */
+    publicPath: (id: string) => string;
+    sections: EntitySection[];
+}
+
 export type AdminDomainId = "places" | "performers" | "events" | "platform";
 
 export interface AdminDomain {
@@ -39,6 +64,15 @@ export interface AdminDomain {
     icon: LucideIcon;
     basePath: string;
     sections: AdminSection[];
+    entity?: EntityScope;
+}
+
+function entitySections(requestsLabel: string): EntitySection[] {
+    return [
+        { id: "overview", label: "Overview", icon: LayoutDashboard, path: "" },
+        { id: "requests", label: requestsLabel, icon: Inbox, path: "requests" },
+        { id: "edit", label: "Details", icon: FilePen, path: "edit" },
+    ];
 }
 
 export const ADMIN_DOMAINS: readonly AdminDomain[] = [
@@ -62,7 +96,7 @@ export const ADMIN_DOMAINS: readonly AdminDomain[] = [
                 label: "My places",
                 to: "/admin/places/list",
                 icon: List,
-                matches: ["/admin/places/list", "/admin/places/new", "/admin/places/:id"],
+                matches: ["/admin/places/list", "/admin/places/new"],
             },
             {
                 id: "requests",
@@ -72,6 +106,14 @@ export const ADMIN_DOMAINS: readonly AdminDomain[] = [
                 matches: ["/admin/places/requests"],
             },
         ],
+        entity: {
+            kind: "place",
+            noun: "Place",
+            allLabel: "All places",
+            newLabel: "New place",
+            publicPath: (id) => `/places/${id}`,
+            sections: entitySections("Event requests"),
+        },
     },
     {
         id: "performers",
@@ -93,7 +135,7 @@ export const ADMIN_DOMAINS: readonly AdminDomain[] = [
                 label: "My performers",
                 to: "/admin/performers/list",
                 icon: List,
-                matches: ["/admin/performers/list", "/admin/performers/new", "/admin/performers/:id"],
+                matches: ["/admin/performers/list", "/admin/performers/new"],
             },
             {
                 id: "requests",
@@ -103,6 +145,14 @@ export const ADMIN_DOMAINS: readonly AdminDomain[] = [
                 matches: ["/admin/performers/requests"],
             },
         ],
+        entity: {
+            kind: "performer",
+            noun: "Performer",
+            allLabel: "All performers",
+            newLabel: "New performer",
+            publicPath: (id) => `/performers/${id}`,
+            sections: entitySections("Lineup requests"),
+        },
     },
     {
         id: "events",
@@ -175,4 +225,25 @@ export function activeSection(domain: AdminDomain, pathname: string): AdminSecti
             ),
         );
     return matching(true) ?? matching(false);
+}
+
+/** Path segments under a domain that are its own pages, not an item's id. */
+const RESERVED = new Set(["list", "requests", "new"]);
+
+/** The id of the place or performer whose own admin area `pathname` is in, if any. */
+export function entityIdForPath(domain: AdminDomain, pathname: string): string | undefined {
+    if (!domain.entity) return undefined;
+    const id = matchPath({ path: `${domain.basePath}/:id/*` }, pathname)?.params.id;
+    return id && !RESERVED.has(id) ? id : undefined;
+}
+
+export function entitySectionPath(domain: AdminDomain, id: string, section: EntitySection): string {
+    return `${domain.basePath}/${id}${section.path ? `/${section.path}` : ""}`;
+}
+
+/** The section of an item's admin area that `pathname` shows. */
+export function activeEntitySection(domain: AdminDomain, id: string, pathname: string): EntitySection | undefined {
+    return domain.entity?.sections.find((section) =>
+        matchPath({ path: entitySectionPath(domain, id, section), end: true }, pathname),
+    );
 }

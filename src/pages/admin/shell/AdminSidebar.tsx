@@ -1,51 +1,65 @@
 import { Drawer } from "@base-ui/react/drawer";
-import { ArrowLeft, X } from "lucide-react";
-import { Link, useLocation } from "react-router";
+import { ArrowLeft, ChevronLeft, ExternalLink, X } from "lucide-react";
+import { Link } from "react-router";
 
 import { cn } from "@/lib/utils";
-import { activeSection, type AdminDomain } from "@/pages/admin/domains";
 
 import styles from "./AdminSidebar.module.scss";
+import type { NavModel } from "./useAdminNav";
 
 interface SidebarNavProps {
-    domain: AdminDomain | undefined;
+    nav: NavModel;
     /** Called after a link is followed, so the phone drawer can close. */
     onNavigate?: () => void;
 }
 
-/** The current domain's sections; the section the page belongs to is marked as the current page. */
-function SidebarNav({ domain, onNavigate }: SidebarNavProps) {
-    const { pathname } = useLocation();
-    const active = domain ? activeSection(domain, pathname) : undefined;
-
+/** The sections in view; the one the page belongs to is marked as the current page. */
+function SidebarNav({ nav, onNavigate }: SidebarNavProps) {
     return (
         <nav className={styles.nav} aria-label="Admin sections">
-            {domain && (
+            {nav.back && (
+                <Link to={nav.back.to} className={styles.backLink} onClick={onNavigate}>
+                    <ChevronLeft size={16} aria-hidden />
+                    {nav.back.label}
+                </Link>
+            )}
+            {nav.title && (
                 <div className={styles.domain}>
-                    <span className={styles.domainLabel}>{domain.label}</span>
-                    <span className={styles.domainDescription}>{domain.description}</span>
+                    <span className={styles.domainLabel}>{nav.title}</span>
+                    <span className={styles.domainDescription}>{nav.subtitle}</span>
                 </div>
             )}
             <ul className={styles.list}>
-                {domain?.sections.map((section) => {
-                    const Icon = section.icon;
-                    const current = section.id === active?.id;
+                {nav.items.map((item) => {
+                    const Icon = item.icon;
                     return (
-                        <li key={section.id}>
+                        <li key={item.id}>
                             <Link
-                                to={section.to}
-                                className={cn(styles.link, current && styles.current)}
-                                aria-current={current ? "page" : undefined}
+                                to={item.to}
+                                className={cn(styles.link, item.current && styles.current)}
+                                aria-current={item.current ? "page" : undefined}
                                 onClick={onNavigate}
                             >
                                 <Icon size={18} aria-hidden />
-                                {section.label}
+                                <span className={styles.linkText}>{item.label}</span>
+                                {item.badge !== undefined && (
+                                    <span className={styles.badge} aria-label={`${item.badge} waiting`}>
+                                        {item.badge}
+                                    </span>
+                                )}
                             </Link>
                         </li>
                     );
                 })}
             </ul>
             <div className={styles.footer}>
+                {nav.publicHref && (
+                    <Link to={nav.publicHref} target="_blank" rel="noreferrer" className={styles.link}>
+                        <ExternalLink size={18} aria-hidden />
+                        <span className={styles.linkText}>View public page</span>
+                        <span className="sr-only">(opens in a new tab)</span>
+                    </Link>
+                )}
                 <Link to="/" className={styles.link} onClick={onNavigate}>
                     <ArrowLeft size={18} aria-hidden />
                     Back to the map
@@ -56,18 +70,18 @@ function SidebarNav({ domain, onNavigate }: SidebarNavProps) {
 }
 
 interface AdminSidebarProps {
-    domain: AdminDomain | undefined;
+    nav: NavModel;
     /** Phone drawer state; on desktop the sidebar is always shown. */
     drawerOpen: boolean;
     onDrawerOpenChange: (open: boolean) => void;
 }
 
 /** The left navigation: a fixed column on desktop, a drawer that slides in from the left on phones. */
-export function AdminSidebar({ domain, drawerOpen, onDrawerOpenChange }: AdminSidebarProps) {
+export function AdminSidebar({ nav, drawerOpen, onDrawerOpenChange }: AdminSidebarProps) {
     return (
         <>
             <aside className={styles.sidebar}>
-                <SidebarNav domain={domain} />
+                <SidebarNav nav={nav} />
             </aside>
             <Drawer.Root open={drawerOpen} onOpenChange={onDrawerOpenChange} swipeDirection="left">
                 <Drawer.Portal>
@@ -81,7 +95,7 @@ export function AdminSidebar({ domain, drawerOpen, onDrawerOpenChange }: AdminSi
                                         <X size={20} aria-hidden />
                                     </Drawer.Close>
                                 </div>
-                                <SidebarNav domain={domain} onNavigate={() => onDrawerOpenChange(false)} />
+                                <SidebarNav nav={nav} onNavigate={() => onDrawerOpenChange(false)} />
                             </Drawer.Content>
                         </Drawer.Popup>
                     </Drawer.Viewport>

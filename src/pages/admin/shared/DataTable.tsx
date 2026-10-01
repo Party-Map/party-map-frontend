@@ -24,13 +24,15 @@ interface DataTableProps<T> {
     rowKey: (row: T) => string;
     /** Makes each row a link (the whole row is clickable, the primary cell is the accessible link). */
     rowTo?: (row: T) => string;
+    /** The rows lead out of the admin area (public pages): open them in a new tab. */
+    external?: boolean;
     empty: ReactNode;
 }
 
 /**
  * The admin lists: a real table on wide screens, one card per row on phones (each cell labelled by its header).
  */
-export function DataTable<T>({ caption, columns, rows, rowKey, rowTo, empty }: DataTableProps<T>) {
+export function DataTable<T>({ caption, columns, rows, rowKey, rowTo, external = false, empty }: DataTableProps<T>) {
     if (rows.length === 0) return <div className={styles.empty}>{empty}</div>;
 
     return (
@@ -67,8 +69,15 @@ export function DataTable<T>({ caption, columns, rows, rowKey, rowTo, empty }: D
                                         return (
                                             <th key={column.id} scope="row" className={cn(styles.primary, className)}>
                                                 {to ? (
-                                                    <Link to={to} className={styles.rowLink}>
+                                                    <Link
+                                                        to={to}
+                                                        className={styles.rowLink}
+                                                        {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
+                                                    >
                                                         {column.cell(row)}
+                                                        {external && (
+                                                            <span className="sr-only"> (opens in a new tab)</span>
+                                                        )}
                                                     </Link>
                                                 ) : (
                                                     column.cell(row)

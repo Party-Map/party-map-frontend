@@ -118,6 +118,12 @@ Token names are the app's own; the prompt's shadcn names map onto them: `--backg
   their sidebar sections and the route patterns that count as each section. A new admin feature is an entry there
   plus its routes in `pages/admin/routes.tsx` (lazy `page(() => import(...), "XPage")`); `routes.test.tsx` opens every
   section, so a section without a page fails.
+- Places and performers also have an `entity` scope in `domains.ts`: each item gets its own area at
+  `<basePath>/:id` (Overview), `/:id/requests`, `/:id/edit`, chosen with a second header switcher
+  (`shell/EntitySwitcher`: all items, yours, new). `shell/useAdminNav.ts` builds the sidebar model (domain sections, or
+  the item's sections with "All …", a pending-requests badge and its public page); `useAdminEntities` loads the items
+  only for users with the domain's role.
+- Links from the admin area to public pages open in a new tab (`shell/PublicPageLink`, `DataTable external`).
 - `shell/AdminShell` is the `/admin` route element: auth states (deep-link `returnTo`), then `AdminHeader` (brand,
   `DomainSwitcher` and `UserMenu` on Base UI Menu, theme), `AdminSidebar` (a Base UI Drawer on phones) and the
   outlet. Pages render inside `shell/AdminPage` (breadcrumbs, the only `h1`, description, actions) and still guard

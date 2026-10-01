@@ -52,8 +52,9 @@ describe("EventsOverviewPage", () => {
         );
         expect(screen.getByRole("link", { name: /Upcoming events\s*1/ })).toBeInTheDocument();
         expect(screen.getByRole("link", { name: /Past events\s*1/ })).toBeInTheDocument();
-        expect(screen.getByRole("link", { name: "Future Rave" })).toHaveAttribute("href", "/events/e1");
-        expect(screen.queryByRole("link", { name: "Old Rave" })).not.toBeInTheDocument();
+        expect(screen.getByRole("link", { name: /Future Rave/ })).toHaveAttribute("href", "/events/e1");
+        expect(screen.getByRole("link", { name: /Future Rave/ })).toHaveAttribute("target", "_blank");
+        expect(screen.queryByRole("link", { name: /Old Rave/ })).not.toBeInTheDocument();
         expect(screen.getByRole("link", { name: "New event plan" })).toHaveAttribute("href", "/admin/events/plans/new");
     });
 

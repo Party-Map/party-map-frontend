@@ -38,8 +38,9 @@ describe("LiveEventsPage", () => {
 
         expect(await screen.findByRole("heading", { name: "Upcoming (1)" })).toBeInTheDocument();
         expect(screen.getByRole("heading", { name: "Past (1)" })).toBeInTheDocument();
-        expect(screen.getByRole("link", { name: "Future Rave" })).toHaveAttribute("href", "/events/e1");
-        expect(screen.getByRole("link", { name: "Old Rave" })).toHaveAttribute("href", "/events/e0");
+        expect(screen.getByRole("link", { name: /Future Rave/ })).toHaveAttribute("href", "/events/e1");
+        expect(screen.getByRole("link", { name: /Future Rave/ })).toHaveAttribute("target", "_blank");
+        expect(screen.getByRole("link", { name: /Old Rave/ })).toHaveAttribute("href", "/events/e0");
         expect(screen.getByText("Dürer")).toBeInTheDocument();
     });
 

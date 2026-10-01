@@ -57,4 +57,18 @@ describe("admin routes", () => {
         expect(await screen.findByRole("heading", { name: "404" })).toBeInTheDocument();
         expect(screen.getByRole("button", { name: "Open navigation" })).toBeInTheDocument();
     });
+
+    it.each([
+        ["/admin/places/p1", "Places"],
+        ["/admin/places/p1/requests", "Places"],
+        ["/admin/places/p1/edit", "Places"],
+        ["/admin/performers/p1", "Performers"],
+        ["/admin/performers/p1/requests", "Performers"],
+        ["/admin/performers/p1/edit", "Performers"],
+    ])("open the page of an item's section %s", async (path) => {
+        renderAt(path);
+        // The test API knows no items, so each page answers with its not-found state inside the shell.
+        expect(await screen.findByRole("heading", { name: "404" })).toBeInTheDocument();
+        expect(screen.getByRole("link", { name: /All (places|performers)/ })).toBeInTheDocument();
+    });
 });

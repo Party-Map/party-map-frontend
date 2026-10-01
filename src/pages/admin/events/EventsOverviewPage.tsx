@@ -88,6 +88,7 @@ function Overview() {
                     rows={upcoming.slice(0, 5)}
                     rowKey={(event) => event.id}
                     rowTo={(event) => `/events/${event.id}`}
+                    external
                     empty="No upcoming events. Publish an event plan to see it here."
                 />
             </section>

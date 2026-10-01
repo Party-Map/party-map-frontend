@@ -112,6 +112,13 @@
     font-weight: 300;
   }
 
+  // Phones in a place's or performer's area: brand, domain icon, item name; the first slash would only crowd it.
+  @include phone {
+    .slash[data-lead] {
+      display: none;
+    }
+  }
+
   .actions {
     display: flex;
     flex: none;

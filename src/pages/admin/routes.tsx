@@ -23,7 +23,12 @@ export const adminRoutes: RouteObject = {
         { path: "places/list", lazy: page(() => import("./places/PlacesListPage"), "PlacesListPage") },
         { path: "places/requests", lazy: page(() => import("./places/PlaceRequestsPage"), "PlaceRequestsPage") },
         { path: "places/new", lazy: page(() => import("./places/NewPlacePage"), "NewPlacePage") },
-        { path: "places/:id", lazy: page(() => import("./places/EditPlacePage"), "EditPlacePage") },
+        { path: "places/:id", lazy: page(() => import("./places/PlaceOverviewPage"), "PlaceOverviewPage") },
+        {
+            path: "places/:id/requests",
+            lazy: page(() => import("./places/SinglePlaceRequestsPage"), "SinglePlaceRequestsPage"),
+        },
+        { path: "places/:id/edit", lazy: page(() => import("./places/EditPlacePage"), "EditPlacePage") },
 
         {
             path: "performers",
@@ -35,7 +40,18 @@ export const adminRoutes: RouteObject = {
             lazy: page(() => import("./performers/PerformerRequestsPage"), "PerformerRequestsPage"),
         },
         { path: "performers/new", lazy: page(() => import("./performers/NewPerformerPage"), "NewPerformerPage") },
-        { path: "performers/:id", lazy: page(() => import("./performers/EditPerformerPage"), "EditPerformerPage") },
+        {
+            path: "performers/:id",
+            lazy: page(() => import("./performers/PerformerOverviewPage"), "PerformerOverviewPage"),
+        },
+        {
+            path: "performers/:id/requests",
+            lazy: page(() => import("./performers/SinglePerformerRequestsPage"), "SinglePerformerRequestsPage"),
+        },
+        {
+            path: "performers/:id/edit",
+            lazy: page(() => import("./performers/EditPerformerPage"), "EditPerformerPage"),
+        },
 
         { path: "events", lazy: page(() => import("./events/EventsOverviewPage"), "EventsOverviewPage") },
         { path: "events/plans", lazy: page(() => import("./events/EventPlansPage"), "EventPlansPage") },

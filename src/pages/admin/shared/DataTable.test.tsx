@@ -70,4 +70,22 @@ describe("DataTable", () => {
         expect(screen.queryByRole("table")).not.toBeInTheDocument();
         expect(screen.getByText("No places.")).toBeInTheDocument();
     });
+
+    it("opens rows that lead out of the admin area in a new tab", () => {
+        renderWithProviders(
+            <DataTable
+                caption="Events"
+                columns={columns}
+                rows={rows}
+                rowKey={(row) => row.id}
+                rowTo={(row) => `/places/${row.id}`}
+                external
+                empty="None"
+            />,
+        );
+
+        const link = screen.getByRole("link", { name: /Danube Club\s*\(opens in a new tab\)/ });
+        expect(link).toHaveAttribute("target", "_blank");
+        expect(link).toHaveAttribute("rel", "noreferrer");
+    });
 });

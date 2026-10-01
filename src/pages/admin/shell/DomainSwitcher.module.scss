@@ -38,8 +38,20 @@
 
   .name {
     overflow: hidden;
+    max-width: 14rem;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  @include phone {
+    .name {
+      max-width: 9rem;
+    }
+
+    .name[data-compact],
+    .chevron[data-compact] {
+      display: none;
+    }
   }
 
   .chevron {

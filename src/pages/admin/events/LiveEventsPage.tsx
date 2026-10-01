@@ -48,6 +48,7 @@ function Events() {
                     rows={upcoming}
                     rowKey={(event) => event.id}
                     rowTo={(event) => `/events/${event.id}`}
+                    external
                     empty="No upcoming events."
                 />
             </section>
@@ -61,6 +62,7 @@ function Events() {
                     rows={past}
                     rowKey={(event) => event.id}
                     rowTo={(event) => `/events/${event.id}`}
+                    external
                     empty="No past events."
                 />
             </section>

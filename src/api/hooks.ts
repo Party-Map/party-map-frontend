@@ -201,16 +201,16 @@ export function useToggleLike(target: LikeTarget, id: ID) {
 
 /* ---------- Admin: places ---------- */
 
-export function useOwnedPlaces() {
-    return useQuery({ queryKey: placeKeys.owned(), queryFn: fetchOwnedPlaces });
+export function useOwnedPlaces({ enabled = true }: { enabled?: boolean } = {}) {
+    return useQuery({ queryKey: placeKeys.owned(), queryFn: fetchOwnedPlaces, enabled });
 }
 
 export function usePlace(id: ID) {
     return useQuery({ queryKey: placeKeys.detail(id), queryFn: () => fetchPlace(id) });
 }
 
-export function usePlaceInvitations(id: ID) {
-    return useQuery({ queryKey: placeKeys.invitations(id), queryFn: () => fetchPlaceInvitations(id) });
+export function usePlaceInvitations(id: ID, { enabled = true }: { enabled?: boolean } = {}) {
+    return useQuery({ queryKey: placeKeys.invitations(id), queryFn: () => fetchPlaceInvitations(id), enabled });
 }
 
 export function useCreatePlace() {
@@ -271,16 +271,16 @@ export function usePerformers() {
     return useQuery({ queryKey: performerKeys.list(), queryFn: fetchPerformers });
 }
 
-export function useOwnedPerformers() {
-    return useQuery({ queryKey: performerKeys.owned(), queryFn: fetchOwnedPerformers });
+export function useOwnedPerformers({ enabled = true }: { enabled?: boolean } = {}) {
+    return useQuery({ queryKey: performerKeys.owned(), queryFn: fetchOwnedPerformers, enabled });
 }
 
 export function usePerformer(id: ID) {
     return useQuery({ queryKey: performerKeys.detail(id), queryFn: () => fetchPerformer(id) });
 }
 
-export function usePerformerInvitations(id: ID) {
-    return useQuery({ queryKey: performerKeys.invitations(id), queryFn: () => fetchPerformerInvitations(id) });
+export function usePerformerInvitations(id: ID, { enabled = true }: { enabled?: boolean } = {}) {
+    return useQuery({ queryKey: performerKeys.invitations(id), queryFn: () => fetchPerformerInvitations(id), enabled });
 }
 
 export function useCreatePerformer() {
