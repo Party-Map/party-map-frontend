@@ -1,6 +1,7 @@
-# Development server in Docker. Run `docker compose up` in this folder and open http://localhost:3000.
-# The backend and Keycloak come from `docker compose up` in ../party-map-backend (ports 8080 and 8081);
-# The dev server proxies /api to the backend on the host; the browser talks to Keycloak directly.
+# Development services. `docker compose up` in this folder starts the dev server and the tile server; open
+# http://localhost:3000. The backend and Keycloak come from `docker compose up` in ../party-map-backend (ports 8080 and
+# 8081). The dev server proxies /api to the backend on the host and /tiles to the tile server; the browser talks to
+# Keycloak directly.
 services:
   frontend:
     image: node:24-alpine
@@ -8,6 +9,7 @@ services:
     command: sh -c "corepack enable && pnpm install --frozen-lockfile && pnpm dev --host 0.0.0.0"
     environment:
       API_URL: http://host.docker.internal:8080
+      TILES_URL: http://tiles:3000
       PUBLIC_KEYCLOAK_URL: http://localhost:8081
       PUBLIC_KEYCLOAK_REALM: party-map
       PUBLIC_KEYCLOAK_CLIENT_ID: partymap-web
@@ -21,6 +23,32 @@ services:
       - .:/app
       # Linux binaries live in a volume so they never mix with the host's node_modules.
       - node_modules:/app/node_modules
+
+  # The Hungary basemap: Martin serves the vector tiles of tiles/data/hungary.pmtiles (OpenMapTiles schema) and the
+  # glyphs of tiles/fonts under /tiles (tiles/martin.yaml). http://localhost:3001/tiles/catalog lists the source and the
+  # font names. Build the tiles first (tiles-build below); the image's own healthcheck probes /health.
+  tiles:
+    image: ghcr.io/maplibre/martin:1.16.1
+    command: ["--config", "/config/martin.yaml"]
+    volumes:
+      - ./tiles/martin.yaml:/config/martin.yaml:ro
+      - ./tiles/fonts:/fonts:ro
+      - ./tiles/data:/data:ro
+    ports:
+      - "3001:3000"
+
+  # One-shot tile build: `docker compose --profile build run --rm tiles-build`. Planetiler downloads the Geofabrik
+  # Hungary extract plus the ocean polygons and Natural Earth (about 1 GB, kept in tiles/data/sources for later runs)
+  # and writes tiles/data/hungary.pmtiles (zoom 0-14, the app overzooms the rest). Needs roughly 1.5 GB of memory:
+  # give Docker Desktop 4 GB, or run the jar natively (tiles/README.md).
+  tiles-build:
+    image: ghcr.io/onthegomap/planetiler:0.10.2
+    profiles: [build]
+    environment:
+      JAVA_TOOL_OPTIONS: "-Xmx1400m"
+    volumes:
+      - ./tiles/data:/data
+    command: ["--download", "--area=hungary", "--output=/data/hungary.pmtiles", "--force", "--maxzoom=14"]
 
 volumes:
   node_modules:

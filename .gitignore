@@ -37,3 +37,6 @@ e2e/visual.spec.ts-snapshots
 .pnpm-store
 .rsbuild
 e2e/admin-visual.auth.spec.ts-snapshots
+
+# tile data: the Geofabrik extract and Natural Earth downloads plus the built hungary.pmtiles (tiles/README.md)
+tiles/data

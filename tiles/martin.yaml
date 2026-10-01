@@ -1,0 +1,33 @@
+# Martin tile server (https://maplibre.org/martin/) for the Hungary basemap. Mounted into the `tiles` service of
+# docker-compose.yml; production uses the same file. Every endpoint lives under /tiles (the app and the proxies use
+# that prefix unchanged), only /health stays at the root for the image's own healthcheck.
+listen_addresses: 0.0.0.0:3000
+route_prefix: /tiles
+web_ui: disable
+preferred_encoding: gzip
+
+# Tiles and glyphs change only when hungary.pmtiles is rebuilt: browsers and the frontend's nginx keep them for a day.
+cache_control: "public, max-age=86400"
+cache:
+  size_mb: 128
+
+# The app reaches Martin through its own origin (dev proxy or nginx); the origins below only matter when a browser is
+# pointed at the container directly while debugging.
+cors:
+  origin:
+    - http://localhost:3000
+    - https://terkep.party
+  max_age: 3600
+
+# Plain Mapbox Vector Tiles for every client (one cache entry per tile, no content negotiation).
+convert_to_mlt: disabled
+
+# Glyph ranges are rendered from the TTF files on the fly; /tiles/catalog lists the exact font names the style must use.
+fonts:
+  paths:
+    - /fonts
+
+# tiles/data/hungary.pmtiles (built by the tiles-build service) is served as the source "hungary".
+pmtiles:
+  paths:
+    - /data
