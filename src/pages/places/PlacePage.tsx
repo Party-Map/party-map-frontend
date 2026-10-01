@@ -72,7 +72,7 @@ export function PlacePage() {
     );
 
     return (
-        <PageShell backTo="/browse/places" backLabel="Places">
+        <PageShell backTo="/browse/places">
             <Hero
                 image={place.image}
                 alt={place.name}

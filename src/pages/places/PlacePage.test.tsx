@@ -28,7 +28,7 @@ describe("PlacePage", () => {
             "href",
             "https://www.google.com/maps/dir/?api=1&destination=47.4771,19.0621",
         );
-        expect(screen.getByRole("link", { name: "Places" })).toHaveAttribute("href", "/browse/places");
+        expect(screen.getByRole("link", { name: "Back" })).toHaveAttribute("href", "/browse/places");
 
         expect(screen.getByRole("heading", { name: "Upcoming events" })).toBeInTheDocument();
         const upcoming = screen.getByRole("list", { name: "Upcoming events" });

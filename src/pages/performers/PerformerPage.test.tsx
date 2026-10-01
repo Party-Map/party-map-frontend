@@ -30,7 +30,7 @@ describe("PerformerPage", () => {
         expect(screen.getByText(performer.genre)).toHaveClass("eyebrow");
         expect(screen.getByText("1 upcoming show")).toBeInTheDocument();
         expect(screen.getByRole("button", { name: "Share" })).toBeInTheDocument();
-        expect(screen.getByRole("link", { name: "Performers" })).toHaveAttribute("href", "/browse/performers");
+        expect(screen.getByRole("link", { name: "Back" })).toHaveAttribute("href", "/browse/performers");
 
         expect(screen.getByRole("heading", { name: "Upcoming shows" })).toBeInTheDocument();
         const shows = screen.getByRole("list", { name: "Upcoming shows" });

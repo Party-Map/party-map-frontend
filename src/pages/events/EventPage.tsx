@@ -72,7 +72,7 @@ export function EventPage() {
     );
 
     return (
-        <PageShell backTo="/browse/events" backLabel="Events">
+        <PageShell backTo="/browse/events">
             <Hero
                 image={event.image ?? place?.image}
                 alt={event.title}

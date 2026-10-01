@@ -52,6 +52,8 @@ export function createMockAuthClient(
 interface ProviderOptions {
     /** Initial URL for the memory router. */
     route?: string;
+    /** Earlier history entries before `route`, for pages that navigate back. */
+    history?: string[];
     /** Route pattern to mount the element on (for pages that read params). */
     path?: string;
     auth?: AuthSnapshot;
@@ -73,6 +75,7 @@ export function createTestQueryClient(): QueryClient {
 export function AppProviders({
     children,
     route = "/",
+    history = [],
     path = "*",
     auth = ANONYMOUS,
     authPending = false,
@@ -89,7 +92,7 @@ export function AppProviders({
                       { path, element: children },
                       { path: "*", element: <p>other page</p> },
                   ],
-                  { initialEntries: [route] },
+                  { initialEntries: [...history, route] },
               )
             : null,
     );
@@ -102,7 +105,7 @@ export function AppProviders({
                             {router ? (
                                 <RouterProvider router={router} />
                             ) : (
-                                <MemoryRouter initialEntries={[route]}>
+                                <MemoryRouter initialEntries={[...history, route]}>
                                     <Routes>
                                         <Route path={path} element={children} />
                                         <Route path="*" element={<p>other page</p>} />
@@ -125,6 +128,7 @@ export function renderWithProviders(
 ): RenderResult & { client: MockAuthClient; queryClient: QueryClient } {
     const {
         route,
+        history,
         path,
         auth,
         authPending,
@@ -142,6 +146,7 @@ export function renderWithProviders(
                 client={client}
                 queryClient={queryClient}
                 {...(route !== undefined ? { route } : {})}
+                {...(history !== undefined ? { history } : {})}
                 {...(path !== undefined ? { path } : {})}
                 {...(dataRouter !== undefined ? { dataRouter } : {})}
             >

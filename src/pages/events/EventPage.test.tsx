@@ -36,7 +36,7 @@ describe("EventPage", () => {
             "https://www.google.com/maps/dir/?api=1&destination=47.4771,19.0621",
         );
         expect(screen.getByRole("button", { name: "Share" })).toBeInTheDocument();
-        expect(screen.getByRole("link", { name: "Events" })).toHaveAttribute("href", "/browse/events");
+        expect(screen.getByRole("link", { name: "Back" })).toHaveAttribute("href", "/browse/events");
 
         const lineup = screen.getByRole("list", { name: "Lineup" });
         const row = within(lineup).getByRole("link", { name: /DJ Test/ });

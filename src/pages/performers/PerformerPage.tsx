@@ -81,7 +81,7 @@ export function PerformerPage() {
     const shows = upcoming.length === 1 ? "1 upcoming show" : `${upcoming.length} upcoming shows`;
 
     return (
-        <PageShell backTo="/browse/performers" backLabel="Performers">
+        <PageShell backTo="/browse/performers">
             <Hero
                 image={performer.image}
                 alt={performer.name}
