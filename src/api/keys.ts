@@ -24,6 +24,7 @@ export const performerKeys = {
 export const eventKeys = {
     all: ["events"] as const,
     page: (id: ID) => [...eventKeys.all, "page", id] as const,
+    byPlace: (placeId: ID) => [...eventKeys.all, "by-place", placeId] as const,
     upcoming: () => [...eventKeys.all, "upcoming"] as const,
     owned: () => [...eventKeys.all, "owned"] as const,
 };

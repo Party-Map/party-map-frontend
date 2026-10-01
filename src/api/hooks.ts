@@ -180,6 +180,15 @@ export function usePlacesById(ids: ID[]): { places: Place[]; pending: boolean } 
     });
 }
 
+/** The events held at a place (the "more at this venue" shelf); nothing is fetched without an id. */
+export function useEventsByPlace(placeId: ID | null) {
+    return useQuery({
+        queryKey: eventKeys.byPlace(placeId ?? ""),
+        queryFn: () => fetchEventsByPlace(placeId ?? ""),
+        enabled: placeId !== null,
+    });
+}
+
 export function useUpcomingEvents() {
     return useQuery({ queryKey: eventKeys.upcoming(), queryFn: fetchUpcomingEventsByPlace });
 }

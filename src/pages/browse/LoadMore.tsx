@@ -21,7 +21,7 @@ export function LoadMore({ hasNextPage, isFetchingNextPage, onLoadMore }: LoadMo
     }, [onLoadMore]);
 
     useEffect(() => {
-        if (inView && hasNextPage && !isFetchingNextPage) latest.current();
+        if (inView === true && hasNextPage && !isFetchingNextPage) latest.current();
     }, [inView, hasNextPage, isFetchingNextPage]);
 
     if (!hasNextPage) return null;

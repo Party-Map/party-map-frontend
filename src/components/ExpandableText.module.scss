@@ -1,0 +1,27 @@
+@layer parts {
+  .text {
+    white-space: pre-line;
+    line-height: 1.55;
+  }
+
+  .clamped {
+    max-height: calc(var(--lines, 4) * 1.55em);
+    overflow: hidden;
+  }
+
+  /* Fades the last visible line out instead of cutting a line in half; only while there is more text below. */
+  .faded {
+    mask-image: linear-gradient(to bottom, var(--black) 65%, transparent);
+  }
+
+  .toggle {
+    margin-top: var(--space-1);
+    font-size: var(--text-14);
+    font-weight: 600;
+    color: var(--link);
+  }
+
+  .toggle:hover {
+    text-decoration: underline;
+  }
+}
