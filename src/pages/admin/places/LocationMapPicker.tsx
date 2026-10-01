@@ -3,10 +3,11 @@ import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { useEffect, useMemo } from "react";
-import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from "react-leaflet";
+import { MapContainer, Marker, useMap, useMapEvents } from "react-leaflet";
 
 import type { GeoPoint } from "@/api/types";
-import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, TILE_ATTRIBUTION, TILE_URL } from "@/lib/constants";
+import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, MAP_MAX_ZOOM } from "@/lib/constants";
+import { LazyBasemap } from "@/map/LazyBasemap";
 
 import styles from "./LocationMapPicker.module.scss";
 
@@ -56,8 +57,14 @@ export function LocationMapPicker({ value, onChange }: LocationMapPickerProps) {
 
     return (
         <div className={styles.frame}>
-            <MapContainer center={center} zoom={DEFAULT_MAP_ZOOM} scrollWheelZoom={false} className={styles.map}>
-                <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
+            <MapContainer
+                center={center}
+                zoom={DEFAULT_MAP_ZOOM}
+                maxZoom={MAP_MAX_ZOOM}
+                scrollWheelZoom={false}
+                className={styles.map}
+            >
+                <LazyBasemap />
                 <ClickHandler onPick={onChange} />
                 <RecenterOnValue value={value} />
                 <Marker position={center} icon={markerPin} />

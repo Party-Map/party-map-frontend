@@ -1,13 +1,13 @@
-import { act, screen } from "@testing-library/react";
+import { act, screen, waitFor } from "@testing-library/react";
 
-import { TILE_URL } from "@/lib/constants";
 import { renderWithProviders } from "@/test/helpers";
-import { fakeMap, leafletMock, reactLeafletMock } from "@/test/mocks/leaflet";
+import { fakeGlLayer, fakeMap, leafletMock, reactLeafletMock } from "@/test/mocks/leaflet";
 
 import { LocationMapPicker } from "./LocationMapPicker";
 
 vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reactLeafletMock));
 vi.mock("leaflet", () => import("@/test/mocks/leaflet").then((m) => m.leafletMock));
+vi.mock("@maplibre/maplibre-gl-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.maplibreLeafletMock));
 
 describe("LocationMapPicker", () => {
     beforeEach(() => fakeMap.reset());
@@ -24,9 +24,9 @@ describe("LocationMapPicker", () => {
         );
     });
 
-    it("shows the default centre on OpenStreetMap tiles when there is no value", () => {
+    it("shows the default centre on the basemap when there is no value", async () => {
         renderWithProviders(<LocationMapPicker value={null} onChange={() => {}} />);
-        expect(screen.getByTestId("tile-layer")).toHaveAttribute("data-url", TILE_URL);
+        await waitFor(() => expect(fakeGlLayer.addTo).toHaveBeenCalledWith(fakeMap));
         expect(screen.getByTestId("marker")).toHaveAttribute("data-position", JSON.stringify([47.4979, 19.0402]));
         expect(fakeMap.setView).not.toHaveBeenCalled();
     });

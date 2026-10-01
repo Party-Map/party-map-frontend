@@ -1,15 +1,15 @@
 vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reactLeafletMock));
 vi.mock("leaflet", () => import("@/test/mocks/leaflet").then((m) => m.leafletMock));
+vi.mock("@maplibre/maplibre-gl-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.maplibreLeafletMock));
 
 import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 
 import type { ID } from "@/api/types";
 import { useHighlight } from "@/layout/HighlightProvider";
-import { TILE_URL } from "@/lib/constants";
 import { forgetMap, recallMap, rememberMap } from "@/map/mapMemory";
 import { place, place2, upcoming } from "@/test/fixtures";
 import { mockApi, renderWithProviders } from "@/test/helpers";
-import { fakeMap, reactLeafletMock } from "@/test/mocks/leaflet";
+import { fakeGlLayer, fakeMap, reactLeafletMock } from "@/test/mocks/leaflet";
 
 import { MapPage } from "./MapPage";
 
@@ -119,10 +119,10 @@ describe("MapPage", () => {
         expect(screen.queryByRole("status")).not.toBeInTheDocument();
     });
 
-    it("renders the OpenStreetMap tiles and a pin and a label per place", async () => {
+    it("renders the basemap and a pin and a label per place", async () => {
         await renderLoaded();
         expect(screen.getAllByTestId("marker")).toHaveLength(2);
-        expect(screen.getByTestId("tile-layer")).toHaveAttribute("data-url", TILE_URL);
+        await waitFor(() => expect(fakeGlLayer.addTo).toHaveBeenCalledWith(fakeMap));
         expect(screen.getByText(upcoming.title)).toBeInTheDocument();
         expect(screen.getByText(place2.name)).toBeInTheDocument();
         expect(fakeMap.flyTo).not.toHaveBeenCalled();

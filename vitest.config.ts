@@ -10,6 +10,7 @@ export default defineConfig({
         include: ["src/**/*.test.{ts,tsx}"],
         env: {
             PUBLIC_API_BASE: "http://api.test/api",
+            PUBLIC_TILES_BASE: "/tiles",
             PUBLIC_KEYCLOAK_URL: "http://kc.test",
             PUBLIC_KEYCLOAK_REALM: "party-map",
             PUBLIC_KEYCLOAK_CLIENT_ID: "partymap-web",

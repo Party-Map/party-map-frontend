@@ -2,13 +2,14 @@ import "./leaflet.scss";
 
 import type { PointTuple } from "leaflet";
 import { useMemo } from "react";
-import { MapContainer, Marker, Popup, TileLayer, useMapEvent } from "react-leaflet";
+import { MapContainer, Marker, Popup, useMapEvent } from "react-leaflet";
 
 import type { ID, Place, UpcomingEventByPlace } from "@/api/types";
-import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, TILE_ATTRIBUTION, TILE_URL } from "@/lib/constants";
+import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, MAP_MAX_ZOOM } from "@/lib/constants";
 
 import { FitToHighlights } from "./FitToHighlights";
 import { toLatLngTuple } from "./geo";
+import { LazyBasemap } from "./LazyBasemap";
 import type { MapViewState } from "./mapMemory";
 import styles from "./MapView.module.scss";
 import { PanPopupMobile } from "./PanPopupMobile";
@@ -46,7 +47,7 @@ interface MapViewProps {
     highlightsSettled?: boolean;
 }
 
-/** The Leaflet map: tiles, pins, labels, controls and the popup for the open place. */
+/** The Leaflet map: basemap, pins, labels, controls and the popup for the open place. */
 export function MapView({
     places,
     upcomingMap,
@@ -71,11 +72,12 @@ export function MapView({
             <MapContainer
                 center={initialView?.center ?? toLatLngTuple(DEFAULT_MAP_CENTER)}
                 zoom={initialView?.zoom ?? DEFAULT_MAP_ZOOM}
+                maxZoom={MAP_MAX_ZOOM}
                 scrollWheelZoom
                 zoomControl={false}
                 className={styles.map}
             >
-                <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
+                <LazyBasemap />
 
                 {(onViewportChange ?? onViewChange) && (
                     <ViewportWatcher onChange={onViewportChange} onViewChange={onViewChange} />

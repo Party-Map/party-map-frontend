@@ -24,13 +24,9 @@
   margin: 0;
 }
 
-.dark .leaflet-container {
+/* The basemap's own background colour, shown until MapLibre has painted (map/basemap/palette.ts). */
+.leaflet-container {
   background: var(--map-bg);
-}
-
-/* OpenStreetMap has no dark tile set; invert the light tiles and mute them instead. */
-.dark .leaflet-tile-pane {
-  filter: invert(1) hue-rotate(180deg) brightness(0.8) contrast(0.9) saturate(0.5);
 }
 
 .pm-pin-wrapper,

@@ -1,17 +1,18 @@
 vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reactLeafletMock));
 vi.mock("leaflet", () => import("@/test/mocks/leaflet").then((m) => m.leafletMock));
+vi.mock("@maplibre/maplibre-gl-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.maplibreLeafletMock));
 vi.mock("./pins", async (importOriginal) => {
     const actual = await importOriginal<typeof pinsModule>();
     return { ...actual, getPinIcon: vi.fn(actual.getPinIcon) };
 });
 
-import { act, fireEvent, screen, within } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import type { ComponentProps } from "react";
 
-import { TILE_URL } from "@/lib/constants";
+import { TILE_ATTRIBUTION } from "@/lib/constants";
 import { place, place2, upcoming } from "@/test/fixtures";
 import { renderWithProviders } from "@/test/helpers";
-import { fakeMap, reactLeafletMock } from "@/test/mocks/leaflet";
+import { fakeGlLayer, fakeMap, maplibreLeafletMock, reactLeafletMock } from "@/test/mocks/leaflet";
 
 import { MapView } from "./MapView";
 import type * as pinsModule from "./pins";
@@ -45,9 +46,12 @@ function marker(index: number): HTMLElement {
 beforeEach(() => fakeMap.reset());
 
 describe("MapView", () => {
-    it("renders the tiles and a marker per place", async () => {
+    it("renders the basemap and a marker per place", async () => {
         await renderView();
-        expect(screen.getByTestId("tile-layer")).toHaveAttribute("data-url", TILE_URL);
+        await waitFor(() => expect(fakeGlLayer.addTo).toHaveBeenCalledWith(fakeMap));
+        expect(maplibreLeafletMock.maplibreGL).toHaveBeenCalledWith(
+            expect.objectContaining({ attribution: TILE_ATTRIBUTION, interactive: false }),
+        );
         expect(screen.getAllByTestId("marker")).toHaveLength(2);
         expect(marker(1)).toHaveAttribute(
             "data-position",

@@ -10,6 +10,7 @@ import { EditPlacePage } from "./EditPlacePage";
 
 vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reactLeafletMock));
 vi.mock("leaflet", () => import("@/test/mocks/leaflet").then((m) => m.leafletMock));
+vi.mock("@maplibre/maplibre-gl-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.maplibreLeafletMock));
 
 function renderPage(auth = authenticatedSnapshot([Role.PLACE_MANAGER])) {
     return renderWithProviders(<EditPlacePage />, {

@@ -1,4 +1,5 @@
 import "leaflet/dist/leaflet.css";
+import "maplibre-gl/dist/maplibre-gl.css";
 import "@/styles/base.scss";
 
 import { StrictMode } from "react";

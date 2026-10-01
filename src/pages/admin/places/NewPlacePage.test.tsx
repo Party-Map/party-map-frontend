@@ -10,6 +10,7 @@ import { NewPlacePage } from "./NewPlacePage";
 
 vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reactLeafletMock));
 vi.mock("leaflet", () => import("@/test/mocks/leaflet").then((m) => m.leafletMock));
+vi.mock("@maplibre/maplibre-gl-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.maplibreLeafletMock));
 
 const manager = authenticatedSnapshot([Role.PLACE_MANAGER]);
 const reverseAnswer = {

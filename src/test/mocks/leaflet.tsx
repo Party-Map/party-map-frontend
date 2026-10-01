@@ -6,7 +6,9 @@
  * ```ts
  * vi.mock("react-leaflet", () => import("./leaflet").then((m) => m.reactLeafletMock))
  * vi.mock("leaflet", () => import("./leaflet").then((m) => m.leafletMock))
+ * vi.mock("@maplibre/maplibre-gl-leaflet", () => import("./leaflet").then((m) => m.maplibreLeafletMock))
  * ```
+ * The third one stands in for the MapLibre basemap layer (map/Basemap.tsx), so maplibre-gl never loads in jsdom.
  */
 import type { ReactNode } from "react";
 import { vi } from "vitest";
@@ -77,7 +79,26 @@ export const fakeMap = {
         });
         fakeMap.dragging.enable.mockClear();
         fakeMap.dragging.disable.mockClear();
+        fakeGlMap.setStyle.mockClear();
+        fakeGlLayer.addTo.mockClear();
+        fakeGlLayer.remove.mockClear();
+        fakeGlLayer.getMaplibreMap.mockClear();
+        maplibreLeafletMock.maplibreGL.mockClear();
     },
+};
+
+/** The MapLibre map behind the basemap layer. */
+export const fakeGlMap = { setStyle: vi.fn() };
+
+/** The Leaflet layer the maplibre-gl-leaflet plugin creates; tests inspect the style it was created with. */
+export const fakeGlLayer = {
+    addTo: vi.fn(),
+    remove: vi.fn(),
+    getMaplibreMap: vi.fn(() => fakeGlMap),
+};
+
+export const maplibreLeafletMock = {
+    maplibreGL: vi.fn((_options: unknown) => fakeGlLayer),
 };
 
 const mapEventHandlers = new Map<string, (...args: unknown[]) => void>();
@@ -88,7 +109,6 @@ export const reactLeafletMock = {
             {children}
         </div>
     ),
-    TileLayer: ({ url }: { url: string }) => <div data-testid="tile-layer" data-url={url} />,
     Marker: ({
         children,
         position,

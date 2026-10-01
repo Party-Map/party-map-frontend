@@ -30,12 +30,12 @@ export const LINK_TYPE_PREFIXES: Record<LinkType, string> = {
 export const DEFAULT_MAP_CENTER: GeoPoint = { latitude: 47.4979, longitude: 19.0402 };
 export const DEFAULT_MAP_ZOOM = 13;
 
-/**
- * OpenStreetMap's standard tiles need no API key (CARTO basemaps do since 2026). Dark mode is a
- * CSS filter on the tile pane, see map/leaflet.scss.
- */
-export const TILE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+/** Leaflet's zoom ceiling; the vector tiles stop at zoom 14 and MapLibre overzooms the rest (map/basemap). */
+export const MAP_MAX_ZOOM = 19;
+
+/** The basemap is OpenStreetMap data (ODbL) in the OpenMapTiles schema: both credits are mandatory. */
 export const TILE_ATTRIBUTION =
+    '&copy; <a href="https://www.openmaptiles.org/">OpenMapTiles</a> ' +
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
 export const BASE_LABEL_ZOOM = 13;
