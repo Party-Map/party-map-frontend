@@ -14,6 +14,7 @@ import { LikeButton } from "@/layout/LikeButton";
 import { PageShell } from "@/layout/PageShell";
 import { splitByNow } from "@/lib/eventTime";
 import { calendarDayLabel, formatDateTimeRange, formatTime, parseDate } from "@/lib/format";
+import { pageTitle, usePageMeta } from "@/lib/seo";
 import { Hero } from "@/pages/common/Hero";
 import { MediaCard } from "@/pages/common/MediaCard";
 import { DirectionsPill, MapPill, SharePill } from "@/pages/common/pageActions";
@@ -35,6 +36,16 @@ export function EventPage() {
     const page = useEventPage(id);
     const likeStatus = useLikeStatus("events", id, { enabled: status === "authenticated" });
     const venueEvents = useEventsByPlace(page.data?.place?.id ?? null);
+    usePageMeta(
+        page.data
+            ? {
+                  title: pageTitle(page.data.event.title),
+                  description: page.data.event.description,
+                  canonicalPath: `/events/${id}`,
+                  image: page.data.event.image ?? page.data.place?.image,
+              }
+            : null,
+    );
 
     if (page.error instanceof ApiError && page.error.status === 404) return <NotFoundPage />;
 

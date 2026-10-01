@@ -13,6 +13,7 @@ import { LikeButton } from "@/layout/LikeButton";
 import { PageShell } from "@/layout/PageShell";
 import { splitByNow } from "@/lib/eventTime";
 import { calendarDayLabel } from "@/lib/format";
+import { pageTitle, usePageMeta } from "@/lib/seo";
 import { Hero } from "@/pages/common/Hero";
 import { SharePill } from "@/pages/common/pageActions";
 import { StickyTitle } from "@/pages/common/StickyTitle";
@@ -32,6 +33,16 @@ export function PerformerPage() {
     const events = page.data?.events ?? NO_EVENTS;
     const placeIds = useMemo(() => [...new Set(events.map((event) => event.placeId))], [events]);
     const venues = usePlacesById(placeIds);
+    usePageMeta(
+        page.data
+            ? {
+                  title: pageTitle(page.data.performer.name),
+                  description: page.data.performer.bio,
+                  canonicalPath: `/performers/${id}`,
+                  image: page.data.performer.image,
+              }
+            : null,
+    );
 
     if (page.error instanceof ApiError && page.error.status === 404) return <NotFoundPage />;
 

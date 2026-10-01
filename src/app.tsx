@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { RouterProvider } from "react-router/dom";
 
+import { readPreloaded, seedQueryClient } from "@/api/preloaded";
 import { createQueryClient } from "@/api/queryClient";
 import type { AuthClient } from "@/auth/keycloak";
 import { AuthProvider } from "@/auth/provider";
@@ -16,7 +17,12 @@ import { applyTheme, watchTheme } from "@/lib/theme";
 import { router } from "./routes";
 
 export function App({ authClient }: { authClient: AuthClient }) {
-    const [queryClient] = useState(createQueryClient);
+    // The cache is seeded from the server-rendered page's data before the first render clears #root.
+    const [queryClient] = useState(() => {
+        const client = createQueryClient();
+        seedQueryClient(client, readPreloaded(document));
+        return client;
+    });
 
     useEffect(() => {
         applyTheme();

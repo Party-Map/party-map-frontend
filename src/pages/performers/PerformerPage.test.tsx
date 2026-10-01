@@ -21,7 +21,9 @@ describe("PerformerPage", () => {
         renderWithProviders(<PerformerPage />, ROUTE);
 
         expect(screen.getByRole("status")).toHaveTextContent("Loading…");
+        expect(document.title).not.toContain(performer.name);
         expect(await screen.findByRole("heading", { level: 1, name: performer.name })).toBeInTheDocument();
+        expect(document.title).toBe("DJ Test | PartyMap");
         const portrait = screen.getByRole("img", { name: performer.name });
         expect(portrait).toHaveAttribute("src", performer.image);
         expect(portrait.parentElement).toHaveClass("round");

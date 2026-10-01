@@ -74,7 +74,7 @@
   "scripts": {
     "api:types": "openapi-typescript openapi.json -o src/api/schema.d.ts",
     "build": "rsbuild build",
-    "check": "pnpm lint:deps && pnpm lint:code && pnpm lint:styles && pnpm lint:tsc && pnpm lint:classes && pnpm test:react --run --coverage && pnpm build",
+    "check": "pnpm lint:deps && pnpm lint:code && pnpm lint:styles && pnpm lint:tsc && pnpm lint:classes && pnpm test:react --run --coverage && pnpm build && pnpm lint:shell",
     "clean": "rimraf dist .rsbuild coverage",
     "clean:all": "rimraf node_modules dist .rsbuild coverage",
     "commitlint": "commitlint",
@@ -85,6 +85,7 @@
     "lint:classes": "node scripts/unused-classes.mjs",
     "lint:code": "eslint",
     "lint:deps": "syncpack lint",
+    "lint:shell": "node scripts/check-shell-markers.mjs",
     "lint:styles": "stylelint \"src/**/*.scss\"",
     "lint:tsc": "tsc --pretty --noEmit",
     "prepare": "husky",

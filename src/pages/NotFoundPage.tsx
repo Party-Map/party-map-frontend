@@ -1,8 +1,13 @@
 import { Link } from "react-router";
 
+import { pageTitle, usePageMeta } from "@/lib/seo";
+
 import styles from "./NotFoundPage.module.scss";
 
+const NOT_FOUND_META = { title: pageTitle("Not found"), noindex: true };
+
 export function NotFoundPage() {
+    usePageMeta(NOT_FOUND_META);
     return (
         <main className={styles.main}>
             <div className={styles.glow1} aria-hidden />

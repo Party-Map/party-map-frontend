@@ -12,6 +12,7 @@ import { LikeButton } from "@/layout/LikeButton";
 import { PageShell } from "@/layout/PageShell";
 import { splitByNow } from "@/lib/eventTime";
 import { formatDateTimeRange } from "@/lib/format";
+import { pageTitle, usePageMeta } from "@/lib/seo";
 import { Hero } from "@/pages/common/Hero";
 import { MediaList } from "@/pages/common/MediaList";
 import { MediaRow } from "@/pages/common/MediaRow";
@@ -27,6 +28,16 @@ export function PlacePage() {
     const { status } = useAuth();
     const page = usePlacePage(id);
     const likeStatus = useLikeStatus("places", id, { enabled: status === "authenticated" });
+    usePageMeta(
+        page.data
+            ? {
+                  title: pageTitle(page.data.place.name),
+                  description: page.data.place.description ?? `${page.data.place.address}, ${page.data.place.city}`,
+                  canonicalPath: `/places/${id}`,
+                  image: page.data.place.image,
+              }
+            : null,
+    );
 
     if (page.error instanceof ApiError && page.error.status === 404) return <NotFoundPage />;
 

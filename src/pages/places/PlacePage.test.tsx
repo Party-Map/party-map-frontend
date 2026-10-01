@@ -17,7 +17,9 @@ describe("PlacePage", () => {
         renderWithProviders(<PlacePage />, ROUTE);
 
         expect(screen.getByRole("status")).toHaveTextContent("Loading…");
+        expect(document.title).not.toContain(place.name);
         expect(await screen.findByRole("heading", { level: 1, name: place.name })).toBeInTheDocument();
+        expect(document.title).toBe("A38 Hajó | PartyMap");
         expect(screen.getByRole("img", { name: place.name })).toHaveAttribute("src", place.image);
         const address = screen.getByText(`${place.address}, ${place.city}`);
         expect(address.tagName).toBe("ADDRESS");

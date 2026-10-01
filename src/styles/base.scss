@@ -189,6 +189,19 @@
     text-size-adjust: 100%;
   }
 
+  /* The server-rendered content of a detail page, shown until React replaces it (web/shell in the backend). */
+  .pm-shell {
+    max-width: var(--page-max-w);
+    margin: calc(var(--topbar-h) + var(--space-8)) auto 0;
+    padding: 0 var(--space-4);
+    color: var(--fg-muted);
+  }
+
+  .pm-shell img {
+    max-width: 16rem;
+    border-radius: var(--radius-lg);
+  }
+
   body {
     min-height: 100dvh;
     line-height: 1.5;

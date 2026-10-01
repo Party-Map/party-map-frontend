@@ -19,7 +19,9 @@ describe("EventPage", () => {
         renderWithProviders(<EventPage />, ROUTE);
 
         expect(screen.getByRole("status")).toHaveTextContent("Loading…");
+        expect(document.title).not.toContain(event.title);
         expect(await screen.findByRole("heading", { level: 1, name: event.title })).toBeInTheDocument();
+        expect(document.title).toBe("Techno Night | PartyMap");
         expect(screen.getByRole("img", { name: event.title })).toHaveAttribute("src", event.image);
         expect(screen.getByText("Techno")).toHaveClass("badge");
         const when = screen.getByText(formatDateTimeRange(event.start, event.end));

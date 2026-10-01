@@ -26,10 +26,11 @@ const config = {
     },
     overrides: [
         {
-            // The global sheet: the theme switch, the utility classes, the token values themselves.
+            // The global sheet: the theme switch, the utility classes, the token values themselves, and the
+            // server-rendered shell content (markup the backend writes, see web/shell).
             files: ["src/styles/base.scss"],
             rules: {
-                "selector-class-pattern": "^(dark|sr-only)$",
+                "selector-class-pattern": "^(dark|sr-only|pm-shell)$",
                 "scale-unlimited/declaration-strict-value": null,
             },
         },
