@@ -75,6 +75,18 @@
   }
 
   @include desktop {
+    // Equal side tracks keep the search centred; the side tracks never shrink below their content.
+    .top-bar {
+      display: grid;
+      grid-template-columns: minmax(max-content, 1fr) minmax(0, 48rem) minmax(max-content, 1fr);
+      gap: var(--space-4);
+    }
+
+    .brand {
+      grid-column: 1;
+      justify-self: start;
+    }
+
     .brand-full {
       display: inline;
     }
@@ -83,12 +95,15 @@
       display: none;
     }
 
-    .top-actions {
-      display: flex;
+    .search {
+      grid-column: 2;
+      max-width: none;
     }
 
-    .search {
-      margin: 0 var(--space-4);
+    .top-actions {
+      display: flex;
+      grid-column: 3;
+      justify-self: end;
     }
   }
 

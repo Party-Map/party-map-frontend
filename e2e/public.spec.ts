@@ -23,3 +23,16 @@ test("unknown routes show the 404 page", async ({ page }) => {
     await page.getByRole("link", { name: "Back to Map" }).click();
     await expect(page).toHaveURL("/");
 });
+
+test("the desktop header centers the search and pins the actions to the right", async ({ page, isMobile }) => {
+    test.skip(isMobile, "phones move the account actions to the bottom bar");
+    await page.goto("/");
+    const bar = await page.getByRole("banner").locator("> div").boundingBox();
+    const search = await page.getByRole("combobox", { name: "Search" }).locator("xpath=..").boundingBox();
+    const toggle = await page.getByRole("banner").getByRole("button", { name: "Toggle theme" }).boundingBox();
+    if (!bar || !search || !toggle) throw new Error("header parts are not laid out");
+
+    const center = (box: { x: number; width: number }) => box.x + box.width / 2;
+    expect(Math.abs(center(search) - center(bar))).toBeLessThan(2);
+    expect(bar.x + bar.width - (toggle.x + toggle.width)).toBeLessThan(24);
+});
