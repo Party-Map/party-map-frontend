@@ -22,6 +22,16 @@
     border: 1px solid fade(white, 10%);
   }
 
+  .lead {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .explore {
+    display: none;
+  }
+
   .brand {
     display: inline-flex;
     align-items: center;
@@ -61,7 +71,7 @@
     flex: 1;
     position: relative;
     z-index: var(--z-dropdown);
-    max-width: 48rem;
+    max-width: 40rem;
   }
 
   .top-actions {
@@ -71,16 +81,21 @@
   }
 
   @include desktop {
-    // Equal side tracks keep the search centred; the side tracks never shrink below their content.
+    // Equal side tracks keep the search centred; the side tracks never shrink below their content, so the
+    // search's maximum leaves both of them room for their links at 1440px.
     .top-bar {
       display: grid;
-      grid-template-columns: minmax(max-content, 1fr) minmax(0, 48rem) minmax(max-content, 1fr);
+      grid-template-columns: minmax(max-content, 1fr) minmax(0, 40rem) minmax(max-content, 1fr);
       gap: var(--space-4);
     }
 
-    .brand {
+    .lead {
       grid-column: 1;
       justify-self: start;
+    }
+
+    .explore {
+      display: block;
     }
 
     .brand-full {

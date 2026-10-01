@@ -10,6 +10,7 @@ import { AuthProvider } from "@/auth/provider";
 import type { Role } from "@/auth/roles";
 import { AppToaster } from "@/layout/AppToaster";
 import { HighlightProvider } from "@/layout/HighlightProvider";
+import { LocationProvider } from "@/layout/LocationProvider";
 
 export type MockAuthClient = AuthClient & {
     emit: (snapshot: AuthSnapshot) => void;
@@ -97,16 +98,18 @@ export function AppProviders({
             <AuthProvider client={authClient}>
                 <QueryClientProvider client={cache}>
                     <HighlightProvider>
-                        {router ? (
-                            <RouterProvider router={router} />
-                        ) : (
-                            <MemoryRouter initialEntries={[route]}>
-                                <Routes>
-                                    <Route path={path} element={children} />
-                                    <Route path="*" element={<p>other page</p>} />
-                                </Routes>
-                            </MemoryRouter>
-                        )}
+                        <LocationProvider>
+                            {router ? (
+                                <RouterProvider router={router} />
+                            ) : (
+                                <MemoryRouter initialEntries={[route]}>
+                                    <Routes>
+                                        <Route path={path} element={children} />
+                                        <Route path="*" element={<p>other page</p>} />
+                                    </Routes>
+                                </MemoryRouter>
+                            )}
+                        </LocationProvider>
                     </HighlightProvider>
                 </QueryClientProvider>
             </AuthProvider>

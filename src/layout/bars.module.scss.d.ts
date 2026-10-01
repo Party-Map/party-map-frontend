@@ -7,6 +7,8 @@ interface CssExports {
   brand: string;
   brandFull: string;
   brandShort: string;
+  explore: string;
+  lead: string;
   search: string;
   topActions: string;
   topBar: string;

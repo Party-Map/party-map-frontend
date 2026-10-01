@@ -10,6 +10,7 @@ import { AuthProvider } from "@/auth/provider";
 import { SessionEndedDialog } from "@/auth/SessionEndedDialog";
 import { AppToaster } from "@/layout/AppToaster";
 import { HighlightProvider } from "@/layout/HighlightProvider";
+import { LocationProvider } from "@/layout/LocationProvider";
 import { applyTheme, watchTheme } from "@/lib/theme";
 
 import { router } from "./routes";
@@ -27,7 +28,9 @@ export function App({ authClient }: { authClient: AuthClient }) {
             <AuthProvider client={authClient}>
                 <QueryClientProvider client={queryClient}>
                     <HighlightProvider>
-                        <RouterProvider router={router} />
+                        <LocationProvider>
+                            <RouterProvider router={router} />
+                        </LocationProvider>
                     </HighlightProvider>
                     <SessionEndedDialog />
                 </QueryClientProvider>

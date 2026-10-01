@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 
 import { searchHits } from "@/test/fixtures";
 import { mockApi, renderWithProviders } from "@/test/helpers";
@@ -6,12 +6,17 @@ import { mockApi, renderWithProviders } from "@/test/helpers";
 import { TopBar } from "./TopBar";
 
 describe("TopBar", () => {
-    it("shows the brand, an empty search box, account actions and the theme toggle", async () => {
+    it("shows the brand with the explore links, an empty search box, account actions and the theme toggle", async () => {
         mockApi({});
         renderWithProviders(<TopBar />);
         expect(await screen.findByRole("button", { name: "Sign in" })).toHaveClass("item", "desktop");
         expect(screen.getByRole("banner")).toHaveClass("top-wrapper");
         expect(screen.getByRole("link", { name: "PartyMap home" })).toHaveAttribute("href", "/");
+        const explore = screen.getByRole("navigation", { name: "Explore" });
+        expect(within(explore).getByRole("link", { name: "Browse" })).toHaveAttribute("href", "/browse");
+        expect(screen.getByRole("navigation", { name: "Account" })).toContainElement(
+            screen.getByRole("button", { name: "Sign in" }),
+        );
         expect(screen.getByRole("combobox", { name: "Search" })).toHaveValue("");
         expect(screen.getByRole("button", { name: "Toggle theme" })).toBeInTheDocument();
     });
