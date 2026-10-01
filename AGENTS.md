@@ -107,18 +107,48 @@ Token names are the app's own; the prompt's shadcn names map onto them: `--backg
 - Search: `layout/SearchBar.tsx` is a cmdk list over `useSearch`; arrow keys choose a hit, Enter picks the chosen
   hit or, with none chosen, commits the query to `?q=`.
 - Toasts: `import { toast } from "@/lib/toast"` (sonner behind it, `layout/AppToaster.tsx` renders them).
-- Forms: react-hook-form with a zod schema (`pages/admin/shared/formSchemas.ts` for the shared pieces), messages
-  under the fields, `setError("root")` for a failed save, `Controller` for composite fields.
+- Forms: react-hook-form with a zod schema (`pages/admin/shared/formSchemas.ts` for the shared pieces, one-line text
+  capped at the API's 255 characters), messages under the fields, `setError("root")` for a failed save, `Controller`
+  for composite fields. Admin create/edit forms are step forms (below).
 - Dates: `lib/format.ts` (date-fns); the backend sends zone-less local times.
+
+## Admin area
+
+- `pages/admin/domains.ts` is the one table of admin domains (Places, Performers, Events, Platform; one role each),
+  their sidebar sections and the route patterns that count as each section. A new admin feature is an entry there
+  plus its routes in `pages/admin/routes.tsx` (lazy `page(() => import(...), "XPage")`); `routes.test.tsx` opens every
+  section, so a section without a page fails.
+- `shell/AdminShell` is the `/admin` route element: auth states (deep-link `returnTo`), then `AdminHeader` (brand,
+  `DomainSwitcher` and `UserMenu` on Base UI Menu, theme), `AdminSidebar` (a Base UI Drawer on phones) and the
+  outlet. Pages render inside `shell/AdminPage` (breadcrumbs, the only `h1`, description, actions) and still guard
+  themselves with `RequireRole`.
+- Lists: `shared/DataTable` (a table on wide screens, cards on phones, the primary column is the row link),
+  `shared/StatusChip` / `InvitationStateChip`, `shared/Pager`, `shared/RequestList` over `shared/requests.ts` (place and
+  performer invitations normalised to one shape). Overview pages use `shell/StatCard` and `shared/overview.module.scss`.
+- Step forms: `shared/stepper/StepForm` takes a zod schema, `steps` (`{ id, title, fields, render }`), default
+  values, a review `summary` and `onSubmit`; create mode unlocks steps in order, edit mode opens any step, saving
+  re-validates and opens the first failing step, and `UnsavedChangesGuard` asks before leaving (it needs a data
+  router). Step bodies read the form with `useFormContext`/`useWatch`. Each form keeps its schema, defaults, payload
+  mapping and review rows in a tested `*FormSchema.ts` (not `xForm.ts`: macOS treats `placeForm.ts` and
+  `PlaceForm.tsx` as the same name).
+- Event plans open as a workspace (`events/EventPlanPage`): venue, lineup, `PublishChecklist` from the pure
+  `planReadiness.ts`, details with their own edit page. Publish stays disabled until the checklist is complete.
+- Platform (`partymap_admin`): `platform/UsersPage` (search and page in the URL) and `UserDetailPage` with
+  `RoleSwitches`; roles change in Keycloak through `/api/admin/users`, and reach the user's token at their next
+  sign-in or refresh.
 
 ## Tests
 
 - Vitest + Testing Library + jsdom; helpers in `src/test`: `renderWithProviders` (auth, a fresh QueryClient without
-  retries, toaster, memory router), `mockApi` (a table of `"METHOD /api/path"` answers; every request is recorded in
+  retries, toaster, memory router; `dataRouter: true` mounts a `createMemoryRouter` instead, which `useBlocker` and
+  so every step form needs), `mockApi` (a table of `"METHOD /api/path"` answers; every request is recorded in
   `fetchMock.requests` with method, URL, headers and parsed body), fixtures, and the Leaflet mock
   (`vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reactLeafletMock))`).
-- Playwright in `e2e/`: `auth.setup.ts` signs in through Keycloak, `public.spec.ts`, `account.auth.spec.ts`,
-  `visual.spec.ts` (baselines are per platform and git-ignored).
+- Playwright in `e2e/`: `auth.setup.ts` signs in through Keycloak (and answers the cookie notice),
+  `public.spec.ts`, `account.auth.spec.ts`, `admin.auth.spec.ts` (domains, deep-link sign-in, the whole
+  plan-invite-accept-publish loop, granting a role on `roles-target@partymap.local`), `admin-phone.auth.spec.ts` and
+  `admin-visual.auth.spec.ts` (the `signed-in-phone` project), `visual.spec.ts`. Baselines are per platform and
+  git-ignored; create missing ones with `--update-snapshots=missing`.
 - Vitest needs Vite as its own dependency; the app itself is built by Rsbuild only.
 
 ## Deliberate differences from the scaffold prompt this stack came from
