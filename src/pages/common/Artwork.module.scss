@@ -1,0 +1,62 @@
+@layer parts {
+  .frame {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .image {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .row {
+    width: var(--row-art);
+    height: var(--row-art);
+    border-radius: var(--radius-sm);
+  }
+
+  .card {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: var(--radius-md);
+  }
+
+  .hero {
+    width: var(--hero-art-size, 16rem);
+    height: var(--hero-art-size, 16rem);
+    border-radius: var(--radius-lg);
+  }
+
+  .square {
+    border-radius: var(--radius-sm);
+  }
+
+  .round {
+    border-radius: 50%;
+  }
+
+  .card.square {
+    border-radius: var(--radius-md);
+  }
+
+  .hero.square {
+    border-radius: var(--radius-lg);
+  }
+
+  /* The glow: the same picture, blurred and saturated, behind the frame. */
+  .ambient::before {
+    content: "";
+    position: absolute;
+    inset: -12%;
+    z-index: 0;
+    border-radius: inherit;
+    background: var(--artwork-url) center / cover no-repeat;
+    filter: blur(14px) saturate(1.6);
+    opacity: var(--artwork-glow, 0);
+    transition: opacity var(--duration-base) var(--ease);
+  }
+}

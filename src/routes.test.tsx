@@ -5,6 +5,8 @@ import { RouterProvider } from "react-router/dom";
 
 import { AuthProvider } from "@/auth/provider";
 import { HighlightProvider } from "@/layout/HighlightProvider";
+import { LocationProvider } from "@/layout/LocationProvider";
+import { browseEventsPage } from "@/test/fixtures";
 import { createTestQueryClient } from "@/test/helpers";
 import { createMockAuthClient, mockApi } from "@/test/helpers";
 
@@ -53,5 +55,24 @@ describe("routes", () => {
         });
         expect(await screen.findByRole("heading", { name: "404" })).toBeInTheDocument();
         expect(screen.queryByRole("heading", { name: "You are now logged out" })).toBeNull();
+    });
+
+    it("sends /browse to the events list", async () => {
+        mockApi({ "GET /api/browse/events": browseEventsPage });
+        const memoryRouter = createMemoryRouter(routes, { initialEntries: ["/browse"] });
+        render(
+            <AuthProvider client={createMockAuthClient()}>
+                <QueryClientProvider client={createTestQueryClient()}>
+                    <HighlightProvider>
+                        <LocationProvider>
+                            <RouterProvider router={memoryRouter} />
+                        </LocationProvider>
+                    </HighlightProvider>
+                </QueryClientProvider>
+            </AuthProvider>,
+        );
+        expect(await screen.findByRole("list", { name: "Events" })).toBeInTheDocument();
+        expect(memoryRouter.state.location.pathname).toBe("/browse/events");
+        expect(screen.getByRole("link", { name: "Events" })).toHaveClass("active");
     });
 });

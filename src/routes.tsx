@@ -1,7 +1,11 @@
-import { createBrowserRouter, type RouteObject } from "react-router";
+import { createBrowserRouter, Navigate, type RouteObject } from "react-router";
 
 import { RootLayout } from "@/layout/RootLayout";
 import { adminRoutes } from "@/pages/admin/routes";
+import { BrowsePage } from "@/pages/browse/BrowsePage";
+import { EventsBrowsePage } from "@/pages/browse/EventsBrowsePage";
+import { PerformersBrowsePage } from "@/pages/browse/PerformersBrowsePage";
+import { PlacesBrowsePage } from "@/pages/browse/PlacesBrowsePage";
 import { ErrorPage } from "@/pages/ErrorPage";
 import { EventPage } from "@/pages/events/EventPage";
 import { LoggedOutPage } from "@/pages/LoggedOutPage";
@@ -26,6 +30,16 @@ export const routes: RouteObject[] = [
             { path: "places/:id", element: <PlacePage /> },
             { path: "events/:id", element: <EventPage /> },
             { path: "performers/:id", element: <PerformerPage /> },
+            {
+                path: "browse",
+                element: <BrowsePage />,
+                children: [
+                    { index: true, element: <Navigate to="/browse/events" replace /> },
+                    { path: "events", element: <EventsBrowsePage /> },
+                    { path: "places", element: <PlacesBrowsePage /> },
+                    { path: "performers", element: <PerformersBrowsePage /> },
+                ],
+            },
             { path: "profile", element: <ProfilePage /> },
             { path: "profile/likes", element: <LikesPage /> },
             adminRoutes,

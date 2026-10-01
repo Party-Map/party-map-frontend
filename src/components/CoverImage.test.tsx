@@ -30,4 +30,9 @@ describe("CoverImage", () => {
         render(<CoverImage src="https://images.example/a.jpg" alt="Cover" height="sm" className="extra" />);
         expect(screen.getByRole("img", { name: "Cover" })).toHaveClass("image", "sm", "extra");
     });
+
+    it("can fill the parent's box", () => {
+        render(<CoverImage src="https://images.example/a.jpg" alt="Cover" height="fill" />);
+        expect(screen.getByRole("img", { name: "Cover" })).toHaveClass("image", "fill");
+    });
 });

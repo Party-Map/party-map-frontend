@@ -8,10 +8,11 @@ import styles from "./CoverImage.module.scss";
 type CoverImageProps = Omit<ImgHTMLAttributes<HTMLImageElement>, "src"> & {
     src: string | null | undefined;
     alt: string;
-    height?: "sm" | "md" | "lg";
+    /** A fixed height, or `fill` to take the parent's box (the parent sets the size). */
+    height?: "sm" | "md" | "lg" | "fill";
 };
 
-const HEIGHTS = { sm: styles.sm, md: styles.md, lg: styles.lg };
+const HEIGHTS = { sm: styles.sm, md: styles.md, lg: styles.lg, fill: styles.fill };
 
 /** Image with a placeholder fallback for missing or broken sources. */
 export function CoverImage({ src, alt, height = "lg", className, ...rest }: CoverImageProps) {

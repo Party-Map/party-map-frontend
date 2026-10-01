@@ -45,6 +45,13 @@ export const LABEL_HIGHLIGHT_OFFSET = -84;
 
 export const PLACEHOLDER_IMAGE = "/placeholder.svg";
 
+/** Browse lists load this many rows per page. */
+export const BROWSE_PAGE_SIZE = 20;
+/** The distance chips of the browse lists (kilometres); "any distance" is the absence of a radius. */
+export const BROWSE_RADIUS_OPTIONS_KM = [5, 25, 100] as const;
+/** How many tag or genre chips the browse filters show. */
+export const BROWSE_FACET_LIMIT = 12;
+
 export const SEARCH_DEBOUNCE_MS = 300;
 export const GEOCODE_DEBOUNCE_MS = 400;
 
