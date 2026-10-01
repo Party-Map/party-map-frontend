@@ -1,9 +1,11 @@
 // The API's shapes, as named in the app. Every type here is an alias of the schema generated from the backend's
 // OpenAPI document (pnpm api:types), never a hand-written copy: when the backend changes, tsc points at the code
 // to update.
-import type { components } from "./schema";
+import type { components, operations } from "./schema";
 
 type Schemas = components["schemas"];
+/** The query parameters of a GET operation, by its operationId. */
+type Query<O extends keyof operations> = NonNullable<operations[O]["parameters"]["query"]>;
 
 export type ID = string;
 
@@ -54,6 +56,18 @@ export type OwnedEventListItem = Schemas["EventAdminListItemDto"];
 export type EventPlanListItem = Schemas["EventPlanAdminListItemDto"];
 export type PlaceInvitationRequest = Schemas["EventPlanPlaceInvitationWithDateDto"];
 export type PerformerInvitationRequest = Schemas["EventPlanLineupInvitationForPerformerDto"];
+
+export type BrowseEventItem = Schemas["BrowseEventItemDto"];
+export type BrowseEventsPage = Schemas["BrowseEventsPageDto"];
+export type BrowsePlaceItem = Schemas["BrowsePlaceItemDto"];
+export type BrowsePlacesPage = Schemas["BrowsePlacesPageDto"];
+export type BrowsePerformerItem = Schemas["BrowsePerformerItemDto"];
+export type BrowsePerformersPage = Schemas["BrowsePerformersPageDto"];
+export type TagCount = Schemas["TagCountDto"];
+export type GenreCount = Schemas["GenreCountDto"];
+export type BrowseEventsQuery = Query<"events">;
+export type BrowsePlacesQuery = Query<"places">;
+export type BrowsePerformersQuery = Query<"performers">;
 
 export type AdminUser = Schemas["AdminUserDto"];
 export type AdminUserPage = Schemas["AdminUserPageDto"];

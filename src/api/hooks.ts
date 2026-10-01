@@ -1,11 +1,25 @@
 // The app's server state: one query hook per read and one mutation hook per write. Queries throw the fetchers'
 // ApiError, so a component reads `error` (404 → not found) and `refetch` (retry). Mutations invalidate the key
 // families they change, so every screen showing that data refreshes.
-import { keepPreviousData, useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+    keepPreviousData,
+    useInfiniteQuery,
+    useMutation,
+    useQueries,
+    useQuery,
+    useQueryClient,
+} from "@tanstack/react-query";
 
 import type { ManagerRole } from "@/auth/roles";
 
 import { type AdminUserQuery, fetchAdminUser, fetchAdminUsers, grantRole, revokeRole } from "./admin";
+import {
+    fetchBrowseEvents,
+    fetchBrowsePerformers,
+    fetchBrowsePlaces,
+    fetchPerformerGenres,
+    fetchPlaceTags,
+} from "./browse";
 import { ApiError } from "./client";
 import {
     addLineupInvitation,
@@ -26,7 +40,16 @@ import {
     fetchOwnedEvents,
     fetchUpcomingEventsByPlace,
 } from "./events";
-import { adminKeys, eventKeys, eventPlanKeys, likeKeys, performerKeys, placeKeys, searchKeys } from "./keys";
+import {
+    adminKeys,
+    browseKeys,
+    eventKeys,
+    eventPlanKeys,
+    likeKeys,
+    performerKeys,
+    placeKeys,
+    searchKeys,
+} from "./keys";
 import { fetchLikedEvents, fetchLikedPerformers, fetchLikedPlaces, fetchLikeStatus, like, unlike } from "./likes";
 import {
     createPerformer,
@@ -49,6 +72,9 @@ import {
 } from "./places";
 import { search } from "./search";
 import type {
+    BrowseEventsQuery,
+    BrowsePerformersQuery,
+    BrowsePlacesQuery,
     EventPlanPayload,
     ID,
     LikedEventsGrouped,
@@ -61,6 +87,65 @@ import type {
 } from "./types";
 
 type Answer = "accept" | "reject";
+
+/* ---------- Browse ---------- */
+
+interface Paged {
+    total: number;
+    page: number;
+    size: number;
+}
+
+/** The next zero-based page while the loaded pages do not cover the total yet. */
+export function nextBrowsePage(page: Paged): number | undefined {
+    return (page.page + 1) * page.size < page.total ? page.page + 1 : undefined;
+}
+
+interface BrowseOptions {
+    /** False while the filters are not ready (the position is still being looked up). */
+    enabled?: boolean;
+}
+
+/** Events page by page; the hook manages `page`, the caller the other filters. */
+export function useBrowseEvents(query: Omit<BrowseEventsQuery, "page">, { enabled = true }: BrowseOptions = {}) {
+    return useInfiniteQuery({
+        queryKey: browseKeys.events(query),
+        queryFn: ({ pageParam }) => fetchBrowseEvents({ ...query, page: pageParam }),
+        initialPageParam: 0,
+        getNextPageParam: nextBrowsePage,
+        placeholderData: keepPreviousData,
+        enabled,
+    });
+}
+
+export function useBrowsePlaces(query: Omit<BrowsePlacesQuery, "page">, { enabled = true }: BrowseOptions = {}) {
+    return useInfiniteQuery({
+        queryKey: browseKeys.places(query),
+        queryFn: ({ pageParam }) => fetchBrowsePlaces({ ...query, page: pageParam }),
+        initialPageParam: 0,
+        getNextPageParam: nextBrowsePage,
+        placeholderData: keepPreviousData,
+        enabled,
+    });
+}
+
+export function useBrowsePerformers(query: Omit<BrowsePerformersQuery, "page">) {
+    return useInfiniteQuery({
+        queryKey: browseKeys.performers(query),
+        queryFn: ({ pageParam }) => fetchBrowsePerformers({ ...query, page: pageParam }),
+        initialPageParam: 0,
+        getNextPageParam: nextBrowsePage,
+        placeholderData: keepPreviousData,
+    });
+}
+
+export function usePlaceTags() {
+    return useQuery({ queryKey: browseKeys.placeTags(), queryFn: fetchPlaceTags });
+}
+
+export function usePerformerGenres() {
+    return useQuery({ queryKey: browseKeys.performerGenres(), queryFn: fetchPerformerGenres });
+}
 
 /* ---------- Public pages ---------- */
 

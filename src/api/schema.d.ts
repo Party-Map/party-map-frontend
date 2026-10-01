@@ -500,6 +500,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/browse/places": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["places"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/browse/place-tags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["placeTags"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/browse/performers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["performers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/browse/performer-genres": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["performerGenres"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/browse/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["events"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/users": {
         parameters: {
             query?: never;
@@ -767,6 +847,85 @@ export interface components {
             startDateTime: string;
             /** Format: date-time */
             endDateTime: string;
+        };
+        BrowsePlaceItemDto: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            city: string;
+            address: string;
+            image?: string | null;
+            tags: string[];
+            location: components["schemas"]["GeoPointDto"];
+            /** Format: double */
+            distanceKm?: number | null;
+        };
+        BrowsePlacesPageDto: {
+            items: components["schemas"]["BrowsePlaceItemDto"][];
+            /** Format: int64 */
+            total: number;
+            /** Format: int32 */
+            page: number;
+            /** Format: int32 */
+            size: number;
+        };
+        TagCountDto: {
+            tag: string;
+            /** Format: int64 */
+            count: number;
+        };
+        BrowsePerformerItemDto: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            genre: string;
+            image?: string | null;
+        };
+        BrowsePerformersPageDto: {
+            items: components["schemas"]["BrowsePerformerItemDto"][];
+            /** Format: int64 */
+            total: number;
+            /** Format: int32 */
+            page: number;
+            /** Format: int32 */
+            size: number;
+        };
+        GenreCountDto: {
+            genre: string;
+            /** Format: int64 */
+            count: number;
+        };
+        BrowseEventItemDto: {
+            /** Format: uuid */
+            id: string;
+            title: string;
+            /** Format: date-time */
+            start: string;
+            /** Format: date-time */
+            end: string;
+            /** @enum {string} */
+            kind: "DISCO" | "TECHNO" | "FESTIVAL" | "JAZZ" | "ALTER" | "HOME" | "PUB";
+            image?: string | null;
+            price?: string | null;
+            place: components["schemas"]["BrowsePlaceSummaryDto"];
+            /** Format: double */
+            distanceKm?: number | null;
+        };
+        BrowseEventsPageDto: {
+            items: components["schemas"]["BrowseEventItemDto"][];
+            /** Format: int64 */
+            total: number;
+            /** Format: int32 */
+            page: number;
+            /** Format: int32 */
+            size: number;
+        };
+        BrowsePlaceSummaryDto: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            city: string;
+            location: components["schemas"]["GeoPointDto"];
         };
         AdminUserDto: {
             /** Format: uuid */
@@ -1744,6 +1903,132 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EventPlanAdminListItemDto"][];
+                };
+            };
+        };
+    };
+    places: {
+        parameters: {
+            query?: {
+                lat?: number;
+                lon?: number;
+                radiusKm?: number;
+                tag?: string;
+                q?: string;
+                sort?: string;
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrowsePlacesPageDto"];
+                };
+            };
+        };
+    };
+    placeTags: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TagCountDto"][];
+                };
+            };
+        };
+    };
+    performers: {
+        parameters: {
+            query?: {
+                genre?: string;
+                q?: string;
+                sort?: string;
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrowsePerformersPageDto"];
+                };
+            };
+        };
+    };
+    performerGenres: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GenreCountDto"][];
+                };
+            };
+        };
+    };
+    events: {
+        parameters: {
+            query?: {
+                lat?: number;
+                lon?: number;
+                radiusKm?: number;
+                from?: string;
+                to?: string;
+                kind?: "DISCO" | "TECHNO" | "FESTIVAL" | "JAZZ" | "ALTER" | "HOME" | "PUB";
+                q?: string;
+                sort?: string;
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrowseEventsPageDto"];
                 };
             };
         };

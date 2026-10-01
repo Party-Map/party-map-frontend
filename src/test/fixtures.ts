@@ -1,11 +1,19 @@
 import type {
     AdminUser,
     AdminUserPage,
+    BrowseEventItem,
+    BrowseEventsPage,
+    BrowsePerformerItem,
+    BrowsePerformersPage,
+    BrowsePlaceItem,
+    BrowsePlacesPage,
     Event,
     EventPlan,
+    GenreCount,
     Performer,
     Place,
     SearchHit,
+    TagCount,
     UpcomingEventByPlace,
 } from "@/api/types";
 
@@ -130,3 +138,72 @@ export const adminUser2: AdminUser = {
 };
 
 export const adminUserPage: AdminUserPage = { items: [adminUser, adminUser2], total: 2, page: 0, size: 20 };
+
+export const browseEvent: BrowseEventItem = {
+    id: event.id,
+    title: event.title,
+    start: event.start,
+    end: event.end,
+    kind: event.kind,
+    image: event.image,
+    price: event.price,
+    place: { id: place.id, name: place.name, city: place.city, location: place.location },
+    distanceKm: 3.2,
+};
+
+export const browseEvent2: BrowseEventItem = {
+    id: "event-2",
+    title: "Jazz Brunch",
+    start: "2030-06-08T11:00:00",
+    end: "2030-06-08T14:00:00",
+    kind: "JAZZ",
+    image: null,
+    price: null,
+    place: { id: place2.id, name: place2.name, city: place2.city, location: place2.location },
+    distanceKm: 12.5,
+};
+
+export const browseEventsPage: BrowseEventsPage = { items: [browseEvent, browseEvent2], total: 2, page: 0, size: 20 };
+
+export const browsePlace: BrowsePlaceItem = {
+    id: place.id,
+    name: place.name,
+    city: place.city,
+    address: place.address,
+    image: place.image,
+    tags: place.tags,
+    location: place.location,
+    distanceKm: 1.2,
+};
+
+export const browsePlace2: BrowsePlaceItem = {
+    id: place2.id,
+    name: place2.name,
+    city: place2.city,
+    address: place2.address,
+    image: place2.image,
+    tags: place2.tags,
+    location: place2.location,
+    distanceKm: null,
+};
+
+export const browsePlacesPage: BrowsePlacesPage = { items: [browsePlace, browsePlace2], total: 2, page: 0, size: 20 };
+
+export const browsePerformer: BrowsePerformerItem = {
+    id: performer.id,
+    name: performer.name,
+    genre: performer.genre,
+    image: performer.image,
+};
+
+export const browsePerformersPage: BrowsePerformersPage = { items: [browsePerformer], total: 1, page: 0, size: 20 };
+
+export const placeTags: TagCount[] = [
+    { tag: "techno", count: 3 },
+    { tag: "garden", count: 1 },
+];
+
+export const performerGenres: GenreCount[] = [
+    { genre: "techno", count: 2 },
+    { genre: "house", count: 1 },
+];
