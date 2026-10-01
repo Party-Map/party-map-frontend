@@ -19,6 +19,7 @@ import { PlacePopupCard } from "./PlacePopupCard";
 import { UserLocation } from "./UserLocation";
 import { ViewportWatcher } from "./ViewportWatcher";
 import { ZoomControls } from "./ZoomControls";
+import { ZoomFloor } from "./ZoomFloor";
 
 /** Lifts the popup so it floats above the pin head. */
 const POPUP_OFFSET: PointTuple = [0, -48];
@@ -79,6 +80,7 @@ export function MapView({
                 className={styles.map}
             >
                 <LazyBasemap />
+                <ZoomFloor />
 
                 {(onViewportChange ?? onViewChange) && (
                     <ViewportWatcher onChange={onViewportChange} onViewChange={onViewChange} />

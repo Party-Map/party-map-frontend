@@ -27,13 +27,13 @@ export interface Palette {
 }
 
 /**
- * After a space-fantasy painting: a royal-blue starry sky around the country, sandy gold land, lavender-blue water
- * and gold-edged roads by day; by night the land turns deep blue with sage-green roads and pale gold names. Pastel
- * in both: nothing fully saturated, nothing pure white or black.
+ * After a space-fantasy painting: a near-black, green-tinted starry sky around the country; sandy gold land,
+ * lavender-blue water and gold-edged roads by day; slate-grey land with sage-green roads and pale gold names by
+ * night. Pastel in both: nothing fully saturated, nothing pure white.
  */
 export const PALETTES: Record<Theme, Palette> = {
     light: {
-        sky: "#3242c4",
+        sky: "#161d19",
         star: "#fff6dc",
         land: "#f3e9cc",
         water: "#b4bdee",
@@ -53,11 +53,11 @@ export const PALETTES: Record<Theme, Palette> = {
         waterText: "#5a65b9",
     },
     dark: {
-        sky: "#11164a",
-        star: "#fff3cf",
-        land: "#2a3394",
-        water: "#5a68cf",
-        waterLine: "#6c79da",
+        sky: "#0c110f",
+        star: "#f3f0d8",
+        land: "#3b3f49",
+        water: "#4f5c86",
+        waterLine: "#5d6a94",
         roads: {
             motorway: { fill: "#93b69b", casing: "#1c2272" },
             trunk: { fill: "#93b69b", casing: "#1c2272" },
@@ -66,10 +66,10 @@ export const PALETTES: Record<Theme, Palette> = {
             tertiary: { fill: "#6e8f7c", casing: "#1c2272" },
             minor: { fill: "#5c7a6b", casing: "#1c2272" },
         },
-        boundary: "#b3b4e0",
-        text: "#f1e5b8",
-        textHalo: "#2a3394",
-        placeText: "#f6edd3",
-        waterText: "#cdd3f7",
+        boundary: "#a0a4bd",
+        text: "#ece4c4",
+        textHalo: "#3b3f49",
+        placeText: "#f2ebd2",
+        waterText: "#b8c2e6",
     },
 };

@@ -50,6 +50,8 @@ export const fakeMap = {
     setZoomAround: vi.fn(),
     panBy: vi.fn(),
     getZoom: vi.fn(() => 13),
+    getBoundsZoom: vi.fn(() => 7),
+    setMinZoom: vi.fn(),
     getCenter: vi.fn(() => ({ lat: 47.5, lng: 19.05 })),
     /** Central Budapest. */
     getBounds: vi.fn((): FakeBounds => ({

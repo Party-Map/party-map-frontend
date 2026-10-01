@@ -74,8 +74,9 @@ routes use `Component:` (the admin area is lazy-loaded). Each file opens with a 
   "Map data" line of the privacy notice (`components/ConsentBanner`). The style is deliberately sparse and painterly
   (after a space-fantasy picture): a starry sky (`map/basemap/stars.ts`, a seeded bitmap handed to MapLibre at
   `style.load`, drawn as a `fill-pattern` over a world-minus-Hungary mask built from `map/basemap/hungary.json`),
-  sandy or deep-blue land, lavender water, six road classes in one colour with outlines, the border and names; no
-  landcover, buildings, rail or POIs.
+  sandy (light) or slate-grey (dark) land, lavender water, six road classes in one colour with outlines, the border
+  and names; no landcover, buildings, rail or POIs. `map/ZoomFloor` keeps the main map from zooming out beyond the
+  whole country (`minZoom` follows the viewport size).
 - `lib/geocode.ts` (Nominatim) is the only other network access; nothing else calls `fetch`.
 
 ## Auth
