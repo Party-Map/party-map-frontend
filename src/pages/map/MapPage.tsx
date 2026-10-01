@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 
 import { usePlaces, usePlacesById, useUpcomingEvents } from "@/api/hooks";
 import type { ID, Place, UpcomingEventByPlace } from "@/api/types";
 import { ErrorState, LoadingState } from "@/components/States";
 import { BottomBar } from "@/layout/BottomBar";
-import { useHighlight } from "@/layout/HighlightProvider";
+import { type PlaceFocus, useHighlight } from "@/layout/HighlightProvider";
 import { TopBar } from "@/layout/TopBar";
 import { MapView } from "@/map/MapView";
 
@@ -14,12 +14,13 @@ import styles from "./MapPage.module.scss";
 const NO_PLACES: Place[] = [];
 
 /**
- * Which popup is open, remembered together with the highlight set it was opened under: a
- * change of highlights (search, focus) closes it without an effect.
+ * Which popup the user opened or closed (null), remembered together with the highlights and focus it happened
+ * under: a new search closes it and a newly focused place opens its own, without an effect.
  */
 interface PopupState {
-    id: ID;
+    id: ID | null;
     forHighlights: ID[];
+    forFocus: PlaceFocus | null;
 }
 
 /**
@@ -29,7 +30,7 @@ interface PopupState {
 export function MapPage() {
     const [searchParams] = useSearchParams();
     const focus = searchParams.get("focus");
-    const { highlightIds, setHighlightIds } = useHighlight();
+    const { highlightIds, focus: focused, focusPlace } = useHighlight();
 
     const [bbox, setBbox] = useState<string | null>(null);
     const placesQuery = usePlaces(bbox);
@@ -44,10 +45,10 @@ export function MapPage() {
     const highlightsSettled = inView !== undefined && !highlightedElsewhere.pending;
     const [popup, setPopup] = useState<PopupState | null>(null);
 
-    // Arriving with ?focus=<placeId> (from search on another page) highlights that place.
+    // Arriving with ?focus=<placeId> (from search on another page) highlights that place and opens its card.
     useEffect(() => {
-        if (focus) setHighlightIds([focus]);
-    }, [focus, setHighlightIds]);
+        if (focus) focusPlace(focus);
+    }, [focus, focusPlace]);
 
     const upcomingMap = useMemo(
         () => new Map<ID, UpcomingEventByPlace>((upcomingQuery.data ?? []).map((u) => [u.placeId, u])),
@@ -61,9 +62,11 @@ export function MapPage() {
         [error, inView, upcomingQuery.data, highlightedElsewhere.places],
     );
 
-    const openPopupId = popup !== null && popup.forHighlights === highlightIds ? popup.id : null;
-    const togglePopup = (id: ID) => setPopup(openPopupId === id ? null : { id, forHighlights: highlightIds });
-    const closePopup = useCallback(() => setPopup(null), []);
+    const current = popup !== null && popup.forHighlights === highlightIds && popup.forFocus === focused;
+    const openPopupId = current ? popup.id : (focused?.id ?? null);
+    const showPopup = (id: ID | null) => setPopup({ id, forHighlights: highlightIds, forFocus: focused });
+    const togglePopup = (id: ID) => showPopup(openPopupId === id ? null : id);
+    const closePopup = () => showPopup(null);
 
     const reload = () => {
         void placesQuery.refetch();

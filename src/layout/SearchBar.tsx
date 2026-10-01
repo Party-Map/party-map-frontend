@@ -34,13 +34,13 @@ export function hrefForHit(hit: SearchHit): string {
 /**
  * Search box with a debounced dropdown (cmdk: arrow keys move through the hits, Enter picks one). Results highlight
  * the matching places on the map; Enter without a chosen hit commits the query to the URL (`?q=`), and picking a
- * hit focuses its place (`?focus=`).
+ * hit focuses its place and opens its card (`?focus=` from other pages).
  */
 export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
     const navigate = useNavigate();
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
-    const { setHighlightIds } = useHighlight();
+    const { setHighlightIds, focusPlace } = useHighlight();
 
     const hasFocusParam = searchParams.has("focus");
     const [query, setQuery] = useState(initialQuery);
@@ -48,6 +48,8 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
     const [open, setOpen] = useState(() => initialQuery.trim() !== "" && !hasFocusParam);
     // cmdk highlights the first hit by itself; it only counts as chosen once the user moves through the list.
     const [choosing, setChoosing] = useState(false);
+    // A picked hit owns the map until the user types again, even if a search typed before the pick finishes later.
+    const [picked, setPicked] = useState(false);
     const rootRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -57,12 +59,12 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
     const settled = debounced.length > 0 && (results.data !== undefined || results.isError);
     const showDropdown = open && settled;
 
-    // The hits highlight their places on the map, unless a focus is pinned.
+    // The hits highlight their places on the map, unless a focus is pinned or a hit was picked.
     useEffect(() => {
-        if (hasFocusParam) return;
+        if (hasFocusParam || picked) return;
         if (!debounced) setHighlightIds([]);
         else if (results.data) setHighlightIds(placeIdsOf(results.data));
-    }, [debounced, results.data, hasFocusParam, setHighlightIds]);
+    }, [debounced, results.data, hasFocusParam, picked, setHighlightIds]);
 
     // Close on outside click and Escape.
     useEffect(() => {
@@ -118,7 +120,8 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
         } else if (pathname !== "/") {
             goToMapWith(query.trim() ? { focus: placeId, q: query.trim() } : { focus: placeId });
         } else {
-            setHighlightIds([placeId]);
+            focusPlace(placeId);
+            setPicked(true);
         }
         dismiss();
     };
@@ -158,6 +161,7 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
                     value={query}
                     onValueChange={(value) => {
                         setQuery(value);
+                        setPicked(false);
                         setOpen(true);
                         setChoosing(false);
                         clearFocusParam();

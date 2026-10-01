@@ -48,11 +48,12 @@ interface Globals {
 }
 
 function Probe() {
-    const { highlightIds } = useHighlight();
+    const { highlightIds, focus } = useHighlight();
     const { pathname, search } = useLocation();
     return (
         <>
             <p data-testid="highlight">{highlightIds.join(",")}</p>
+            <p data-testid="focus">{focus?.id ?? ""}</p>
             <p data-testid="location">{`${pathname}${search}`}</p>
         </>
     );
@@ -106,6 +107,7 @@ async function setup({ route = "/", initialQuery, routes = DEFAULT_ROUTES }: Set
 
 const highlight = () => screen.getByTestId("highlight").textContent;
 const location = () => screen.getByTestId("location").textContent;
+const focused = () => screen.getByTestId("focus").textContent;
 const requestedUrls = (fetchMock: ApiMock) => fetchMock.requests.map((request) => request.url);
 const listbox = () => screen.queryByRole("listbox", { name: "Search results" });
 
@@ -231,13 +233,39 @@ describe("SearchBar", () => {
         expect(listbox()).toBeNull();
     });
 
-    it("only highlights the place when picking on the map", async () => {
+    it("focuses the place (its card opens) when picking on the map", async () => {
         const { user, input } = await setup();
         const list = await typeAndWait(user, input);
+        expect(focused()).toBe("");
         await user.click(within(list).getByRole("option", { name: /Techno Night/ }));
         expect(highlight()).toBe("place-2");
+        expect(focused()).toBe("place-2");
         expect(location()).toBe("/");
         expect(listbox()).toBeNull();
+    });
+
+    it("keeps a picked place focused when the search typed before the pick finishes afterwards", async () => {
+        const { user, input } = await setup({
+            routes: {
+                ...DEFAULT_ROUTES,
+                "GET /api/search?q=techno%20club": response("techno club", [performerHit]),
+                "GET /api/search?q=techno%20clubs": response("techno clubs", [placeHit]),
+            },
+        });
+        const list = await typeAndWait(user, input);
+        await user.type(input, " club");
+        await user.click(within(list).getByRole("option", { name: /Techno Night/ }));
+        await settle();
+        await settle(0);
+        expect(highlight()).toBe("place-2");
+        expect(focused()).toBe("place-2");
+
+        // Typing again hands the map back to the search results.
+        await user.type(input, "s");
+        await settle();
+        await settle(0);
+        expect(focused()).toBe("");
+        expect(highlight()).toBe("place-1");
     });
 
     it("moves through the hits with the arrow keys and picks the chosen one on Enter", async () => {

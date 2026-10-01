@@ -19,11 +19,16 @@ const ROUTES = {
 
 /** Test-only way to change the highlights the way the search bar would. */
 function HighlightSetter({ ids }: { ids: ID[] }) {
-    const { setHighlightIds } = useHighlight();
+    const { setHighlightIds, focusPlace } = useHighlight();
     return (
-        <button type="button" onClick={() => setHighlightIds(ids)}>
-            set highlights
-        </button>
+        <>
+            <button type="button" onClick={() => setHighlightIds(ids)}>
+                set highlights
+            </button>
+            <button type="button" onClick={() => focusPlace(place2.id)}>
+                focus place
+            </button>
+        </>
     );
 }
 
@@ -129,13 +134,48 @@ describe("MapPage", () => {
         expect(screen.getByTestId("popup")).toBeInTheDocument();
     });
 
-    it("highlights the place from ?focus and flies to it", async () => {
+    it("highlights the place from ?focus, flies to it and opens its card", async () => {
         await renderLoaded(`/?focus=${place.id}`);
         await waitFor(() =>
             expect(fakeMap.flyTo).toHaveBeenCalledWith([place.location.latitude, place.location.longitude], 15, {
                 duration: 0.6,
             }),
         );
+        expect(screen.getByTestId("popup")).toHaveTextContent(upcoming.title);
+    });
+
+    it("opens the card of a focused place, and again when it is picked after closing", async () => {
+        await renderLoaded();
+        fireEvent.click(pin(0));
+        expect(screen.getByTestId("popup")).toHaveTextContent(upcoming.title);
+
+        fireEvent.click(screen.getByRole("button", { name: "focus place" }));
+        expect(screen.getByTestId("popup")).toHaveTextContent(place2.name);
+
+        fireEvent.click(screen.getByRole("button", { name: "Close popup" }));
+        expect(screen.queryByTestId("popup")).not.toBeInTheDocument();
+        fireEvent.click(pin(0));
+        expect(screen.getByTestId("popup")).toHaveTextContent(upcoming.title);
+
+        fireEvent.click(screen.getByRole("button", { name: "focus place" }));
+        expect(screen.getByTestId("popup")).toHaveTextContent(place2.name);
+
+        // Plain highlights (typing a search) never open a card on their own.
+        fireEvent.click(screen.getByRole("button", { name: "set highlights" }));
+        expect(screen.queryByTestId("popup")).not.toBeInTheDocument();
+    });
+
+    it("opens the card of a focused place outside the viewport once it has loaded", async () => {
+        const faraway = {
+            ...place2,
+            id: "place-far",
+            name: "Far Club",
+            location: { latitude: 46.25, longitude: 20.15 },
+        };
+        mockApi({ ...ROUTES, "GET /api/places": [place], [`GET /api/places/${faraway.id}`]: faraway });
+        renderWithProviders(<MapPage />, { route: `/?focus=${faraway.id}` });
+
+        expect(await screen.findByTestId("popup")).toHaveTextContent("Far Club");
     });
 
     it("loads the places around the viewport and reloads them after a move", async () => {

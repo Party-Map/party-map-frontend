@@ -36,3 +36,28 @@ test("the desktop header centers the search and pins the actions to the right", 
     expect(Math.abs(center(search) - center(bar))).toBeLessThan(2);
     expect(bar.x + bar.width - (toggle.x + toggle.width)).toBeLessThan(24);
 });
+
+test("picking a search hit opens its card on the map, also from another page", async ({ page }) => {
+    const pick = async () => {
+        await page.getByRole("combobox", { name: "Search" }).fill("balaton");
+        const results = page.getByRole("listbox", { name: "Search results" });
+        await results
+            .getByRole("option", { name: /Füred Pier Lounge/ })
+            .first()
+            .click();
+    };
+    const card = page.locator(".leaflet-popup");
+
+    await page.goto("/");
+    await expect(page.locator(".pm-pin").first()).toBeVisible();
+    await pick();
+    await expect(card).toBeVisible();
+    await expect(card).toContainText("Füred Pier Lounge");
+    await expect(card).toBeInViewport({ ratio: 1 });
+
+    await page.goto("/places/43ce6e13-e30b-5b9f-8cc6-0aa52be7cf85");
+    await pick();
+    await expect(page).toHaveURL(/focus=/);
+    await expect(card).toContainText("Füred Pier Lounge");
+    await expect(card).toBeInViewport({ ratio: 1 });
+});
