@@ -1,26 +1,37 @@
-import { Link, useParams } from "react-router";
+import { useMemo } from "react";
+import { useParams } from "react-router";
 
 import { ApiError } from "@/api/client";
-import { useLikeStatus, usePerformerPage } from "@/api/hooks";
+import { useLikeStatus, usePerformerPage, usePlacesById } from "@/api/hooks";
+import type { Event } from "@/api/types";
 import { useAuth } from "@/auth/provider";
-import { Card, CardBody } from "@/components/Card";
-import { CoverImage } from "@/components/CoverImage";
+import { ExpandableText } from "@/components/ExpandableText";
 import { SocialLinks } from "@/components/SocialLinks";
 import { EmptyState, ErrorState, LoadingState } from "@/components/States";
 import text from "@/components/typography.module.scss";
 import { LikeButton } from "@/layout/LikeButton";
 import { PageShell } from "@/layout/PageShell";
-import { cn } from "@/lib/utils";
+import { splitByNow } from "@/lib/eventTime";
+import { calendarDayLabel } from "@/lib/format";
+import { Hero } from "@/pages/common/Hero";
+import { SharePill } from "@/pages/common/pageActions";
+import { StickyTitle } from "@/pages/common/StickyTitle";
+import { TrackList, TrackRow } from "@/pages/common/TrackList";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 
 import styles from "./PerformerPage.module.scss";
 
-/** Public detail page of a performer with the events they play at. */
+const NO_EVENTS: Event[] = [];
+
+/** Public detail page of a performer: hero, upcoming and past shows with their venues, about. */
 export function PerformerPage() {
     const { id = "" } = useParams();
     const { status } = useAuth();
     const page = usePerformerPage(id);
     const likeStatus = useLikeStatus("performers", id, { enabled: status === "authenticated" });
+    const events = page.data?.events ?? NO_EVENTS;
+    const placeIds = useMemo(() => [...new Set(events.map((event) => event.placeId))], [events]);
+    const venues = usePlacesById(placeIds);
 
     if (page.error instanceof ApiError && page.error.status === 404) return <NotFoundPage />;
 
@@ -40,36 +51,35 @@ export function PerformerPage() {
         );
     }
 
-    const { performer, events } = page.data;
+    const { performer } = page.data;
+    const { upcoming, past } = splitByNow(events, new Date());
+    const row = (event: Event, index: number) => {
+        const venue = venues.places.find((place) => place.id === event.placeId);
+        return (
+            <TrackRow
+                key={event.id}
+                index={index + 1}
+                to={`/events/${event.id}`}
+                image={event.image ?? venue?.image}
+                title={event.title}
+                secondary={venue && `${venue.name} • ${venue.city}`}
+                meta={<time dateTime={event.start}>{calendarDayLabel(event.start)}</time>}
+            />
+        );
+    };
+    const shows = upcoming.length === 1 ? "1 upcoming show" : `${upcoming.length} upcoming shows`;
 
     return (
-        <PageShell
-            footer={
-                <>
-                    <h2 className={text.sectionTitle}>Events</h2>
-                    {events.length === 0 ? (
-                        <EmptyState message="No events yet." />
-                    ) : (
-                        <ul className={styles.events}>
-                            {events.map((event) => (
-                                <li key={event.id}>
-                                    <Card padded>
-                                        <Link to={`/events/${event.id}`} className={styles.eventLink}>
-                                            {event.title}
-                                        </Link>
-                                    </Card>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </>
-            }
-        >
-            <Card>
-                <CoverImage src={performer.image} alt={performer.name} />
-                <CardBody>
-                    <div className={styles.titleRow}>
-                        <h1 className={cn(text.pageTitle, styles.title)}>{performer.name}</h1>
+        <PageShell backTo="/browse/performers" backLabel="Performers">
+            <Hero
+                image={performer.image}
+                alt={performer.name}
+                eyebrow={performer.genre}
+                title={performer.name}
+                subtitle={upcoming.length === 0 ? "No upcoming shows" : shows}
+                shape="round"
+                actions={
+                    <>
                         {!likeStatus.isLoading && (
                             <LikeButton
                                 target="performers"
@@ -78,12 +88,32 @@ export function PerformerPage() {
                                 initialLiked={likeStatus.data?.liked ?? false}
                             />
                         )}
-                    </div>
-                    <p className={styles.metaLine}>{performer.genre}</p>
-                    <p className={styles.bio}>{performer.bio}</p>
-                    <SocialLinks links={performer.links} className={styles.links} />
-                </CardBody>
-            </Card>
+                        <SharePill title={performer.name} />
+                    </>
+                }
+            />
+            <StickyTitle title={performer.name} />
+
+            <section className={styles.section}>
+                <h2 className={text.sectionTitle}>Upcoming shows</h2>
+                {upcoming.length === 0 ? (
+                    <EmptyState message="No events yet." />
+                ) : (
+                    <TrackList label="Upcoming shows">{upcoming.map(row)}</TrackList>
+                )}
+                {past.length > 0 && (
+                    <details className={styles.past}>
+                        <summary className={styles.summary}>Past shows ({past.length})</summary>
+                        <TrackList label="Past shows">{past.map(row)}</TrackList>
+                    </details>
+                )}
+            </section>
+
+            <section className={styles.section}>
+                <h2 className={text.sectionTitle}>About</h2>
+                <ExpandableText text={performer.bio} />
+                <SocialLinks links={performer.links} className={styles.links} />
+            </section>
         </PageShell>
     );
 }

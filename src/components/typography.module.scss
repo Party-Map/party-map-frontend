@@ -1,4 +1,4 @@
-// Shared text styles: page and section titles, secondary text, inline links.
+// Shared text styles: page and section titles, secondary text.
 @layer components {
   .page-title {
     font-size: var(--text-24);
@@ -20,14 +20,5 @@
   .lead {
     margin-top: var(--space-2);
     color: var(--fg-muted);
-  }
-
-  .link {
-    color: var(--link);
-    cursor: pointer;
-
-    &:hover {
-      text-decoration: underline;
-    }
   }
 }

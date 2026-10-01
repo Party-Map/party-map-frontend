@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
@@ -10,22 +10,56 @@ import { EventPage } from "./EventPage";
 
 const ROUTE = { route: "/events/event-1", path: "/events/:id" };
 const EVENT_ROUTES = { "GET /api/events/event-1": event, "GET /api/events/event-1/place": place };
+const later = { ...event, id: "event-2", title: "Jazz Brunch", kind: "JAZZ" as const, image: null };
+const ended = { ...event, id: "event-0", title: "Old Night", start: "2020-01-01T20:00:00", end: "2020-01-02T02:00:00" };
 
 describe("EventPage", () => {
-    it("shows a loading state, then the event with venue, price, links and lineup", async () => {
+    it("shows a loading state, then the hero with the venue, the lineup, the about block and the links", async () => {
         mockApi(EVENT_ROUTES);
         renderWithProviders(<EventPage />, ROUTE);
 
         expect(screen.getByRole("status")).toHaveTextContent("Loading…");
         expect(await screen.findByRole("heading", { level: 1, name: event.title })).toBeInTheDocument();
         expect(screen.getByRole("img", { name: event.title })).toHaveAttribute("src", event.image);
-        expect(screen.getByText(formatDateTimeRange(event.start, event.end))).toBeInTheDocument();
-        expect(screen.getByRole("link", { name: place.name })).toHaveAttribute("href", "/places/place-1");
-        expect(screen.getByText("Price: 3000")).toBeInTheDocument();
+        expect(screen.getByText("Techno")).toHaveClass("badge");
+        const when = screen.getByText(formatDateTimeRange(event.start, event.end));
+        expect(when.tagName).toBe("TIME");
+        expect(when).toHaveAttribute("datetime", event.start);
+        const venue = screen.getByRole("link", { name: "A38 Hajó, Budapest" });
+        expect(venue).toHaveAttribute("href", "/places/place-1");
+        expect(venue.closest("address")).not.toBeNull();
+        expect(screen.getAllByRole("link", { name: "Show on map" })[0]).toHaveAttribute("href", "/?focus=place-1");
+        expect(screen.getByRole("link", { name: "Directions" })).toHaveAttribute(
+            "href",
+            "https://www.google.com/maps/dir/?api=1&destination=47.4771,19.0621",
+        );
+        expect(screen.getByRole("button", { name: "Share" })).toBeInTheDocument();
+        expect(screen.getByRole("link", { name: "Events" })).toHaveAttribute("href", "/browse/events");
+
+        const lineup = screen.getByRole("list", { name: "Lineup" });
+        const row = within(lineup).getByRole("link", { name: /DJ Test/ });
+        expect(row).toHaveAttribute("href", "/performers/performer-1");
+        expect(row).toHaveTextContent("1");
+        expect(row).toHaveTextContent(performer.genre);
+        expect(row).toHaveTextContent("22:00 – 00:00");
+
+        expect(screen.getByRole("heading", { name: "About" })).toBeInTheDocument();
         expect(screen.getByText(event.description)).toBeInTheDocument();
+        expect(screen.getByText("3000")).toBeInTheDocument();
         expect(screen.getByRole("link", { name: "Facebook" })).toHaveAttribute("href", "https://facebook.com/events/1");
-        expect(screen.getByRole("heading", { name: "Lineup & Set Times" })).toBeInTheDocument();
-        expect(screen.getByRole("link", { name: performer.name })).toHaveAttribute("href", "/performers/performer-1");
+        expect(screen.queryByRole("heading", { name: /More at/ })).toBeNull();
+    });
+
+    it("shelves the venue's other upcoming events, without itself and the ended ones", async () => {
+        mockApi({ ...EVENT_ROUTES, "GET /api/events?placeId=place-1": [event, later, ended] });
+        renderWithProviders(<EventPage />, ROUTE);
+
+        const shelf = await screen.findByRole("list", { name: "More at A38 Hajó" });
+        expect(within(shelf).getAllByRole("listitem")).toHaveLength(1);
+        const card = within(shelf).getByRole("link", { name: /Jazz Brunch/ });
+        expect(card).toHaveAttribute("href", "/events/event-2");
+        expect(within(card).getByRole("presentation")).toHaveAttribute("src", place.image);
+        expect(screen.getByRole("link", { name: "All events ›" })).toHaveAttribute("href", "/places/place-1");
     });
 
     it("tolerates a missing venue, omits a missing price and says when no lineup is announced", async () => {
@@ -33,8 +67,9 @@ describe("EventPage", () => {
         renderWithProviders(<EventPage />, ROUTE);
 
         await screen.findByRole("heading", { level: 1, name: event.title });
-        expect(screen.queryByText(/^at /)).not.toBeInTheDocument();
-        expect(screen.queryByText(/^Price:/)).not.toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: /Show on map/ })).toBeNull();
+        expect(screen.queryByRole("link", { name: "Directions" })).toBeNull();
+        expect(screen.queryByText("3000")).toBeNull();
         expect(screen.getByText("No lineup announced yet.")).toBeInTheDocument();
     });
 
@@ -55,7 +90,7 @@ describe("EventPage", () => {
 
         expect(await screen.findByRole("alert")).toHaveTextContent("Could not load this event.");
         await userEvent.click(screen.getByRole("button", { name: "Try again" }));
-        expect(await screen.findByRole("link", { name: place.name })).toBeInTheDocument();
+        expect(await screen.findByRole("link", { name: "A38 Hajó, Budapest" })).toBeInTheDocument();
     });
 
     it("neither fetches the like status nor shows the heart for anonymous visitors", async () => {

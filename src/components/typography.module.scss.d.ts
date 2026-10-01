@@ -2,7 +2,6 @@
 // Please do not change this file!
 interface CssExports {
   lead: string;
-  link: string;
   muted: string;
   pageTitle: string;
   sectionTitle: string;

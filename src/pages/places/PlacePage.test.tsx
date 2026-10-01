@@ -8,31 +8,56 @@ import { authenticatedSnapshot, mockApi, renderWithProviders } from "@/test/help
 import { PlacePage } from "./PlacePage";
 
 const ROUTE = { route: "/places/place-1", path: "/places/:id" };
-const PLACE_ROUTES = { "GET /api/places/place-1": place, "GET /api/events?placeId=place-1": [event] };
+const ended = { ...event, id: "event-0", title: "Old Night", start: "2020-01-01T20:00:00", end: "2020-01-02T02:00:00" };
+const PLACE_ROUTES = { "GET /api/places/place-1": place, "GET /api/events?placeId=place-1": [ended, event] };
 
 describe("PlacePage", () => {
-    it("shows a loading state, then the place with its tags, links and events", async () => {
+    it("shows a loading state, then the hero, the upcoming and past events, the tags and the links", async () => {
         mockApi(PLACE_ROUTES);
         renderWithProviders(<PlacePage />, ROUTE);
 
         expect(screen.getByRole("status")).toHaveTextContent("Loading…");
         expect(await screen.findByRole("heading", { level: 1, name: place.name })).toBeInTheDocument();
         expect(screen.getByRole("img", { name: place.name })).toHaveAttribute("src", place.image);
-        expect(screen.getByText(`${place.address}, ${place.city}`)).toBeInTheDocument();
-        expect(screen.getByText(place.description!)).toBeInTheDocument();
-        expect(within(screen.getByRole("list", { name: "Tags" })).getAllByRole("listitem")).toHaveLength(3);
-        expect(screen.getByRole("link", { name: "Website" })).toHaveAttribute("href", "https://a38.hu");
+        const address = screen.getByText(`${place.address}, ${place.city}`);
+        expect(address.tagName).toBe("ADDRESS");
+        expect(screen.getAllByRole("link", { name: "Show on map" })[0]).toHaveAttribute("href", "/?focus=place-1");
+        expect(screen.getByRole("link", { name: "Directions" })).toHaveAttribute(
+            "href",
+            "https://www.google.com/maps/dir/?api=1&destination=47.4771,19.0621",
+        );
+        expect(screen.getByRole("link", { name: "Places" })).toHaveAttribute("href", "/browse/places");
+
         expect(screen.getByRole("heading", { name: "Upcoming events" })).toBeInTheDocument();
-        expect(screen.getByRole("heading", { level: 3, name: event.title })).toBeInTheDocument();
-        expect(screen.getByRole("link", { name: "Details →" })).toHaveAttribute("href", "/events/event-1");
+        const upcoming = screen.getByRole("list", { name: "Upcoming events" });
+        const row = within(upcoming).getByRole("link", { name: /Techno Night/ });
+        expect(row).toHaveAttribute("href", "/events/event-1");
+        expect(row).toHaveTextContent("3000");
+        expect(within(row).getByText("Techno")).toHaveClass("badge");
+        expect(within(upcoming).queryByRole("link", { name: /Old Night/ })).toBeNull();
+        const past = screen.getByText("Past events (1)");
+        expect(past.tagName).toBe("SUMMARY");
+        expect(
+            within(screen.getByRole("list", { name: "Past events" })).getByRole("link", { name: /Old Night/ }),
+        ).toBeInTheDocument();
+
+        expect(screen.getByText(place.description!)).toBeInTheDocument();
+        const tags = within(screen.getByRole("list", { name: "Tags" })).getAllByRole("link");
+        expect(tags).toHaveLength(3);
+        expect(tags[0]).toHaveAttribute("href", "/browse/places?tag=concert");
+        expect(screen.getByRole("link", { name: "Website" })).toHaveAttribute("href", "https://a38.hu");
     });
 
     it("shows an empty message without events and no tag list without tags", async () => {
-        mockApi({ "GET /api/places/place-1": { ...place, tags: [] }, "GET /api/events?placeId=place-1": [] });
+        mockApi({
+            "GET /api/places/place-1": { ...place, tags: [], description: null },
+            "GET /api/events?placeId=place-1": [],
+        });
         renderWithProviders(<PlacePage />, ROUTE);
 
         expect(await screen.findByText("No events yet.")).toBeInTheDocument();
         expect(screen.queryByRole("list", { name: "Tags" })).not.toBeInTheDocument();
+        expect(screen.queryByText(/Past events/)).toBeNull();
     });
 
     it("renders the 404 page when the place does not exist", async () => {
