@@ -6,6 +6,7 @@ const routes: [name: string, path: string, fullPage: boolean][] = [
     ["search", "/?q=balaton", false],
     ["place", "/places/43ce6e13-e30b-5b9f-8cc6-0aa52be7cf85", true],
     ["event", "/events/50bf3153-7d1c-51d2-9bb7-cc81432d7311", true],
+    ["performer", "/performers/04238ef3-0e2b-528d-b141-ab202c578afc", true],
     ["browse-events", "/browse/events", true],
     ["browse-places", "/browse/places", true],
     ["browse-performers", "/browse/performers", true],
