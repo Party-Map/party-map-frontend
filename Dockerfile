@@ -6,10 +6,12 @@ WORKDIR /frontend
 ENV HUSKY=0
 
 ARG PUBLIC_API_BASE=/api
+ARG PUBLIC_TILES_BASE=/tiles
 ARG PUBLIC_KEYCLOAK_URL
 ARG PUBLIC_KEYCLOAK_REALM=party-map
 ARG PUBLIC_KEYCLOAK_CLIENT_ID=partymap-web
 ENV PUBLIC_API_BASE=$PUBLIC_API_BASE \
+    PUBLIC_TILES_BASE=$PUBLIC_TILES_BASE \
     PUBLIC_KEYCLOAK_URL=$PUBLIC_KEYCLOAK_URL \
     PUBLIC_KEYCLOAK_REALM=$PUBLIC_KEYCLOAK_REALM \
     PUBLIC_KEYCLOAK_CLIENT_ID=$PUBLIC_KEYCLOAK_CLIENT_ID
@@ -22,9 +24,11 @@ RUN pnpm build
 
 # The official nginx image running as a non-root user, listening on 8080. Its entrypoint renders the template in
 # nginx/templates with the environment: BACKEND_UPSTREAM is the backend the detail-page HTML routes and the sitemap
-# are proxied to (the compose service name), NGINX_RESOLVER the DNS that resolves it (Docker's embedded DNS).
+# are proxied to (the compose service name), TILES_UPSTREAM the Martin tile server behind /tiles, NGINX_RESOLVER the
+# DNS that resolves them (Docker's embedded DNS).
 FROM nginxinc/nginx-unprivileged:stable-alpine
 ENV BACKEND_UPSTREAM=backend:8080 \
+    TILES_UPSTREAM=tiles:3000 \
     NGINX_RESOLVER=127.0.0.11
 COPY nginx/templates/ /etc/nginx/templates/
 COPY --from=build /frontend/dist /usr/share/nginx/html

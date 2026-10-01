@@ -48,6 +48,7 @@ jobs:
           tags: ghcr.io/party-map/party-map-frontend:latest
           build-args: |
             PUBLIC_API_BASE=https://api.terkep.party/api
+            PUBLIC_TILES_BASE=/tiles
             PUBLIC_KEYCLOAK_URL=https://auth.terkep.party
             PUBLIC_KEYCLOAK_REALM=party-map
             PUBLIC_KEYCLOAK_CLIENT_ID=partymap-web

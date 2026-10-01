@@ -1,16 +1,28 @@
 # Static files, plus the server-rendered shells of the detail pages: /events/{id}, /places/{id}, /performers/{id}
 # and /sitemap.xml are proxied to the backend (BACKEND_UPSTREAM), which answers this image's own index.html with
-# the page's metadata, JSON-LD and data spliced in. The rest of the API lives on its own origin
-# (https://api.terkep.party); Keycloak serves the login pages itself. The entrypoint fills in ${…} from the
-# environment (nginx's own $variables are left alone).
+# the page's metadata, JSON-LD and data spliced in. /tiles/ is proxied to the Martin tile server (TILES_UPSTREAM)
+# and cached on disk. The rest of the API lives on its own origin (https://api.terkep.party); Keycloak serves the
+# login pages itself. The entrypoint fills in ${…} from the environment (nginx's own $variables are left alone).
+
+# Vector tiles and glyphs change only when the tile data is rebuilt; the unprivileged image may write under /tmp.
+proxy_cache_path /tmp/tiles-cache levels=1:2 keys_zone=tiles:10m max_size=512m inactive=7d use_temp_path=off;
+
 server {
     listen 8080;
     server_name _;
     root /usr/share/nginx/html;
 
-    # Resolve the backend at request time, so nginx starts even while the backend container is not up yet.
+    # Resolve the upstreams at request time, so nginx starts even while their containers are not up yet.
     resolver ${NGINX_RESOLVER} valid=30s ipv6=off;
     set $shell_upstream http://${BACKEND_UPSTREAM};
+    set $tiles_upstream http://${TILES_UPSTREAM};
+
+    # MapLibre's worker is an ES module (.mjs), which the image's mime.types does not know: a module worker needs a
+    # JavaScript type or the browser refuses it. A types block replaces the inherited table, hence the include.
+    include /etc/nginx/mime.types;
+    types {
+        application/javascript mjs;
+    }
 
     gzip on;
     gzip_types text/css application/javascript application/json image/svg+xml application/xml;
@@ -51,6 +63,25 @@ server {
         proxy_pass $shell_upstream;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # The basemap: Martin serves every endpoint under /tiles itself, so the URI passes through unchanged.
+    location /tiles/ {
+        proxy_pass $tiles_upstream;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # Every browser accepts gzip; a fixed encoding keeps one cache entry per tile.
+        proxy_set_header Accept-Encoding gzip;
+        proxy_cache tiles;
+        proxy_cache_key $uri;
+        proxy_cache_valid 200 1d;
+        proxy_cache_valid 404 1m;
+        proxy_cache_lock on;
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+        add_header X-Cache-Status $upstream_cache_status;
+        add_header Cache-Control "public, max-age=86400";
     }
 
     location @spa {
