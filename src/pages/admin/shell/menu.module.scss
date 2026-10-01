@@ -1,0 +1,86 @@
+@use "@/styles/mixins" as *;
+
+// Popup menus of the admin header (domain switcher, user menu), on Base UI Menu parts.
+@layer components {
+  .positioner {
+    z-index: var(--z-dropdown);
+    outline: 0;
+  }
+
+  .popup {
+    min-width: 15rem;
+    padding: var(--space-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface-solid);
+    color: var(--fg);
+    box-shadow: var(--shadow-lg);
+    transform-origin: var(--transform-origin);
+    transition:
+      opacity var(--duration-fast) var(--ease),
+      scale var(--duration-fast) var(--ease);
+    outline: 0;
+
+    &[data-starting-style],
+    &[data-ending-style] {
+      opacity: 0;
+      scale: 0.97;
+    }
+  }
+
+  .label {
+    padding: var(--space-2) var(--space-3) var(--space-1);
+    color: var(--fg-subtle);
+    font-size: var(--text-12);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    color: var(--fg);
+    font-size: var(--text-14);
+    text-align: start;
+    cursor: pointer;
+    user-select: none;
+    outline: 0;
+
+    &[data-highlighted] {
+      background: var(--surface-hover);
+    }
+  }
+
+  .item-icon {
+    flex: none;
+    color: var(--fg-muted);
+  }
+
+  .item-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .item-hint {
+    color: var(--fg-subtle);
+    font-size: var(--text-12);
+  }
+
+  .check {
+    flex: none;
+    color: var(--accent);
+  }
+
+  .separator {
+    height: 1px;
+    margin: var(--space-1) 0;
+    background: var(--border);
+  }
+}

@@ -37,23 +37,3 @@ export function TopBar() {
         </header>
     );
 }
-
-/** Header variant for the admin area: brand only, no search. */
-export function AdminTopBar() {
-    return (
-        <header className={styles.adminWrapper}>
-            <div className={styles.topBar}>
-                <Link to="/admin" className={styles.brand}>
-                    <span className={styles.brandFull}>Admin Panel</span>
-                    <span className={styles.brandShort} aria-hidden>
-                        AP
-                    </span>
-                </Link>
-                <div className={styles.topActions}>
-                    <NavActions variant="desktop" />
-                    <ThemeToggle />
-                </div>
-            </div>
-        </header>
-    );
-}

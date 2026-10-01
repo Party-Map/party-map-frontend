@@ -1,15 +1,16 @@
 import { useNavigate, useParams } from "react-router";
 
-import { usePlace, usePlaceInvitations, useUpdatePlace } from "@/api/hooks";
+import { usePlace, usePlaceInvitations, useRespondToPlaceInvitation, useUpdatePlace } from "@/api/hooks";
 import type { PlacePayload } from "@/api/types";
 import { Role } from "@/auth/roles";
 import { ErrorState, LoadingState } from "@/components/States";
 import { toast } from "@/lib/toast";
 import { RequireRole } from "@/pages/admin/RequireRole";
 import styles from "@/pages/admin/shared/admin.module.scss";
+import { RequestList } from "@/pages/admin/shared/RequestList";
+import { fromPlaceRequest, sortRequests } from "@/pages/admin/shared/requests";
 
 import { PlaceForm } from "./PlaceForm";
-import { PlaceInvitationRequests } from "./PlaceInvitationRequests";
 
 /** /admin/places/:id: edit a place and answer the event invitations it received. */
 export function EditPlacePage() {
@@ -27,6 +28,7 @@ function PlaceEditor() {
     const place = usePlace(id);
     const invitations = usePlaceInvitations(id);
     const save = useUpdatePlace(id);
+    const respond = useRespondToPlaceInvitation();
 
     if (place.isPending || invitations.isPending) return <LoadingState />;
     if (!place.data || !invitations.data) {
@@ -51,7 +53,18 @@ function PlaceEditor() {
                 initialValues={place.data}
                 onSubmit={handleSubmit}
             />
-            <PlaceInvitationRequests placeId={id} requests={invitations.data} />
+            <section className={styles.panel} aria-labelledby="place-requests">
+                <h2 id="place-requests" className={styles.panelTitle}>
+                    Event requests
+                </h2>
+                <RequestList
+                    requests={sortRequests(invitations.data.map((request) => fromPlaceRequest(request, place.data)))}
+                    onRespond={(request, answer) =>
+                        respond.mutateAsync({ placeId: id, eventPlanId: request.eventPlanId, answer })
+                    }
+                    empty="No event requests for this place at the moment."
+                />
+            </section>
         </div>
     );
 }

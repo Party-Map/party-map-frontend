@@ -124,12 +124,12 @@ describe("EditPlacePage", () => {
         renderPage();
         expect(await screen.findByText("Pending")).toBeInTheDocument();
 
-        await userEvent.click(screen.getByRole("button", { name: "Accept" }));
+        await userEvent.click(screen.getByRole("button", { name: "Accept Summer Opening" }));
 
         expect(await screen.findByText("Accepted")).toBeInTheDocument();
         expect(screen.getByText("Invitation accepted.")).toBeInTheDocument();
-        expect(screen.getByRole("button", { name: "Accept" })).toBeDisabled();
-        expect(screen.getByRole("button", { name: "Reject" })).toBeEnabled();
+        expect(screen.getByRole("button", { name: "Accept Summer Opening" })).toBeDisabled();
+        expect(screen.getByRole("button", { name: "Reject Summer Opening" })).toBeEnabled();
         const respondCall = fetchMock.requests.find((request) => request.url.includes("/respond"));
         expect(respondCall?.url).toBe("http://api.test/api/places/place-1/invitations/plan-1/respond?state=accept");
         expect(respondCall?.method).toBe("PUT");

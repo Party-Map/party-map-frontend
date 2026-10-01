@@ -1,0 +1,49 @@
+@use "@/styles/mixins" as *;
+
+@layer parts {
+  .trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+    height: 2.25rem;
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-sm);
+    color: var(--fg);
+    font-size: var(--text-14);
+    font-weight: 600;
+  }
+
+  button.trigger {
+    border: 1px solid transparent;
+    transition: background-color var(--duration-fast) var(--ease);
+
+    &:hover,
+    &[data-popup-open] {
+      background: var(--surface-hover);
+      border-color: var(--border);
+    }
+  }
+
+  .icon {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: var(--radius-xs);
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  .name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .chevron {
+    flex: none;
+    color: var(--fg-subtle);
+  }
+}

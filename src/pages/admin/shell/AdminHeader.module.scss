@@ -1,0 +1,122 @@
+@use "@/styles/mixins" as *;
+
+@layer parts {
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-topbar);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    height: var(--admin-header-h);
+    padding: 0 var(--space-3);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-solid);
+  }
+
+  @include desktop {
+    .header {
+      padding: 0 var(--space-4);
+    }
+  }
+
+  .skip {
+    position: absolute;
+    left: var(--space-2);
+    top: var(--space-2);
+    z-index: 1;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    background: var(--accent);
+    color: var(--accent-fg);
+    transform: translateY(-200%);
+
+    &:focus {
+      transform: none;
+    }
+  }
+
+  .menu-button {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-sm);
+    color: var(--fg-muted);
+
+    &:hover {
+      background: var(--surface-hover);
+      color: var(--fg);
+    }
+  }
+
+  @include desktop {
+    .menu-button {
+      display: none;
+    }
+  }
+
+  .brand {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--fg);
+  }
+
+  .logo {
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-sm);
+    background: var(--brand-gradient);
+    color: var(--white);
+    font-family: var(--font-brand);
+    font-size: var(--text-14);
+    font-weight: 800;
+  }
+
+  .wordmark {
+    display: none;
+    font-family: var(--font-brand);
+    font-size: var(--text-18);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .badge {
+    display: none;
+    padding: 0 var(--space-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    color: var(--fg-muted);
+    font-size: var(--text-11);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 1.6;
+    text-transform: uppercase;
+  }
+
+  @include from-sm {
+    .wordmark,
+    .badge {
+      display: inline;
+    }
+  }
+
+  .slash {
+    color: var(--border-strong);
+    font-size: var(--text-20);
+    font-weight: 300;
+  }
+
+  .actions {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--space-2);
+    margin-left: auto;
+  }
+}

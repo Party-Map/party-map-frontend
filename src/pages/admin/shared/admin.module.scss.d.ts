@@ -3,16 +3,8 @@
 interface CssExports {
   detail: string;
   header: string;
-  list: string;
   panel: string;
   panelTitle: string;
-  requestActions: string;
-  requestCard: string;
-  requestTitle: string;
-  requestTitleRow: string;
-  stateAccepted: string;
-  statePending: string;
-  stateRejected: string;
 }
 declare const cssExports: CssExports;
 export default cssExports;

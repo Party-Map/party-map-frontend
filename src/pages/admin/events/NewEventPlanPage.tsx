@@ -15,7 +15,7 @@ export function NewEventPlanPage() {
     const handleSubmit = async (payload: EventPlanPayload) => {
         const created = await create.mutateAsync(payload);
         toast.success("Event plan created.");
-        void navigate(`/admin/events/${created.id}`);
+        void navigate(`/admin/events/plans/${created.id}`);
     };
 
     return (

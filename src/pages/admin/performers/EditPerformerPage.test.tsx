@@ -75,7 +75,7 @@ describe("EditPerformerPage", () => {
             "https://images.example/dj.jpg",
         );
 
-        expect(screen.getByRole("heading", { name: "Event requests" })).toBeInTheDocument();
+        expect(screen.getByRole("heading", { name: "Lineup requests" })).toBeInTheDocument();
         expect(screen.getByText("Summer Opening")).toBeInTheDocument();
         expect(screen.getByText("Pending")).toBeInTheDocument();
         expect(screen.getByText(formatDateTimeRange(request.startTime, request.endTime))).toBeInTheDocument();
@@ -121,12 +121,12 @@ describe("EditPerformerPage", () => {
         renderPage();
         expect(await screen.findByText("Pending")).toBeInTheDocument();
 
-        await userEvent.click(screen.getByRole("button", { name: "Reject" }));
+        await userEvent.click(screen.getByRole("button", { name: "Reject Summer Opening" }));
 
         expect(await screen.findByText("Rejected")).toBeInTheDocument();
         expect(screen.getByText("Invitation rejected.")).toBeInTheDocument();
-        expect(screen.getByRole("button", { name: "Reject" })).toBeDisabled();
-        expect(screen.getByRole("button", { name: "Accept" })).toBeEnabled();
+        expect(screen.getByRole("button", { name: "Reject Summer Opening" })).toBeDisabled();
+        expect(screen.getByRole("button", { name: "Accept Summer Opening" })).toBeEnabled();
         const respondCall = fetchMock.requests.find((request) => request.url.includes("/respond"));
         expect(respondCall?.url).toBe(
             "http://api.test/api/performers/performer-1/invitations/plan-1/respond?state=reject",

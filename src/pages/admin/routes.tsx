@@ -1,59 +1,48 @@
+import type { ComponentType } from "react";
 import type { RouteObject } from "react-router";
 
-import { AdminLayout } from "@/layout/AdminLayout";
-
 import { AdminIndexPage } from "./AdminIndexPage";
+import { AdminShell } from "./shell/AdminShell";
+
+/** A lazily loaded page: `page(() => import("…/XPage"), "XPage")`. */
+function page<K extends string>(load: () => Promise<Record<K, ComponentType>>, name: K): RouteObject["lazy"] {
+    return async () => ({ Component: (await load())[name] });
+}
 
 /**
- * The admin area is code-split: visitors who only browse the map never download the forms,
- * the address search or the lineup editor.
+ * The admin area (see `domains.ts` for the sidebar sections). Code-split: visitors who only browse the map never
+ * download the admin pages. Static segments (`list`, `requests`, `new`) win over `:id`.
  */
 export const adminRoutes: RouteObject = {
     path: "admin",
-    element: <AdminLayout />,
+    element: <AdminShell />,
     children: [
         { index: true, element: <AdminIndexPage /> },
-        {
-            path: "places",
-            lazy: async () => ({ Component: (await import("@/pages/admin/places/AdminPlacesPage")).AdminPlacesPage }),
-        },
-        {
-            path: "places/new",
-            lazy: async () => ({ Component: (await import("@/pages/admin/places/NewPlacePage")).NewPlacePage }),
-        },
-        {
-            path: "places/:id",
-            lazy: async () => ({ Component: (await import("@/pages/admin/places/EditPlacePage")).EditPlacePage }),
-        },
+
+        { path: "places", lazy: page(() => import("./places/PlacesOverviewPage"), "PlacesOverviewPage") },
+        { path: "places/list", lazy: page(() => import("./places/PlacesListPage"), "PlacesListPage") },
+        { path: "places/requests", lazy: page(() => import("./places/PlaceRequestsPage"), "PlaceRequestsPage") },
+        { path: "places/new", lazy: page(() => import("./places/NewPlacePage"), "NewPlacePage") },
+        { path: "places/:id", lazy: page(() => import("./places/EditPlacePage"), "EditPlacePage") },
+
         {
             path: "performers",
-            lazy: async () => ({
-                Component: (await import("@/pages/admin/performers/AdminPerformersPage")).AdminPerformersPage,
-            }),
+            lazy: page(() => import("./performers/PerformersOverviewPage"), "PerformersOverviewPage"),
         },
+        { path: "performers/list", lazy: page(() => import("./performers/PerformersListPage"), "PerformersListPage") },
         {
-            path: "performers/new",
-            lazy: async () => ({
-                Component: (await import("@/pages/admin/performers/NewPerformerPage")).NewPerformerPage,
-            }),
+            path: "performers/requests",
+            lazy: page(() => import("./performers/PerformerRequestsPage"), "PerformerRequestsPage"),
         },
-        {
-            path: "performers/:id",
-            lazy: async () => ({
-                Component: (await import("@/pages/admin/performers/EditPerformerPage")).EditPerformerPage,
-            }),
-        },
-        {
-            path: "events",
-            lazy: async () => ({ Component: (await import("@/pages/admin/events/AdminEventsPage")).AdminEventsPage }),
-        },
-        {
-            path: "events/new",
-            lazy: async () => ({ Component: (await import("@/pages/admin/events/NewEventPlanPage")).NewEventPlanPage }),
-        },
-        {
-            path: "events/:id",
-            lazy: async () => ({ Component: (await import("@/pages/admin/events/EventPlanPage")).EventPlanPage }),
-        },
+        { path: "performers/new", lazy: page(() => import("./performers/NewPerformerPage"), "NewPerformerPage") },
+        { path: "performers/:id", lazy: page(() => import("./performers/EditPerformerPage"), "EditPerformerPage") },
+
+        { path: "events", lazy: page(() => import("./events/EventsOverviewPage"), "EventsOverviewPage") },
+        { path: "events/plans", lazy: page(() => import("./events/EventPlansPage"), "EventPlansPage") },
+        { path: "events/plans/new", lazy: page(() => import("./events/NewEventPlanPage"), "NewEventPlanPage") },
+        { path: "events/plans/:id", lazy: page(() => import("./events/EventPlanPage"), "EventPlanPage") },
+        { path: "events/live", lazy: page(() => import("./events/LiveEventsPage"), "LiveEventsPage") },
+
+        { path: "*", lazy: page(() => import("@/pages/NotFoundPage"), "NotFoundPage") },
     ],
 };

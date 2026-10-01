@@ -1,0 +1,76 @@
+@use "@/styles/mixins" as *;
+
+@layer parts {
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface-solid);
+    color: var(--fg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  @include from-md {
+    .card {
+      padding: var(--space-4) var(--space-5);
+    }
+  }
+
+  a.card {
+    transition:
+      border-color var(--duration-fast) var(--ease),
+      box-shadow var(--duration-fast) var(--ease);
+
+    &:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-md);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+    }
+  }
+
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  .label {
+    color: var(--fg-muted);
+    font-size: var(--text-14);
+    font-weight: 500;
+  }
+
+  .icon {
+    color: var(--fg-subtle);
+  }
+
+  .value {
+    font-size: var(--text-24);
+    font-weight: 700;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+
+    &[data-attention] {
+      color: var(--warning);
+    }
+  }
+
+  @include from-md {
+    .value {
+      font-size: var(--text-28);
+    }
+  }
+
+  .hint {
+    color: var(--fg-subtle);
+    font-size: var(--text-13);
+  }
+}

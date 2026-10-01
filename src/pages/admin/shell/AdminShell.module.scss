@@ -1,0 +1,37 @@
+@use "@/styles/mixins" as *;
+
+@layer parts {
+  .shell {
+    min-height: 100dvh;
+    background: var(--admin-canvas);
+    color: var(--fg);
+  }
+
+  .body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @include desktop {
+    .body {
+      grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+    }
+  }
+
+  .main {
+    min-width: 0;
+    padding: var(--space-5) var(--space-4) var(--space-8);
+    outline: 0;
+  }
+
+  @include desktop {
+    .main {
+      padding: var(--space-8);
+    }
+  }
+
+  .content {
+    max-width: var(--admin-content-max-w);
+    margin-inline: auto;
+  }
+}

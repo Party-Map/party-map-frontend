@@ -3,7 +3,7 @@ import { screen } from "@testing-library/react";
 import { searchHits } from "@/test/fixtures";
 import { mockApi, renderWithProviders } from "@/test/helpers";
 
-import { AdminTopBar, TopBar } from "./TopBar";
+import { TopBar } from "./TopBar";
 
 describe("TopBar", () => {
     it("shows the brand, an empty search box, account actions and the theme toggle", async () => {
@@ -21,16 +21,5 @@ describe("TopBar", () => {
         renderWithProviders(<TopBar />, { route: "/?q=techno" });
         expect(screen.getByRole("combobox", { name: "Search" })).toHaveValue("techno");
         expect(await screen.findByRole("listbox", { name: "Search results" })).toHaveTextContent("Techno Night");
-    });
-});
-
-describe("AdminTopBar", () => {
-    it("links to the admin home without a search box", async () => {
-        renderWithProviders(<AdminTopBar />);
-        expect(await screen.findByRole("button", { name: "Sign in" })).toBeInTheDocument();
-        expect(screen.getByRole("banner")).toHaveClass("admin-wrapper");
-        expect(screen.getByRole("link", { name: "Admin Panel" })).toHaveAttribute("href", "/admin");
-        expect(screen.queryByRole("combobox")).toBeNull();
-        expect(screen.getByRole("button", { name: "Toggle theme" })).toBeInTheDocument();
     });
 });

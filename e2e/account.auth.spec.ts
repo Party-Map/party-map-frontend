@@ -10,7 +10,7 @@ test("signed-in user sees profile, likes and the admin area", async ({ page }) =
 
     await page.getByRole("link", { name: "Admin page" }).click();
     await expect(page).toHaveURL(/\/admin\/places$/);
-    await expect(page.getByRole("heading", { name: "Places admin" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Places" })).toBeVisible();
 
     await page.getByRole("link", { name: "Likes" }).first().click();
     await expect(page.getByRole("heading", { name: "Your likes" })).toBeVisible();

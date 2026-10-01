@@ -27,7 +27,11 @@ const routes = {
 const failure = () => new Response("boom", { status: 500 });
 
 function renderPage(auth = authenticatedSnapshot([Role.EVENT_ORGANIZER])) {
-    return renderWithProviders(<EventPlanPage />, { route: "/admin/events/plan-1", path: "/admin/events/:id", auth });
+    return renderWithProviders(<EventPlanPage />, {
+        route: "/admin/events/plans/plan-1",
+        path: "/admin/events/plans/:id",
+        auth,
+    });
 }
 
 describe("EventPlanPage", () => {
@@ -101,7 +105,7 @@ describe("EventPlanPage", () => {
         await user.type(title, "Summer Closing");
         await user.click(screen.getByRole("button", { name: "Save changes" }));
 
-        await waitFor(() => expect(navigate).toHaveBeenCalledWith("/admin/events"));
+        await waitFor(() => expect(navigate).toHaveBeenCalledWith("/admin/events/plans"));
         expect(body).toEqual({
             title: "Summer Closing",
             kind: "DISCO",

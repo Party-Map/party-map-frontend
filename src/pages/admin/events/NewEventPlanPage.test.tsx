@@ -16,7 +16,11 @@ vi.mock("react-router", async (importOriginal) => ({
 }));
 
 function renderPage(auth = authenticatedSnapshot([Role.EVENT_ORGANIZER])) {
-    return renderWithProviders(<NewEventPlanPage />, { route: "/admin/events/new", path: "/admin/events/new", auth });
+    return renderWithProviders(<NewEventPlanPage />, {
+        route: "/admin/events/plans/new",
+        path: "/admin/events/plans/new",
+        auth,
+    });
 }
 
 async function fillForm() {
@@ -54,7 +58,7 @@ describe("NewEventPlanPage", () => {
         expect(await screen.findByRole("heading", { name: "Create new Event plan" })).toBeInTheDocument();
         await fillForm();
 
-        await waitFor(() => expect(navigate).toHaveBeenCalledWith("/admin/events/plan-9"));
+        await waitFor(() => expect(navigate).toHaveBeenCalledWith("/admin/events/plans/plan-9"));
         expect(body).toEqual({
             title: "Garden Party",
             kind: "TECHNO",

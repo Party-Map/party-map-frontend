@@ -19,6 +19,7 @@ function renderIndex(roles: Role[]) {
                 <Route path="/admin" element={<AdminIndexPage />} />
                 <Route path="/admin/places" element={<p>places section</p>} />
                 <Route path="/admin/performers" element={<p>performers section</p>} />
+                <Route path="/admin/platform" element={<p>platform section</p>} />
             </Routes>
         </>,
         { route: "/admin", auth: authenticatedSnapshot(roles) },
@@ -34,6 +35,11 @@ describe("AdminIndexPage", () => {
     it("prefers the places section when the user manages places too", async () => {
         renderIndex([Role.EVENT_ORGANIZER, Role.PLACE_MANAGER]);
         expect(await screen.findByText("places section")).toBeInTheDocument();
+    });
+
+    it("opens the platform for a platform admin without manager roles", async () => {
+        renderIndex([Role.PARTYMAP_ADMIN]);
+        expect(await screen.findByText("platform section")).toBeInTheDocument();
     });
 
     it("renders nothing for users without an admin section", async () => {

@@ -229,17 +229,40 @@ export function useUpdatePlace(id: ID) {
     });
 }
 
-export function useRespondToPlaceInvitation(placeId: ID) {
+/** Answers an event plan's invitation to one of the manager's places. */
+export function useRespondToPlaceInvitation() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ eventPlanId, answer }: { eventPlanId: ID; answer: Answer }) =>
+        mutationFn: ({ placeId, eventPlanId, answer }: { placeId: ID; eventPlanId: ID; answer: Answer }) =>
             respondToPlaceInvitation(placeId, eventPlanId, answer),
-        onSuccess: () =>
+        onSuccess: (_, { placeId }) =>
             Promise.all([
                 queryClient.invalidateQueries({ queryKey: placeKeys.invitations(placeId) }),
                 queryClient.invalidateQueries({ queryKey: eventPlanKeys.all }),
             ]),
     });
+}
+
+/** Every invitation to every place the manager owns, each with its place. */
+export function usePlaceRequests() {
+    const owned = useOwnedPlaces();
+    const places = owned.data ?? [];
+    const results = useQueries({
+        queries: places.map((place) => ({
+            queryKey: placeKeys.invitations(place.id),
+            queryFn: () => fetchPlaceInvitations(place.id),
+        })),
+    });
+    return {
+        places,
+        requests: places.flatMap((place, index) => (results[index]?.data ?? []).map((request) => ({ request, place }))),
+        isPending: owned.isPending || results.some((result) => result.isPending),
+        isError: owned.isError || results.some((result) => result.isError),
+        refetch: () => {
+            void owned.refetch();
+            for (const result of results) void result.refetch();
+        },
+    };
 }
 
 /* ---------- Admin: performers ---------- */
@@ -276,17 +299,40 @@ export function useUpdatePerformer(id: ID) {
     });
 }
 
-export function useRespondToPerformerInvitation(performerId: ID) {
+/** Answers an event plan's invitation to one of the manager's performers. */
+export function useRespondToPerformerInvitation() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ eventPlanId, answer }: { eventPlanId: ID; answer: Answer }) =>
+        mutationFn: ({ performerId, eventPlanId, answer }: { performerId: ID; eventPlanId: ID; answer: Answer }) =>
             respondToPerformerInvitation(performerId, eventPlanId, answer),
-        onSuccess: () =>
+        onSuccess: (_, { performerId }) =>
             Promise.all([
                 queryClient.invalidateQueries({ queryKey: performerKeys.invitations(performerId) }),
                 queryClient.invalidateQueries({ queryKey: eventPlanKeys.all }),
             ]),
     });
+}
+
+/** Every lineup invitation to every performer the manager owns (each request carries its performer). */
+export function usePerformerRequests() {
+    const owned = useOwnedPerformers();
+    const performers = owned.data ?? [];
+    const results = useQueries({
+        queries: performers.map((performer) => ({
+            queryKey: performerKeys.invitations(performer.id),
+            queryFn: () => fetchPerformerInvitations(performer.id),
+        })),
+    });
+    return {
+        performers,
+        requests: results.flatMap((result) => result.data ?? []),
+        isPending: owned.isPending || results.some((result) => result.isPending),
+        isError: owned.isError || results.some((result) => result.isError),
+        refetch: () => {
+            void owned.refetch();
+            for (const result of results) void result.refetch();
+        },
+    };
 }
 
 /* ---------- Admin: event plans ---------- */

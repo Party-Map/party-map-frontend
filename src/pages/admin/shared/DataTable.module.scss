@@ -1,0 +1,120 @@
+@use "@/styles/mixins" as *;
+
+@layer components {
+  .frame {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface-solid);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-14);
+
+    th,
+    td {
+      padding: var(--space-3) var(--space-4);
+      text-align: start;
+      vertical-align: middle;
+    }
+
+    thead th {
+      border-bottom: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--fg-subtle);
+      font-size: var(--text-12);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    td {
+      color: var(--fg-muted);
+    }
+  }
+
+  .row + .row {
+    border-top: 1px solid var(--border);
+  }
+
+  .linked {
+    position: relative;
+    transition: background-color var(--duration-fast) var(--ease);
+
+    &:hover {
+      background: var(--surface-hover);
+    }
+  }
+
+  .primary {
+    color: var(--fg);
+    font-weight: 600;
+  }
+
+  // The whole row is the link's hit area; the primary cell stays the accessible name.
+  .row-link {
+    color: inherit;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+    }
+
+    &:focus-visible {
+      outline: none;
+
+      &::after {
+        outline: 2px solid var(--ring);
+        outline-offset: -2px;
+      }
+    }
+  }
+
+  .end {
+    text-align: end;
+  }
+
+  .empty {
+    padding: var(--space-8) var(--space-4);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-md);
+    background: var(--surface-solid);
+    text-align: center;
+  }
+
+  @include phone {
+    .table thead {
+      display: none;
+    }
+
+    .row {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+      padding: var(--space-3) var(--space-4);
+    }
+
+    .table .row > th,
+    .table .row > td {
+      padding: 0;
+    }
+
+    .table .row > td::before {
+      content: attr(data-label) ": ";
+      color: var(--fg-subtle);
+    }
+
+    .hide-on-phone {
+      display: none;
+    }
+
+    .end {
+      text-align: start;
+    }
+  }
+}

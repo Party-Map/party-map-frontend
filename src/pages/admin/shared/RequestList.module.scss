@@ -1,0 +1,71 @@
+@use "@/styles/mixins" as *;
+
+@layer components {
+  .list {
+    overflow: hidden;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface-solid);
+    box-shadow: var(--shadow-sm);
+    list-style: none;
+  }
+
+  .item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-4);
+    padding: var(--space-4);
+  }
+
+  .item + .item {
+    border-top: 1px solid var(--border);
+  }
+
+  .main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-width: 0;
+  }
+
+  .title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .title {
+    font-size: var(--text-16);
+    font-weight: 600;
+  }
+
+  .meta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    color: var(--fg-muted);
+    font-size: var(--text-14);
+  }
+
+  .target {
+    color: var(--fg-subtle);
+    font-size: var(--text-13);
+  }
+
+  .actions {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .empty {
+    padding: var(--space-8) var(--space-4);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-md);
+    background: var(--surface-solid);
+    text-align: center;
+  }
+}

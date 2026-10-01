@@ -10,7 +10,7 @@ import text from "@/components/typography.module.scss";
 import { toast } from "@/lib/toast";
 import { RequireRole } from "@/pages/admin/RequireRole";
 import adminStyles from "@/pages/admin/shared/admin.module.scss";
-import { InvitationStateLabel } from "@/pages/admin/shared/InvitationStateLabel";
+import { InvitationStateChip } from "@/pages/admin/shared/StatusChip";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 
 import { EventPlanForm } from "./EventPlanForm";
@@ -42,7 +42,7 @@ function EventPlanDetail() {
     const handleSubmit = async (payload: EventPlanPayload) => {
         await save.mutateAsync(payload);
         toast.success("Event plan saved.");
-        void navigate("/admin/events");
+        void navigate("/admin/events/plans");
     };
 
     if (plan.error instanceof ApiError && plan.error.status === 404) return <NotFoundPage />;
@@ -71,7 +71,7 @@ function EventPlanDetail() {
                     {invitation && invitation.state !== "REJECTED" ? (
                         <p className={text.muted}>
                             This event plan has been invited to a place ({invitation.place.name}) with a status of{" "}
-                            <InvitationStateLabel state={invitation.state} />.
+                            <InvitationStateChip state={invitation.state} />.
                         </p>
                     ) : (
                         <InvitePlace planId={id} />

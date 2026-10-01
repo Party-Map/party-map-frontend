@@ -9,7 +9,7 @@ import { ErrorState, LoadingState } from "@/components/States";
 import { clampDateTimeRange, formatDateTime, toDateTimeLocalInput } from "@/lib/format";
 import adminStyles from "@/pages/admin/shared/admin.module.scss";
 import { DateTimeRangeFields } from "@/pages/admin/shared/DateTimeRangeFields";
-import { InvitationStateLabel } from "@/pages/admin/shared/InvitationStateLabel";
+import { InvitationStateChip } from "@/pages/admin/shared/StatusChip";
 
 import styles from "./LineupEditor.module.scss";
 
@@ -179,7 +179,7 @@ function LineupItems({ plan, performers, initialInvitations }: LineupItemsProps)
                             </p>
 
                             <div className={styles.itemFooter}>
-                                <span>{row.state && <InvitationStateLabel state={row.state} />}</span>
+                                <span>{row.state && <InvitationStateChip state={row.state} />}</span>
                                 <Button size="sm" onClick={() => invite(row)} disabled={pending}>
                                     Invite
                                 </Button>

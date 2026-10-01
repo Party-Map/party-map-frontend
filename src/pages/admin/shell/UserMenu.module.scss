@@ -1,0 +1,45 @@
+@use "@/styles/mixins" as *;
+
+@layer parts {
+  .trigger {
+    display: inline-grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-full);
+
+    &:hover .avatar,
+    &[data-popup-open] .avatar {
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+  }
+
+  .avatar {
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-full);
+    background: var(--brand-gradient);
+    color: var(--white);
+    font-size: var(--text-12);
+    font-weight: 700;
+    transition: box-shadow var(--duration-fast) var(--ease);
+  }
+
+  .who {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .name {
+    font-size: var(--text-14);
+    font-weight: 600;
+  }
+
+  .email {
+    color: var(--fg-subtle);
+    font-size: var(--text-12);
+  }
+}
