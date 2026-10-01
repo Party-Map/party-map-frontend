@@ -23,44 +23,44 @@ export interface Palette {
 }
 
 /**
- * A cartoon take on Apple Maps: plain cream land, bright blue water, chunky white roads with soft brown outlines;
- * the dark palette keeps the same hierarchy on a deep slate land.
+ * Pastel and easy on the eye: warm light-grey land, powder-blue water, white roads with faint outlines and soft
+ * grey text; the dark palette is a muted slate with dusty blue water and low-contrast roads.
  */
 export const PALETTES: Record<Theme, Palette> = {
     light: {
-        background: "#f6efe0",
-        water: "#9fd3f3",
-        waterLine: "#86c5ee",
+        background: "#f3f0ea",
+        water: "#c6dcee",
+        waterLine: "#b6cfe4",
         roads: {
-            motorway: { fill: "#ffffff", casing: "#c9bfae" },
-            trunk: { fill: "#ffffff", casing: "#c9bfae" },
-            primary: { fill: "#ffffff", casing: "#c9bfae" },
-            secondary: { fill: "#ffffff", casing: "#cfc6b6" },
-            tertiary: { fill: "#ffffff", casing: "#d5cdbf" },
-            minor: { fill: "#fffdf8", casing: "#dcd4c6" },
+            motorway: { fill: "#ffffff", casing: "#dbd5cb" },
+            trunk: { fill: "#ffffff", casing: "#dbd5cb" },
+            primary: { fill: "#ffffff", casing: "#dbd5cb" },
+            secondary: { fill: "#ffffff", casing: "#dfd9d0" },
+            tertiary: { fill: "#ffffff", casing: "#e3ded5" },
+            minor: { fill: "#fdfcfa", casing: "#e7e2da" },
         },
-        boundary: "#b89f80",
-        text: "#3b3630",
-        textHalo: "#fffaf0",
-        placeText: "#2e2a25",
-        waterText: "#3f7fb8",
+        boundary: "#c9bfb1",
+        text: "#5c5750",
+        textHalo: "#f7f4ee",
+        placeText: "#4d4842",
+        waterText: "#7f9fbe",
     },
     dark: {
-        background: "#23262f",
-        water: "#244b78",
-        waterLine: "#2f5d8f",
+        background: "#292c34",
+        water: "#374a66",
+        waterLine: "#405676",
         roads: {
-            motorway: { fill: "#5a6075", casing: "#1b1e26" },
-            trunk: { fill: "#5a6075", casing: "#1b1e26" },
-            primary: { fill: "#5a6075", casing: "#1b1e26" },
-            secondary: { fill: "#4f5568", casing: "#1b1e26" },
-            tertiary: { fill: "#464b5c", casing: "#1b1e26" },
-            minor: { fill: "#3d4251", casing: "#1b1e26" },
+            motorway: { fill: "#4b505c", casing: "#23262d" },
+            trunk: { fill: "#4b505c", casing: "#23262d" },
+            primary: { fill: "#4b505c", casing: "#23262d" },
+            secondary: { fill: "#454a56", casing: "#23262d" },
+            tertiary: { fill: "#40454f", casing: "#23262d" },
+            minor: { fill: "#3a3f49", casing: "#23262d" },
         },
-        boundary: "#6a7088",
-        text: "#e6e8ef",
-        textHalo: "#23262f",
-        placeText: "#f1f2f6",
-        waterText: "#8fb6e6",
+        boundary: "#5d6376",
+        text: "#c3c7d1",
+        textHalo: "#292c34",
+        placeText: "#d2d5de",
+        waterText: "#95abc8",
     },
 };

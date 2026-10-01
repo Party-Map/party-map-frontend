@@ -40,8 +40,8 @@ const linearByZoom = (stops: Stops) => expr(["interpolate", ["linear"], ["zoom"]
 /** Link roads (ramps) at six tenths of their class's width. */
 const rampAware = (width: number) => expr(["case", ["==", get("ramp"), 1], width * 0.6, width]);
 const roadWidth = (stops: Stops) => widthByZoom(stops.map(([zoom, width]) => [zoom, rampAware(width)]));
-/** Thick outlines are the cartoon look. */
-const casingWidth = (stops: Stops) => widthByZoom(stops.map(([zoom, width]) => [zoom, rampAware(width * 1.3 + 1.5)]));
+/** Outlines a touch wider than the road: present, not heavy. */
+const casingWidth = (stops: Stops) => widthByZoom(stops.map(([zoom, width]) => [zoom, rampAware(width * 1.15 + 1)]));
 /** Hungarian names, as OpenStreetMap stores them; Latin transliterations for the rest. */
 const NAME = expr(["coalesce", get("name"), get("name:latin")]);
 const ROUND = { "line-cap": "round", "line-join": "round" } as const;
@@ -213,6 +213,7 @@ function layers(p: Palette): LayerSpecification[] {
                     [12, 3],
                 ]),
                 "line-dasharray": [3, 2],
+                "line-opacity": 0.7,
             },
         },
         {
