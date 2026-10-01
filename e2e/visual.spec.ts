@@ -1,11 +1,14 @@
 import { expect, test } from "@playwright/test";
 
-// Dev seed ids from party-map-backend/src/main/resources/data.sql.
+// Dev seed ids from party-map-backend/src/main/resources/db/seed/afterMigrate.sql.
 const routes: [name: string, path: string, fullPage: boolean][] = [
     ["home", "/", false],
     ["search", "/?q=balaton", false],
     ["place", "/places/43ce6e13-e30b-5b9f-8cc6-0aa52be7cf85", true],
     ["event", "/events/50bf3153-7d1c-51d2-9bb7-cc81432d7311", true],
+    ["browse-events", "/browse/events", true],
+    ["browse-places", "/browse/places", true],
+    ["browse-performers", "/browse/performers", true],
     ["not-found", "/this-does-not-exist", true],
 ];
 
@@ -15,8 +18,9 @@ for (const [name, path, fullPage] of routes) {
         await page.waitForLoadState("networkidle");
         await expect(page).toHaveScreenshot(`${name}.png`, {
             fullPage,
-            // Map tiles come from the network and differ between runs; pins and UI stay visible.
-            mask: [page.locator(".leaflet-tile-pane")],
+            // Map tiles come from the network and differ between runs; pins and UI stay visible. The seed's event
+            // times are relative to now, so the weekday labels in <time> elements drift from day to day.
+            mask: [page.locator(".leaflet-tile-pane"), page.locator("time")],
         });
     });
 
