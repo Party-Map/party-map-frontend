@@ -9,6 +9,7 @@ import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, TILE_ATTRIBUTION, TILE_URL } from
 
 import { FitToHighlights } from "./FitToHighlights";
 import { toLatLngTuple } from "./geo";
+import type { MapViewState } from "./mapMemory";
 import styles from "./MapView.module.scss";
 import { PanPopupMobile } from "./PanPopupMobile";
 import { getPinIcon } from "./pins";
@@ -37,6 +38,10 @@ interface MapViewProps {
     onClosePopup: () => void;
     /** Called with the `bbox` to load places for, on mount and after every pan or zoom. */
     onViewportChange?: (bbox: string) => void;
+    /** Called with the centre and zoom on mount and after every pan or zoom, for remembering the view. */
+    onViewChange?: (view: MapViewState) => void;
+    /** Where the map starts; the remembered view when the user comes back, Budapest otherwise. */
+    initialView?: MapViewState | null;
     /** False while highlighted places are still loading; the view is fitted to them once they are all there. */
     highlightsSettled?: boolean;
 }
@@ -50,6 +55,8 @@ export function MapView({
     onOpenPlace,
     onClosePopup,
     onViewportChange,
+    onViewChange,
+    initialView = null,
     highlightsSettled = true,
 }: MapViewProps) {
     // Memoised so the popup position stays referentially stable: react-leaflet re-opens the popup
@@ -62,16 +69,19 @@ export function MapView({
     return (
         <div className={styles.root}>
             <MapContainer
-                center={toLatLngTuple(DEFAULT_MAP_CENTER)}
-                zoom={DEFAULT_MAP_ZOOM}
+                center={initialView?.center ?? toLatLngTuple(DEFAULT_MAP_CENTER)}
+                zoom={initialView?.zoom ?? DEFAULT_MAP_ZOOM}
                 scrollWheelZoom
                 zoomControl={false}
                 className={styles.map}
             >
                 <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
 
-                {onViewportChange && <ViewportWatcher onChange={onViewportChange} />}
-                <UserLocation auto={highlightIds.length === 0} />
+                {(onViewportChange ?? onViewChange) && (
+                    <ViewportWatcher onChange={onViewportChange} onViewChange={onViewChange} />
+                )}
+                {/* A restored view is where the user left off: no flight to the device position. */}
+                <UserLocation auto={highlightIds.length === 0 && initialView === null} />
                 <FitToHighlights places={places} highlightIds={highlightIds} ready={highlightsSettled} />
                 <ZoomControls places={places} openPopupId={openPopupId} />
                 <PlaceLabels

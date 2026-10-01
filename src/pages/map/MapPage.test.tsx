@@ -6,6 +6,7 @@ import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import type { ID } from "@/api/types";
 import { useHighlight } from "@/layout/HighlightProvider";
 import { TILE_URL } from "@/lib/constants";
+import { forgetMap, recallMap, rememberMap } from "@/map/mapMemory";
 import { place, place2, upcoming } from "@/test/fixtures";
 import { mockApi, renderWithProviders } from "@/test/helpers";
 import { fakeMap, reactLeafletMock } from "@/test/mocks/leaflet";
@@ -51,9 +52,42 @@ async function renderLoaded(route = "/") {
     return view;
 }
 
-beforeEach(() => fakeMap.reset());
+beforeEach(() => {
+    fakeMap.reset();
+    forgetMap();
+});
+afterEach(() => {
+    fakeMap.getCenter.mockReturnValue({ lat: 47.5, lng: 19.05 });
+    fakeMap.getZoom.mockReturnValue(13);
+});
 
 describe("MapPage", () => {
+    it("starts from Budapest and remembers the view and the open card for the next visit", async () => {
+        await renderLoaded();
+        expect(screen.getByTestId("map")).toHaveAttribute("data-center", "[47.4979,19.0402]");
+        expect(screen.getByTestId("map")).toHaveAttribute("data-zoom", "13");
+        expect(recallMap()).toEqual({ center: [47.5, 19.05], zoom: 13, popupId: null });
+
+        fireEvent.click(pin(0));
+        await waitFor(() => expect(recallMap()?.popupId).toBe(place.id));
+
+        fakeMap.getCenter.mockReturnValue({ lat: 46.2, lng: 20.1 });
+        fakeMap.getZoom.mockReturnValue(11);
+        act(() => {
+            reactLeafletMock.fireMapEvent("moveend");
+        });
+        await waitFor(() => expect(recallMap()).toEqual({ center: [46.2, 20.1], zoom: 11, popupId: place.id }));
+    });
+
+    it("comes back to the remembered view with the remembered card open, without flying to the device", async () => {
+        rememberMap({ center: [47.6, 19.2], zoom: 15, popupId: place2.id });
+        await renderLoaded();
+        expect(screen.getByTestId("map")).toHaveAttribute("data-center", "[47.6,19.2]");
+        expect(screen.getByTestId("map")).toHaveAttribute("data-zoom", "15");
+        expect(await screen.findByTestId("popup")).toHaveTextContent(place2.name);
+        expect(fakeMap.flyTo).not.toHaveBeenCalled();
+    });
+
     it("shows a loading state over an empty map", async () => {
         vi.stubGlobal(
             "fetch",

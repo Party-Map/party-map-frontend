@@ -51,11 +51,12 @@ describe("UserLocation", () => {
         expect(screen.queryByTestId("marker")).not.toBeInTheDocument();
     });
 
-    it("does not ask for the position unless auto", () => {
-        const { geolocation } = installGeolocation();
+    it("shows the marker without flying to it unless auto", () => {
+        const { callbacks } = installGeolocation();
         render(<UserLocation auto={false} />);
-        expect(geolocation.getCurrentPosition).not.toHaveBeenCalled();
-        expect(geolocation.watchPosition).not.toHaveBeenCalled();
+        act(() => callbacks.current?.(positionAt(47.5, 19.05, 50)));
+        expect(screen.getByTestId("marker")).toHaveAttribute("data-position", "[47.5,19.05]");
+        expect(fakeMap.flyTo).not.toHaveBeenCalled();
     });
 
     it("flies to the first fix and shows the marker with its accuracy circle", () => {

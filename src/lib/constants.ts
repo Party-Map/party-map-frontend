@@ -57,6 +57,8 @@ export const GEOCODE_DEBOUNCE_MS = 400;
 
 export const CONSENT_STORAGE_KEY = "pm:consent:v1";
 export const THEME_STORAGE_KEY = "theme";
+/** The map's last viewport and open card, restored on the next visit (session only). */
+export const MAP_MEMORY_STORAGE_KEY = "pm:map:v1";
 
 /** Breakpoint at which the desktop top bar replaces the mobile bottom bar (matches the desktop mixin in styles/_mixins.scss). */
 export const DESKTOP_MIN_WIDTH = 1024;

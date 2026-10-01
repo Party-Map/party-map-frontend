@@ -26,4 +26,19 @@ describe("ViewportWatcher", () => {
         expect(onChange).toHaveBeenLastCalledWith("20.05,46.15,20.25,46.35");
         expect(onChange).toHaveBeenCalledTimes(2);
     });
+
+    it("reports the centre and zoom for remembering the view", () => {
+        const onViewChange = vi.fn();
+        render(<ViewportWatcher onViewChange={onViewChange} />);
+        expect(onViewChange).toHaveBeenLastCalledWith({ center: [47.5, 19.05], zoom: 13 });
+
+        fakeMap.getCenter.mockReturnValue({ lat: 46.2, lng: 20.1 });
+        fakeMap.getZoom.mockReturnValue(11);
+        act(() => {
+            reactLeafletMock.fireMapEvent("moveend");
+        });
+        expect(onViewChange).toHaveBeenLastCalledWith({ center: [46.2, 20.1], zoom: 11 });
+        fakeMap.getCenter.mockReturnValue({ lat: 47.5, lng: 19.05 });
+        fakeMap.getZoom.mockReturnValue(13);
+    });
 });

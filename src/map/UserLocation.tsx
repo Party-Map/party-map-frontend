@@ -20,7 +20,7 @@ function toFix(position: GeolocationPosition): Fix {
 
 /**
  * "You are here" marker with an accuracy circle, following the device position. When `auto` the
- * map flies to the first fix; it is off while highlights own the viewport.
+ * map flies to the first fix; it is off while highlights own the viewport or a remembered view was restored.
  */
 // Location denied or unavailable: the map simply shows no position marker.
 const ignoreLocationError = () => undefined;
@@ -31,14 +31,14 @@ export function UserLocation({ auto }: { auto: boolean }) {
     const icon = useMemo(() => createYouAreHereIcon(), []);
 
     useEffect(() => {
-        if (!auto || !("geolocation" in navigator)) return;
+        if (!("geolocation" in navigator)) return;
         const { geolocation } = navigator;
 
         geolocation.getCurrentPosition(
             (position) => {
                 const next = toFix(position);
                 setFix(next);
-                map.flyTo(next.position, Math.max(map.getZoom(), FIRST_FIX_MIN_ZOOM), { duration: 0.8 });
+                if (auto) map.flyTo(next.position, Math.max(map.getZoom(), FIRST_FIX_MIN_ZOOM), { duration: 0.8 });
             },
             ignoreLocationError,
             POSITION_OPTIONS,

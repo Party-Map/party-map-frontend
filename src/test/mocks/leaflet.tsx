@@ -48,6 +48,7 @@ export const fakeMap = {
     setZoomAround: vi.fn(),
     panBy: vi.fn(),
     getZoom: vi.fn(() => 13),
+    getCenter: vi.fn(() => ({ lat: 47.5, lng: 19.05 })),
     /** Central Budapest. */
     getBounds: vi.fn((): FakeBounds => ({
         getWest: () => 19.0,
@@ -82,7 +83,11 @@ export const fakeMap = {
 const mapEventHandlers = new Map<string, (...args: unknown[]) => void>();
 
 export const reactLeafletMock = {
-    MapContainer: ({ children }: { children?: ReactNode }) => <div data-testid="map">{children}</div>,
+    MapContainer: ({ children, center, zoom }: { children?: ReactNode; center?: unknown; zoom?: number }) => (
+        <div data-testid="map" data-center={JSON.stringify(center)} data-zoom={zoom}>
+            {children}
+        </div>
+    ),
     TileLayer: ({ url }: { url: string }) => <div data-testid="tile-layer" data-url={url} />,
     Marker: ({
         children,

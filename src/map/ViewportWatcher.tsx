@@ -2,11 +2,28 @@ import { useEffect } from "react";
 import { useMap, useMapEvent } from "react-leaflet";
 
 import { toBbox } from "./geo";
+import type { MapViewState } from "./mapMemory";
 
-/** Reports the area to load places for: once when the map mounts, then after every pan or zoom. */
-export function ViewportWatcher({ onChange }: { onChange: (bbox: string) => void }) {
+interface ViewportWatcherProps {
+    /** The area to load places for ("minLon,minLat,maxLon,maxLat"). */
+    onChange?: (bbox: string) => void;
+    /** The centre and zoom, for remembering the view. */
+    onViewChange?: (view: MapViewState) => void;
+}
+
+/** Reports the viewport once when the map mounts, then after every pan or zoom. */
+export function ViewportWatcher({ onChange, onViewChange }: ViewportWatcherProps) {
     const map = useMap();
-    useMapEvent("moveend", () => onChange(toBbox(map.getBounds())));
-    useEffect(() => onChange(toBbox(map.getBounds())), [map, onChange]);
+    const report = () => {
+        onChange?.(toBbox(map.getBounds()));
+        const center = map.getCenter();
+        onViewChange?.({ center: [center.lat, center.lng], zoom: map.getZoom() });
+    };
+    useMapEvent("moveend", report);
+    useEffect(() => {
+        onChange?.(toBbox(map.getBounds()));
+        const center = map.getCenter();
+        onViewChange?.({ center: [center.lat, center.lng], zoom: map.getZoom() });
+    }, [map, onChange, onViewChange]);
     return null;
 }

@@ -7,6 +7,7 @@ import { ErrorState, LoadingState } from "@/components/States";
 import { BottomBar } from "@/layout/BottomBar";
 import { type PlaceFocus, useHighlight } from "@/layout/HighlightProvider";
 import { TopBar } from "@/layout/TopBar";
+import { type MapViewState, recallMap, rememberMap } from "@/map/mapMemory";
 import { MapView } from "@/map/MapView";
 
 import styles from "./MapPage.module.scss";
@@ -25,14 +26,17 @@ interface PopupState {
 
 /**
  * Home route: the full-screen map with the places around the viewport and their next events. Highlighted places
- * outside the viewport (search results, a focus link) are loaded one by one so the map can fly to them.
+ * outside the viewport (search results, a focus link) are loaded one by one so the map can fly to them. The view
+ * and the open card are remembered, so coming back (from a detail page, say) lands where the user left off.
  */
 export function MapPage() {
     const [searchParams] = useSearchParams();
     const focus = searchParams.get("focus");
     const { highlightIds, focus: focused, focusPlace } = useHighlight();
+    const [remembered] = useState(recallMap);
 
     const [bbox, setBbox] = useState<string | null>(null);
+    const [view, setView] = useState<MapViewState | null>(remembered);
     const placesQuery = usePlaces(bbox);
     const upcomingQuery = useUpcomingEvents();
     const inView = placesQuery.data;
@@ -43,7 +47,9 @@ export function MapPage() {
     const highlightedElsewhere = usePlacesById(missingHighlights);
     // Fitting the view waits until every highlighted place is known, or it would fly to the first one to arrive.
     const highlightsSettled = inView !== undefined && !highlightedElsewhere.pending;
-    const [popup, setPopup] = useState<PopupState | null>(null);
+    const [popup, setPopup] = useState<PopupState | null>(() =>
+        remembered?.popupId ? { id: remembered.popupId, forHighlights: highlightIds, forFocus: focused } : null,
+    );
 
     // Arriving with ?focus=<placeId> (from search on another page) highlights that place and opens its card.
     useEffect(() => {
@@ -64,6 +70,10 @@ export function MapPage() {
 
     const current = popup !== null && popup.forHighlights === highlightIds && popup.forFocus === focused;
     const openPopupId = current ? popup.id : (focused?.id ?? null);
+
+    useEffect(() => {
+        if (view) rememberMap({ ...view, popupId: openPopupId });
+    }, [view, openPopupId]);
     const showPopup = (id: ID | null) => setPopup({ id, forHighlights: highlightIds, forFocus: focused });
     const togglePopup = (id: ID) => showPopup(openPopupId === id ? null : id);
     const closePopup = () => showPopup(null);
@@ -86,6 +96,8 @@ export function MapPage() {
                     onOpenPlace={togglePopup}
                     onClosePopup={closePopup}
                     onViewportChange={setBbox}
+                    onViewChange={setView}
+                    initialView={remembered}
                     highlightsSettled={highlightsSettled}
                 />
                 {(loading || error) && (
