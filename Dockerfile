@@ -20,9 +20,13 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
 COPY . ./
 RUN pnpm build
 
-# The official nginx image running as a non-root user, listening on 8080.
+# The official nginx image running as a non-root user, listening on 8080. Its entrypoint renders the template in
+# nginx/templates with the environment: BACKEND_UPSTREAM is the backend the detail-page HTML routes and the sitemap
+# are proxied to (the compose service name), NGINX_RESOLVER the DNS that resolves it (Docker's embedded DNS).
 FROM nginxinc/nginx-unprivileged:stable-alpine
-COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+ENV BACKEND_UPSTREAM=backend:8080 \
+    NGINX_RESOLVER=127.0.0.11
+COPY nginx/templates/ /etc/nginx/templates/
 COPY --from=build /frontend/dist /usr/share/nginx/html
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://127.0.0.1:8080/healthz || exit 1

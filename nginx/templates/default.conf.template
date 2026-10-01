@@ -1,0 +1,63 @@
+# Static files, plus the server-rendered shells of the detail pages: /events/{id}, /places/{id}, /performers/{id}
+# and /sitemap.xml are proxied to the backend (BACKEND_UPSTREAM), which answers this image's own index.html with
+# the page's metadata, JSON-LD and data spliced in. The rest of the API lives on its own origin
+# (https://api.terkep.party); Keycloak serves the login pages itself. The entrypoint fills in ${…} from the
+# environment (nginx's own $variables are left alone).
+server {
+    listen 8080;
+    server_name _;
+    root /usr/share/nginx/html;
+
+    # Resolve the backend at request time, so nginx starts even while the backend container is not up yet.
+    resolver ${NGINX_RESOLVER} valid=30s ipv6=off;
+    set $shell_upstream http://${BACKEND_UPSTREAM};
+
+    gzip on;
+    gzip_types text/css application/javascript application/json image/svg+xml application/xml;
+    gzip_min_length 1024;
+
+    location = /healthz {
+        access_log off;
+        default_type text/plain;
+        return 200 "ok\n";
+    }
+
+    # The API's paths are never the app's.
+    location /api/ {
+        return 404;
+    }
+
+    # The build's hashed files never change under their name.
+    location /static/ {
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        try_files $uri =404;
+    }
+
+    location = /index.html {
+        add_header Cache-Control "no-cache";
+    }
+
+    # Detail pages: the backend's shell; the plain app when the backend cannot answer.
+    location ~ "^/(events|places|performers)/[0-9a-f-]{36}$" {
+        proxy_pass $shell_upstream;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_intercept_errors on;
+        error_page 502 503 504 = @spa;
+    }
+
+    location = /sitemap.xml {
+        proxy_pass $shell_upstream;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location @spa {
+        try_files /index.html =404;
+    }
+
+    location / {
+        try_files $uri /index.html;
+    }
+}
