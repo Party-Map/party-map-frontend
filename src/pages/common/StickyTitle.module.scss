@@ -1,0 +1,50 @@
+@layer parts {
+  .sentinel {
+    height: 1px;
+  }
+
+  .bar {
+    position: fixed;
+    top: calc(var(--topbar-h) + var(--space-3));
+    right: var(--space-4);
+    left: var(--space-4);
+    z-index: var(--z-sticky);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    max-width: var(--page-max-w);
+    height: var(--sticky-h);
+    margin: 0 auto;
+    padding: 0 var(--space-2) 0 var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    transform: translateY(-0.5rem);
+    pointer-events: none;
+    transition:
+      opacity var(--duration-base) var(--ease),
+      transform var(--duration-base) var(--ease);
+  }
+
+  .visible {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .title {
+    overflow: hidden;
+    font-size: var(--text-15);
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .action {
+    flex-shrink: 0;
+  }
+}

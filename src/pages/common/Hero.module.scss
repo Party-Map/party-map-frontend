@@ -1,0 +1,136 @@
+@use "@/styles/mixins" as *;
+
+@layer parts {
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: scale(0.96) translateY(0.5rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Full-bleed on phones (the page's side padding is the only gutter), a rounded block inside the column above. */
+  .hero {
+    position: relative;
+    margin: 0 calc(-1 * var(--space-4));
+    padding: var(--space-6) var(--space-4) var(--space-5);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .backdrop {
+    position: absolute;
+    inset: -20%;
+    z-index: -2;
+    background: var(--hero-image) center / cover no-repeat;
+    filter: blur(var(--hero-blur)) saturate(1.6);
+    opacity: var(--hero-backdrop-opacity);
+  }
+
+  /* The blur fades into the page so the hero has no hard bottom edge. */
+  .hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(to bottom, transparent 30%, var(--bg));
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    text-align: center;
+  }
+
+  .art {
+    box-shadow: var(--shadow-artwork);
+    animation: rise var(--duration-slow) var(--ease);
+  }
+
+  .text {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    font-size: var(--text-13);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+
+  .title {
+    margin-top: var(--space-1);
+    font-size: var(--text-title);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    overflow-wrap: anywhere;
+  }
+
+  .subtitle {
+    margin-top: var(--space-2);
+    font-size: var(--text-15);
+    color: var(--fg-muted);
+  }
+
+  .subtitle address {
+    display: inline;
+    font-style: normal;
+  }
+
+  .subtitle a {
+    color: var(--link);
+  }
+
+  .subtitle a:hover {
+    text-decoration: underline;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+
+  @include from-md {
+    .hero {
+      margin: 0;
+      padding: var(--space-8) var(--space-6) var(--space-6);
+      border-radius: var(--radius-xl);
+    }
+
+    .content {
+      flex-direction: row;
+      align-items: flex-end;
+      gap: var(--space-6);
+      text-align: left;
+    }
+
+    .eyebrow,
+    .actions {
+      justify-content: flex-start;
+    }
+  }
+
+  @include reduced-motion {
+    .art {
+      animation: none;
+    }
+  }
+}

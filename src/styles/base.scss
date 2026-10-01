@@ -67,6 +67,14 @@
     --bottombar-h: 4rem;
     --page-max-w: 64rem;
     --row-art: 3.5rem;
+    --hero-art-size: clamp(11rem, 42vw, 18rem);
+    --hero-blur: 48px;
+    --hero-backdrop-opacity: 0.55;
+    --shadow-artwork: 0 24px 48px -16px rgb(0 0 0 / 45%);
+    --pill-h: 2.5rem;
+    --shelf-card-w: 10.5rem;
+    --sticky-h: 3rem;
+    --z-sticky: 1100;
     --admin-header-h: 3.5rem;
     --sidebar-w: 15.5rem;
     --admin-content-max-w: 76rem;
@@ -123,6 +131,7 @@
     --text-24: 1.5rem;
     --text-28: 1.75rem;
     --text-display: clamp(1.75rem, 5vw, 2.75rem);
+    --text-title: clamp(1.875rem, 4vw + 1rem, 3rem);
     --text-hero: clamp(4.5rem, 15vw, 7rem);
 
     /* Motion. */
@@ -132,6 +141,7 @@
 
     /* Radius aliases and the focus ring. */
     --radius-xs: 0.25rem;
+    --radius-xl: 1.5rem;
     --radius: var(--radius-md);
     --ring: var(--accent);
   }
@@ -161,6 +171,8 @@
     --shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
     --shadow-md: 0 4px 16px -4px rgb(0 0 0 / 60%);
     --shadow-lg: 0 14px 32px -8px rgb(0 0 0 / 70%);
+    --shadow-artwork: 0 24px 48px -16px rgb(0 0 0 / 70%);
+    --hero-backdrop-opacity: 0.4;
   }
 
   *,
