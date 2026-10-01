@@ -12,7 +12,9 @@ test("signed-in user sees profile, likes and the admin area", async ({ page }) =
     await expect(page).toHaveURL(/\/admin\/places$/);
     await expect(page.getByRole("heading", { level: 1, name: "Places" })).toBeVisible();
 
-    await page.getByRole("link", { name: "Likes" }).first().click();
+    // The admin area keeps the user's own pages in its account menu.
+    await page.getByRole("button", { name: /Account menu/ }).click();
+    await page.getByRole("menuitem", { name: "Likes" }).click();
     await expect(page.getByRole("heading", { name: "Your likes" })).toBeVisible();
 });
 

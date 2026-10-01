@@ -36,3 +36,4 @@ e2e/visual.spec.ts-snapshots
 # pnpm content-addressable store created by the Docker dev server
 .pnpm-store
 .rsbuild
+e2e/admin-visual.auth.spec.ts-snapshots

@@ -41,7 +41,15 @@ export default defineConfig({
             name: "signed-in",
             dependencies: ["setup"],
             testMatch: /.*\.auth\.spec\.ts/,
+            testIgnore: /phone\.auth\.spec\.ts/,
             use: { ...desktop, colorScheme: "light", storageState: "e2e/.auth/user.json" },
+        },
+        {
+            // The admin area's phone layout (drawer navigation) and its visual checks.
+            name: "signed-in-phone",
+            dependencies: ["setup"],
+            testMatch: /(admin-visual|admin-phone)\.auth\.spec\.ts/,
+            use: { ...phone, colorScheme: "light", storageState: "e2e/.auth/user.json" },
         },
     ],
 });
