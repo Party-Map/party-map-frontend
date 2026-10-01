@@ -71,9 +71,11 @@ routes use `Component:` (the admin area is lazy-loaded). Each file opens with a 
   swapped in place with the theme), the tiles and glyphs come from `/tiles` (`PUBLIC_TILES_BASE`; Martin, see
   `tiles/README.md`), and MapLibre's worker is emitted by `rsbuild.config.ts` under `/static/maplibre-<version>/`
   (`map/basemap/worker.ts`). The maps have no attribution control; the OpenMapTiles + OpenStreetMap credit is the
-  "Map data" line of the privacy notice (`components/ConsentBanner`). The style is deliberately cartoonish and sparse:
-  plain land, water, six road classes in one colour with thick outlines, the border and names; no landcover, buildings,
-  rail or POIs.
+  "Map data" line of the privacy notice (`components/ConsentBanner`). The style is deliberately sparse and painterly
+  (after a space-fantasy picture): a starry sky (`map/basemap/stars.ts`, a seeded bitmap handed to MapLibre at
+  `style.load`, drawn as a `fill-pattern` over a world-minus-Hungary mask built from `map/basemap/hungary.json`),
+  sandy or deep-blue land, lavender water, six road classes in one colour with outlines, the border and names; no
+  landcover, buildings, rail or POIs.
 - `lib/geocode.ts` (Nominatim) is the only other network access; nothing else calls `fetch`.
 
 ## Auth

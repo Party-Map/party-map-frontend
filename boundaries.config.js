@@ -29,6 +29,7 @@ const config = [
             ],
             "boundaries/files": [
                 { category: "styles", pattern: "**/*.scss" },
+                { category: "data", pattern: "**/*.json" },
                 { category: "root", pattern: "*.{ts,tsx}" },
                 { category: "test", pattern: "**/*.test.{ts,tsx}" },
             ],
@@ -40,8 +41,8 @@ const config = [
                 {
                     default: "disallow",
                     policies: [
-                        // Every part may import stylesheets.
-                        { allow: { to: { file: { categories: "styles" } } } },
+                        // Every part may import stylesheets and data files.
+                        { allow: { to: { file: { categories: ["styles", "data"] } } } },
                         allow("lib", ["lib"]),
                         // The API's shapes are types: lib, components and map may import them, type-only.
                         {

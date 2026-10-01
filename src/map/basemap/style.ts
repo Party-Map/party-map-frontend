@@ -3,7 +3,9 @@ import type { ExpressionSpecification, LayerSpecification, StyleSpecification } 
 import { TILE_ATTRIBUTION } from "@/lib/constants";
 import type { Theme } from "@/lib/theme";
 
+import hungary from "./hungary.json";
 import { type Palette, PALETTES, type RoadClass } from "./palette";
+import { starImageId } from "./stars";
 
 /** Martin's source id: the file stem of tiles/data/hungary.pmtiles. */
 export const TILES_SOURCE = "hungary";
@@ -25,6 +27,25 @@ export const SOURCE_LAYERS = [
 ] as const;
 
 const SOURCE = "osm";
+/**
+ * Everything but the country (OpenStreetMap relation 21335, simplified to about 200 m): the world with Hungary cut
+ * out, which the sky layer fills with stars over whatever the tiles hold beyond the border.
+ */
+const SKY_SOURCE = "sky";
+const WORLD_RING = [
+    [-180, -85],
+    [180, -85],
+    [180, 85],
+    [-180, 85],
+    [-180, -85],
+];
+/** GeoJSON winds outer rings counter-clockwise and holes clockwise; the outline comes counter-clockwise. */
+const HOLE = hungary.geometry.coordinates.map((ring) => [...ring].reverse());
+const SKY_MASK: GeoJSON.Feature = {
+    type: "Feature",
+    properties: {},
+    geometry: { type: "Polygon", coordinates: [WORLD_RING, ...HOLE] },
+};
 type Stops = [zoom: number, value: number][];
 type Output = number | ExpressionSpecification;
 
@@ -172,9 +193,9 @@ function placeLayer(
 }
 
 /** The layers, bottom to top. Light and dark share everything but the colours they take from the palette. */
-function layers(p: Palette): LayerSpecification[] {
+function layers(p: Palette, theme: Theme): LayerSpecification[] {
     return [
-        { id: "background", type: "background", paint: { "background-color": p.background } },
+        { id: "background", type: "background", paint: { "background-color": p.land } },
         {
             id: "water",
             type: "fill",
@@ -200,6 +221,13 @@ function layers(p: Palette): LayerSpecification[] {
             },
         },
         ...ROADS.flatMap((road) => roadLayers(p, road)),
+        // The sky around the country: a repeated star bitmap that map/Basemap.tsx hands MapLibre (stars.ts).
+        {
+            id: "sky",
+            type: "fill",
+            source: SKY_SOURCE,
+            paint: { "fill-color": p.sky, "fill-pattern": starImageId(theme) },
+        },
         {
             id: "boundary-country",
             type: "line",
@@ -348,7 +376,9 @@ export function basemapStyle(theme: Theme, tilesBase: string): StyleSpecificatio
                 maxzoom: SOURCE_MAXZOOM,
                 attribution: TILE_ATTRIBUTION,
             },
+            // No per-zoom simplification: the pieces must keep meeting exactly.
+            [SKY_SOURCE]: { type: "geojson", data: SKY_MASK },
         },
-        layers: layers(PALETTES[theme]),
+        layers: layers(PALETTES[theme], theme),
     };
 }

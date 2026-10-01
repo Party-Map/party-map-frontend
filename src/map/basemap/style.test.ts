@@ -37,17 +37,45 @@ describe("basemapStyle", () => {
         });
     });
 
-    it("draws only known OpenMapTiles layers from the one source, each layer once", () => {
+    it("draws only known OpenMapTiles layers from the tile source, each layer once", () => {
         const ids = light.layers.map((layer) => layer.id);
         expect(new Set(ids).size).toBe(ids.length);
         for (const layer of light.layers) {
-            if (layer.type === "background") continue;
+            if (layer.type === "background" || layer.id === "sky") continue;
             expect(layer.source).toBe("osm");
             expect(SOURCE_LAYERS).toContain(layer["source-layer"]);
         }
     });
 
-    it("stacks water, roads, the border and labels in that order", () => {
+    it("covers everything beyond the border with a starry sky", () => {
+        const source = light.sources.sky as { type: string; data: GeoJSON.Feature<GeoJSON.Polygon> };
+        expect(source.type).toBe("geojson");
+        const [world, hole] = source.data.geometry.coordinates;
+        expect(world).toHaveLength(5);
+        expect(hole?.length).toBeGreaterThan(1000);
+        // GeoJSON winding: the outline arrives counter-clockwise and is reversed into a clockwise hole.
+        const area = (ring: number[][]) =>
+            ring.reduce((sum, [x1 = 0, y1 = 0], i) => {
+                const [x2 = 0, y2 = 0] = ring[(i + 1) % ring.length] ?? [];
+                return sum + (x2 - x1) * (y2 + y1);
+            }, 0);
+        expect(area(world ?? [])).toBeLessThan(0);
+        expect(area(hole ?? [])).toBeGreaterThan(0);
+        const sky = light.layers.find((layer) => layer.id === "sky");
+        expect(sky).toMatchObject({ type: "fill", source: "sky", paint: { "fill-pattern": "stars-light" } });
+        expect(dark.layers.find((layer) => layer.id === "sky")).toMatchObject({
+            paint: { "fill-pattern": "stars-dark" },
+        });
+        const ids = light.layers.map((layer) => layer.id);
+        expect(ids.indexOf("sky")).toBeGreaterThan(ids.indexOf("road-motorway"));
+        expect(ids.indexOf("sky")).toBeLessThan(ids.indexOf("boundary-country"));
+        expect(light.layers[0]).toMatchObject({
+            type: "background",
+            paint: { "background-color": PALETTES.light.land },
+        });
+    });
+
+    it("stacks the sky, land, water, roads, the border and labels in that order", () => {
         expect(light.layers.map((layer) => layer.id)).toMatchInlineSnapshot(`
           [
             "background",
@@ -65,6 +93,7 @@ describe("basemapStyle", () => {
             "road-trunk",
             "road-motorway-casing",
             "road-motorway",
+            "sky",
             "boundary-country",
             "water-name",
             "waterway-name",
@@ -99,7 +128,7 @@ describe("basemapStyle", () => {
     it("keeps the map background token in step with the palettes", () => {
         const base = readFileSync(path.resolve(process.cwd(), "src/styles/base.scss"), "utf8");
         const tokens = [...base.matchAll(/--map-bg: (#[0-9a-f]{6});/g)].map((match) => match[1]);
-        expect(tokens).toEqual([PALETTES.light.background, PALETTES.dark.background]);
+        expect(tokens).toEqual([PALETTES.light.sky, PALETTES.dark.sky]);
     });
 });
 

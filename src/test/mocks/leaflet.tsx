@@ -80,6 +80,10 @@ export const fakeMap = {
         fakeMap.dragging.enable.mockClear();
         fakeMap.dragging.disable.mockClear();
         fakeGlMap.setStyle.mockClear();
+        fakeGlMap.addImage.mockClear();
+        fakeGlMap.hasImage.mockClear();
+        fakeGlMap.on.mockClear();
+        glListeners.clear();
         fakeGlLayer.addTo.mockClear();
         fakeGlLayer.remove.mockClear();
         fakeGlLayer.getMaplibreMap.mockClear();
@@ -87,8 +91,17 @@ export const fakeMap = {
     },
 };
 
+const glListeners = new Map<string, (event?: { id: string }) => void>();
+
 /** The MapLibre map behind the basemap layer. */
-export const fakeGlMap = { setStyle: vi.fn() };
+export const fakeGlMap = {
+    setStyle: vi.fn(),
+    addImage: vi.fn(),
+    hasImage: vi.fn(() => false),
+    on: vi.fn((event: string, handler: (event?: { id: string }) => void) => glListeners.set(event, handler)),
+    /** Test helper: trigger a MapLibre event registered through `on`. */
+    fire: (event: string, payload?: { id: string }) => glListeners.get(event)?.(payload),
+};
 
 /** The Leaflet layer the maplibre-gl-leaflet plugin creates; tests inspect the style it was created with. */
 export const fakeGlLayer = {

@@ -9,6 +9,7 @@ import { setThemeChoice } from "@/lib/theme";
 import { fakeGlLayer, fakeGlMap, fakeMap, maplibreLeafletMock } from "@/test/mocks/leaflet";
 
 import { Basemap } from "./Basemap";
+import { STAR_SKY_PIXEL_RATIO } from "./basemap/stars";
 import type { basemapStyle } from "./basemap/style";
 import { MAPLIBRE_WORKER_URL } from "./basemap/worker";
 
@@ -46,6 +47,25 @@ describe("Basemap", () => {
             diff: true,
         });
         expect(maplibreLeafletMock.maplibreGL).toHaveBeenCalledTimes(1);
+    });
+
+    it("hands MapLibre both star skies as soon as the style is parsed, and a missing one when it asks", () => {
+        render(<Basemap />);
+        expect(fakeGlMap.on).toHaveBeenCalledWith("style.load", expect.any(Function));
+        expect(fakeGlMap.on).toHaveBeenCalledWith("styleimagemissing", expect.any(Function));
+        fakeGlMap.fire("style.load");
+        expect(fakeGlMap.addImage).toHaveBeenCalledTimes(2);
+        expect(fakeGlMap.addImage).toHaveBeenCalledWith(
+            "stars-dark",
+            expect.objectContaining({ width: 512, height: 512 }),
+            { pixelRatio: STAR_SKY_PIXEL_RATIO },
+        );
+        fakeGlMap.fire("styleimagemissing", { id: "pin" });
+        fakeGlMap.hasImage.mockReturnValueOnce(true);
+        fakeGlMap.fire("styleimagemissing", { id: "stars-light" });
+        expect(fakeGlMap.addImage).toHaveBeenCalledTimes(2);
+        fakeGlMap.fire("styleimagemissing", { id: "stars-light" });
+        expect(fakeGlMap.addImage).toHaveBeenCalledTimes(3);
     });
 
     it("removes the layer on unmount", () => {

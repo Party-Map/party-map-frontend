@@ -10,8 +10,12 @@ export type RoadClass = "motorway" | "trunk" | "primary" | "secondary" | "tertia
 
 /** Every colour the basemap style uses; light and dark differ in nothing else. */
 export interface Palette {
-    /** Land where nothing else is drawn; also `--map-bg` in styles/base.scss. */
-    background: string;
+    /** The night sky around the country (the star pattern's base); also `--map-bg` in styles/base.scss. */
+    sky: string;
+    /** The stars' tint. */
+    star: string;
+    /** Hungary itself: the background everything else is drawn on. */
+    land: string;
     water: string;
     waterLine: string;
     roads: Record<RoadClass, RoadColors>;
@@ -23,44 +27,49 @@ export interface Palette {
 }
 
 /**
- * Pastel and easy on the eye: warm light-grey land, powder-blue water, white roads with faint outlines and soft
- * grey text; the dark palette is a muted slate with dusty blue water and low-contrast roads.
+ * After a space-fantasy painting: a royal-blue starry sky around the country, sandy gold land, lavender-blue water
+ * and gold-edged roads by day; by night the land turns deep blue with sage-green roads and pale gold names. Pastel
+ * in both: nothing fully saturated, nothing pure white or black.
  */
 export const PALETTES: Record<Theme, Palette> = {
     light: {
-        background: "#f3f0ea",
-        water: "#c6dcee",
-        waterLine: "#b6cfe4",
+        sky: "#3242c4",
+        star: "#fff6dc",
+        land: "#f3e9cc",
+        water: "#b4bdee",
+        waterLine: "#9ea9e6",
         roads: {
-            motorway: { fill: "#ffffff", casing: "#dbd5cb" },
-            trunk: { fill: "#ffffff", casing: "#dbd5cb" },
-            primary: { fill: "#ffffff", casing: "#dbd5cb" },
-            secondary: { fill: "#ffffff", casing: "#dfd9d0" },
-            tertiary: { fill: "#ffffff", casing: "#e3ded5" },
-            minor: { fill: "#fdfcfa", casing: "#e7e2da" },
+            motorway: { fill: "#fffbf2", casing: "#d8c58e" },
+            trunk: { fill: "#fffbf2", casing: "#d8c58e" },
+            primary: { fill: "#fffbf2", casing: "#d8c58e" },
+            secondary: { fill: "#fffbf2", casing: "#ddcd9d" },
+            tertiary: { fill: "#fffbf2", casing: "#e2d5ab" },
+            minor: { fill: "#fdf8ea", casing: "#e7dcba" },
         },
-        boundary: "#c9bfb1",
-        text: "#5c5750",
-        textHalo: "#f7f4ee",
-        placeText: "#4d4842",
-        waterText: "#7f9fbe",
+        boundary: "#8d95d8",
+        text: "#38418f",
+        textHalo: "#f7f1dc",
+        placeText: "#2d3685",
+        waterText: "#5a65b9",
     },
     dark: {
-        background: "#292c34",
-        water: "#374a66",
-        waterLine: "#405676",
+        sky: "#11164a",
+        star: "#fff3cf",
+        land: "#2a3394",
+        water: "#5a68cf",
+        waterLine: "#6c79da",
         roads: {
-            motorway: { fill: "#4b505c", casing: "#23262d" },
-            trunk: { fill: "#4b505c", casing: "#23262d" },
-            primary: { fill: "#4b505c", casing: "#23262d" },
-            secondary: { fill: "#454a56", casing: "#23262d" },
-            tertiary: { fill: "#40454f", casing: "#23262d" },
-            minor: { fill: "#3a3f49", casing: "#23262d" },
+            motorway: { fill: "#93b69b", casing: "#1c2272" },
+            trunk: { fill: "#93b69b", casing: "#1c2272" },
+            primary: { fill: "#93b69b", casing: "#1c2272" },
+            secondary: { fill: "#7fa38a", casing: "#1c2272" },
+            tertiary: { fill: "#6e8f7c", casing: "#1c2272" },
+            minor: { fill: "#5c7a6b", casing: "#1c2272" },
         },
-        boundary: "#5d6376",
-        text: "#c3c7d1",
-        textHalo: "#292c34",
-        placeText: "#d2d5de",
-        waterText: "#95abc8",
+        boundary: "#b3b4e0",
+        text: "#f1e5b8",
+        textHalo: "#2a3394",
+        placeText: "#f6edd3",
+        waterText: "#cdd3f7",
     },
 };

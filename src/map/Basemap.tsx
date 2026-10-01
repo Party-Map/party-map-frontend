@@ -5,6 +5,7 @@ import { useMap } from "react-leaflet";
 import { getEnv } from "@/lib/env";
 import { resolveTheme, type Theme, useTheme } from "@/lib/theme";
 
+import { STAR_SKY_PIXEL_RATIO, starImageId, starSky, themeOfStarImage } from "./basemap/stars";
 import { basemapStyle, resolveTilesBase } from "./basemap/style";
 import { configureMaplibreWorker } from "./basemap/worker";
 
@@ -31,6 +32,19 @@ export function Basemap() {
         };
         const gl = maplibreGL(options);
         gl.addTo(map);
+        // The sky patterns are bitmaps computed here: both themes' images go in as soon as the style is parsed,
+        // before the first tile is built (a tile built without its pattern stays blank), and a missing one (after a
+        // full style reload) is handed over when the style asks for it.
+        const glMap = gl.getMaplibreMap();
+        const addStars = (id: string) => {
+            const theme = themeOfStarImage(id);
+            if (theme && !glMap.hasImage(id)) glMap.addImage(id, starSky(theme), { pixelRatio: STAR_SKY_PIXEL_RATIO });
+        };
+        glMap.on("style.load", () => {
+            addStars(starImageId("light"));
+            addStars(starImageId("dark"));
+        });
+        glMap.on("styleimagemissing", ({ id }) => addStars(id));
         layer.current = gl;
         appliedTheme.current = initialTheme;
         return () => {
