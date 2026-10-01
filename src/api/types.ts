@@ -55,6 +55,9 @@ export type EventPlanListItem = Schemas["EventPlanAdminListItemDto"];
 export type PlaceInvitationRequest = Schemas["EventPlanPlaceInvitationWithDateDto"];
 export type PerformerInvitationRequest = Schemas["EventPlanLineupInvitationForPerformerDto"];
 
+export type AdminUser = Schemas["AdminUserDto"];
+export type AdminUserPage = Schemas["AdminUserPageDto"];
+
 export type PlacePayload = Schemas["PlaceCreateDto"];
 export type PerformerPayload = Schemas["PerformerCreateDto"];
 export type EventPlanPayload = Schemas["EventPlanCreateDto"];

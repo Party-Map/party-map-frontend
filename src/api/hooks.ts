@@ -3,6 +3,9 @@
 // families they change, so every screen showing that data refreshes.
 import { keepPreviousData, useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import type { ManagerRole } from "@/auth/roles";
+
+import { type AdminUserQuery, fetchAdminUser, fetchAdminUsers, grantRole, revokeRole } from "./admin";
 import { ApiError } from "./client";
 import {
     addLineupInvitation,
@@ -23,7 +26,7 @@ import {
     fetchOwnedEvents,
     fetchUpcomingEventsByPlace,
 } from "./events";
-import { eventKeys, eventPlanKeys, likeKeys, performerKeys, placeKeys, searchKeys } from "./keys";
+import { adminKeys, eventKeys, eventPlanKeys, likeKeys, performerKeys, placeKeys, searchKeys } from "./keys";
 import { fetchLikedEvents, fetchLikedPerformers, fetchLikedPlaces, fetchLikeStatus, like, unlike } from "./likes";
 import {
     createPerformer,
@@ -357,5 +360,30 @@ export function usePublishEventPlan(planId: ID) {
                 queryClient.invalidateQueries({ queryKey: eventKeys.all }),
                 queryClient.invalidateQueries({ queryKey: placeKeys.all }),
             ]),
+    });
+}
+
+/* ---------- Admin: platform users ---------- */
+
+/** A page of users; the previous page stays visible while the next one (or a new search) loads. */
+export function useAdminUsers(query: AdminUserQuery) {
+    return useQuery({
+        queryKey: adminKeys.userList(query),
+        queryFn: () => fetchAdminUsers(query),
+        placeholderData: keepPreviousData,
+    });
+}
+
+export function useAdminUser(id: ID) {
+    return useQuery({ queryKey: adminKeys.user(id), queryFn: () => fetchAdminUser(id) });
+}
+
+/** Grants (`grant: true`) or revokes a manager role; every user list and detail refreshes afterwards. */
+export function useChangeUserRole(id: ID) {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ role, grant }: { role: ManagerRole; grant: boolean }) =>
+            grant ? grantRole(id, role) : revokeRole(id, role),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: adminKeys.users() }),
     });
 }

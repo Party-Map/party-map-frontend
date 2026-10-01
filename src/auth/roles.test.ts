@@ -1,4 +1,4 @@
-import { ADMIN_ROLES, isAdmin, parseRoles, Role } from "./roles";
+import { ADMIN_ROLES, isAdmin, isLabelledRole, MANAGER_ROLES, parseRoles, Role, ROLE_LABELS } from "./roles";
 
 describe("parseRoles", () => {
     it("keeps only known roles", () => {
@@ -29,7 +29,35 @@ describe("isAdmin", () => {
         expect(isAdmin([Role.USER, role])).toBe(true);
     });
 
-    it("lists the three manager roles", () => {
-        expect(ADMIN_ROLES).toEqual([Role.PLACE_MANAGER, Role.PERFORMER_MANAGER, Role.EVENT_ORGANIZER]);
+    it("is true for the platform admin alone", () => {
+        expect(isAdmin([Role.USER, Role.PARTYMAP_ADMIN])).toBe(true);
+    });
+
+    it("lists the three manager roles and the platform admin", () => {
+        expect(ADMIN_ROLES).toEqual([
+            Role.PLACE_MANAGER,
+            Role.PERFORMER_MANAGER,
+            Role.EVENT_ORGANIZER,
+            Role.PARTYMAP_ADMIN,
+        ]);
+    });
+});
+
+describe("manager roles", () => {
+    it("are the grantable roles, never the platform admin", () => {
+        expect(MANAGER_ROLES).toEqual([Role.PLACE_MANAGER, Role.PERFORMER_MANAGER, Role.EVENT_ORGANIZER]);
+        expect(MANAGER_ROLES).not.toContain(Role.PARTYMAP_ADMIN);
+    });
+
+    it("have a label each, as has the platform admin", () => {
+        expect(ROLE_LABELS[Role.PLACE_MANAGER]).toBe("Place manager");
+        expect(ROLE_LABELS[Role.PARTYMAP_ADMIN]).toBe("Platform admin");
+    });
+
+    it("tell labelled roles from others", () => {
+        expect(isLabelledRole("event_organizer_user")).toBe(true);
+        expect(isLabelledRole("partymap_admin")).toBe(true);
+        expect(isLabelledRole("user")).toBe(false);
+        expect(isLabelledRole("toString")).toBe(false);
     });
 });

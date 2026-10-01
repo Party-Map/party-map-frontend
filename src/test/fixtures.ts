@@ -1,4 +1,13 @@
-import type { Event, EventPlan, Performer, Place, SearchHit, UpcomingEventByPlace } from "@/api/types";
+import type {
+    AdminUser,
+    AdminUserPage,
+    Event,
+    EventPlan,
+    Performer,
+    Place,
+    SearchHit,
+    UpcomingEventByPlace,
+} from "@/api/types";
 
 export const place: Place = {
     id: "place-1",
@@ -99,3 +108,25 @@ export const eventPlan: EventPlan = {
     placeInvitation: null,
     lineupInvitations: [],
 };
+
+export const adminUser: AdminUser = {
+    id: "user-1",
+    username: "jane@example.com",
+    email: "jane@example.com",
+    firstName: "Jane",
+    lastName: "Doe",
+    enabled: true,
+    roles: ["place_manager_user"],
+};
+
+export const adminUser2: AdminUser = {
+    id: "user-2",
+    username: "bob@example.com",
+    email: null,
+    firstName: null,
+    lastName: null,
+    enabled: false,
+    roles: [],
+};
+
+export const adminUserPage: AdminUserPage = { items: [adminUser, adminUser2], total: 2, page: 0, size: 20 };

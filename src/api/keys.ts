@@ -1,5 +1,6 @@
 // Query keys, one small factory per API area. A family's `all` key prefixes every key in it, so invalidating
 // `placeKeys.all` refreshes every place query after a place changes.
+import type { AdminUserQuery } from "./admin";
 import type { ID, LikeTarget } from "./types";
 
 export const placeKeys = {
@@ -44,4 +45,11 @@ export const likeKeys = {
     all: ["likes"] as const,
     status: (target: LikeTarget, id: ID) => [...likeKeys.all, "status", target, id] as const,
     mine: () => [...likeKeys.all, "mine"] as const,
+};
+
+export const adminKeys = {
+    all: ["admin"] as const,
+    users: () => [...adminKeys.all, "users"] as const,
+    userList: (query: AdminUserQuery) => [...adminKeys.users(), "list", query.q ?? "", query.page, query.size] as const,
+    user: (id: ID) => [...adminKeys.users(), "detail", id] as const,
 };

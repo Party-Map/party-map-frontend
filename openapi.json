@@ -526,6 +526,62 @@
         }
       }
     },
+    "/api/admin/users/{id}/roles/{role}" : {
+      "put" : {
+        "tags" : [ "admin-user-controller" ],
+        "operationId" : "grant",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "role",
+          "in" : "path",
+          "description" : "A manager role.",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "event_organizer_user", "place_manager_user", "performer_manager_user" ]
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "admin-user-controller" ],
+        "operationId" : "revoke",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "role",
+          "in" : "path",
+          "description" : "A manager role.",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "event_organizer_user", "place_manager_user", "performer_manager_user" ]
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          }
+        }
+      }
+    },
     "/api/places" : {
       "get" : {
         "tags" : [ "place-controller" ],
@@ -1095,6 +1151,81 @@
                   "items" : {
                     "$ref" : "#/components/schemas/EventPlanAdminListItemDto"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users" : {
+      "get" : {
+        "tags" : [ "admin-user-controller" ],
+        "operationId" : "list",
+        "parameters" : [ {
+          "name" : "q",
+          "in" : "query",
+          "description" : "Part of the username, email, first or last name; blank lists everyone.",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0,
+            "minimum" : 0
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 20,
+            "maximum" : 50,
+            "minimum" : 1
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AdminUserPageDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users/{id}" : {
+      "get" : {
+        "tags" : [ "admin-user-controller" ],
+        "operationId" : "get",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AdminUserDto"
                 }
               }
             }
@@ -1752,6 +1883,61 @@
           }
         },
         "required" : [ "endDateTime", "id", "startDateTime", "title" ]
+      },
+      "AdminUserDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "username" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : [ "string", "null" ]
+          },
+          "firstName" : {
+            "type" : [ "string", "null" ]
+          },
+          "lastName" : {
+            "type" : [ "string", "null" ]
+          },
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "roles" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        },
+        "required" : [ "enabled", "id", "roles", "username" ]
+      },
+      "AdminUserPageDto" : {
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AdminUserDto"
+            }
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "page" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        },
+        "required" : [ "items", "page", "size", "total" ]
       }
     }
   }

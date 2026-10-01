@@ -148,6 +148,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/users/{id}/roles/{role}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["grant"];
+        post?: never;
+        delete: operations["revoke"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/places": {
         parameters: {
             query?: never;
@@ -484,6 +500,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/users/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/event-plan/{id}/lineup-invitation/{performerId}": {
         parameters: {
             query?: never;
@@ -719,6 +767,25 @@ export interface components {
             startDateTime: string;
             /** Format: date-time */
             endDateTime: string;
+        };
+        AdminUserDto: {
+            /** Format: uuid */
+            id: string;
+            username: string;
+            email?: string | null;
+            firstName?: string | null;
+            lastName?: string | null;
+            enabled: boolean;
+            roles: string[];
+        };
+        AdminUserPageDto: {
+            items: components["schemas"]["AdminUserDto"][];
+            /** Format: int64 */
+            total: number;
+            /** Format: int32 */
+            page: number;
+            /** Format: int32 */
+            size: number;
         };
     };
     responses: never;
@@ -1126,6 +1193,50 @@ export interface operations {
             path: {
                 id: string;
                 placeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    grant: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                /** @description A manager role. */
+                role: "event_organizer_user" | "place_manager_user" | "performer_manager_user";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    revoke: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                /** @description A manager role. */
+                role: "event_organizer_user" | "place_manager_user" | "performer_manager_user";
             };
             cookie?: never;
         };
@@ -1633,6 +1744,53 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EventPlanAdminListItemDto"][];
+                };
+            };
+        };
+    };
+    list: {
+        parameters: {
+            query?: {
+                /** @description Part of the username, email, first or last name; blank lists everyone. */
+                q?: string;
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminUserPageDto"];
+                };
+            };
+        };
+    };
+    get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminUserDto"];
                 };
             };
         };
