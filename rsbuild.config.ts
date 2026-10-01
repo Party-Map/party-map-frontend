@@ -1,3 +1,5 @@
+import type { IncomingMessage } from "node:http";
+
 import { defineConfig } from "@rsbuild/core";
 import { pluginReact } from "@rsbuild/plugin-react";
 import { pluginSass } from "@rsbuild/plugin-sass";
@@ -6,6 +8,24 @@ import { pluginTypedCSSModules } from "@rsbuild/plugin-typed-css-modules";
 // The dev server proxies /api to the backend. The backend mounts every route under /api itself, so the
 // prefix is kept (no pathRewrite). Keycloak stays on its own origin: the browser follows its redirects.
 const API = process.env.API_URL || "http://localhost:8080";
+
+// HTML navigations to a detail page (and the sitemap) go to the backend too, which answers this very app's
+// index.html with the page's metadata and data spliced in (its "shell" routes). Script and API requests under the
+// same paths stay with the dev server. SHELL_PROXY=off keeps everything local for frontend-only work.
+const SHELL_ROUTE = /^\/(events|places|performers)\/[0-9a-f-]{36}$/;
+const wantsHtml = (req: IncomingMessage) => (req.headers.accept ?? "").includes("text/html");
+const shellProxy =
+    process.env.SHELL_PROXY === "off"
+        ? []
+        : [
+              {
+                  pathFilter: (pathname: string, req: IncomingMessage) =>
+                      pathname === "/sitemap.xml" || (SHELL_ROUTE.test(pathname) && wantsHtml(req)),
+                  target: API,
+                  changeOrigin: true,
+                  xfwd: true,
+              },
+          ];
 
 // Public build-time configuration, read from the environment or .env / .env.local (PUBLIC_* only).
 const publicEnv = {
@@ -32,12 +52,16 @@ export default defineConfig({
     },
     server: {
         // Port 3000: the Keycloak client's redirect URIs, the backend's CORS origin and Playwright expect it.
+        // IPv4 loopback: the backend fetches index.html from here with a client that resolves "localhost" to
+        // 127.0.0.1 first; browsers and curl fall back from ::1 on their own.
+        host: "127.0.0.1",
         port: 3000,
         strictPort: true,
-        proxy: {
+        proxy: [
             // xfwd: the API sees the browser's origin (X-Forwarded-Host), as behind a reverse proxy.
-            "/api": { target: API, changeOrigin: true, xfwd: true },
-        },
+            { pathFilter: ["/api"], target: API, changeOrigin: true, xfwd: true },
+            ...shellProxy,
+        ],
     },
     output: {
         assetPrefix: "/",
