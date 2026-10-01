@@ -9,7 +9,7 @@ import { HUNGARY_OUTLINE } from "./outline";
 import { PALETTES } from "./palette";
 import {
     basemapStyle,
-    BOUNDARY_LAYER_ID,
+    FIRST_LABEL_LAYER_ID,
     FONT_MEDIUM,
     FONT_REGULAR,
     FONT_SEMIBOLD,
@@ -63,11 +63,15 @@ describe("basemapStyle", () => {
         expect(dark.layers[0]).toMatchObject({ paint: { "fill-color": PALETTES.dark.land } });
         expect(light.layers.some((layer) => layer.type === "background")).toBe(false);
         expect(JSON.stringify(light)).not.toContain("fill-pattern");
-        // The cutout (map/basemap/cutout.ts) goes in under this layer at run time.
-        expect(light.layers.find((layer) => layer.id === BOUNDARY_LAYER_ID)).toMatchObject({ type: "line" });
+        // The border is the land's own edge: no boundary line. The cutout (map/basemap/cutout.ts) goes in under the
+        // first name layer at run time.
+        expect(light.layers.some((layer) => layer.id.startsWith("boundary"))).toBe(false);
+        expect(light.layers.find((layer) => layer.id === FIRST_LABEL_LAYER_ID)).toMatchObject({ type: "symbol" });
+        const ids = light.layers.map((layer) => layer.id);
+        expect(ids.indexOf(FIRST_LABEL_LAYER_ID)).toBe(ids.indexOf("road-motorway") + 1);
     });
 
-    it("stacks the land, water, roads, the border and labels in that order", () => {
+    it("stacks the land, water, roads and labels in that order", () => {
         expect(light.layers.map((layer) => layer.id)).toMatchInlineSnapshot(`
           [
             "land",
@@ -85,7 +89,6 @@ describe("basemapStyle", () => {
             "road-trunk",
             "road-motorway-casing",
             "road-motorway",
-            "boundary-country",
             "water-name",
             "waterway-name",
             "road-name",

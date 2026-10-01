@@ -20,7 +20,7 @@ import { Sky } from "./Sky";
 import { UserLocation } from "./UserLocation";
 import { ViewportWatcher } from "./ViewportWatcher";
 import { ZoomControls } from "./ZoomControls";
-import { ZoomFloor } from "./ZoomFloor";
+import { HUNGARY_BOUNDS, ZoomFloor } from "./ZoomFloor";
 
 /** Lifts the popup so it floats above the pin head. */
 const POPUP_OFFSET: PointTuple = [0, -48];
@@ -75,6 +75,10 @@ export function MapView({
                 center={initialView?.center ?? toLatLngTuple(DEFAULT_MAP_CENTER)}
                 zoom={initialView?.zoom ?? DEFAULT_MAP_ZOOM}
                 maxZoom={MAP_MAX_ZOOM}
+                // A solid wall at the country's extent: the view never leaves Hungary (ZoomFloor keeps it from
+                // zooming out beyond it), so the country cannot be pushed off the screen.
+                maxBounds={HUNGARY_BOUNDS}
+                maxBoundsViscosity={1}
                 scrollWheelZoom
                 zoomControl={false}
                 attributionControl={false}

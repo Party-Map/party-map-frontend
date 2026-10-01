@@ -6,7 +6,7 @@ import { getEnv } from "@/lib/env";
 import { resolveTheme, type Theme, useTheme } from "@/lib/theme";
 
 import { CUTOUT_LAYER_ID, cutoutLayer } from "./basemap/cutout";
-import { basemapStyle, BOUNDARY_LAYER_ID, resolveTilesBase } from "./basemap/style";
+import { basemapStyle, FIRST_LABEL_LAYER_ID, resolveTilesBase } from "./basemap/style";
 import { configureMaplibreWorker } from "./basemap/worker";
 
 type BasemapLayer = ReturnType<typeof maplibreGL>;
@@ -42,7 +42,7 @@ export function Basemap() {
         // after a full reload; the themed restyle is a diff, which leaves it where it is).
         const glMap = gl.getMaplibreMap();
         glMap.on("style.load", () => {
-            if (!glMap.getLayer(CUTOUT_LAYER_ID)) glMap.addLayer(cutoutLayer(), BOUNDARY_LAYER_ID);
+            if (!glMap.getLayer(CUTOUT_LAYER_ID)) glMap.addLayer(cutoutLayer(), FIRST_LABEL_LAYER_ID);
         });
         layer.current = gl;
         appliedTheme.current = initialTheme;

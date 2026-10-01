@@ -78,10 +78,11 @@ routes use `Component:` (the admin area is lazy-loaded). Each file opens with a 
   background layer, the land is a fill of the outline in `map/basemap/outline.ts` (`hungary.json`), and the custom
   layer `map/basemap/cutout.ts` (earcut triangles of the world minus Hungary, drawn with ZERO/ZERO blending, added
   by `Basemap` at `style.load` under the border) erases what the tiles hold beyond the border, so the canvas is
-  transparent there (`canvasContextAttributes.antialias` smooths the edge). Sandy (light) or slate-grey (dark) land,
-  lavender water, six road classes in one colour with outlines, the border and names; no landcover, buildings, rail
-  or POIs. `map/ZoomFloor` keeps the main map from zooming out beyond the whole country (`minZoom` follows the
-  viewport size).
+  transparent there (`canvasContextAttributes.antialias` smooths the edge; the land's edge is the border, no boundary
+  line is drawn). Sandy (light) or slate-grey (dark) land, lavender water, six road classes in one colour with
+  outlines, and names; no landcover, buildings, rail or POIs. `map/ZoomFloor` keeps the main map from zooming out
+  beyond the whole country (`minZoom` follows the viewport size) and `MapView` walls the view in at `HUNGARY_BOUNDS`
+  (`maxBounds`, full viscosity), so the country cannot be pushed off the screen.
 - `lib/geocode.ts` (Nominatim) is the only other network access; nothing else calls `fetch`.
 
 ## Auth

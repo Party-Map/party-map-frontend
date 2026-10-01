@@ -16,6 +16,7 @@ import { fakeGlLayer, fakeMap, maplibreLeafletMock, reactLeafletMock } from "@/t
 import { MapView } from "./MapView";
 import type * as pinsModule from "./pins";
 import { getPinIcon } from "./pins";
+import { HUNGARY_BOUNDS } from "./ZoomFloor";
 
 async function renderView(overrides: Partial<ComponentProps<typeof MapView>> = {}) {
     const onOpenPlace = vi.fn();
@@ -50,6 +51,9 @@ describe("MapView", () => {
         await waitFor(() => expect(fakeGlLayer.addTo).toHaveBeenCalledWith(fakeMap));
         expect(maplibreLeafletMock.maplibreGL).toHaveBeenCalledWith(expect.objectContaining({ interactive: false }));
         expect(screen.getAllByTestId("marker")).toHaveLength(2);
+        // The view is walled in at the country's extent, so Hungary cannot be pushed off the screen.
+        expect(screen.getByTestId("map")).toHaveAttribute("data-max-bounds", JSON.stringify(HUNGARY_BOUNDS));
+        expect(screen.getByTestId("map")).toHaveAttribute("data-max-bounds-viscosity", "1");
         expect(marker(1)).toHaveAttribute(
             "data-position",
             JSON.stringify([place2.location.latitude, place2.location.longitude]),

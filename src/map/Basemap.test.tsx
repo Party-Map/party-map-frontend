@@ -55,7 +55,7 @@ describe("Basemap", () => {
         expect(maplibreLeafletMock.maplibreGL).toHaveBeenCalledTimes(1);
     });
 
-    it("slips the cutout layer in under the border once the style is parsed, never twice", () => {
+    it("slips the cutout layer in under the names once the style is parsed, never twice", () => {
         render(<Basemap />);
         expect(fakeGlMap.on).toHaveBeenCalledTimes(1);
         expect(fakeGlMap.on).toHaveBeenCalledWith("style.load", expect.any(Function));
@@ -64,7 +64,7 @@ describe("Basemap", () => {
         expect(fakeGlMap.addLayer).toHaveBeenCalledTimes(1);
         expect(fakeGlMap.addLayer).toHaveBeenCalledWith(
             expect.objectContaining({ id: CUTOUT_LAYER_ID, type: "custom", render: expect.any(Function) }),
-            "boundary-country",
+            "water-name",
         );
         fakeGlMap.getLayer.mockReturnValueOnce({ id: CUTOUT_LAYER_ID });
         fakeGlMap.fire("style.load");

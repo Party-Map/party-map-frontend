@@ -19,7 +19,6 @@ export interface Palette {
     water: string;
     waterLine: string;
     roads: Record<RoadClass, RoadColors>;
-    boundary: string;
     text: string;
     textHalo: string;
     placeText: string;
@@ -46,7 +45,6 @@ export const PALETTES: Record<Theme, Palette> = {
             tertiary: { fill: "#fffbf2", casing: "#e2d5ab" },
             minor: { fill: "#fdf8ea", casing: "#e7dcba" },
         },
-        boundary: "#8d95d8",
         text: "#38418f",
         textHalo: "#f7f1dc",
         placeText: "#2d3685",
@@ -66,7 +64,6 @@ export const PALETTES: Record<Theme, Palette> = {
             tertiary: { fill: "#6e8f7c", casing: "#1c2272" },
             minor: { fill: "#5c7a6b", casing: "#1c2272" },
         },
-        boundary: "#a0a4bd",
         text: "#ece4c4",
         textHalo: "#3b3f49",
         placeText: "#f2ebd2",

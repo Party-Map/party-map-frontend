@@ -14,11 +14,10 @@ export const SOURCE_MAXZOOM = 14;
 export const FONT_REGULAR = ["Inter Regular"];
 export const FONT_MEDIUM = ["Inter Medium"];
 export const FONT_SEMIBOLD = ["Inter SemiBold"];
-/** The OpenMapTiles layers the style draws: water, roads, the border and names; no landcover, buildings, POIs or rail. */
+/** The OpenMapTiles layers the style draws: water, roads and names; no border, landcover, buildings, POIs or rail. */
 export const SOURCE_LAYERS = [
     "water",
     "waterway",
-    "boundary",
     "transportation",
     "transportation_name",
     "place",
@@ -28,8 +27,8 @@ export const SOURCE_LAYERS = [
 const SOURCE = "osm";
 /** The country's outline (outline.ts): the land fill. */
 const COUNTRY_SOURCE = "country";
-/** The dashed border; map/Basemap.tsx slips the cutout layer in right under it. */
-export const BOUNDARY_LAYER_ID = "boundary-country";
+/** The first of the name layers; map/Basemap.tsx slips the cutout layer in right under it. */
+export const FIRST_LABEL_LAYER_ID = "water-name";
 type Stops = [zoom: number, value: number][];
 type Output = number | ExpressionSpecification;
 
@@ -37,7 +36,6 @@ type Output = number | ExpressionSpecification;
 const expr = (parts: unknown[]): ExpressionSpecification => parts as ExpressionSpecification;
 const get = (field: string) => expr(["get", field]);
 const classIn = (classes: readonly string[]) => expr(["match", get("class"), [...classes], true, false]);
-const all = (...conditions: ExpressionSpecification[]) => expr(["all", ...conditions]);
 /** Widths grow exponentially with the zoom, as the ground shrinks; a stop's value may depend on the feature. */
 const widthByZoom = (stops: [zoom: number, value: Output][]) =>
     expr(["interpolate", ["exponential", 1.4], ["zoom"], ...stops.flat()]);
@@ -181,7 +179,7 @@ function layers(p: Palette): LayerSpecification[] {
     return [
         // No background layer: the canvas stays transparent, so the sky behind it (map/Sky.tsx) shows wherever the
         // land is not. What the tiles hold beyond the border is erased by the cutout layer (cutout.ts), which
-        // map/Basemap.tsx adds above the roads, under the border and the names.
+        // map/Basemap.tsx adds above the roads, under the names; the land's own edge is the border, undrawn.
         { id: "land", type: "fill", source: COUNTRY_SOURCE, paint: { "fill-color": p.land } },
         {
             id: "water",
@@ -209,23 +207,7 @@ function layers(p: Palette): LayerSpecification[] {
         },
         ...ROADS.flatMap((road) => roadLayers(p, road)),
         {
-            id: BOUNDARY_LAYER_ID,
-            type: "line",
-            source: SOURCE,
-            "source-layer": "boundary",
-            filter: all(expr(["==", get("admin_level"), 2]), expr(["==", get("maritime"), 0])),
-            paint: {
-                "line-color": p.boundary,
-                "line-width": linearByZoom([
-                    [4, 1.5],
-                    [12, 3],
-                ]),
-                "line-dasharray": [3, 2],
-                "line-opacity": 0.7,
-            },
-        },
-        {
-            id: "water-name",
+            id: FIRST_LABEL_LAYER_ID,
             type: "symbol",
             source: SOURCE,
             "source-layer": "water_name",

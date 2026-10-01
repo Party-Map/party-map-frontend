@@ -2,7 +2,7 @@ import type { LatLngBoundsLiteral } from "leaflet";
 import { useEffect } from "react";
 import { useMap } from "react-leaflet";
 
-/** The country's extent: the smallest view the map allows is the whole of Hungary. */
+/** The country's extent: the smallest view the map allows is the whole of Hungary, and the view never leaves it. */
 export const HUNGARY_BOUNDS: LatLngBoundsLiteral = [
     [45.737, 16.114],
     [48.585, 22.897],

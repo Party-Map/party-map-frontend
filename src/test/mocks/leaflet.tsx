@@ -124,8 +124,26 @@ export const maplibreLeafletMock = {
 const mapEventHandlers = new Map<string, (...args: unknown[]) => void>();
 
 export const reactLeafletMock = {
-    MapContainer: ({ children, center, zoom }: { children?: ReactNode; center?: unknown; zoom?: number }) => (
-        <div data-testid="map" data-center={JSON.stringify(center)} data-zoom={zoom}>
+    MapContainer: ({
+        children,
+        center,
+        zoom,
+        maxBounds,
+        maxBoundsViscosity,
+    }: {
+        children?: ReactNode;
+        center?: unknown;
+        zoom?: number;
+        maxBounds?: unknown;
+        maxBoundsViscosity?: number;
+    }) => (
+        <div
+            data-testid="map"
+            data-center={JSON.stringify(center)}
+            data-zoom={zoom}
+            data-max-bounds={maxBounds === undefined ? undefined : JSON.stringify(maxBounds)}
+            data-max-bounds-viscosity={maxBoundsViscosity}
+        >
             {children}
         </div>
     ),
