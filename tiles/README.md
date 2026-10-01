@@ -45,8 +45,9 @@ overwrites the archive. Delete `tiles/data/sources/hungary.osm.pbf` first to fet
 afterwards; browsers and nginx cache tiles for a day (`cache_control` in `martin.yaml`, `proxy_cache` in
 `nginx/templates/default.conf.template`).
 
-**Attribution.** The tiles are OpenStreetMap data (ODbL) in the OpenMapTiles schema; the map's attribution control
-credits both (`TILE_ATTRIBUTION` in `src/lib/constants.ts`). Keep it.
+**Attribution.** The tiles are OpenStreetMap data (ODbL) in the OpenMapTiles schema, so both must be credited. The
+maps show no attribution control (the owner's choice); the credit is the "Map data" line of the first-visit privacy
+notice (`src/components/ConsentBanner.tsx`, text in `TILE_ATTRIBUTION`). Keep it.
 
 ## Production
 

@@ -47,23 +47,15 @@ describe("basemapStyle", () => {
         }
     });
 
-    it("stacks land, water, buildings, roads, boundaries and labels in that order", () => {
+    it("stacks land, water, roads, the border and labels in that order", () => {
         expect(light.layers.map((layer) => layer.id)).toMatchInlineSnapshot(`
           [
             "background",
             "landcover-wood",
             "landcover-grass",
-            "landcover-farmland",
-            "landuse-residential",
             "park",
             "water",
             "waterway",
-            "aeroway",
-            "building",
-            "road-tunnel",
-            "road-path",
-            "road-service-casing",
-            "road-service",
             "road-minor-casing",
             "road-minor",
             "road-tertiary-casing",
@@ -76,14 +68,11 @@ describe("basemapStyle", () => {
             "road-trunk",
             "road-motorway-casing",
             "road-motorway",
-            "rail",
-            "boundary-region",
             "boundary-country",
             "water-name",
             "waterway-name",
             "road-name",
             "place-suburb",
-            "place-neighbourhood",
             "place-village",
             "place-town",
             "place-city",

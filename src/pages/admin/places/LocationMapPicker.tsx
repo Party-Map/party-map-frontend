@@ -62,6 +62,7 @@ export function LocationMapPicker({ value, onChange }: LocationMapPickerProps) {
                 zoom={DEFAULT_MAP_ZOOM}
                 maxZoom={MAP_MAX_ZOOM}
                 scrollWheelZoom={false}
+                attributionControl={false}
                 className={styles.map}
             >
                 <LazyBasemap />

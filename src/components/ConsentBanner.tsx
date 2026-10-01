@@ -45,6 +45,10 @@ export function ConsentBanner() {
                     the map working smoothly. We do not track you across other websites or use your data for
                     advertising. You can accept or reject these optional features using the buttons below.
                 </p>
+                <p className={styles.credit}>
+                    Map data &copy; <a href="https://www.openmaptiles.org/">OpenMapTiles</a> &copy;{" "}
+                    <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.
+                </p>
                 <div className={styles.actions}>
                     <Button variant="secondary" size="sm" onClick={() => answer(true)}>
                         Reject

@@ -75,6 +75,7 @@ export function MapView({
                 maxZoom={MAP_MAX_ZOOM}
                 scrollWheelZoom
                 zoomControl={false}
+                attributionControl={false}
                 className={styles.map}
             >
                 <LazyBasemap />

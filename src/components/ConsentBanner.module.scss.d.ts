@@ -3,6 +3,7 @@
 interface CssExports {
   actions: string;
   banner: string;
+  credit: string;
   text: string;
   title: string;
   wrapper: string;

@@ -70,7 +70,9 @@ routes use `Component:` (the admin area is lazy-loaded). Each file opens with a 
   `map/LazyBasemap`): `map/basemap/style.ts` builds the style from `palette.ts` (light and dark differ only in paint,
   swapped in place with the theme), the tiles and glyphs come from `/tiles` (`PUBLIC_TILES_BASE`; Martin, see
   `tiles/README.md`), and MapLibre's worker is emitted by `rsbuild.config.ts` under `/static/maplibre-<version>/`
-  (`map/basemap/worker.ts`). The attribution credits OpenMapTiles and OpenStreetMap.
+  (`map/basemap/worker.ts`). The maps have no attribution control; the OpenMapTiles + OpenStreetMap credit is the
+  "Map data" line of the privacy notice (`components/ConsentBanner`). The style is deliberately cartoonish and sparse:
+  landcover, parks, water, six road classes with thick outlines, the border and names; no buildings, rail or POIs.
 - `lib/geocode.ts` (Nominatim) is the only other network access; nothing else calls `fetch`.
 
 ## Auth

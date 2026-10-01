@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { CONSENT_STORAGE_KEY } from "@/lib/constants";
@@ -15,6 +15,10 @@ describe("ConsentBanner", () => {
         render(<ConsentBanner />);
         const dialog = screen.getByRole("dialog", { name: "Privacy & Cookies" });
         expect(dialog).toHaveTextContent("This site uses cookies and local storage");
+        expect(within(dialog).getByRole("link", { name: "OpenStreetMap" })).toHaveAttribute(
+            "href",
+            "https://www.openstreetmap.org/copyright",
+        );
         expect(screen.getByRole("button", { name: "Accept" })).toBeInTheDocument();
         expect(screen.getByRole("button", { name: "Reject" })).toBeInTheDocument();
     });

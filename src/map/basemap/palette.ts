@@ -1,12 +1,12 @@
 import type { Theme } from "@/lib/theme";
 
-/** A road class's fill and the slightly darker casing drawn under it. */
+/** A road class's fill and the darker outline drawn under it. */
 export interface RoadColors {
     fill: string;
     casing: string;
 }
 
-export type RoadClass = "motorway" | "trunk" | "primary" | "secondary" | "tertiary" | "minor" | "service" | "path";
+export type RoadClass = "motorway" | "trunk" | "primary" | "secondary" | "tertiary" | "minor";
 
 /** Every colour the basemap style uses; light and dark differ in nothing else. */
 export interface Palette {
@@ -14,17 +14,11 @@ export interface Palette {
     background: string;
     wood: string;
     grass: string;
-    farmland: string;
     /** National parks and nature reserves, drawn translucent over the landcover. */
     park: string;
-    residential: string;
     water: string;
     waterLine: string;
-    building: string;
-    buildingOutline: string;
     roads: Record<RoadClass, RoadColors>;
-    rail: string;
-    aeroway: string;
     boundary: string;
     text: string;
     textHalo: string;
@@ -33,66 +27,50 @@ export interface Palette {
 }
 
 /**
- * Apple-Maps-like colours: warm off-white land, soft blue water, muted greens, white roads with faint casings and a
- * pale yellow for motorways; the dark palette keeps the same hierarchy on near-black land.
+ * A cartoon take on Apple Maps: cream land, bright blue water, fresh greens, chunky white roads with soft brown
+ * outlines and golden motorways; the dark palette keeps the same hierarchy on a deep slate land.
  */
 export const PALETTES: Record<Theme, Palette> = {
     light: {
-        background: "#f5f3ef",
-        wood: "#d9e7d0",
-        grass: "#e1ecd8",
-        farmland: "#eeeadf",
-        park: "#cfe6c3",
-        residential: "#efece6",
-        water: "#bbd9f0",
-        waterLine: "#a9cdeb",
-        building: "#e8e4dd",
-        buildingOutline: "#dedad2",
+        background: "#f6efe0",
+        wood: "#b9dc9c",
+        grass: "#cfe8b0",
+        park: "#b2d98f",
+        water: "#9fd3f3",
+        waterLine: "#86c5ee",
         roads: {
-            motorway: { fill: "#f8d59e", casing: "#e3b164" },
-            trunk: { fill: "#fbe3b8", casing: "#e3bf7e" },
-            primary: { fill: "#ffffff", casing: "#cdc7bc" },
-            secondary: { fill: "#ffffff", casing: "#d1cbc1" },
-            tertiary: { fill: "#ffffff", casing: "#d5cfc6" },
-            minor: { fill: "#ffffff", casing: "#d9d4cb" },
-            service: { fill: "#fbfaf7", casing: "#e0dcd4" },
-            path: { fill: "#cfc9bf", casing: "#cfc9bf" },
+            motorway: { fill: "#ffd36a", casing: "#e0a93b" },
+            trunk: { fill: "#ffe08f", casing: "#dfb45a" },
+            primary: { fill: "#ffffff", casing: "#c9bfae" },
+            secondary: { fill: "#ffffff", casing: "#cfc6b6" },
+            tertiary: { fill: "#ffffff", casing: "#d5cdbf" },
+            minor: { fill: "#fffdf8", casing: "#dcd4c6" },
         },
-        rail: "#cfcac2",
-        aeroway: "#e6e2da",
-        boundary: "#b8b2a8",
-        text: "#3c3c3c",
-        textHalo: "#ffffff",
-        placeText: "#2b2b2b",
-        waterText: "#5b86ad",
+        boundary: "#b89f80",
+        text: "#3b3630",
+        textHalo: "#fffaf0",
+        placeText: "#2e2a25",
+        waterText: "#3f7fb8",
     },
     dark: {
-        background: "#1d1d1f",
-        wood: "#1f271f",
-        grass: "#232a22",
-        farmland: "#212120",
-        park: "#1f2e22",
-        residential: "#222224",
-        water: "#10233a",
-        waterLine: "#193754",
-        building: "#27272a",
-        buildingOutline: "#2e2e31",
+        background: "#23262f",
+        wood: "#263a2e",
+        grass: "#2a3f31",
+        park: "#2f5038",
+        water: "#244b78",
+        waterLine: "#2f5d8f",
         roads: {
-            motorway: { fill: "#5c5440", casing: "#6e6549" },
-            trunk: { fill: "#514b3d", casing: "#625a48" },
-            primary: { fill: "#4c4c50", casing: "#2a2a2c" },
-            secondary: { fill: "#454549", casing: "#2a2a2c" },
-            tertiary: { fill: "#3f3f43", casing: "#2a2a2c" },
-            minor: { fill: "#38383c", casing: "#28282a" },
-            service: { fill: "#303034", casing: "#262628" },
-            path: { fill: "#48484d", casing: "#48484d" },
+            motorway: { fill: "#a8893c", casing: "#6d5a2a" },
+            trunk: { fill: "#8f7a3e", casing: "#5f512b" },
+            primary: { fill: "#5a6075", casing: "#1b1e26" },
+            secondary: { fill: "#4f5568", casing: "#1b1e26" },
+            tertiary: { fill: "#464b5c", casing: "#1b1e26" },
+            minor: { fill: "#3d4251", casing: "#1b1e26" },
         },
-        rail: "#3a3a3d",
-        aeroway: "#2a2a2d",
-        boundary: "#4a4a4f",
-        text: "#d4d4d8",
-        textHalo: "#1d1d1f",
-        placeText: "#e4e4e7",
-        waterText: "#6f9cc7",
+        boundary: "#6a7088",
+        text: "#e6e8ef",
+        textHalo: "#23262f",
+        placeText: "#f1f2f6",
+        waterText: "#8fb6e6",
     },
 };

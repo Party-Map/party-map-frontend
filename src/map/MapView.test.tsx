@@ -9,7 +9,6 @@ vi.mock("./pins", async (importOriginal) => {
 import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import type { ComponentProps } from "react";
 
-import { TILE_ATTRIBUTION } from "@/lib/constants";
 import { place, place2, upcoming } from "@/test/fixtures";
 import { renderWithProviders } from "@/test/helpers";
 import { fakeGlLayer, fakeMap, maplibreLeafletMock, reactLeafletMock } from "@/test/mocks/leaflet";
@@ -49,9 +48,7 @@ describe("MapView", () => {
     it("renders the basemap and a marker per place", async () => {
         await renderView();
         await waitFor(() => expect(fakeGlLayer.addTo).toHaveBeenCalledWith(fakeMap));
-        expect(maplibreLeafletMock.maplibreGL).toHaveBeenCalledWith(
-            expect.objectContaining({ attribution: TILE_ATTRIBUTION, interactive: false }),
-        );
+        expect(maplibreLeafletMock.maplibreGL).toHaveBeenCalledWith(expect.objectContaining({ interactive: false }));
         expect(screen.getAllByTestId("marker")).toHaveLength(2);
         expect(marker(1)).toHaveAttribute(
             "data-position",

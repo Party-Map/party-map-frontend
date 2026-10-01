@@ -41,6 +41,18 @@
     margin-bottom: var(--space-3);
   }
 
+  .credit {
+    font-size: var(--text-11);
+    line-height: 1.5;
+    color: var(--fg-muted);
+    margin-bottom: var(--space-3);
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+    }
+  }
+
   .actions {
     display: flex;
     flex-wrap: wrap;

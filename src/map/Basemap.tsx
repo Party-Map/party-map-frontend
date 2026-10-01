@@ -1,9 +1,7 @@
 import { maplibreGL } from "@maplibre/maplibre-gl-leaflet";
-import type { LayerOptions } from "leaflet";
 import { useEffect, useRef } from "react";
 import { useMap } from "react-leaflet";
 
-import { TILE_ATTRIBUTION } from "@/lib/constants";
 import { getEnv } from "@/lib/env";
 import { resolveTheme, type Theme, useTheme } from "@/lib/theme";
 
@@ -11,7 +9,7 @@ import { basemapStyle, resolveTilesBase } from "./basemap/style";
 import { configureMaplibreWorker } from "./basemap/worker";
 
 type BasemapLayer = ReturnType<typeof maplibreGL>;
-type BasemapOptions = Parameters<typeof maplibreGL>[0] & LayerOptions;
+type BasemapOptions = Parameters<typeof maplibreGL>[0];
 
 /**
  * The basemap: MapLibre GL draws the self-hosted Hungary vector tiles on a canvas in Leaflet's tile pane
@@ -29,7 +27,6 @@ export function Basemap() {
         const initialTheme = resolveTheme();
         const options: BasemapOptions = {
             style: basemapStyle(initialTheme, resolveTilesBase(getEnv().tilesBase)),
-            attribution: TILE_ATTRIBUTION,
             interactive: false,
         };
         const gl = maplibreGL(options);

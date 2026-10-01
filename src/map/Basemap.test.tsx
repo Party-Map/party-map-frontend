@@ -5,7 +5,6 @@ vi.mock("@maplibre/maplibre-gl-leaflet", () => import("@/test/mocks/leaflet").th
 import { act, render } from "@testing-library/react";
 import { getWorkerUrl } from "maplibre-gl";
 
-import { TILE_ATTRIBUTION } from "@/lib/constants";
 import { setThemeChoice } from "@/lib/theme";
 import { fakeGlLayer, fakeGlMap, fakeMap, maplibreLeafletMock } from "@/test/mocks/leaflet";
 
@@ -28,11 +27,9 @@ beforeEach(() => {
 afterEach(() => setThemeChoice("system"));
 
 describe("Basemap", () => {
-    it("adds a MapLibre layer with the themed style and the attribution to the map", () => {
+    it("adds a non-interactive MapLibre layer with the themed style to the map", () => {
         render(<Basemap />);
-        expect(maplibreLeafletMock.maplibreGL).toHaveBeenCalledWith(
-            expect.objectContaining({ attribution: TILE_ATTRIBUTION, interactive: false }),
-        );
+        expect(maplibreLeafletMock.maplibreGL).toHaveBeenCalledWith(expect.objectContaining({ interactive: false }));
         expect(fakeGlLayer.addTo).toHaveBeenCalledWith(fakeMap);
         expect(getWorkerUrl()).toBe(MAPLIBRE_WORKER_URL);
         const style = createdStyle();

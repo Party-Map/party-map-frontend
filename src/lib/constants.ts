@@ -33,7 +33,10 @@ export const DEFAULT_MAP_ZOOM = 13;
 /** Leaflet's zoom ceiling; the vector tiles stop at zoom 14 and MapLibre overzooms the rest (map/basemap). */
 export const MAP_MAX_ZOOM = 19;
 
-/** The basemap is OpenStreetMap data (ODbL) in the OpenMapTiles schema: both credits are mandatory. */
+/**
+ * The basemap is OpenStreetMap data (ODbL) in the OpenMapTiles schema: both credits are mandatory. The maps show no
+ * attribution control (the owner's choice); the credit is in the privacy notice (components/ConsentBanner) instead.
+ */
 export const TILE_ATTRIBUTION =
     '&copy; <a href="https://www.openmaptiles.org/">OpenMapTiles</a> ' +
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
