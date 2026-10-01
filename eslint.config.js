@@ -87,7 +87,7 @@ const eslintConfig = defineConfig([
     },
     // Tests hand vi.fn() mocks around as methods, stub with no-op and async functions, and match with expect.any().
     {
-        files: ["src/**/*.test.{ts,tsx}", "src/test/**", "e2e/**"],
+        files: ["src/**/*.test.{ts,tsx}", "scripts/*.test.ts", "src/test/**", "e2e/**"],
         rules: {
             "@typescript-eslint/unbound-method": "off",
             "@typescript-eslint/no-non-null-assertion": "off",
@@ -97,7 +97,7 @@ const eslintConfig = defineConfig([
         },
     },
     // Command-line scripts report on stdout.
-    { files: ["scripts/*.mjs"], rules: { "no-console": "off" } },
+    { files: ["scripts/*.mjs", "scripts/check-*.ts"], rules: { "no-console": "off" } },
 ]);
 
 export default eslintConfig;

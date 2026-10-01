@@ -21,5 +21,5 @@
     "baseUrl": ".",
     "paths": { "@/*": ["./src/*"] }
   },
-  "include": ["src", "e2e", "rsbuild.config.ts", "vitest.config.ts", "playwright.config.ts"]
+  "include": ["src", "e2e", "scripts/*.ts", "rsbuild.config.ts", "vitest.config.ts", "playwright.config.ts"]
 }

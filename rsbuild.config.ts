@@ -7,6 +7,8 @@ import { pluginReact } from "@rsbuild/plugin-react";
 import { pluginSass } from "@rsbuild/plugin-sass";
 import { pluginTypedCSSModules } from "@rsbuild/plugin-typed-css-modules";
 
+import { hoverMedia } from "./scripts/hoverMedia";
+
 // The dev server proxies /api to the backend. The backend mounts every route under /api itself, so the
 // prefix is kept (no pathRewrite). Keycloak stays on its own origin: the browser follows its redirects.
 const API = process.env.API_URL || "http://localhost:8080";
@@ -99,6 +101,11 @@ export default defineConfig({
     },
     dev: { lazyCompilation: false },
     tools: {
+        // Hover styles only where a pointer exists: every `:hover` rule ends up in `@media (hover: hover)`, so touch
+        // devices keep no hover state after a tap (scripts/hoverMedia.ts; scripts/check-hover-media.mjs guards it).
+        postcss: (_options, { addPlugins }) => {
+            addPlugins(hoverMedia());
+        },
         rspack: {
             // WATCH_POLL=true when file events do not reach the process (Docker bind mounts).
             watchOptions: { poll: process.env.WATCH_POLL === "true" ? 500 : false },

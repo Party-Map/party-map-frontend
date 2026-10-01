@@ -110,6 +110,9 @@ routes use `Component:` (the admin area is lazy-loaded). Each file opens with a 
   template string: `pnpm lint:classes` reports classes nothing reads.
 - Class names are hashed in production: to restyle another module's element, select a data attribute; tests query
   by role, label or `data-testid` (Vitest compiles the modules, so unit tests see the class names as written).
+- Write plain `:hover` rules: the build moves every one of them into `@media (hover: hover)` (the PostCSS plugin
+  `scripts/hoverMedia.ts` in `rsbuild.config.ts`), so touch devices get no hover styles and keep only their active
+  and focus states; `pnpm lint:hover` checks the built CSS.
 - Theme: `lib/theme.ts` puts `.dark` and `color-scheme` on `<html>` (light/dark/system in `localStorage.theme`,
   following the system while nothing is chosen); `index.html` applies the same rule before first paint.
 - Inline `style` only for values computed at runtime (the map labels).
