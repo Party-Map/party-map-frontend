@@ -32,6 +32,13 @@
     display: none;
   }
 
+  // Below the desktop breakpoint the brand button gives way to the search while it is in use.
+  @include below-desktop {
+    .lead-collapsed {
+      display: none;
+    }
+  }
+
   .brand {
     display: inline-flex;
     align-items: center;

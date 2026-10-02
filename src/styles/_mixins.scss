@@ -36,6 +36,13 @@
   }
 }
 
+// Everything under the desktop breakpoint: the compact bars (brand button, bottom navigation).
+@mixin below-desktop {
+  @media (width <= 1023px) {
+    @content;
+  }
+}
+
 @mixin reduced-motion {
   @media (prefers-reduced-motion: reduce) {
     @content;

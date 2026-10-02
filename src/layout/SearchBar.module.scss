@@ -9,7 +9,8 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    padding: 0.5rem 0.75rem;
+    height: 2.75rem;
+    padding: 0 0.75rem;
     border-radius: var(--radius-full);
     border: 1px solid fade(white, 20%);
     background: var(--surface);
@@ -27,6 +28,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
     width: 1.25rem;
     height: 1.25rem;
     color: var(--fg-muted);
@@ -37,13 +39,33 @@
     cursor: default;
   }
 
+  // Phones only: steps out of the search (the brand is hidden meanwhile) in place of the search icon.
+  .back-button {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-left: -0.25rem;
+    border-radius: var(--radius-full);
+    color: var(--fg);
+    transition: background-color var(--duration-fast) var(--ease);
+  }
+
+  .back-button:hover {
+    background: var(--surface-2);
+  }
+
   .input {
     flex: 1;
     min-width: 0;
     background: transparent;
     border: 0;
     outline: none;
-    font-size: var(--text-14);
+
+    // 16px on phones: iOS Safari zooms the page into any smaller input on focus.
+    font-size: var(--text-16);
     color: var(--fg);
   }
 
@@ -80,15 +102,43 @@
     opacity: 0.5;
   }
 
+  // Phones hide the results by tapping the map (or the back button); the explicit toggle is a desktop control.
+  .hide-results {
+    display: none;
+  }
+
+  @include below-desktop {
+    .root[data-expanded] .icon-button {
+      display: none;
+    }
+
+    .root[data-expanded] .back-button {
+      display: inline-flex;
+    }
+  }
+
+  @include desktop {
+    .input {
+      font-size: var(--text-14);
+    }
+
+    .hide-results {
+      display: inline-flex;
+    }
+  }
+
   .dropdown {
     position: absolute;
     left: 0;
     top: 100%;
     width: 100%;
-    max-height: 24rem;
+
+    // Leaves room for the on-screen keyboard on phones; the list scrolls inside.
+    max-height: min(24rem, calc(100dvh - 8rem));
     margin-top: var(--space-2);
     overflow: auto;
-    border-radius: var(--radius-md);
+    overscroll-behavior: contain;
+    border-radius: var(--radius-lg);
     border: 1px solid fade(violet-500, 35%);
     background: var(--surface);
     color: var(--fg);
@@ -98,7 +148,7 @@
   }
 
   .no-results {
-    padding: 0.75rem 1rem;
+    padding: 0.875rem 1rem;
     font-size: var(--text-14);
     color: var(--fg-muted);
   }
@@ -111,7 +161,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    padding: 0.75rem 1rem;
+    padding: 0.625rem 0.75rem 0.625rem 1rem;
     cursor: pointer;
     transition: background-color var(--duration-fast) var(--ease);
   }
@@ -133,29 +183,42 @@
   .thumb {
     position: relative;
     flex-shrink: 0;
-    width: 2.5rem;
-    height: 2.5rem;
-    overflow: hidden;
-    border-radius: var(--radius-sm);
-    box-shadow: inset 0 0 0 1px fade(white, 20%);
+    width: 2.75rem;
+    height: 2.75rem;
   }
 
   .thumb-image {
     width: 100%;
     height: 100%;
+    border-radius: var(--radius-md);
+    box-shadow: inset 0 0 0 1px fade(white, 20%);
   }
 
-  .thumb-letter {
+  // The hit's type: a coloured dot with its icon on the thumbnail's corner, named for assistive technology.
+  .type-badge {
     position: absolute;
-    inset-inline: 0;
-    bottom: 0;
-    background: fade(black, 45%);
+    right: -0.3125rem;
+    bottom: -0.3125rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: var(--radius-full);
     color: var(--white);
-    font-size: var(--text-10);
-    font-weight: 600;
-    text-align: center;
-    text-transform: uppercase;
-    line-height: 1.2;
+    box-shadow: 0 0 0 2px var(--surface);
+  }
+
+  .type-place {
+    background: var(--emerald-900);
+  }
+
+  .type-event {
+    background: var(--violet-500);
+  }
+
+  .type-performer {
+    background: var(--rose-900);
   }
 
   .item-text {
@@ -163,20 +226,14 @@
     flex: 1;
     min-width: 0;
     flex-direction: column;
-  }
-
-  .item-title-row {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    min-width: 0;
+    gap: 0.125rem;
   }
 
   .item-title {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: var(--text-14);
+    font-size: var(--text-15);
     font-weight: 500;
   }
 
@@ -185,11 +242,26 @@
   }
 
   .item-subtitle {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    min-width: 0;
+    font-size: var(--text-13);
+    color: var(--fg-muted);
+  }
+
+  .subtitle-text {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: var(--text-12);
-    color: var(--fg-muted);
+  }
+
+  // The next event's date: part of the subtitle on narrow screens (the subtitle truncates, the date stays), its own
+  // column from tablets up.
+  .inline-date {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
   }
 
   .item-date {
@@ -202,48 +274,33 @@
   }
 
   @include from-sm {
+    .inline-date {
+      display: none;
+    }
+
     .item-date {
       display: inline;
     }
   }
 
-  .type-pill {
+  .view-button {
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
+    justify-content: center;
     flex-shrink: 0;
-    padding: 0.125rem 0.5rem;
+    width: 2rem;
+    height: 2rem;
     border-radius: var(--radius-full);
-    font-size: var(--text-10);
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    color: var(--white);
-  }
-
-  .type-place {
-    background: fade(emerald-900, 85%);
-  }
-
-  .type-event {
-    background: fade(violet-900, 85%);
-  }
-
-  .type-performer {
-    background: fade(rose-900, 85%);
-  }
-
-  .view-button {
-    flex-shrink: 0;
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-full);
-    border: 1px solid fade(violet-500, 50%);
-    font-size: var(--text-11);
-    font-weight: 500;
-    color: var(--link);
+    border: 1px solid var(--border);
+    color: var(--fg-muted);
     background: var(--surface-2);
+    transition:
+      background-color var(--duration-fast) var(--ease),
+      color var(--duration-fast) var(--ease);
   }
 
   .view-button:hover {
     background: var(--accent-soft);
+    color: var(--link);
   }
 }

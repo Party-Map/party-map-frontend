@@ -1,5 +1,5 @@
 import { Command } from "cmdk";
-import { Eraser, Minimize2, Search } from "lucide-react";
+import { ArrowLeft, Eraser, Minimize2, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router";
 
@@ -31,12 +31,19 @@ export function hrefForHit(hit: SearchHit): string {
     }
 }
 
+interface SearchBarProps {
+    initialQuery?: string;
+    /** Reports whether the box is in use (focused or showing results); the phone top bar makes room for it. */
+    onExpandedChange?: (expanded: boolean) => void;
+}
+
 /**
  * Search box with a debounced dropdown (cmdk: arrow keys move through the hits, Enter picks one). Results highlight
  * the matching places on the map; Enter without a chosen hit commits the query to the URL (`?q=`), and picking a
- * hit focuses its place and opens its card (`?focus=` from other pages).
+ * hit focuses its place and opens its card (`?focus=` from other pages). While it is in use ("expanded") the
+ * phone layout hides the brand and shows a back button in place of the search icon.
  */
-export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
+export function SearchBar({ initialQuery = "", onExpandedChange }: SearchBarProps) {
     const navigate = useNavigate();
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
@@ -44,6 +51,7 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
 
     const hasFocusParam = searchParams.has("focus");
     const [query, setQuery] = useState(initialQuery);
+    const [focused, setFocused] = useState(false);
     // A query arriving with the page (?q=) shows its results unless a place is pinned (?focus=).
     const [open, setOpen] = useState(() => initialQuery.trim() !== "" && !hasFocusParam);
     // cmdk highlights the first hit by itself; it only counts as chosen once the user moves through the list.
@@ -58,6 +66,12 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
     const hits = debounced ? (results.data ?? NO_HITS) : NO_HITS;
     const settled = debounced.length > 0 && (results.data !== undefined || results.isError);
     const showDropdown = open && settled;
+    const expanded = focused || showDropdown;
+
+    useEffect(() => {
+        onExpandedChange?.(expanded);
+        return () => onExpandedChange?.(false);
+    }, [expanded, onExpandedChange]);
 
     // The hits highlight their places on the map, unless a focus is pinned or a hit was picked.
     useEffect(() => {
@@ -144,8 +158,27 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
     const hasQuery = query.trim().length > 0;
 
     return (
-        <Command ref={rootRef} shouldFilter={false} loop label="Search" className={styles.root}>
+        <Command
+            ref={rootRef}
+            shouldFilter={false}
+            loop
+            label="Search"
+            className={styles.root}
+            data-expanded={expanded || undefined}
+        >
             <div className={styles.box}>
+                {expanded && (
+                    <button
+                        type="button"
+                        onClick={dismiss}
+                        // Keep the input focused through the press, or the button would vanish before its click.
+                        onMouseDown={(e) => e.preventDefault()}
+                        aria-label="Close search"
+                        className={styles.backButton}
+                    >
+                        <ArrowLeft size={18} aria-hidden />
+                    </button>
+                )}
                 <button
                     type="button"
                     onClick={submit}
@@ -167,8 +200,10 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
                         clearFocusParam();
                     }}
                     onFocus={() => {
+                        setFocused(true);
                         if (hits.length && !hasFocusParam) setOpen(true);
                     }}
+                    onBlur={() => setFocused(false)}
                     onKeyDown={(e) => {
                         if (e.key === "ArrowDown" || e.key === "ArrowUp") {
                             // The first ArrowDown reveals cmdk's highlighted first hit instead of moving past it.
@@ -196,7 +231,11 @@ export function SearchBar({ initialQuery = "" }: { initialQuery?: string }) {
                         onClick={dismiss}
                         disabled={!showDropdown}
                         aria-label={showDropdown ? "Hide results" : "Results hidden"}
-                        className={cn(styles.roundButton, showDropdown ? styles.roundActive : styles.roundMuted)}
+                        className={cn(
+                            styles.roundButton,
+                            styles.hideResults,
+                            showDropdown ? styles.roundActive : styles.roundMuted,
+                        )}
                     >
                         <Minimize2 size={16} aria-hidden />
                     </button>

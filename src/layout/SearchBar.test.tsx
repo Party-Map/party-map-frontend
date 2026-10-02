@@ -61,9 +61,11 @@ function Probe() {
 
 function Harness({ initialQuery }: { initialQuery?: string }) {
     const [mounted, setMounted] = useState(true);
+    const [expanded, setExpanded] = useState(false);
     return (
         <>
-            {mounted && <SearchBar initialQuery={initialQuery} />}
+            {mounted && <SearchBar initialQuery={initialQuery} onExpandedChange={setExpanded} />}
+            <p data-testid="expanded">{String(expanded)}</p>
             <button type="button" onClick={() => setMounted(false)}>
                 unmount search
             </button>
@@ -106,6 +108,7 @@ async function setup({ route = "/", initialQuery, routes = DEFAULT_ROUTES }: Set
 }
 
 const highlight = () => screen.getByTestId("highlight").textContent;
+const expanded = () => screen.getByTestId("expanded").textContent;
 const location = () => screen.getByTestId("location").textContent;
 const focused = () => screen.getByTestId("focus").textContent;
 const requestedUrls = (fetchMock: ApiMock) => fetchMock.requests.map((request) => request.url);
@@ -333,11 +336,50 @@ describe("SearchBar", () => {
         expect(listbox()).toBeNull();
     });
 
+    it("counts as expanded while focused or showing results, with a back button that steps out", async () => {
+        const { user, input } = await setup();
+        expect(expanded()).toBe("false");
+        expect(screen.queryByRole("button", { name: "Close search" })).toBeNull();
+        expect(screen.getByRole("combobox", { name: "Search" }).closest(".root")).not.toHaveAttribute("data-expanded");
+
+        await user.click(input);
+        expect(expanded()).toBe("true");
+        expect(input.closest(".root")).toHaveAttribute("data-expanded", "true");
+
+        await typeAndWait(user, input);
+        // A pointer press on the back button must not blur the input and unmount the button under the pointer.
+        const back = screen.getByRole("button", { name: "Close search" });
+        const press = fireEvent.mouseDown(back);
+        expect(press).toBe(false);
+        await user.click(back);
+        expect(listbox()).toBeNull();
+        expect(input).toHaveValue("techno");
+        expect(input).not.toHaveFocus();
+        expect(expanded()).toBe("false");
+        expect(screen.queryByRole("button", { name: "Close search" })).toBeNull();
+    });
+
+    it("stays expanded while the results show even after the input loses focus", async () => {
+        const { user, input } = await setup();
+        await typeAndWait(user, input);
+        act(() => input.blur());
+        expect(listbox()).toBeInTheDocument();
+        expect(expanded()).toBe("true");
+    });
+
+    it("reports a collapsed search when unmounted", async () => {
+        const { user, input } = await setup();
+        await user.click(input);
+        expect(expanded()).toBe("true");
+        await user.click(screen.getByRole("button", { name: "unmount search" }));
+        expect(expanded()).toBe("false");
+    });
+
     it("can hide the results without clearing the query", async () => {
         const { user, input } = await setup();
         await typeAndWait(user, input);
         const hide = screen.getByRole("button", { name: "Hide results" });
-        expect(hide).toHaveClass("round-active");
+        expect(hide).toHaveClass("round-active", "hide-results");
 
         await user.click(hide);
         expect(listbox()).toBeNull();

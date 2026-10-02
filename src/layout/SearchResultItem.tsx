@@ -1,7 +1,8 @@
 // One search hit in the dropdown: a cmdk option (Enter or a click focuses its place on the map) with a View button
-// that opens the hit's own page.
+// that opens the hit's own page. The type shows as a coloured icon on the thumbnail's corner (named for screen
+// readers), so the title gets the whole line.
 import { Command } from "cmdk";
-import { CalendarDays, MapPin, UserRound } from "lucide-react";
+import { CalendarDays, ChevronRight, MapPin, UserRound } from "lucide-react";
 
 import type { SearchHit, SearchHitType } from "@/api/types";
 import { CoverImage } from "@/components/CoverImage";
@@ -30,18 +31,18 @@ export function SearchResultItem({ hit, onPick, onView }: SearchResultItemProps)
         <Command.Item value={`${hit.type}-${hit.id}`} onSelect={onPick} className={styles.item}>
             <span className={styles.itemMain}>
                 <span className={styles.thumb}>
-                    <CoverImage src={hit.image} alt="" height="sm" className={styles.thumbImage} />
-                    <span className={styles.thumbLetter}>{hit.type.charAt(0)}</span>
+                    <CoverImage src={hit.image} alt="" height="fill" className={styles.thumbImage} />
+                    <span className={cn(styles.typeBadge, typeClass)}>
+                        <Icon size={11} strokeWidth={2.5} aria-hidden />
+                        <span className="sr-only">{label}</span>
+                    </span>
                 </span>
                 <span className={styles.itemText}>
-                    <span className={styles.itemTitleRow}>
-                        <span className={styles.itemTitle}>{hit.title}</span>
-                        <span className={cn(styles.typePill, typeClass)}>
-                            <Icon size={12} aria-hidden />
-                            {label}
-                        </span>
+                    <span className={styles.itemTitle}>{hit.title}</span>
+                    <span className={styles.itemSubtitle}>
+                        <span className={styles.subtitleText}>{hit.subtitle}</span>
+                        {dateLabel && <span className={styles.inlineDate}>· {dateLabel}</span>}
                     </span>
-                    <span className={styles.itemSubtitle}>{hit.subtitle}</span>
                 </span>
                 {dateLabel && <span className={styles.itemDate}>{dateLabel}</span>}
             </span>
@@ -51,9 +52,11 @@ export function SearchResultItem({ hit, onPick, onView }: SearchResultItemProps)
                     e.stopPropagation();
                     onView();
                 }}
+                aria-label="View"
+                title="Open page"
                 className={styles.viewButton}
             >
-                View
+                <ChevronRight size={18} aria-hidden />
             </button>
         </Command.Item>
     );

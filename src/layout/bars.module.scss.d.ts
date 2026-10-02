@@ -9,6 +9,7 @@ interface CssExports {
   brandShort: string;
   explore: string;
   lead: string;
+  leadCollapsed: string;
   search: string;
   topActions: string;
   topBar: string;

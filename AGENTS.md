@@ -66,6 +66,12 @@ routes use `Component:` (the admin area is lazy-loaded). Each file opens with a 
   `bbox` (`map/geo.ts` `toBbox`) on mount and after every move, `usePlaces(bbox)` keeps the previous pins while the
   next area loads, and highlighted places outside it come from `usePlacesById`. `FitToHighlights` fits once per
   highlight set, after all of them have loaded.
+- Overlays on the map are Leaflet layers, never React-positioned per frame: the place labels (`map/PlaceLabels`) are
+  non-interactive markers in the custom `labels` pane whose zero-sized div icon hosts the React content through a
+  portal, so Leaflet moves them with the pins through every pan and zoom frame and React only re-renders on
+  `moveend`/`zoomend`/`resize` (opacity goes through the marker's `opacity` prop). The open card's `Popup` gets its
+  `position` from `map/geo.useStableLatLng` because react-leaflet re-opens a popup for every new position object;
+  `PanPopupMobile` keys on the open place's coordinates and re-pans after non-drag moves that cut the card off.
 - The basemap is MapLibre GL drawing the self-hosted Hungary vector tiles inside Leaflet (`map/Basemap`, lazy through
   `map/LazyBasemap`): `map/basemap/style.ts` builds the style from `palette.ts` (light and dark differ only in paint,
   swapped in place with the theme), the tiles and glyphs come from `/tiles` (`PUBLIC_TILES_BASE`; Martin, see
@@ -127,7 +133,11 @@ Token names are the app's own; the prompt's shadcn names map onto them: `--backg
 - Base UI is used headless under the app's classes: `components/primitives.tsx` (`AlertDialog`), `ConfirmDialog`,
   the session-ended dialog, the likes tabs (`@base-ui/react/tabs`). Its guide for agents is `.rules/base-ui.md`.
 - Search: `layout/SearchBar.tsx` is a cmdk list over `useSearch`; arrow keys choose a hit, Enter picks the chosen
-  hit or, with none chosen, commits the query to `?q=`.
+  hit or, with none chosen, commits the query to `?q=`. While the box is in use (focused or showing results) it
+  reports `onExpandedChange`: below the desktop breakpoint `TopBar` hides the brand so the box and its list get the
+  whole bar, a back button replaces the search icon, and the "Hide results" toggle is desktop-only. A result row is
+  thumbnail with a type icon dot (`sr-only` name), title, subtitle (with the date inline below 640 px) and a round
+  "View" chevron.
 - Toasts: `import { toast } from "@/lib/toast"` (sonner behind it, `layout/AppToaster.tsx` renders them).
 - Forms: react-hook-form with a zod schema (`pages/admin/shared/formSchemas.ts` for the shared pieces, one-line text
   capped at the API's 255 characters), messages under the fields, `setError("root")` for a failed save, `Controller`

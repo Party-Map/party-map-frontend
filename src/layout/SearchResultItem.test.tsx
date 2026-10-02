@@ -59,26 +59,35 @@ afterEach(() => {
 });
 
 describe("SearchResultItem", () => {
-    it("shows the title, subtitle, type pill, thumbnail letter and next event date", () => {
+    it("shows the title, subtitle, a named type badge on the thumbnail and the next event date twice", () => {
         const { item } = renderItem(placeHit);
         expect(within(item).getByText("A38 Hajó")).toHaveClass("item-title");
-        expect(within(item).getByText("Budapest")).toHaveClass("item-subtitle");
-        expect(within(item).getByText("Place")).toHaveClass("type-pill", "type-place");
-        expect(within(item).getByText("P")).toHaveClass("thumb-letter");
+        expect(within(item).getByText("Budapest")).toHaveClass("subtitle-text");
+        expect(within(item).getByText("Budapest").parentElement).toHaveClass("item-subtitle");
+        // The type is a coloured icon on the thumbnail's corner; its name is for screen readers only.
+        const typeName = within(item).getByText("Place");
+        expect(typeName).toHaveClass("sr-only");
+        expect(typeName.parentElement).toHaveClass("type-badge", "type-place");
+        expect(typeName.parentElement?.parentElement).toHaveClass("thumb");
+        // Phones read the date inside the subtitle, wider screens in its own column (CSS shows one of them).
         expect(within(item).getByText("1 Jun")).toHaveClass("item-date");
+        expect(within(item).getByText("· 1 Jun")).toHaveClass("inline-date");
         expect(item.querySelector("img")).toHaveAttribute("src", place.image);
     });
 
     it("labels events and performers by type", () => {
-        expect(within(renderItem(eventHit).item).getByText("Event")).toHaveClass("type-event");
-        expect(within(renderItem(performerHit).item).getByText("Performer")).toHaveClass("type-performer");
+        expect(within(renderItem(eventHit).item).getByText("Event").parentElement).toHaveClass("type-event");
+        expect(within(renderItem(performerHit).item).getByText("Performer").parentElement).toHaveClass(
+            "type-performer",
+        );
     });
 
     it("omits the date without an upcoming event and uses the placeholder image", () => {
         const { item } = renderItem(performerHit);
         expect(item.querySelector(".item-date")).toBeNull();
+        expect(item.querySelector(".inline-date")).toBeNull();
         expect(item.querySelector("img")).toHaveAttribute("src", PLACEHOLDER_IMAGE);
-        expect(within(item).getByText("techno")).toHaveClass("item-subtitle");
+        expect(within(item).getByText("techno")).toHaveClass("subtitle-text");
     });
 
     it("picks the hit when the option is chosen and opens its page from View alone", () => {
