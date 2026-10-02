@@ -1,14 +1,13 @@
 import "./leaflet.scss";
 
 import type { PointTuple } from "leaflet";
-import { useMemo } from "react";
 import { MapContainer, Marker, Popup, useMapEvent } from "react-leaflet";
 
 import type { ID, Place, UpcomingEventByPlace } from "@/api/types";
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, MAP_MAX_ZOOM } from "@/lib/constants";
 
 import { FitToHighlights } from "./FitToHighlights";
-import { toLatLngTuple } from "./geo";
+import { toLatLngTuple, useStableLatLng } from "./geo";
 import { LazyBasemap } from "./LazyBasemap";
 import { MapLimits } from "./MapLimits";
 import type { MapViewState } from "./mapMemory";
@@ -62,12 +61,11 @@ export function MapView({
     initialView = null,
     highlightsSettled = true,
 }: MapViewProps) {
-    // Memoised so the popup position stays referentially stable: react-leaflet re-opens the popup
-    // whenever it receives a new position.
-    const popup = useMemo(() => {
-        const place = places.find((p) => p.id === openPopupId);
-        return place ? { place, position: toLatLngTuple(place.location) } : null;
-    }, [places, openPopupId]);
+    // The popup position is keyed on the coordinates, not on the places array: react-leaflet tears the popup down
+    // and re-opens it whenever it receives a new position object, and the array changes after every viewport load.
+    const openPlace = openPopupId === null ? undefined : places.find((p) => p.id === openPopupId);
+    const position = useStableLatLng(openPlace?.location.latitude, openPlace?.location.longitude);
+    const popup = openPlace && position ? { place: openPlace, position } : null;
 
     return (
         <div className={styles.root}>

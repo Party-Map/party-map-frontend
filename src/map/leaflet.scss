@@ -24,6 +24,19 @@
   margin: 0;
 }
 
+/* The place labels (map/PlaceLabels.tsx) are markers in their own pane between the pins (600) and the popup (700);
+   only the label buttons take pointer events. Leaflet animates the markers' transforms through a zoom; the opacity
+   fades once the map settles. */
+.leaflet-labels-pane {
+  z-index: 620;
+  pointer-events: none;
+}
+
+.pm-label-marker {
+  overflow: visible;
+  transition: opacity 260ms var(--ease);
+}
+
 /* The night sky: the base colour (map/basemap/palette.ts) under the star field map/Sky.tsx hands over as --map-sky
    (an SVG that repeats every --map-sky-size). The container does not move with the map, so the sky stays put while
    the country pans and zooms over it. */

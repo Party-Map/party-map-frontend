@@ -45,8 +45,21 @@ const listeners = new Map<string, Set<(...args: unknown[]) => void>>();
 /** The map's container element (`.leaflet-container`); map/Sky.tsx paints the stars on its background. */
 export const fakeContainer = document.createElement("div");
 
+/** Panes created through `createPane`, by name; `getPane` finds them again like Leaflet does. */
+const panes = new Map<string, HTMLElement>();
+
+/** The `position` prop of every rendered Popup, in order; tests check it stays referentially stable. */
+export const popupPositions: unknown[] = [];
+
 export const fakeMap = {
     getContainer: vi.fn(() => fakeContainer),
+    getPane: vi.fn((name: string) => panes.get(name)),
+    createPane: vi.fn((name: string) => {
+        const pane = document.createElement("div");
+        pane.className = `leaflet-pane leaflet-${name}-pane`;
+        panes.set(name, pane);
+        return pane;
+    }),
     flyTo: vi.fn(),
     flyToBounds: vi.fn(),
     setView: vi.fn(),
@@ -81,6 +94,8 @@ export const fakeMap = {
     fire: (event: string, ...args: unknown[]) => listeners.get(event)?.forEach((h) => h(...args)),
     reset: () => {
         listeners.clear();
+        panes.clear();
+        popupPositions.length = 0;
         Object.values(fakeMap).forEach((v) => {
             if (typeof v === "function" && "mockClear" in v) (v as { mockClear: () => void }).mockClear();
         });
@@ -145,27 +160,48 @@ export const reactLeafletMock = {
             {children}
         </div>
     ),
+    /**
+     * Pins render as a clickable box. A marker in the `labels` pane (map/PlaceLabels.tsx) is a `label-marker`
+     * whose div icon element is attached under it, so the label content portalled into it is in the document.
+     */
     Marker: ({
         children,
         position,
         eventHandlers,
+        icon,
+        pane,
+        opacity,
     }: {
         children?: ReactNode;
         position: unknown;
         eventHandlers?: Record<string, () => void>;
-    }) => (
-        <div
-            data-testid="marker"
-            data-position={JSON.stringify(position)}
-            role="button"
-            tabIndex={0}
-            onClick={eventHandlers?.click}
-            onKeyDown={eventHandlers?.click}
-        >
-            {children}
-        </div>
-    ),
-    Popup: ({ children }: { children?: ReactNode }) => <div data-testid="popup">{children}</div>,
+        icon?: { options?: { html?: unknown } };
+        pane?: string;
+        opacity?: number;
+    }) => {
+        const html = icon?.options?.html;
+        const clickable = eventHandlers?.click !== undefined;
+        return (
+            <div
+                data-testid={pane === "labels" ? "label-marker" : "marker"}
+                data-position={JSON.stringify(position)}
+                data-opacity={opacity}
+                role={clickable ? "button" : undefined}
+                tabIndex={clickable ? 0 : undefined}
+                onClick={eventHandlers?.click}
+                onKeyDown={eventHandlers?.click}
+                ref={(el) => {
+                    if (el && html instanceof Element && html.parentElement !== el) el.appendChild(html);
+                }}
+            >
+                {children}
+            </div>
+        );
+    },
+    Popup: ({ children, position }: { children?: ReactNode; position?: unknown }) => {
+        popupPositions.push(position);
+        return <div data-testid="popup">{children}</div>;
+    },
     Circle: ({ radius }: { radius: number }) => <div data-testid="circle" data-radius={radius} />,
     useMap: () => fakeMap,
     useMapEvent: (name: string, handler: (...args: unknown[]) => void) => {

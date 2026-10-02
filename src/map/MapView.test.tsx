@@ -11,7 +11,7 @@ import type { ComponentProps } from "react";
 
 import { place, place2, upcoming } from "@/test/fixtures";
 import { renderWithProviders } from "@/test/helpers";
-import { fakeGlLayer, fakeMap, maplibreLeafletMock, reactLeafletMock } from "@/test/mocks/leaflet";
+import { fakeGlLayer, fakeMap, maplibreLeafletMock, popupPositions, reactLeafletMock } from "@/test/mocks/leaflet";
 
 import { MapView } from "./MapView";
 import type * as pinsModule from "./pins";
@@ -77,6 +77,32 @@ describe("MapView", () => {
     it("shows the place itself when it has no upcoming event", async () => {
         await renderView({ openPopupId: place2.id });
         expect(screen.getByTestId("popup")).toHaveTextContent(place2.name);
+    });
+
+    it("keeps the popup position stable while the places are reloaded, so the card is not re-opened", async () => {
+        renderWithProviders(
+            <MapView
+                places={[place, place2]}
+                upcomingMap={new Map()}
+                highlightIds={[]}
+                openPopupId={place.id}
+                onOpenPlace={vi.fn()}
+                onClosePopup={vi.fn()}
+            />,
+        ).rerender(
+            <MapView
+                places={[{ ...place }, { ...place2 }]}
+                upcomingMap={new Map()}
+                highlightIds={[]}
+                openPopupId={place.id}
+                onOpenPlace={vi.fn()}
+                onClosePopup={vi.fn()}
+            />,
+        );
+        await act(async () => {});
+        expect(popupPositions.length).toBeGreaterThanOrEqual(2);
+        expect(popupPositions[0]).toEqual([place.location.latitude, place.location.longitude]);
+        expect(popupPositions.every((position) => position === popupPositions[0])).toBe(true);
     });
 
     it("renders no popup for an unknown id", async () => {

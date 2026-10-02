@@ -1,13 +1,14 @@
 vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reactLeafletMock));
 vi.mock("leaflet", () => import("@/test/mocks/leaflet").then((m) => m.leafletMock));
 
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import L from "leaflet";
 import type { ComponentProps } from "react";
 
 import { place, place2, upcoming } from "@/test/fixtures";
 import { fakeMap, point } from "@/test/mocks/leaflet";
 
-import { computeLabelOpacity, getPopupRect, isInsideRect, PlaceLabels } from "./PlaceLabels";
+import { computeLabelOpacity, getPopupRect, isInsideRect, LABEL_PANE, PlaceLabels } from "./PlaceLabels";
 
 const CENTRE = point(400, 300);
 
@@ -32,8 +33,19 @@ function labelOf(text: string): HTMLElement {
     return label;
 }
 
+/** The Leaflet marker carrying the label; its opacity is what Leaflet applies to the icon element. */
+function markerOf(text: string): HTMLElement {
+    const marker = screen.getByText(text).closest("[data-testid='label-marker']");
+    if (!(marker instanceof HTMLElement)) throw new Error(`no label marker around "${text}"`);
+    return marker;
+}
+
+const opacityOf = (text: string) => markerOf(text).dataset.opacity;
+
 beforeEach(() => {
     fakeMap.reset();
+    vi.mocked(L.divIcon).mockClear();
+    vi.mocked(L.DomEvent.disableClickPropagation).mockClear();
     fakeMap.getZoom.mockReturnValue(13);
     fakeMap.latLngToContainerPoint.mockReturnValue(CENTRE);
 });
@@ -76,30 +88,58 @@ describe("getPopupRect / isInsideRect", () => {
 });
 
 describe("PlaceLabels", () => {
-    it("renders event labels and plain place labels at the projected point", () => {
+    it("renders each label as a marker in the labels pane, lifted above its pin", () => {
         renderLabels();
-        const eventLabel = labelOf(upcoming.title);
-        expect(eventLabel.style.left).toBe("400px");
-        expect(eventLabel.style.top).toBe("300px");
-        expect(eventLabel.style.transform).toBe("translate(-50%, -76px)");
-        expect(eventLabel.style.opacity).toBe("1");
-        expect(eventLabel).toHaveClass("settled");
+        expect(fakeMap.createPane).toHaveBeenCalledWith(LABEL_PANE);
+
+        const markers = screen.getAllByTestId("label-marker");
+        expect(markers).toHaveLength(2);
+        expect(markerOf(upcoming.title)).toHaveAttribute(
+            "data-position",
+            JSON.stringify([place.location.latitude, place.location.longitude]),
+        );
+        expect(opacityOf(upcoming.title)).toBe("1");
+        expect(labelOf(upcoming.title).style.transform).toBe("translate(-50%, -76px)");
         expect(screen.getByText("Techno")).toBeInTheDocument();
         expect(screen.getByText(place.name)).toBeInTheDocument();
         expect(labelOf(place2.name)).toBeInTheDocument();
+
+        // The icon is an empty div the label content is portalled into, and clicks inside never reach the map.
+        const [options] = vi.mocked(L.divIcon).mock.calls[0] ?? [];
+        expect(options).toMatchObject({ className: "pm-label-marker", iconSize: [0, 0] });
+        expect(options?.html).toBeInstanceOf(HTMLDivElement);
+        expect(L.DomEvent.disableClickPropagation).toHaveBeenCalledWith(options?.html);
+    });
+
+    it("reuses the labels pane when the map already has one", () => {
+        fakeMap.createPane(LABEL_PANE);
+        fakeMap.createPane.mockClear();
+        renderLabels();
+        expect(fakeMap.getPane).toHaveBeenCalledWith(LABEL_PANE);
+        expect(fakeMap.createPane).not.toHaveBeenCalled();
+    });
+
+    it("keeps the icon and position of a label across re-renders with the same coordinates", () => {
+        const { rerender } = renderLabels();
+        expect(L.divIcon).toHaveBeenCalledTimes(2);
+        rerender(
+            <PlaceLabels
+                places={[{ ...place }, { ...place2 }]}
+                upcomingMap={new Map()}
+                highlightIds={[]}
+                openPopupId={null}
+                onOpen={vi.fn()}
+            />,
+        );
+        expect(L.divIcon).toHaveBeenCalledTimes(2);
+        expect(screen.getAllByTestId("label-marker")).toHaveLength(2);
     });
 
     it("fades labels away from the viewport centre", () => {
         fakeMap.latLngToContainerPoint.mockReturnValue(point(40, 30));
         renderLabels();
         // distance 450 of a 540 fade extent
-        expect(Number(labelOf(place2.name).style.opacity)).toBeCloseTo(0.17, 2);
-    });
-
-    it("skips labels far outside the viewport", () => {
-        fakeMap.latLngToContainerPoint.mockReturnValue(point(-100, 300));
-        renderLabels();
-        expect(screen.queryByRole("button")).not.toBeInTheDocument();
+        expect(Number(opacityOf(place2.name))).toBeCloseTo(0.17, 2);
     });
 
     it("hides all labels below the minimum zoom, lower when places are highlighted", () => {
@@ -134,20 +174,24 @@ describe("PlaceLabels", () => {
     it("lifts highlighted labels and dims the rest", () => {
         renderLabels({ highlightIds: [place.id] });
         expect(labelOf(upcoming.title).style.transform).toBe("translate(-50%, -84px)");
-        expect(labelOf(upcoming.title).style.opacity).toBe("1");
-        expect(labelOf(place2.name).style.opacity).toBe("0.06");
+        expect(opacityOf(upcoming.title)).toBe("1");
+        expect(opacityOf(place2.name)).toBe("0.06");
     });
 
-    it("hides the active label and skips labels under the popup card", () => {
+    it("hides the active label and the labels under the popup card without unmounting them", () => {
         renderLabels({ openPopupId: place.id });
         const active = labelOf(upcoming.title);
-        expect(active.style.opacity).toBe("0");
+        expect(opacityOf(upcoming.title)).toBe("0");
         expect(active.style.transform).toBe("translate(-50%, -118px) scale(0.6)");
         expect(active).toHaveAttribute("aria-hidden", "true");
-        expect(active).toHaveClass("active");
-        expect(screen.getByRole("button", { hidden: true })).toBeDisabled();
-        // place2 projects to the same point, inside the popup rectangle
-        expect(screen.queryByText(place2.name)).not.toBeInTheDocument();
+        expect(active).toHaveClass("active", "hidden");
+        // place2 projects to the same point, inside the popup rectangle: faded out, so it can fade back in later.
+        const covered = labelOf(place2.name);
+        expect(opacityOf(place2.name)).toBe("0");
+        expect(covered).toHaveClass("hidden");
+        expect(covered).not.toHaveClass("active");
+        expect(screen.getAllByRole("button", { hidden: true }).every((b) => b.hasAttribute("disabled"))).toBe(true);
+        expect(screen.queryByRole("button")).not.toBeInTheDocument();
     });
 
     it("keeps labels outside the popup rectangle, dimmed", () => {
@@ -156,13 +200,14 @@ describe("PlaceLabels", () => {
             .mockReturnValueOnce(CENTRE) // place (active)
             .mockReturnValueOnce(point(700, 300)); // place2, right of the card
         renderLabels({ openPopupId: place.id });
-        expect(labelOf(place2.name).style.opacity).toBe("0.06");
+        expect(opacityOf(place2.name)).toBe("0.06");
+        expect(labelOf(place2.name)).not.toHaveClass("hidden");
     });
 
     it("shows every label when the open id is unknown", () => {
         renderLabels({ openPopupId: "missing" });
         expect(screen.getAllByRole("button")).toHaveLength(2);
-        expect(labelOf(place2.name).style.opacity).toBe("0.06");
+        expect(opacityOf(place2.name)).toBe("0.06");
     });
 
     it("opens a place from its label", () => {
@@ -171,36 +216,35 @@ describe("PlaceLabels", () => {
         expect(onOpen).toHaveBeenCalledWith(place2.id);
     });
 
-    it("re-renders per frame while the map moves and settles afterwards", async () => {
+    it("leaves the labels alone while the map moves and works the opacities out once it settles", () => {
         renderLabels();
-        const label = labelOf(upcoming.title);
+        expect(fakeMap.on).not.toHaveBeenCalledWith("move", expect.any(Function));
+        expect(fakeMap.on).not.toHaveBeenCalledWith("zoom", expect.any(Function));
 
-        act(() => {
-            fakeMap.fire("movestart");
-        });
-        expect(label).toHaveClass("moving");
-
-        fakeMap.latLngToContainerPoint.mockReturnValue(point(120, 80));
+        fakeMap.latLngToContainerPoint.mockReturnValue(point(40, 30));
         act(() => {
             fakeMap.fire("move");
-            fakeMap.fire("move"); // coalesced into the same frame
         });
-        await waitFor(() => expect(label.style.left).toBe("120px"));
+        expect(opacityOf(place2.name)).toBe("1");
 
         act(() => {
             fakeMap.fire("moveend");
         });
-        await waitFor(() => expect(label).toHaveClass("settled"));
+        expect(Number(opacityOf(place2.name))).toBeCloseTo(0.17, 2);
+
+        fakeMap.latLngToContainerPoint.mockReturnValue(CENTRE);
+        act(() => {
+            fakeMap.fire("zoomend");
+        });
+        expect(opacityOf(place2.name)).toBe("1");
     });
 
-    it("unsubscribes from the map and cancels pending frames on unmount", () => {
-        const cancel = vi.spyOn(window, "cancelAnimationFrame");
+    it("unsubscribes from the map on unmount", () => {
         const { unmount } = renderLabels();
-        act(() => {
-            fakeMap.fire("zoom");
-        });
         unmount();
-        expect(fakeMap.off).toHaveBeenCalledTimes(6);
-        expect(cancel).toHaveBeenCalled();
+        expect(fakeMap.off).toHaveBeenCalledTimes(3);
+        expect(fakeMap.off).toHaveBeenCalledWith("moveend", expect.any(Function));
+        expect(fakeMap.off).toHaveBeenCalledWith("zoomend", expect.any(Function));
+        expect(fakeMap.off).toHaveBeenCalledWith("resize", expect.any(Function));
     });
 });

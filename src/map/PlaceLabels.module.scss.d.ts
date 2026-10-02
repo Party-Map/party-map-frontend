@@ -4,13 +4,11 @@ interface CssExports {
   active: string;
   button: string;
   eventTitle: string;
+  hidden: string;
   label: string;
-  layer: string;
   meta: string;
-  moving: string;
   placeName: string;
   placeOnly: string;
-  settled: string;
 }
 declare const cssExports: CssExports;
 export default cssExports;

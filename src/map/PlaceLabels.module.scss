@@ -1,32 +1,24 @@
 @use "@/styles/mixins" as *;
 
 @layer parts {
-  .layer {
-    position: absolute;
-    inset: 0;
-    z-index: var(--z-labels);
-    pointer-events: none;
-    user-select: none;
-  }
-
+  // The label sits inside a zero-sized Leaflet div icon anchored at the place (map/leaflet.scss sets the pane up),
+  // centred on it and lifted above the pin by its inline transform.
   .label {
     position: absolute;
-    pointer-events: auto;
-    will-change: transform;
+    left: 0;
+    top: 0;
+    width: max-content;
+    pointer-events: none;
+    user-select: none;
+    transition: transform 260ms var(--ease);
   }
 
   .active {
+    transform-origin: 50% 100%;
+  }
+
+  .hidden .button {
     pointer-events: none;
-  }
-
-  .moving {
-    transition: opacity var(--duration-fast) linear;
-  }
-
-  .settled {
-    transition:
-      opacity 260ms var(--ease),
-      transform 260ms var(--ease);
   }
 
   .button {

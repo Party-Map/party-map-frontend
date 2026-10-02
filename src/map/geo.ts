@@ -1,4 +1,5 @@
 import type { LatLngTuple } from "leaflet";
+import { useMemo } from "react";
 
 import type { GeoPoint } from "@/api/types";
 
@@ -39,4 +40,15 @@ export function toBbox(bounds: ViewBounds): string {
     const east = clamp(snapUp(bounds.getEast() + padLng), 180);
     const north = clamp(snapUp(bounds.getNorth() + padLat), 90);
     return `${west},${south},${east},${north}`;
+}
+
+/**
+ * A LatLng tuple that keeps its identity while the coordinates stay the same, for props that react-leaflet treats
+ * as "moved" on every new object (a Popup's `position` re-opens it). Null without coordinates.
+ */
+export function useStableLatLng(latitude: number | undefined, longitude: number | undefined): LatLngTuple | null {
+    return useMemo(
+        () => (latitude === undefined || longitude === undefined ? null : [latitude, longitude]),
+        [latitude, longitude],
+    );
 }
