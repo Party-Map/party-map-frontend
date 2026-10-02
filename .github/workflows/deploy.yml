@@ -88,7 +88,12 @@ jobs:
             { line = line $0 }
             END { if (line) print line }' >~/.ssh/known_hosts
           chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
-          echo "trusting host keys:"; ssh-keygen -lf ~/.ssh/known_hosts
+          if grep -q 'SSH-2.0' ~/.ssh/known_hosts; then
+            echo "::error::DEPLOY_KNOWN_HOSTS holds ssh-keyscan's banner comment, not the key. Run: ssh-keyscan -t ed25519 $host 2>/dev/null  and store the line that starts with '$host ssh-ed25519' (party-map-infra/deploy/README.md)"
+            exit 1
+          fi
+          echo "trusting:"; ssh-keygen -lf ~/.ssh/known_hosts || true
+          echo "the server currently presents:"; ssh-keyscan -t ed25519 "$host" 2>/dev/null | ssh-keygen -lf - || true
           ssh-keygen -F "$host" -f ~/.ssh/known_hosts >/dev/null || { echo "::error::DEPLOY_KNOWN_HOSTS has no entry for $host (expected: $host ssh-ed25519 AAAA…)"; exit 1; }
           ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ServerAliveInterval=30 \
             "$DEPLOY_TARGET" "frontend ${{ github.sha }}"
