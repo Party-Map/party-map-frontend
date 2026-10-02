@@ -45,10 +45,40 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/party-map/party-map-frontend:latest
+          # :latest for the compose file, the commit sha for the deploy job (and rollbacks by sha).
+          tags: |
+            ghcr.io/party-map/party-map-frontend:latest
+            ghcr.io/party-map/party-map-frontend:${{ github.sha }}
           build-args: |
             PUBLIC_API_BASE=https://api.terkep.party/api
             PUBLIC_TILES_BASE=/tiles
             PUBLIC_KEYCLOAK_URL=https://auth.terkep.party
             PUBLIC_KEYCLOAK_REALM=party-map
             PUBLIC_KEYCLOAK_CLIENT_ID=partymap-web
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency:
+      group: deploy-frontend
+      cancel-in-progress: false
+    timeout-minutes: 15
+    steps:
+      # The key can only run /root/partymap/bin/deploy on the server (party-map-infra/deploy/README.md); the script
+      # pulls the image tagged with this commit, swaps it in, waits for the health check, smoke-tests and rolls back.
+      - name: Deploy this commit's image on the server
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ vars.DEPLOY_KNOWN_HOSTS }}
+          DEPLOY_TARGET: ${{ vars.DEPLOY_TARGET || 'root@204.168.148.191' }}
+        run: |
+          test -n "$DEPLOY_SSH_KEY" || { echo "::error::the DEPLOY_SSH_KEY secret is missing (party-map-infra/deploy/README.md)"; exit 1; }
+          test -n "$DEPLOY_KNOWN_HOSTS" || { echo "::error::the DEPLOY_KNOWN_HOSTS variable is missing (party-map-infra/deploy/README.md)"; exit 1; }
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" >~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" >~/.ssh/known_hosts
+          chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ServerAliveInterval=30 \
+            "$DEPLOY_TARGET" "frontend ${{ github.sha }}"
