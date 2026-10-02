@@ -31,6 +31,15 @@ describe("place form", () => {
         });
     });
 
+    it("refuses a map position beyond the border", () => {
+        const values = { ...toPlaceFormValues(), name: "Krakkói kirándulás", city: "Krakkó" };
+        const abroad = placeSchema.safeParse({ ...values, location: { latitude: 50.0678, longitude: 19.9362 } });
+        expect(abroad.error?.issues.map((issue) => issue.message)).toEqual(["The place must be inside Hungary."]);
+        expect(placeSchema.safeParse({ ...values, location: { latitude: 47.4979, longitude: 19.0402 } }).success).toBe(
+            true,
+        );
+    });
+
     it("builds the payload, leaving out empty links and sending no image as null", () => {
         const parsed = placeSchema.parse({ ...toPlaceFormValues(place), links: [], image: " " });
         expect(toPlacePayload(parsed)).toEqual({

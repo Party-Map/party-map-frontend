@@ -21,7 +21,7 @@ describe("geocodeAddress", () => {
         expect(fetchMock).not.toHaveBeenCalled();
     });
 
-    it("queries Nominatim with address details", async () => {
+    it("queries Nominatim for Hungarian addresses with their details", async () => {
         const fetchMock = stubFetch([]);
         await geocodeAddress("Petőfi híd");
         const url = requestedUrl(fetchMock);
@@ -30,6 +30,7 @@ describe("geocodeAddress", () => {
             format: "json",
             addressdetails: "1",
             limit: "5",
+            countrycodes: "hu",
             q: "Petőfi híd",
         });
         expect(fetchMock.mock.calls[0]?.[1]).toEqual({ headers: { Accept: "application/json" } });

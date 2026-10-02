@@ -2,6 +2,7 @@
 import { z } from "zod";
 
 import type { GeoPoint, Place, PlacePayload } from "@/api/types";
+import { insideHungary } from "@/map/basemap/outline";
 import { imageUrl, links, optionalShortText, optionalText, requiredText, tags } from "@/pages/admin/shared/formSchemas";
 import type { SummaryRow } from "@/pages/admin/shared/stepper/StepForm";
 import { linkSummary, NONE, orNone } from "@/pages/admin/shared/stepper/summary";
@@ -12,7 +13,12 @@ export const placeSchema = z.object({
     tags,
     address: optionalShortText("Address"),
     city: requiredText("City"),
-    location: z.custom<GeoPoint | null>().refine((value) => value !== null, "Pick the place on the map."),
+    location: z
+        .custom<GeoPoint | null>()
+        // The predicate narrows the output type; abort keeps the next rule from seeing null.
+        .refine((value) => value !== null, { message: "Pick the place on the map.", abort: true })
+        // The map covers Hungary only, and the API refuses anything beyond the border.
+        .refine((value) => insideHungary([value.longitude, value.latitude]), "The place must be inside Hungary."),
     image: imageUrl,
     links,
 });

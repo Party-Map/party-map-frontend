@@ -57,6 +57,8 @@ export async function geocodeAddress(query: string): Promise<GeocodeResult[]> {
     url.searchParams.set("format", "json");
     url.searchParams.set("addressdetails", "1");
     url.searchParams.set("limit", "5");
+    // Places must lie inside Hungary (the API refuses the rest), so only Hungarian addresses are offered.
+    url.searchParams.set("countrycodes", "hu");
     url.searchParams.set("q", query);
 
     const res = await fetch(url, { headers: { Accept: "application/json" } });
