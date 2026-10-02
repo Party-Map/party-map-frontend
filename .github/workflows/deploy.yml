@@ -66,34 +66,24 @@ jobs:
       cancel-in-progress: false
     timeout-minutes: 15
     steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github
       # The key can only run /root/partymap/bin/deploy on the server (party-map-infra/deploy/README.md); the script
       # pulls the image tagged with this commit, swaps it in, waits for the health check, smoke-tests and rolls back.
       - name: Deploy this commit's image on the server
         env:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
-          DEPLOY_KNOWN_HOSTS: ${{ vars.DEPLOY_KNOWN_HOSTS }}
           DEPLOY_TARGET: ${{ vars.DEPLOY_TARGET || 'root@204.168.148.191' }}
         run: |
           test -n "$DEPLOY_SSH_KEY" || { echo "::error::the DEPLOY_SSH_KEY secret is missing (party-map-infra/deploy/README.md)"; exit 1; }
-          test -n "$DEPLOY_KNOWN_HOSTS" || { echo "::error::the DEPLOY_KNOWN_HOSTS variable is missing (party-map-infra/deploy/README.md)"; exit 1; }
           install -d -m 700 ~/.ssh
           printf '%s\n' "$DEPLOY_SSH_KEY" >~/.ssh/deploy_key
-          # The host-key variable may hold the bare key (no host in front), a "[host]:22" prefix, or a line a
-          # terminal wrapped when it was copied: rebuild one proper known_hosts line per key.
-          host=${DEPLOY_TARGET#*@}
-          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" | tr -d '\r' | awk -v host="$host" '
-            NF == 0 { next }
-            $1 ~ /^(ssh-|ecdsa-)/ { if (line) print line; line = host " " $0; next }
-            $1 == host || $1 ~ /^\[/ { if (line) print line; line = $0; next }
-            { line = line $0 }
-            END { if (line) print line }' >~/.ssh/known_hosts
+          # The server's public host key is committed in .github/deploy_known_hosts (strict checking, no TOFU).
+          cp .github/deploy_known_hosts ~/.ssh/known_hosts
           chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
-          if grep -q 'SSH-2.0' ~/.ssh/known_hosts; then
-            echo "::error::DEPLOY_KNOWN_HOSTS holds ssh-keyscan's banner comment, not the key. Run: ssh-keyscan -t ed25519 $host 2>/dev/null  and store the line that starts with '$host ssh-ed25519' (party-map-infra/deploy/README.md)"
-            exit 1
-          fi
-          echo "trusting:"; ssh-keygen -lf ~/.ssh/known_hosts || true
-          echo "the server currently presents:"; ssh-keyscan -t ed25519 "$host" 2>/dev/null | ssh-keygen -lf - || true
-          ssh-keygen -F "$host" -f ~/.ssh/known_hosts >/dev/null || { echo "::error::DEPLOY_KNOWN_HOSTS has no entry for $host (expected: $host ssh-ed25519 AAAA…)"; exit 1; }
+          host=${DEPLOY_TARGET#*@}
+          echo "trusting:"; ssh-keygen -lf ~/.ssh/known_hosts
+          echo "the server presents:"; ssh-keyscan -t ed25519 "$host" 2>/dev/null | grep "^$host " | ssh-keygen -lf - || true
           ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ServerAliveInterval=30 \
             "$DEPLOY_TARGET" "frontend ${{ github.sha }}"
