@@ -1,7 +1,10 @@
-import type { Theme } from "@/lib/theme";
-
-import { PALETTES } from "./palette";
-
+/**
+ * The night sky behind the country: near-black with a teal tint, the same in both themes, so the map's surroundings
+ * never change with the theme. Also `--map-bg` in styles/base.scss.
+ */
+export const SKY_COLOR = "#0e171b";
+/** The stars' tints: mint, powder blue and cream, so the field is not uniform. */
+export const STAR_TINTS = ["#cfe9df", "#c7dcf0", "#f6ecd2"] as const;
 /** The star field repeats every this many CSS pixels. */
 export const STAR_SKY_SIZE = 512;
 const STAR_COUNT = 140;
@@ -27,9 +30,9 @@ function random(seed: number): () => number {
     };
 }
 
-/** The stars of a theme's sky: a few are big and bright, most are specks; their tint varies. */
-export function stars(theme: Theme, size = STAR_SKY_SIZE): Star[] {
-    const next = random(theme === "dark" ? 0x5eed : 0x1ee7);
+/** The stars of the sky: a few are big and bright, most are specks; their tint varies. */
+export function stars(size = STAR_SKY_SIZE): Star[] {
+    const next = random(0x5eed);
     const result: Star[] = [];
     for (let n = 0; n < STAR_COUNT; n += 1) {
         result.push({
@@ -37,7 +40,7 @@ export function stars(theme: Theme, size = STAR_SKY_SIZE): Star[] {
             cy: next() * size,
             radius: 0.7 + next() * next() * 2.8,
             opacity: 0.5 + next() * 0.5,
-            tint: Math.floor(next() * 3),
+            tint: Math.floor(next() * STAR_TINTS.length),
         });
     }
     return result;
@@ -46,21 +49,19 @@ export function stars(theme: Theme, size = STAR_SKY_SIZE): Star[] {
 const round = (value: number, digits: number) => value.toFixed(digits).replace(/\.?0+$/, "");
 
 /**
- * The star field as SVG markup: each star is a circle filled with a radial glow in one of the palette's tints on a
- * transparent ground (the sky colour comes from `--map-bg`). A star near an edge is drawn again on the opposite
+ * The star field as SVG markup: each star is a circle filled with a radial glow in one of the tints on a transparent
+ * ground (the sky colour comes from `--map-bg`). A star near an edge is drawn again on the opposite
  * side, so the tile repeats seamlessly.
  */
-export function starSkySvg(theme: Theme, size = STAR_SKY_SIZE): string {
-    const gradients = PALETTES[theme].stars
-        .map(
-            (tint, i) =>
-                `<radialGradient id='s${i}'><stop offset='0' stop-color='${tint}'/>` +
-                `<stop offset='0.3' stop-color='${tint}' stop-opacity='0.85'/>` +
-                `<stop offset='1' stop-color='${tint}' stop-opacity='0'/></radialGradient>`,
-        )
-        .join("");
+export function starSkySvg(size = STAR_SKY_SIZE): string {
+    const gradients = STAR_TINTS.map(
+        (tint, i) =>
+            `<radialGradient id='s${i}'><stop offset='0' stop-color='${tint}'/>` +
+            `<stop offset='0.3' stop-color='${tint}' stop-opacity='0.85'/>` +
+            `<stop offset='1' stop-color='${tint}' stop-opacity='0'/></radialGradient>`,
+    ).join("");
     const circles: string[] = [];
-    for (const star of stars(theme, size)) {
+    for (const star of stars(size)) {
         const r = star.radius * GLOW;
         const xs = [star.cx, star.cx - r < 0 ? star.cx + size : null, star.cx + r > size ? star.cx - size : null];
         const ys = [star.cy, star.cy - r < 0 ? star.cy + size : null, star.cy + r > size ? star.cy - size : null];
@@ -81,7 +82,7 @@ export function starSkySvg(theme: Theme, size = STAR_SKY_SIZE): string {
 }
 
 /** The star field as a CSS `background-image` value (a data URL; only the characters CSS and URLs mind are escaped). */
-export function starSkyImage(theme: Theme): string {
-    const encoded = starSkySvg(theme).replace(/[#<>"% ]/g, (c) => `%${c.charCodeAt(0).toString(16)}`);
+export function starSkyImage(): string {
+    const encoded = starSkySvg().replace(/[#<>"% ]/g, (c) => `%${c.charCodeAt(0).toString(16)}`);
     return `url("data:image/svg+xml,${encoded}")`;
 }

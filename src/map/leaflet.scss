@@ -37,9 +37,9 @@
   transition: opacity 260ms var(--ease);
 }
 
-/* The night sky: the base colour (map/basemap/palette.ts) under the star field map/Sky.tsx hands over as --map-sky
-   (an SVG that repeats every --map-sky-size). The container does not move with the map, so the sky stays put while
-   the country pans and zooms over it. */
+/* The night sky, the same in both themes: the base colour (map/basemap/stars.ts) under the star field map/Sky.tsx
+   hands over as --map-sky (an SVG that repeats every --map-sky-size). The container does not move with the map, so
+   the sky stays put while the country pans and zooms over it. */
 .leaflet-container {
   background-color: var(--map-bg);
   background-image: var(--map-sky);

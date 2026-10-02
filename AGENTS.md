@@ -78,9 +78,10 @@ routes use `Component:` (the admin area is lazy-loaded). Each file opens with a 
   `tiles/README.md`), and MapLibre's worker is emitted by `rsbuild.config.ts` under `/static/maplibre-<version>/`
   (`map/basemap/worker.ts`). The maps have no attribution control; the OpenMapTiles + OpenStreetMap credit is the
   "Map data" line of the privacy notice (`components/ConsentBanner`). The style is deliberately sparse and painterly
-  (after a space-fantasy picture): the country floats on a fixed starry sky. The sky is the map container's
-  background (`map/Sky.tsx` hands a seeded SVG star field from `map/basemap/stars.ts` over as `--map-sky`, laid
-  over `--map-bg` by `map/leaflet.scss`), so it stays put while the map moves; the MapLibre canvas has no
+  (after a space-fantasy picture): the country floats on a fixed starry sky that is the same in both themes
+  (`SKY_COLOR` and `STAR_TINTS` in `map/basemap/stars.ts`, outside the palette). The sky is the map container's
+  background (`map/Sky.tsx` hands the seeded SVG star field over as `--map-sky`, laid over `--map-bg` by
+  `map/leaflet.scss`), so it stays put while the map moves; the MapLibre canvas has no
   background layer, the land is a fill of the outline in `map/basemap/outline.ts` (`hungary.json`), and the custom
   layer `map/basemap/cutout.ts` (earcut triangles of the world minus Hungary, drawn with ZERO/ZERO blending, added
   by `Basemap` at `style.load` under the border) erases what the tiles hold beyond the border, so the canvas is

@@ -18,15 +18,16 @@ beforeEach(() => {
 afterEach(() => setThemeChoice("system"));
 
 describe("Sky", () => {
-    it("hands the theme's star field to the map container", () => {
+    it("hands the star field to the map container", () => {
         render(<Sky />);
-        expect(sky()).toBe(starSkyImage("light"));
+        expect(sky()).toBe(starSkyImage());
     });
 
-    it("swaps the stars with the theme", () => {
+    it("keeps the same sky in both themes", () => {
         render(<Sky />);
+        const light = sky();
         act(() => setThemeChoice("dark"));
-        expect(sky()).toBe(starSkyImage("dark"));
+        expect(sky()).toBe(light);
     });
 
     it("takes the sky away on unmount", () => {

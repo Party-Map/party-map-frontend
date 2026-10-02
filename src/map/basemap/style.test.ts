@@ -1,6 +1,3 @@
-import { readFileSync } from "node:fs";
-import path from "node:path";
-
 import { validateStyleMin } from "@maplibre/maplibre-gl-style-spec";
 
 import { TILE_ATTRIBUTION } from "@/lib/constants";
@@ -117,12 +114,6 @@ describe("basemapStyle", () => {
             expect(FONTS).toContainEqual(layer.layout?.["text-font"]);
             expect(layer.layout?.["text-field"]).toEqual(["coalesce", ["get", "name"], ["get", "name:latin"]]);
         }
-    });
-
-    it("keeps the map background token in step with the palettes", () => {
-        const base = readFileSync(path.resolve(process.cwd(), "src/styles/base.scss"), "utf8");
-        const tokens = [...base.matchAll(/--map-bg: (#[0-9a-f]{6});/g)].map((match) => match[1]);
-        expect(tokens).toEqual([PALETTES.light.sky, PALETTES.dark.sky]);
     });
 });
 

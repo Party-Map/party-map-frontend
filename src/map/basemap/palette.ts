@@ -8,12 +8,11 @@ export interface RoadColors {
 
 export type RoadClass = "motorway" | "trunk" | "primary" | "secondary" | "tertiary" | "minor";
 
-/** Every colour the basemap style uses; light and dark differ in nothing else. */
+/**
+ * Every colour the basemap style uses; light and dark differ in nothing else. The starry sky around the country is
+ * not part of it: it is the same in both themes (map/basemap/stars.ts).
+ */
 export interface Palette {
-    /** The night sky behind the map (map/Sky.tsx); also `--map-bg` in styles/base.scss. */
-    sky: string;
-    /** The stars' tints (map/basemap/stars.ts): mint, powder blue and cream, so the field is not uniform. */
-    stars: [string, string, string];
     /** Hungary itself: the only opaque ground in the canvas; the tiles beyond the border are cut away. */
     land: string;
     water: string;
@@ -26,14 +25,11 @@ export interface Palette {
 }
 
 /**
- * After a space-fantasy painting: a near-black, teal-tinted starry sky around the country; sandy gold land,
- * lavender-blue water and gold-edged roads by day; slate-grey land with sage-green roads and pale gold names by
- * night. Pastel in both: nothing fully saturated, nothing pure white.
+ * After a space-fantasy painting: sandy gold land, lavender-blue water and gold-edged roads by day; slate-grey land
+ * with sage-green roads and pale gold names by night. Pastel in both: nothing fully saturated, nothing pure white.
  */
 export const PALETTES: Record<Theme, Palette> = {
     light: {
-        sky: "#152126",
-        stars: ["#d9f1e7", "#cfe2f4", "#fff3d8"],
         land: "#f3e9cc",
         water: "#b4bdee",
         waterLine: "#9ea9e6",
@@ -51,8 +47,6 @@ export const PALETTES: Record<Theme, Palette> = {
         waterText: "#5a65b9",
     },
     dark: {
-        sky: "#0e171b",
-        stars: ["#cfe9df", "#c7dcf0", "#f6ecd2"],
         land: "#3b3f49",
         water: "#4f5c86",
         waterLine: "#5d6a94",
