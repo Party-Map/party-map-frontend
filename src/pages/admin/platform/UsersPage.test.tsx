@@ -68,7 +68,9 @@ describe("UsersPage", () => {
             "href",
             "/admin/platform/users/user-1?q=jane",
         );
-        expect(screen.queryByText("bob@example.com")).not.toBeInTheDocument();
+        // Jane's link carries the new query as soon as the URL changes; the previous page stays visible until the
+        // search result arrives, so wait for Bob (listed twice: display name and username) to go.
+        await waitFor(() => expect(screen.queryAllByText("bob@example.com")).toHaveLength(0));
         expect(fetchMock.requests.map((r) => r.url)).toContain("http://api.test/api/admin/users?q=jane&page=0&size=20");
     });
 
