@@ -78,7 +78,17 @@ jobs:
           test -n "$DEPLOY_KNOWN_HOSTS" || { echo "::error::the DEPLOY_KNOWN_HOSTS variable is missing (party-map-infra/deploy/README.md)"; exit 1; }
           install -d -m 700 ~/.ssh
           printf '%s\n' "$DEPLOY_SSH_KEY" >~/.ssh/deploy_key
-          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" >~/.ssh/known_hosts
+          # The host-key variable may hold the bare key (no host in front), a "[host]:22" prefix, or a line a
+          # terminal wrapped when it was copied: rebuild one proper known_hosts line per key.
+          host=${DEPLOY_TARGET#*@}
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" | tr -d '\r' | awk -v host="$host" '
+            NF == 0 { next }
+            $1 ~ /^(ssh-|ecdsa-)/ { if (line) print line; line = host " " $0; next }
+            $1 == host || $1 ~ /^\[/ { if (line) print line; line = $0; next }
+            { line = line $0 }
+            END { if (line) print line }' >~/.ssh/known_hosts
           chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
+          echo "trusting host keys:"; ssh-keygen -lf ~/.ssh/known_hosts
+          ssh-keygen -F "$host" -f ~/.ssh/known_hosts >/dev/null || { echo "::error::DEPLOY_KNOWN_HOSTS has no entry for $host (expected: $host ssh-ed25519 AAAA…)"; exit 1; }
           ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ServerAliveInterval=30 \
             "$DEPLOY_TARGET" "frontend ${{ github.sha }}"
