@@ -126,7 +126,11 @@ routes use `Component:` (the admin area is lazy-loaded). Each file opens with a 
 
 - keycloak-js with the public client `partymap-web` (PKCE S256, `check-sso`, tokens in memory, silent SSO through
   `public/silent-check-sso.html`). `useAuth()` gives `status`, `user`, `roles`, `hasRole`, `isAdmin`, `login`,
-  `logout`, `accountUrl`. Gate pages with `layout/RequireAuth` or `pages/admin/RequireRole`.
+  `register`, `logout`, `accountUrl`. Gate pages with `layout/RequireAuth` or `pages/admin/RequireRole`.
+- The sign-in and sign-up pages are Keycloak's, drawn by the login theme in `../party-map-keycloak-theme`. `login`
+  and `register` add `pm_theme=light|dark` (the theme in effect) to Keycloak's URL so those pages match; keep the
+  Keycloak form ids `#username`, `#password`, `#kc-login` in mind (`e2e/auth.setup.ts` uses them). A user's display
+  name is the token's `given_name` (Keycloak `firstName`); `/privacy` is the notice the registration links to.
 - `auth/session.ts`: when a signed-in session ends (the token cannot be refreshed, or the API answers 401 while
   signed in) the `SessionEndedDialog` opens (Sign in / Refresh) and the refused call waits (`pending()`). A 401 while
   anonymous is an ordinary error. Page navigation goes through `browser` so tests can spy on it.
