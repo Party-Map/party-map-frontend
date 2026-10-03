@@ -45,6 +45,9 @@
 
     /* The star field's tile (map/basemap/stars.ts STAR_SKY_SIZE). */
     --map-sky-size: 512px;
+
+    /* The device's bottom safe area, readable from scripts (map/insets.ts); env() itself cannot be read. */
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
     --kind-disco: #ec4899;
     --kind-techno: #6366f1;
     --kind-festival: #10b981;

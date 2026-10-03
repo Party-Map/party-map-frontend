@@ -43,6 +43,35 @@ describe("HighlightProvider", () => {
         expect(result.current.highlightIds).toBe(ids);
     });
 
+    it("counts the user's changes in the generation and leaves republications out of it", () => {
+        const { result } = renderHook(() => useHighlight(), { wrapper: HighlightProvider });
+        expect(result.current.generation).toBe(0);
+
+        act(() => result.current.setHighlightIds(["a"]));
+        expect(result.current.generation).toBe(1);
+        const ids = result.current.highlightIds;
+
+        // The same ids coming back with a page (not typed) change nothing at all.
+        act(() => result.current.setHighlightIds(["a"], { userAction: false }));
+        expect(result.current.generation).toBe(1);
+        expect(result.current.highlightIds).toBe(ids);
+
+        act(() => result.current.setHighlightIds(["b"], { userAction: false }));
+        expect(result.current.generation).toBe(1);
+        expect(result.current.highlightIds).toEqual(["b"]);
+
+        act(() => result.current.focusPlace("b"));
+        expect(result.current.generation).toBe(2);
+        act(() => result.current.setHighlightIds([], { userAction: false }));
+        expect(result.current.generation).toBe(2);
+        expect(result.current.focus).toBeNull();
+        // Nothing changes, so nothing is counted, whoever asks.
+        act(() => result.current.setHighlightIds([]));
+        expect(result.current.generation).toBe(2);
+        act(() => result.current.setHighlightIds(["c"]));
+        expect(result.current.generation).toBe(3);
+    });
+
     it("keeps the setter stable across renders", () => {
         const { result } = renderHook(() => useHighlight(), { wrapper: HighlightProvider });
         const setter = result.current.setHighlightIds;

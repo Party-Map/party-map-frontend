@@ -23,6 +23,11 @@ describe("ConsentBanner", () => {
         expect(screen.getByRole("button", { name: "Reject" })).toBeInTheDocument();
     });
 
+    it("marks itself as an overlay over the bottom of the map, so an open card is kept above it", () => {
+        render(<ConsentBanner />);
+        expect(screen.getByRole("dialog")).toHaveAttribute("data-map-inset", "bottom");
+    });
+
     it("stays hidden once a choice was stored", () => {
         window.localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify({ t: 1, v: 1, rejected: true }));
         const { container } = render(<ConsentBanner />);

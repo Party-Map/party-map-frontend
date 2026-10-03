@@ -7,6 +7,7 @@ import { useSearch } from "@/api/hooks";
 import type { ID, SearchHit } from "@/api/types";
 import { SEARCH_DEBOUNCE_MS } from "@/lib/constants";
 import { useDebouncedValue } from "@/lib/hooks/useDebouncedValue";
+import { useFromHistory } from "@/lib/hooks/useFromHistory";
 import { cn } from "@/lib/utils";
 
 import { useHighlight } from "./HighlightProvider";
@@ -14,6 +15,19 @@ import styles from "./SearchBar.module.scss";
 import { SearchResultItem } from "./SearchResultItem";
 
 const NO_HITS: SearchHit[] = [];
+/** A press that closed the results is followed by its click within this time; a later click is someone else's. */
+const SWALLOW_CLICK_MS = 700;
+
+/** Keeps the click of the press that just happened from reaching anything (the map, in particular). */
+function swallowNextClick(): void {
+    const armedAt = Date.now();
+    const swallow = (e: MouseEvent) => {
+        if (Date.now() - armedAt > SWALLOW_CLICK_MS) return;
+        e.stopPropagation();
+        e.preventDefault();
+    };
+    document.addEventListener("click", swallow, { capture: true, once: true });
+}
 
 export function placeIdsOf(hits: SearchHit[]): ID[] {
     const ids = hits.map((h) => h.placeId ?? (h.type === "PLACE" ? h.id : null)).filter((id): id is ID => Boolean(id));
@@ -41,19 +55,26 @@ interface SearchBarProps {
  * Search box with a debounced dropdown (cmdk: arrow keys move through the hits, Enter picks one). Results highlight
  * the matching places on the map; Enter without a chosen hit commits the query to the URL (`?q=`), and picking a
  * hit focuses its place and opens its card (`?focus=` from other pages). While it is in use ("expanded") the
- * phone layout hides the brand and shows a back button in place of the search icon.
+ * phone layout hides the brand and shows a back button in place of the search icon. Mounting on a history
+ * navigation (Back, Forward, a reload) is quiet: the results stay closed and the highlights are republished without
+ * counting as a new search, so the map keeps the view and card the user had.
  */
 export function SearchBar({ initialQuery = "", onExpandedChange }: SearchBarProps) {
     const navigate = useNavigate();
     const { pathname } = useLocation();
     const [searchParams] = useSearchParams();
     const { setHighlightIds, focusPlace } = useHighlight();
+    // How the box was reached is settled at mount: a later replace of the URL (clearing it) changes nothing here.
+    const [fromHistory] = useState(useFromHistory());
 
     const hasFocusParam = searchParams.has("focus");
     const [query, setQuery] = useState(initialQuery);
     const [focused, setFocused] = useState(false);
-    // A query arriving with the page (?q=) shows its results unless a place is pinned (?focus=).
-    const [open, setOpen] = useState(() => initialQuery.trim() !== "" && !hasFocusParam);
+    // A query arriving with the page (?q=) shows its results unless a place is pinned (?focus=) or the page came
+    // back from the history.
+    const [open, setOpen] = useState(() => initialQuery.trim() !== "" && !hasFocusParam && !fromHistory);
+    // Whether the user has typed here: until then, the hits of a query that came with the page are republished.
+    const typed = useRef(false);
     // cmdk highlights the first hit by itself; it only counts as chosen once the user moves through the list.
     const [choosing, setChoosing] = useState(false);
     // A picked hit owns the map until the user types again, even if a search typed before the pick finishes later.
@@ -73,31 +94,42 @@ export function SearchBar({ initialQuery = "", onExpandedChange }: SearchBarProp
         return () => onExpandedChange?.(false);
     }, [expanded, onExpandedChange]);
 
-    // The hits highlight their places on the map, unless a focus is pinned or a hit was picked.
+    // The hits highlight their places on the map, unless a focus is pinned or a hit was picked. A query that came
+    // with a history navigation republishes its hits without counting as a new search.
     useEffect(() => {
         if (hasFocusParam || picked) return;
-        if (!debounced) setHighlightIds([]);
-        else if (results.data) setHighlightIds(placeIdsOf(results.data));
-    }, [debounced, results.data, hasFocusParam, picked, setHighlightIds]);
+        const userAction = typed.current || !fromHistory;
+        if (!debounced) setHighlightIds([], { userAction });
+        else if (results.data) setHighlightIds(placeIdsOf(results.data), { userAction });
+    }, [debounced, results.data, hasFocusParam, picked, fromHistory, setHighlightIds]);
 
-    // Close on outside click and Escape.
+    // Escape closes the results.
     useEffect(() => {
-        const onPointerDown = (e: PointerEvent) => {
-            if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
-        };
         const onKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape") setOpen(false);
         };
-        document.addEventListener("pointerdown", onPointerDown, true);
         document.addEventListener("keydown", onKeyDown);
-        return () => {
-            document.removeEventListener("pointerdown", onPointerDown, true);
-            document.removeEventListener("keydown", onKeyDown);
-        };
+        return () => document.removeEventListener("keydown", onKeyDown);
     }, []);
 
-    // Leaving the page drops the highlights.
-    useEffect(() => () => setHighlightIds([]), [setHighlightIds]);
+    // A press outside closes the results. On the map's background that press means "hide the results", nothing
+    // more: the click it becomes is kept from the map, which would otherwise close the open card as well. A press
+    // on a pin or on the card is what it is.
+    useEffect(() => {
+        if (!showDropdown) return;
+        const onPointerDown = (e: PointerEvent) => {
+            const target = e.target instanceof Node ? e.target : null;
+            if (!target || rootRef.current?.contains(target)) return;
+            setOpen(false);
+            if (!(target instanceof Element) || !target.closest(".leaflet-container")) return;
+            if (!target.closest(".leaflet-marker-icon, .leaflet-popup")) swallowNextClick();
+        };
+        document.addEventListener("pointerdown", onPointerDown, true);
+        return () => document.removeEventListener("pointerdown", onPointerDown, true);
+    }, [showDropdown]);
+
+    // Leaving the page drops the highlights (not a search of the user's: the map does not react).
+    useEffect(() => () => setHighlightIds([], { userAction: false }), [setHighlightIds]);
 
     const dismiss = () => {
         setOpen(false);
@@ -193,6 +225,7 @@ export function SearchBar({ initialQuery = "", onExpandedChange }: SearchBarProp
                     ref={inputRef}
                     value={query}
                     onValueChange={(value) => {
+                        typed.current = true;
                         setQuery(value);
                         setPicked(false);
                         setOpen(true);

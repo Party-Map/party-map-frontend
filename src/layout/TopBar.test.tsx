@@ -1,4 +1,4 @@
-import { screen, within } from "@testing-library/react";
+import { act, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { searchHits } from "@/test/fixtures";
@@ -37,10 +37,15 @@ describe("TopBar", () => {
         expect(lead).not.toHaveClass("lead-collapsed");
     });
 
-    it("seeds the search box from the URL query and restores its results", async () => {
+    it("seeds the search box from the URL query and shows its results once the box is used", async () => {
         mockApi({ "GET /api/search?q=techno": { query: "techno", hits: searchHits } });
         renderWithProviders(<TopBar />, { route: "/?q=techno" });
-        expect(screen.getByRole("combobox", { name: "Search" })).toHaveValue("techno");
+        const box = screen.getByRole("combobox", { name: "Search" });
+        expect(box).toHaveValue("techno");
+        // The page came with the query (nothing was followed): the list waits until the box is focused.
+        await act(async () => {});
+        expect(screen.queryByRole("listbox", { name: "Search results" })).toBeNull();
+        await userEvent.click(box);
         expect(await screen.findByRole("listbox", { name: "Search results" })).toHaveTextContent("Techno Night");
     });
 });

@@ -2,10 +2,13 @@ vi.mock("react-leaflet", () => import("@/test/mocks/leaflet").then((m) => m.reac
 vi.mock("leaflet", () => import("@/test/mocks/leaflet").then((m) => m.leafletMock));
 
 import { act, fireEvent, render, screen } from "@testing-library/react";
+import type L from "leaflet";
 
 import { place } from "@/test/fixtures";
 import { fakeMap, leafletMock } from "@/test/mocks/leaflet";
 
+import { showTarget } from "./camera";
+import { mapInsets } from "./insets";
 import { ZoomControls } from "./ZoomControls";
 
 const latLng = [place.location.latitude, place.location.longitude];
@@ -14,7 +17,7 @@ beforeEach(() => fakeMap.reset());
 
 describe("ZoomControls", () => {
     it("zooms in and out around the current view", () => {
-        render(<ZoomControls places={[place]} openPopupId={null} />);
+        render(<ZoomControls places={[place]} openPopupId={null} cardRect={null} />);
         fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
         expect(fakeMap.setZoom).toHaveBeenCalledWith(14);
         fireEvent.click(screen.getByRole("button", { name: "Zoom out" }));
@@ -24,20 +27,33 @@ describe("ZoomControls", () => {
     });
 
     it("keeps clicks and scrolling away from the map", () => {
-        const { container } = render(<ZoomControls places={[place]} openPopupId={null} />);
+        const { container } = render(<ZoomControls places={[place]} openPopupId={null} cardRect={null} />);
         expect(leafletMock.default.DomEvent.disableClickPropagation).toHaveBeenCalledWith(container.firstElementChild);
         expect(leafletMock.default.DomEvent.disableScrollPropagation).toHaveBeenCalledWith(container.firstElementChild);
     });
 
-    it("recenters on the selected place and anchors zooming to it until the map is dragged", () => {
-        render(<ZoomControls places={[place]} openPopupId={place.id} />);
+    it("recenters the selected place with its card between the bars and anchors zooming to it until dragged", () => {
+        const cardRect = { left: -161, top: -288, right: 161, bottom: -68 };
+        render(<ZoomControls places={[place]} openPopupId={place.id} cardRect={cardRect} />);
         const center = screen.getByRole("button", { name: "Center selected" });
         expect(center).toHaveAttribute("aria-pressed", "false");
 
         fireEvent.click(center);
-        expect(fakeMap.project).toHaveBeenCalledWith(latLng, 13);
-        expect(fakeMap.unproject).toHaveBeenCalledWith(expect.objectContaining({ x: 400, y: 200 }), 13);
-        expect(fakeMap.flyTo).toHaveBeenCalledWith({ lat: 47.5, lng: 19.05 }, 13, { duration: 0.6 });
+        const size = fakeMap.getSize();
+        const wanted = showTarget({
+            pin: latLng as [number, number],
+            card: cardRect,
+            center: fakeMap.getCenter(),
+            zoom: 13,
+            size,
+            insets: mapInsets(size.x),
+            mode: "center",
+        });
+        expect(fakeMap.panTo).toHaveBeenCalledTimes(1);
+        const [target, options] = fakeMap.panTo.mock.calls[0] as [L.LatLng, object];
+        expect(target.equals(wanted.center)).toBe(true);
+        expect(options).toEqual({ animate: true, duration: 0.6 });
+        expect(fakeMap.flyTo).not.toHaveBeenCalled();
         expect(center).toHaveAttribute("aria-pressed", "true");
 
         fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
@@ -53,7 +69,7 @@ describe("ZoomControls", () => {
     });
 
     it("stops listening for drags on unmount", () => {
-        const { unmount } = render(<ZoomControls places={[place]} openPopupId={null} />);
+        const { unmount } = render(<ZoomControls places={[place]} openPopupId={null} cardRect={null} />);
         unmount();
         expect(fakeMap.off).toHaveBeenCalledWith("dragstart", expect.any(Function));
     });

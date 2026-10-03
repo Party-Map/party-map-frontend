@@ -8,6 +8,7 @@ import { KindBadge } from "@/components/KindBadge";
 import { BASE_LABEL_ZOOM, HIGHLIGHT_LABEL_ZOOM, LABEL_BASE_OFFSET, LABEL_HIGHLIGHT_OFFSET } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
+import type { AnchoredRect } from "./camera";
 import { toLatLngTuple } from "./geo";
 import styles from "./PlaceLabels.module.scss";
 
@@ -25,9 +26,10 @@ interface XY {
 
 /** The Leaflet pane the labels live in: above the pins, below the popup (see map/leaflet.scss). */
 export const LABEL_PANE = "labels";
-/** Screen-space box the popup card covers around its pin; labels underneath it are hidden. */
-const POPUP_HALF_WIDTH = 140;
-const POPUP_HEIGHT_ABOVE = 230;
+/** Screen-space box the popup card covers around its pin until it is measured; labels underneath it are hidden. */
+const POPUP_HALF_WIDTH = 160;
+const POPUP_HEIGHT_ABOVE = 290;
+/** The box reaches a little below the anchor, over the pin itself. */
 const POPUP_HEIGHT_BELOW = 10;
 /** Labels fade with their distance from the viewport centre; the fade spans this share of the short side. */
 const FADE_EXTENT = 0.9;
@@ -36,11 +38,12 @@ const DIMMED_OPACITY = 0.06;
 /** The map events after which the labels' opacities are worked out again. */
 const SETTLE_EVENTS = ["moveend", "zoomend", "resize"] as const;
 
-export function getPopupRect(anchor: XY): PopupRect {
+/** The card's box on the screen: the measured one when known (map/CardMeasure.tsx), a generous guess otherwise. */
+export function getPopupRect(anchor: XY, card: AnchoredRect | null = null): PopupRect {
     return {
-        left: anchor.x - POPUP_HALF_WIDTH,
-        right: anchor.x + POPUP_HALF_WIDTH,
-        top: anchor.y - POPUP_HEIGHT_ABOVE,
+        left: anchor.x + (card ? card.left : -POPUP_HALF_WIDTH),
+        right: anchor.x + (card ? card.right : POPUP_HALF_WIDTH),
+        top: anchor.y + (card ? card.top : -POPUP_HEIGHT_ABOVE),
         bottom: anchor.y + POPUP_HEIGHT_BELOW,
     };
 }
@@ -121,6 +124,8 @@ interface PlaceLabelsProps {
     upcomingMap: Map<ID, UpcomingEventByPlace>;
     highlightIds: ID[];
     openPopupId: ID | null;
+    /** The open card's measured box around its pin, null until measured. */
+    cardRect?: AnchoredRect | null;
     onOpen: (id: ID) => void;
 }
 
@@ -129,7 +134,14 @@ interface PlaceLabelsProps {
  * opacities (distance fade, dimming behind a selection, hiding under the open card) are worked out once the map
  * settles.
  */
-export function PlaceLabels({ places, upcomingMap, highlightIds, openPopupId, onOpen }: PlaceLabelsProps) {
+export function PlaceLabels({
+    places,
+    upcomingMap,
+    highlightIds,
+    openPopupId,
+    cardRect = null,
+    onOpen,
+}: PlaceLabelsProps) {
     const map = useMap();
     useLabelPane(map);
     useSettledView(map);
@@ -142,7 +154,9 @@ export function PlaceLabels({ places, upcomingMap, highlightIds, openPopupId, on
     const centre = size.divideBy(2);
     const maxDistance = Math.min(size.x, size.y) * FADE_EXTENT;
     const openPlace = places.find((p) => p.id === openPopupId);
-    const popupRect = openPlace ? getPopupRect(map.latLngToContainerPoint(toLatLngTuple(openPlace.location))) : null;
+    const popupRect = openPlace
+        ? getPopupRect(map.latLngToContainerPoint(toLatLngTuple(openPlace.location)), cardRect)
+        : null;
     const hasSelection = openPopupId !== null || hasHighlights;
 
     return (

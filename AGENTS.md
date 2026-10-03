@@ -64,14 +64,46 @@ routes use `Component:` (the admin area is lazy-loaded). Each file opens with a 
   a result answer 204 (the fetcher resolves to `undefined`).
 - The map loads only the places around the viewport: `map/ViewportWatcher` reports a padded, grid-snapped
   `bbox` (`map/geo.ts` `toBbox`) on mount and after every move, `usePlaces(bbox)` keeps the previous pins while the
-  next area loads, and highlighted places outside it come from `usePlacesById`. `FitToHighlights` fits once per
-  highlight set, after all of them have loaded.
+  next area loads, and highlighted places outside it, plus the open card's place, come from `usePlacesById` (so the
+  card never disappears when its pin leaves the loaded area).
+- **The camera rule.** Every programmatic move of the map is worked out to its final, wall-legal destination before
+  it starts, and runs as one animation: the pure maths in `map/camera.ts` (`wall`, `clampCenter` = a port of
+  Leaflet's `_limitCenter`, `floorZoom`, `showTarget` for a pin with its measured card, `fitTarget` for several
+  places; tested against real Leaflet in `camera.test.ts`) feeds `map/useCamera.ts`, the only code that calls
+  Leaflet's `panTo`/`flyTo`/`setView` (never `panBy`; it stops a running pan first, knows whether a move is its own
+  or the user's, and queues a move while a CSS zoom animation runs, during which Leaflet drops `setView`). Nothing
+  moves the map from a `moveend` listener, and gestures (drag, pinch, wheel, buttons) never trigger a re-pan: the
+  card stays open wherever it ends up. `map/CameraDirector` is the one component that decides moves: a search
+  (one place: a flight to the search zoom, with its card if it is opening, centred between the bars, or the least
+  move when the map already shows the place; several: a bounds fit with the bars as padding), and a card opened
+  from a pin or label (the least pan that puts the pin and its card inside the free area between the bars; when the
+  wall forbids, a level in around the pin, up to zoom 16). It acts once per `generation` of the highlights
+  (`layout/HighlightProvider`: bumped by the user's typing, picking or clearing, not by a search box republishing
+  what its URL says on a history navigation, see `lib/hooks/useFromHistory`) and once per opened card, and never
+  for a restored view (Back from a detail page lands exactly where the user was, card included). The card's box is
+  measured, not guessed: `map/CardMeasure` inside the `Popup` reports it relative to the pin once the content is in
+  the DOM; `MapView` passes it to the director, to `ZoomControls` (Center selected = the same target, centring) and
+  to `PlaceLabels` (labels under the card hide). The insets (`map/insets.ts`) follow the bars and the device's
+  bottom safe area (`--safe-bottom` on `:root`), and an overlay marked `data-map-inset="bottom"` (the consent
+  banner) keeps an opened card above it.
+- `map/MapLimits` keeps the whole country on the screen: the zoom floor is where Hungary exactly fills the part of
+  the viewport the bars leave free (fractional, `zoomSnap: 0`, recomputed up and down on every resize), the wall
+  (`maxBounds` at full viscosity, from `HUNGARY_BOUNDS` plus the bars' cover in pixels, recomputed on zoom and
+  resize) lets the country slide under a bar but never off the screen, a restored view outside the limits is
+  corrected without animation before the limits go in, and a one-line override of Leaflet's private `_limitCenter`
+  (leaflet 1.9.4, pinned; guarded by `MapLimits.leaflet.test.ts`) makes every zoom clamp against the wall of the
+  zoom it is going to, so a wheel, pinch or button zoom at the border lands once, without a corrective pan.
+  `bounceAtZoomLimits` is off: a pinch cannot go under the floor.
 - Overlays on the map are Leaflet layers, never React-positioned per frame: the place labels (`map/PlaceLabels`) are
   non-interactive markers in the custom `labels` pane whose zero-sized div icon hosts the React content through a
   portal, so Leaflet moves them with the pins through every pan and zoom frame and React only re-renders on
-  `moveend`/`zoomend`/`resize` (opacity goes through the marker's `opacity` prop). The open card's `Popup` gets its
-  `position` from `map/geo.useStableLatLng` because react-leaflet re-opens a popup for every new position object;
-  `PanPopupMobile` keys on the open place's coordinates and re-pans after non-drag moves that cut the card off.
+  `moveend`/`zoomend`/`resize` (opacity goes through the marker's `opacity` prop); the pins are `map/PlacePins`
+  (positions and click handlers kept per place). The open card's `Popup` gets its `position` from
+  `map/geo.useStableLatLng` because react-leaflet re-opens a popup for every new position object.
+- The map hands itself to the page in development builds only (`map/MapProbe`: `window.__pmMap`, `__pmCamera`),
+  which the Playwright map behaviour spec (`e2e/map.spec.ts`, helper `e2e/helpers/map.ts`: a probe counting moves,
+  the bars' free band, drags, a CDP pinch, the wall check) reads; it runs on the desktop and phone projects plus
+  `phone-landscape` and `tablet`, and needs the dev seed's border places.
 - The basemap is MapLibre GL drawing the self-hosted Hungary vector tiles inside Leaflet (`map/Basemap`, lazy through
   `map/LazyBasemap`): `map/basemap/style.ts` builds the style from `palette.ts` (light and dark differ only in paint,
   swapped in place with the theme), the tiles and glyphs come from `/tiles` (`PUBLIC_TILES_BASE`; Martin, see
@@ -87,10 +119,7 @@ routes use `Component:` (the admin area is lazy-loaded). Each file opens with a 
   by `Basemap` at `style.load` under the border) erases what the tiles hold beyond the border, so the canvas is
   transparent there (`canvasContextAttributes.antialias` smooths the edge; the land's edge is the border, no boundary
   line is drawn). Sandy (light) or slate-grey (dark) land, lavender water, six road classes in one colour with
-  outlines, and names; no landcover, buildings, rail or POIs. `map/MapLimits` keeps the whole country on the screen:
-  the zoom floor is where Hungary fills the part of the viewport the bars leave free, and the wall (`maxBounds` at
-  full viscosity, set from `HUNGARY_BOUNDS` plus the bars' cover in pixels, `map/insets.ts`, recomputed on zoom and
-  resize) lets the country slide under a bar but never off the screen.
+  outlines, and names; no landcover, buildings, rail or POIs.
 - `lib/geocode.ts` (Nominatim) is the only other network access; nothing else calls `fetch`.
 
 ## Auth

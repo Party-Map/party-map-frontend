@@ -48,12 +48,13 @@ interface Globals {
 }
 
 function Probe() {
-    const { highlightIds, focus } = useHighlight();
+    const { highlightIds, focus, generation } = useHighlight();
     const { pathname, search } = useLocation();
     return (
         <>
             <p data-testid="highlight">{highlightIds.join(",")}</p>
             <p data-testid="focus">{focus?.id ?? ""}</p>
+            <p data-testid="generation">{generation}</p>
             <p data-testid="location">{`${pathname}${search}`}</p>
         </>
     );
@@ -95,19 +96,22 @@ async function settle(ms = SEARCH_DEBOUNCE_MS) {
 
 interface SetupOptions {
     route?: string;
+    /** Entries behind the route: the page then counts as reached through the history (Back, reload). */
+    history?: string[];
     initialQuery?: string;
     routes?: Record<string, unknown>;
 }
 
-async function setup({ route = "/", initialQuery, routes = DEFAULT_ROUTES }: SetupOptions = {}) {
+async function setup({ route = "/", history, initialQuery, routes = DEFAULT_ROUTES }: SetupOptions = {}) {
     const fetchMock = mockApi(routes);
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    renderWithProviders(<Harness initialQuery={initialQuery} />, { route });
+    renderWithProviders(<Harness initialQuery={initialQuery} />, history ? { route, history } : { route });
     await settle(0);
     return { fetchMock, user, input: screen.getByRole("combobox", { name: "Search" }) };
 }
 
 const highlight = () => screen.getByTestId("highlight").textContent;
+const generation = () => Number(screen.getByTestId("generation").textContent);
 const expanded = () => screen.getByTestId("expanded").textContent;
 const location = () => screen.getByTestId("location").textContent;
 const focused = () => screen.getByTestId("focus").textContent;
@@ -213,10 +217,14 @@ describe("SearchBar", () => {
         expect(location()).toBe("/");
     });
 
-    it("restores the results for the initial query and clears everything with the eraser", async () => {
+    it("highlights the initial query's hits, shows them on focus, and clears everything with the eraser", async () => {
         const { user, input } = await setup({ route: "/?q=techno", initialQuery: "techno" });
-        expect(await screen.findByRole("listbox", { name: "Search results" })).toBeInTheDocument();
+        await settle();
         expect(highlight()).toBe("place-1,place-2");
+        // The page came with the query (no link was followed): the list waits until the box is used.
+        expect(listbox()).toBeNull();
+        await user.click(input);
+        expect(await screen.findByRole("listbox", { name: "Search results" })).toBeInTheDocument();
 
         await user.click(screen.getByRole("button", { name: "Clear search" }));
         expect(input).toHaveValue("");
@@ -417,12 +425,87 @@ describe("SearchBar", () => {
         expect(highlight()).toBe("place-1,place-2");
     });
 
-    it("drops the highlights when unmounted", async () => {
+    it("drops the highlights when unmounted, without counting as a search", async () => {
         const { user, input } = await setup();
         await typeAndWait(user, input);
         expect(highlight()).toBe("place-1,place-2");
+        const before = generation();
         await user.click(screen.getByRole("button", { name: "unmount search" }));
         expect(screen.queryByRole("combobox")).toBeNull();
         expect(highlight()).toBe("");
+        expect(generation()).toBe(before);
+    });
+
+    it("comes back from the history quietly: results closed, hits republished without counting as a search", async () => {
+        const routes = { ...DEFAULT_ROUTES, "GET /api/search?q=technox": response("technox", [eventHit]) };
+        const { user, input } = await setup({
+            route: "/?q=techno",
+            history: ["/places/x"],
+            initialQuery: "techno",
+            routes,
+        });
+        await settle();
+        expect(listbox()).toBeNull();
+        expect(highlight()).toBe("place-1,place-2");
+        expect(generation()).toBe(0);
+        expect(expanded()).toBe("false");
+
+        // Typing is the user's search again.
+        await user.type(input, "x");
+        await settle();
+        expect(await screen.findByRole("listbox", { name: "Search results" })).toBeInTheDocument();
+        expect(highlight()).toBe("place-2");
+        expect(generation()).toBeGreaterThan(0);
+    });
+
+    it("counts a query reached through a link as the user's search and shows its results", async () => {
+        const { user, input } = await setup({ route: "/browse" });
+        await typeAndWait(user, input);
+        await user.keyboard("{Enter}");
+        await settle(0);
+        expect(location()).toBe("/?q=techno");
+        expect(generation()).toBeGreaterThan(0);
+    });
+
+    it("hides the results on a press on the map and keeps that click from the map", async () => {
+        const { user, input } = await setup();
+        await typeAndWait(user, input);
+        const mapEl = document.createElement("div");
+        mapEl.className = "leaflet-container";
+        document.body.appendChild(mapEl);
+        const onMapClick = vi.fn();
+        mapEl.addEventListener("click", onMapClick);
+        try {
+            fireEvent.pointerDown(mapEl);
+            expect(listbox()).toBeNull();
+            fireEvent.click(mapEl);
+            expect(onMapClick).not.toHaveBeenCalled();
+            // Only the press that closed the results is kept from the map.
+            fireEvent.click(mapEl);
+            expect(onMapClick).toHaveBeenCalledTimes(1);
+
+            // A press elsewhere lets the map have its clicks.
+            act(() => input.blur());
+            await user.click(input);
+            expect(listbox()).not.toBeNull();
+            fireEvent.pointerDown(document.body);
+            expect(listbox()).toBeNull();
+            fireEvent.click(mapEl);
+            expect(onMapClick).toHaveBeenCalledTimes(2);
+
+            // A press on a pin is a tap on the pin: it closes the results and still reaches the pin.
+            const pin = document.createElement("div");
+            pin.className = "leaflet-marker-icon";
+            mapEl.appendChild(pin);
+            act(() => input.blur());
+            await user.click(input);
+            expect(listbox()).not.toBeNull();
+            fireEvent.pointerDown(pin);
+            expect(listbox()).toBeNull();
+            fireEvent.click(pin);
+            expect(onMapClick).toHaveBeenCalledTimes(3);
+        } finally {
+            mapEl.remove();
+        }
     });
 });

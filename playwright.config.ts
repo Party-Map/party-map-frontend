@@ -37,6 +37,17 @@ export default defineConfig({
         { name: "desktop-dark", ...anonymous, use: { ...desktop, colorScheme: "dark", storageState: consent("dark") } },
         { name: "phone-light", ...anonymous, use: { ...phone, colorScheme: "light", storageState: consent("light") } },
         { name: "phone-dark", ...anonymous, use: { ...phone, colorScheme: "dark", storageState: consent("dark") } },
+        // The map behaviour spec also runs on a phone held sideways and on a tablet (bottom bar, no zoom controls).
+        {
+            name: "phone-landscape",
+            testMatch: /map\.spec\.ts/,
+            use: { ...devices["Pixel 7 landscape"], colorScheme: "light", storageState: consent("light") },
+        },
+        {
+            name: "tablet",
+            testMatch: /map\.spec\.ts/,
+            use: { ...devices["Galaxy Tab S4"], colorScheme: "light", storageState: consent("light") },
+        },
         {
             name: "signed-in",
             dependencies: ["setup"],

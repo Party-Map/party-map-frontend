@@ -35,7 +35,8 @@ export function ConsentBanner() {
     };
 
     return (
-        <div className={styles.wrapper} role="dialog" aria-labelledby="consent-title">
+        // The map keeps an open card above the banner (map/insets.ts reads the marked element's top edge).
+        <div className={styles.wrapper} role="dialog" aria-labelledby="consent-title" data-map-inset="bottom">
             <div className={styles.banner}>
                 <h2 id="consent-title" className={styles.title}>
                     Privacy &amp; Cookies

@@ -6,23 +6,29 @@ import { useMap } from "react-leaflet";
 import type { ID, Place } from "@/api/types";
 import { cn } from "@/lib/utils";
 
+import { type AnchoredRect, showTarget } from "./camera";
 import { toLatLngTuple } from "./geo";
+import { mapInsets } from "./insets";
+import { useCamera } from "./useCamera";
 import styles from "./ZoomControls.module.scss";
 
-/** After recentering the selected pin sits this many pixels above the viewport centre, leaving room for its popup. */
-const RECENTER_OFFSET_Y = -100;
+const RECENTER_DURATION = 0.6;
 
 interface ZoomControlsProps {
     places: Place[];
     openPopupId: ID | null;
+    /** The open card's measured box, so recentring puts the pin and its card in the middle of the free area. */
+    cardRect: AnchoredRect | null;
 }
 
 /**
- * Desktop zoom buttons plus a "center selected" button while a popup is open. After recentering,
- * zooming keeps the selected pin in place until the user drags the map.
+ * Desktop zoom buttons plus a "center selected" button while a popup is open: it centres the pin with its card
+ * between the bars (through the camera, so the wall is respected). After recentering, zooming keeps the selected
+ * pin in place until the user drags the map.
  */
-export function ZoomControls({ places, openPopupId }: ZoomControlsProps) {
+export function ZoomControls({ places, openPopupId, cardRect }: ZoomControlsProps) {
     const map = useMap();
+    const camera = useCamera();
     const rootRef = useRef<HTMLDivElement>(null);
     const [anchorActive, setAnchorActive] = useState(false);
     const selectedPlace = places.find((p) => p.id === openPopupId) ?? null;
@@ -51,9 +57,17 @@ export function ZoomControls({ places, openPopupId }: ZoomControlsProps) {
 
     const recenter = () => {
         if (!selectedPlace) return;
-        const zoom = map.getZoom();
-        const shifted = map.project(toLatLngTuple(selectedPlace.location), zoom).add([0, RECENTER_OFFSET_Y]);
-        map.flyTo(map.unproject(shifted, zoom), zoom, { duration: 0.6 });
+        const size = map.getSize();
+        const target = showTarget({
+            pin: toLatLngTuple(selectedPlace.location),
+            card: cardRect,
+            center: map.getCenter(),
+            zoom: map.getZoom(),
+            size,
+            insets: mapInsets(size.x),
+            mode: "center",
+        });
+        camera.move(target, { duration: RECENTER_DURATION });
         setAnchorActive(true);
     };
 

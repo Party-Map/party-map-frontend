@@ -1,43 +1,65 @@
-import L, { type LatLngBounds, type LatLngBoundsLiteral, type Map as LeafletMap } from "leaflet";
+// Keeps the whole country on the screen: the zoom floor is where Hungary fills the part of the viewport the bars
+// leave free, and the wall (`maxBounds` at full viscosity, see MapView) is the country's extent plus the bars' cover.
+// Both follow the viewport size; the wall, being pixels at a zoom, also follows the zoom (map/camera.ts).
+import L, { type LatLng, type LatLngBounds, type Map as LeafletMap } from "leaflet";
 import { useEffect } from "react";
 import { useMap } from "react-leaflet";
 
-import { mapInsets } from "./insets";
+import { clampCenter, floorZoom, wall } from "./camera";
+import { type MapInsets, mapInsets } from "./insets";
+import { getCamera } from "./useCamera";
 
-/** The country's extent: the smallest view the map allows is the whole of Hungary, and the view never leaves it. */
-export const HUNGARY_EXTENT = { south: 45.737, west: 16.114, north: 48.585, east: 22.897 };
-export const HUNGARY_BOUNDS: LatLngBoundsLiteral = [
-    [HUNGARY_EXTENT.south, HUNGARY_EXTENT.west],
-    [HUNGARY_EXTENT.north, HUNGARY_EXTENT.east],
-];
+export { HUNGARY_BOUNDS, HUNGARY_EXTENT } from "./camera";
 
-/**
- * The country's extent grown by the bars' cover at the map's current zoom, so the view's wall sits that many pixels
- * beyond the border: the country can slide under a bar, and at the floor it sits centred between them.
- */
-export function paddedBounds(map: LeafletMap, top: number, bottom: number): LatLngBounds {
-    const zoom = map.getZoom();
-    const { south, west, north, east } = HUNGARY_EXTENT;
-    const northWest = map.project([north, west], zoom).subtract(L.point(0, top));
-    const southEast = map.project([south, east], zoom).add(L.point(0, bottom));
-    return L.latLngBounds([map.unproject(northWest, zoom), map.unproject(southEast, zoom)]);
+/** Leaflet's private clamp that every `setView` and bounds enforcement goes through (leaflet 1.9.4, pinned). */
+interface LimitCenter {
+    _limitCenter: (this: LeafletMap, center: LatLng, zoom: number, bounds?: LatLngBounds) => LatLng;
 }
 
 /**
- * Keeps the whole country on the screen: the zoom floor is the level at which Hungary fills the part of the viewport
- * the bars leave free, and the map's wall (`maxBounds`, see MapView) is the country's extent plus the bars' cover.
- * Both follow the viewport size; the wall, being geographic, also follows the zoom.
+ * Makes the map clamp against the wall of the zoom it is going to. Leaflet clamps a `setView` target with
+ * `_limitCenter(center, zoom, options.maxBounds)` before any zoom animation starts, and the wall is pixels at a
+ * zoom, so a wheel, pinch or button zoom near the border would otherwise be clamped against the old zoom's wall
+ * and corrected with a second pan afterwards. Returns the undo.
  */
+export function installZoomAwareWall(map: LeafletMap, insetsOf: () => MapInsets): () => void {
+    const target = map as unknown as LimitCenter;
+    const original = target._limitCenter;
+    target._limitCenter = function limitCenter(this: LeafletMap, center, zoom, bounds) {
+        const effective = bounds !== undefined && bounds === this.options.maxBounds ? wall(zoom, insetsOf()) : bounds;
+        return original.call(this, center, zoom, effective);
+    };
+    return () => {
+        target._limitCenter = original;
+    };
+}
+
 export function MapLimits() {
     const map = useMap();
 
     useEffect(() => {
+        const camera = getCamera(map);
+        const insetsOf = () => mapInsets(map.getSize().x);
+        const uninstall = installZoomAwareWall(map, insetsOf);
+        let applying = false;
+
         const apply = () => {
-            const { top, bottom } = mapInsets(map.getSize().x);
-            const floor = map.getBoundsZoom(HUNGARY_BOUNDS, false, L.point(0, top + bottom));
+            if (applying) return;
+            applying = true;
+            const size = map.getSize();
+            const insets = insetsOf();
+            const floor = floorZoom(size, insets);
+            const zoom = Math.max(map.getZoom(), floor);
+            const bounds = wall(zoom, insets);
+            const center = L.latLng(map.getCenter());
+            const inside = clampCenter(center, zoom, size, bounds);
+            // A view outside the limits (a restored one, on another screen size) is corrected without animation,
+            // before the floor and the wall go in: both would animate the correction themselves.
+            if (zoom !== map.getZoom() || !inside.equals(center))
+                camera.move({ center: inside, zoom }, { animate: false });
             map.setMinZoom(floor);
-            if (map.getZoom() < floor) map.setZoom(floor);
-            map.setMaxBounds(paddedBounds(map, top, bottom));
+            map.setMaxBounds(bounds);
+            applying = false;
         };
         apply();
         map.on("resize", apply);
@@ -45,6 +67,7 @@ export function MapLimits() {
         return () => {
             map.off("resize", apply);
             map.off("zoomend", apply);
+            uninstall();
         };
     }, [map]);
 

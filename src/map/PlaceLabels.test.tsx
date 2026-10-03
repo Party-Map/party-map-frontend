@@ -77,13 +77,18 @@ describe("computeLabelOpacity", () => {
 });
 
 describe("getPopupRect / isInsideRect", () => {
-    it("spans the card above the pin", () => {
+    it("spans a generous card above the pin until the card is measured", () => {
         const rect = getPopupRect({ x: 400, y: 300 });
-        expect(rect).toEqual({ left: 260, right: 540, top: 70, bottom: 310 });
+        expect(rect).toEqual({ left: 240, right: 560, top: 10, bottom: 310 });
         expect(isInsideRect({ x: 400, y: 100 }, rect)).toBe(true);
-        expect(isInsideRect({ x: 260, y: 310 }, rect)).toBe(true);
-        expect(isInsideRect({ x: 259, y: 200 }, rect)).toBe(false);
+        expect(isInsideRect({ x: 240, y: 310 }, rect)).toBe(true);
+        expect(isInsideRect({ x: 239, y: 200 }, rect)).toBe(false);
         expect(isInsideRect({ x: 400, y: 311 }, rect)).toBe(false);
+    });
+
+    it("takes the measured card's box, still reaching a little below the pin", () => {
+        const rect = getPopupRect({ x: 400, y: 300 }, { left: -161, top: -288, right: 161, bottom: -68 });
+        expect(rect).toEqual({ left: 239, right: 561, top: 12, bottom: 310 });
     });
 });
 
@@ -202,6 +207,23 @@ describe("PlaceLabels", () => {
         renderLabels({ openPopupId: place.id });
         expect(opacityOf(place2.name)).toBe("0.06");
         expect(labelOf(place2.name)).not.toHaveClass("hidden");
+    });
+
+    it("hides only what the measured card really covers", () => {
+        const beside = () =>
+            fakeMap.latLngToContainerPoint
+                .mockReturnValueOnce(CENTRE) // popup anchor
+                .mockReturnValueOnce(CENTRE) // place (active)
+                .mockReturnValueOnce(point(470, 200)); // place2: under a guessed card, beside a narrow measured one
+        beside();
+        const { unmount } = renderLabels({ openPopupId: place.id });
+        expect(labelOf(place2.name)).toHaveClass("hidden");
+        unmount();
+
+        beside();
+        renderLabels({ openPopupId: place.id, cardRect: { left: -50, top: -200, right: 50, bottom: -68 } });
+        expect(labelOf(place2.name)).not.toHaveClass("hidden");
+        expect(opacityOf(place2.name)).toBe("0.06");
     });
 
     it("shows every label when the open id is unknown", () => {
