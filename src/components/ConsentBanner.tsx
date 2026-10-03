@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 
 import { CONSENT_STORAGE_KEY } from "@/lib/constants";
 
@@ -44,7 +45,8 @@ export function ConsentBanner() {
                 <p className={styles.text}>
                     This site uses cookies and local storage to remember your settings, improve functionality, and keep
                     the map working smoothly. We do not track you across other websites or use your data for
-                    advertising. You can accept or reject these optional features using the buttons below.
+                    advertising. You can accept or reject these optional features using the buttons below. Read the{" "}
+                    <Link to="/privacy">privacy notice</Link>.
                 </p>
                 <p className={styles.credit}>
                     Map data &copy; <a href="https://www.openmaptiles.org/">OpenMapTiles</a> &copy;{" "}

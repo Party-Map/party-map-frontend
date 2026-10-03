@@ -27,8 +27,9 @@ describe("ProfilePage", () => {
         expect(screen.getByText("TU")).toBeInTheDocument();
         expect(screen.getByText("Test User")).toBeInTheDocument();
         expect(screen.getByText("test@example.com")).toBeInTheDocument();
-        expect(screen.getByText("Given name")).toBeInTheDocument();
+        expect(screen.getByText("Display name")).toBeInTheDocument();
         expect(screen.getByText("Test")).toBeInTheDocument();
+        // An account from before display names keeps its family name on show.
         expect(screen.getByText("Family name")).toBeInTheDocument();
         expect(screen.getByText("User")).toBeInTheDocument();
         expect(screen.getByRole("link", { name: "Edit profile" })).toHaveAttribute(
@@ -55,7 +56,8 @@ describe("ProfilePage", () => {
 
         expect(await screen.findByText("?")).toBeInTheDocument();
         expect(screen.getByText("Not provided")).toBeInTheDocument();
-        expect(screen.getAllByText("—")).toHaveLength(2);
+        expect(screen.getAllByText("—")).toHaveLength(1);
+        expect(screen.queryByText("Family name")).not.toBeInTheDocument();
     });
 
     it("names an unknown user when the token carries no profile", async () => {

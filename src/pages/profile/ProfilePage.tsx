@@ -54,13 +54,16 @@ export function ProfilePage() {
 
                     <dl className={styles.fields}>
                         <div>
-                            <dt className={styles.fieldLabel}>Given name</dt>
+                            <dt className={styles.fieldLabel}>Display name</dt>
                             <dd className={styles.fieldValue}>{user?.givenName ?? EMPTY_VALUE}</dd>
                         </div>
-                        <div>
-                            <dt className={styles.fieldLabel}>Family name</dt>
-                            <dd className={styles.fieldValue}>{user?.familyName ?? EMPTY_VALUE}</dd>
-                        </div>
+                        {/* Accounts made before display names (2026-10-03) may still carry a family name. */}
+                        {user?.familyName ? (
+                            <div>
+                                <dt className={styles.fieldLabel}>Family name</dt>
+                                <dd className={styles.fieldValue}>{user.familyName}</dd>
+                            </div>
+                        ) : null}
                     </dl>
                 </Card>
             </PageShell>

@@ -1,0 +1,9 @@
+@layer parts {
+  // The two ways in under the message: sign in, or create an account first.
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+}

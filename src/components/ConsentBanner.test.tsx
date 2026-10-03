@@ -1,5 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter } from "react-router";
 
 import { CONSENT_STORAGE_KEY } from "@/lib/constants";
 
@@ -11,8 +12,13 @@ function stored(): unknown {
 }
 
 describe("ConsentBanner", () => {
+    it("links to the privacy notice", () => {
+        render(<ConsentBanner />, { wrapper: MemoryRouter });
+        expect(screen.getByRole("link", { name: "privacy notice" })).toHaveAttribute("href", "/privacy");
+    });
+
     it("asks for consent until a choice is stored", () => {
-        render(<ConsentBanner />);
+        render(<ConsentBanner />, { wrapper: MemoryRouter });
         const dialog = screen.getByRole("dialog", { name: "Privacy & Cookies" });
         expect(dialog).toHaveTextContent("This site uses cookies and local storage");
         expect(within(dialog).getByRole("link", { name: "OpenStreetMap" })).toHaveAttribute(
@@ -24,19 +30,19 @@ describe("ConsentBanner", () => {
     });
 
     it("marks itself as an overlay over the bottom of the map, so an open card is kept above it", () => {
-        render(<ConsentBanner />);
+        render(<ConsentBanner />, { wrapper: MemoryRouter });
         expect(screen.getByRole("dialog")).toHaveAttribute("data-map-inset", "bottom");
     });
 
     it("stays hidden once a choice was stored", () => {
         window.localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify({ t: 1, v: 1, rejected: true }));
-        const { container } = render(<ConsentBanner />);
+        const { container } = render(<ConsentBanner />, { wrapper: MemoryRouter });
         expect(container).toBeEmptyDOMElement();
     });
 
     it("stores acceptance as version 1 and hides", async () => {
         const before = Date.now();
-        render(<ConsentBanner />);
+        render(<ConsentBanner />, { wrapper: MemoryRouter });
         await userEvent.click(screen.getByRole("button", { name: "Accept" }));
         expect(screen.queryByRole("dialog")).toBeNull();
         const value = stored();
@@ -46,7 +52,7 @@ describe("ConsentBanner", () => {
     });
 
     it("stores rejection with the rejected flag", async () => {
-        render(<ConsentBanner />);
+        render(<ConsentBanner />, { wrapper: MemoryRouter });
         await userEvent.click(screen.getByRole("button", { name: "Reject" }));
         expect(screen.queryByRole("dialog")).toBeNull();
         expect(stored()).toEqual({ t: expect.any(Number), v: 1, rejected: true });
@@ -56,7 +62,7 @@ describe("ConsentBanner", () => {
         vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
             throw new Error("denied");
         });
-        const { container } = render(<ConsentBanner />);
+        const { container } = render(<ConsentBanner />, { wrapper: MemoryRouter });
         expect(container).toBeEmptyDOMElement();
     });
 
@@ -64,7 +70,7 @@ describe("ConsentBanner", () => {
         vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
             throw new Error("quota");
         });
-        render(<ConsentBanner />);
+        render(<ConsentBanner />, { wrapper: MemoryRouter });
         await userEvent.click(screen.getByRole("button", { name: "Accept" }));
         expect(screen.queryByRole("dialog")).toBeNull();
     });

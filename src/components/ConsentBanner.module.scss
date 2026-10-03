@@ -39,6 +39,11 @@
     line-height: 1.6;
     color: var(--fg-muted);
     margin-bottom: var(--space-3);
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+    }
   }
 
   .credit {

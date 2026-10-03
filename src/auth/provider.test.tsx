@@ -36,6 +36,12 @@ function Probe() {
             <button type="button" onClick={() => auth.login("/events/9")}>
                 login to
             </button>
+            <button type="button" onClick={() => auth.register()}>
+                register
+            </button>
+            <button type="button" onClick={() => auth.register("/likes")}>
+                register to
+            </button>
             <button type="button" onClick={() => auth.logout()}>
                 logout
             </button>
@@ -100,6 +106,17 @@ describe("AuthProvider", () => {
         expect(client.login).toHaveBeenCalledWith("/events/1?tab=lineup");
         await userEvent.click(screen.getByRole("button", { name: "login to" }));
         expect(client.login).toHaveBeenLastCalledWith("/events/9");
+    });
+
+    it("opens the registration with the current path by default or the given return path", async () => {
+        window.history.replaceState(null, "", "/places/2");
+        const client = createMockAuthClient();
+        renderAuth(client);
+        await waitFor(() => expect(status()).toHaveTextContent("anonymous"));
+        await userEvent.click(screen.getByRole("button", { name: "register" }));
+        expect(client.register).toHaveBeenCalledWith("/places/2");
+        await userEvent.click(screen.getByRole("button", { name: "register to" }));
+        expect(client.register).toHaveBeenLastCalledWith("/likes");
     });
 
     it("logs out to the logged-out page", async () => {

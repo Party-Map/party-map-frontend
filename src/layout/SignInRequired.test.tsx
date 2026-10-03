@@ -15,6 +15,13 @@ describe("SignInRequired", () => {
         expect(client.login).toHaveBeenCalledWith("/profile/likes");
     });
 
+    it("offers to create an account, back to the same page", async () => {
+        const { client } = renderWithProviders(<SignInRequired returnTo="/profile/likes" />);
+        await userEvent.click(await screen.findByRole("button", { name: "Create account" }));
+        expect(client.register).toHaveBeenCalledWith("/profile/likes");
+        expect(client.login).not.toHaveBeenCalled();
+    });
+
     it("accepts a custom message", async () => {
         renderWithProviders(<SignInRequired returnTo="/x" message="Sign in to like places." />);
         expect(await screen.findByText("Sign in to like places.")).toBeInTheDocument();

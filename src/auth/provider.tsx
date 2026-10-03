@@ -15,6 +15,8 @@ export interface AuthContextValue {
     hasRole: (role: Role) => boolean;
     isAdmin: boolean;
     login: (returnTo?: string) => void;
+    /** Keycloak's sign-up page; back on `returnTo` (default: this page) signed in. */
+    register: (returnTo?: string) => void;
     logout: () => void;
     accountUrl: (returnTo?: string) => string;
 }
@@ -61,6 +63,7 @@ export function AuthProvider({ client, children }: { client: AuthClient; childre
     const roles = useMemo(() => parseRoles(snapshot.roles), [snapshot.roles]);
 
     const login = useCallback((returnTo?: string) => void client.login(returnTo ?? currentPath()), [client]);
+    const register = useCallback((returnTo?: string) => void client.register(returnTo ?? currentPath()), [client]);
     const logout = useCallback(() => {
         markSignedOut();
         void client.logout(LOGGED_OUT_PATH);
@@ -75,10 +78,11 @@ export function AuthProvider({ client, children }: { client: AuthClient; childre
             hasRole: (role) => roles.includes(role),
             isAdmin: hasAdminRole(roles),
             login,
+            register,
             logout,
             accountUrl,
         }),
-        [status, snapshot.user, roles, login, logout, accountUrl],
+        [status, snapshot.user, roles, login, register, logout, accountUrl],
     );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

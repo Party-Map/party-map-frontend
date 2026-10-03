@@ -15,6 +15,7 @@ import { LocationProvider } from "@/layout/LocationProvider";
 export type MockAuthClient = AuthClient & {
     emit: (snapshot: AuthSnapshot) => void;
     login: Mock<AuthClient["login"]>;
+    register: Mock<AuthClient["register"]>;
     logout: Mock<AuthClient["logout"]>;
     getToken: Mock<AuthClient["getToken"]>;
 };
@@ -38,6 +39,7 @@ export function createMockAuthClient(
     return {
         init: vi.fn(() => (options.pending ? new Promise<AuthSnapshot>(() => {}) : Promise.resolve(snapshot))),
         login: vi.fn(async () => {}),
+        register: vi.fn(async () => {}),
         logout: vi.fn(async () => {}),
         getToken: vi.fn(async () => (snapshot.authenticated ? "test-token" : null)),
         accountUrl: vi.fn((returnTo: string) => `http://kc.test/account?returnTo=${encodeURIComponent(returnTo)}`),

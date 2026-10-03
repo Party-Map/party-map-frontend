@@ -13,6 +13,7 @@ import { MapPage } from "@/pages/map/MapPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { PerformerPage } from "@/pages/performers/PerformerPage";
 import { PlacePage } from "@/pages/places/PlacePage";
+import { PrivacyPage } from "@/pages/PrivacyPage";
 import { LikesPage } from "@/pages/profile/LikesPage";
 import { ProfilePage } from "@/pages/profile/ProfilePage";
 
@@ -44,6 +45,7 @@ export const routes: RouteObject[] = [
             { path: "profile/likes", element: <LikesPage /> },
             adminRoutes,
             { path: "logged-out", element: <LoggedOutPage /> },
+            { path: "privacy", element: <PrivacyPage /> },
             { path: "*", element: <NotFoundPage /> },
         ],
     },

@@ -14,7 +14,8 @@ const fake = vi.hoisted(() => {
         onAuthLogout: Handler = undefined;
         onTokenExpired: Handler = undefined;
         init = vi.fn(async (_options: unknown) => true);
-        login = vi.fn(async (_options: unknown) => {});
+        createLoginUrl = vi.fn(async (_options: unknown) => "http://kc.test/auth?client_id=web");
+        createRegisterUrl = vi.fn(async (_options: unknown) => "http://kc.test/registrations?client_id=web");
         logout = vi.fn(async (_options: unknown) => {});
         updateToken = vi.fn(async (_minValidity: number) => true);
         clearToken = vi.fn(() => {
@@ -36,9 +37,12 @@ vi.mock("keycloak-js", () => ({ default: fake.FakeKeycloak }));
 
 type FakeInstance = InstanceType<typeof fake.FakeKeycloak>;
 
+const navigate = vi.fn<(url: string) => void>();
+
 function make(setup?: (keycloak: FakeInstance) => void) {
     fake.FakeKeycloak.instances.length = 0;
-    const client = createKeycloakClient();
+    navigate.mockClear();
+    const client = createKeycloakClient(navigate);
     const keycloak = fake.FakeKeycloak.instances[0];
     if (!keycloak) throw new Error("Keycloak was not constructed");
     setup?.(keycloak);
@@ -133,12 +137,38 @@ describe("createKeycloakClient", () => {
         await expect(client.init()).resolves.toEqual(anonymous);
     });
 
-    it("redirects to origin-prefixed paths on login and logout", async () => {
+    it("redirects to origin-prefixed paths on login and logout, telling Keycloak's pages the theme", async () => {
         const { client, keycloak } = make();
         await client.login("/events/1?x=1");
-        expect(keycloak.login).toHaveBeenCalledWith({ redirectUri: `${origin}/events/1?x=1` });
+        expect(keycloak.createLoginUrl).toHaveBeenCalledWith({ redirectUri: `${origin}/events/1?x=1` });
+        expect(navigate).toHaveBeenCalledWith("http://kc.test/auth?client_id=web&pm_theme=light");
         await client.logout("/logged-out");
         expect(keycloak.logout).toHaveBeenCalledWith({ redirectUri: `${origin}/logged-out` });
+    });
+
+    it("opens the registration with the dark theme when the app is dark", async () => {
+        window.localStorage.setItem("theme", "dark");
+        try {
+            const { client, keycloak } = make();
+            await client.register("/likes");
+            expect(keycloak.createRegisterUrl).toHaveBeenCalledWith({ redirectUri: `${origin}/likes` });
+            expect(navigate).toHaveBeenCalledWith("http://kc.test/registrations?client_id=web&pm_theme=dark");
+        } finally {
+            window.localStorage.removeItem("theme");
+        }
+    });
+
+    it("leaves the page by default", async () => {
+        fake.FakeKeycloak.instances.length = 0;
+        const assign = vi.fn();
+        vi.stubGlobal("location", { origin, assign });
+        try {
+            const client = createKeycloakClient();
+            await client.login("/");
+            expect(assign).toHaveBeenCalledWith("http://kc.test/auth?client_id=web&pm_theme=light");
+        } finally {
+            vi.unstubAllGlobals();
+        }
     });
 
     it("builds the account URL by hand with the client as referrer", () => {
